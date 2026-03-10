@@ -1,12 +1,18 @@
 {
-  "name": "docsy-example-site",
-  "version": "0.14.4-dev",
-  "description": "Example site that uses Docsy theme for technical documentation.",
-  "repository": "github:google/docsy-example",
-  "homepage": "https://example.docsy.dev",
-  "author": "Docsy Authors",
+  "name": "solo-docs",
+  "version": "0.0.0",
+  "version.next": "0.0.1",
+  "description": "Solo technical documentation.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hiero-ledger/solo.git"
+  },
+  "homepage": "https://solo.hiero.org/",
+  "author": "Hashgraph",
   "license": "Apache-2.0",
-  "bugs": "https://github.com/google/docsy-example/issues",
+  "bugs": {
+    "url": "https://github.com/hiero-ledger/solo/issues"
+  },
   "spelling": "cSpell:ignore docsy hugo htmltest precheck postbuild rtlcss -",
   "scripts": {
     "_build": "npm run _hugo-dev --",
