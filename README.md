@@ -1,183 +1,190 @@
-# Docsy Example
+# Solo Docs Site
 
-[Docsy][] is a [Hugo theme module][] for technical documentation sites,
-providing easy site navigation, structure, and more. This **Docsy Example
-Project** uses the Docsy theme component as a hugo module and provides a
-skeleton documentation structure for you to use. You can clone/copy this project
-and edit it with your own content, or use it as an example.
+## Overview
 
-In this project, the Docsy theme is pulled in as a Hugo module, together with
-its dependencies:
+This repository contains the Hugo + Docsy site for Solo. It ships with Hiero
+branding (logo, palette, typography) and a lightweight build/preview workflow.
+
+Solo Docs uses Docsy as a Hugo module. You can inspect module dependencies
+with:
 
 ```console
-$ hugo mod graph
-...
+hugo mod graph
 ```
 
 For Docsy documentation, see [Docsy user guide][].
 
-This Docsy Example Project is hosted on [Netlify][] at [example.docsy.dev][].
-You can view deploy logs from the [deploy section of the project's Netlify
-dashboard][deploys], or this [alternate dashboard][].
+## Prerequisites
 
-This is not an officially supported Google product. This project is currently
-maintained.
+- Node 18+ and npm
+- Go (for Hugo extended and Hugo modules)
+- Hugo extended 0.145.0 or newer
 
-## Using the Docsy Example Project as a template
+## Quick Start
 
-A simple way to get started is to use this project as a template, which gives
-you a site project that is set up and ready to use. To do this:
-
-1. Use the dropdown for switching branches/tags to change to the **latest**
-   released tag.
-
-2. Click **Use this template**.
-
-3. Select a name for your new project and click **Create repository from
-   template**.
-
-4. Make your own local working copy of your new repo using git clone, replacing
-   https://github.com/me/example.git with your repo’s web URL:
-
-```bash
-git clone --depth 1 https://github.com/me/example.git
-```
-
-Depending on your environment you may need to adjust the top-level `module`
-settings in your project's Hugo config file, for example, by adding a proxy to
-use when downloading remote modules. You can find details of what these
-configuration settings do in the
-[Hugo modules documentation](https://gohugo.io/hugo-modules/configuration/#module-config-top-level).
-
-Once your settings are adjusted, you can edit your own versions of the site’s
-source files.
-
-If you want to do SCSS edits and want to publish these, you need to install
-`PostCSS`
+1. Install site dependencies and Hugo modules:
 
 ```bash
 npm install
 ```
 
-## Running the website locally
-
-Building and running the site locally requires a recent `extended` version of
-[Hugo](https://gohugo.io). You can find out more about how to install Hugo for
-your environment in our
-[Getting started](https://www.docsy.dev/docs/getting-started/#prerequisites-and-installation)
-guide.
-
-Once you've made your working copy of the site repo, from the repo root folder,
-run:
+1. Build the site (no Kind required):
 
 ```bash
-hugo server
+hugo --cleanDestinationDir
 ```
 
-## Running a container locally
+This outputs the generated site to `public/`.
 
-You can run docsy-example inside a [Docker](https://docs.docker.com/) container,
-the container runs with a volume bound to the `docsy-example` folder. This
-approach doesn't require you to install any dependencies other than
-[Docker Desktop](https://www.docker.com/products/docker-desktop) on Windows and
-Mac, and [Docker Compose](https://docs.docker.com/compose/install/) on Linux.
+1. Run with live reload:
 
-1. Build the docker image
+```bash
+hugo server -D --baseURL http://localhost:1313/main/ --cleanDestinationDir
+```
 
-   ```bash
-   docker-compose build
-   ```
+Open `http://localhost:1313/main/` in your browser.
 
-1. Run the built image
+## Common Commands
 
-   ```bash
-   docker-compose up
-   ```
+- Full docs site build: `hugo --cleanDestinationDir`
+- Local preview with live reload:
+   `hugo server -D --baseURL http://localhost:1313/main/ --cleanDestinationDir`
+- Clean generated artifacts: `npm run clean`
 
-   > NOTE: You can run both commands at once with `docker-compose up --build`.
+Note: Typedoc generation is not a native Hugo command. If you use generated API
+docs, run the typedoc command from your API docs/tooling project, then copy its
+output to `static/` as needed.
 
-1. Verify that the service is working.
+## Branding and Theming
 
-   Open your web browser and type `http://localhost:1313` in your navigation
-   bar, This opens a local instance of the docsy-example homepage. You can now
-   make changes to the docsy example and those changes will immediately show up
-   in your browser after you save.
+- Logo: `assets/icons/logo.svg` (Docsy inlines it via `navbar_logo`)
+- Design tokens and component overrides:
+   `assets/scss/_variables_project.scss`
+- Colors: Hiero palette is defined as CSS variables (primary `#b81a56`,
+   primary-dark `#992350`, primary-light `#d92d6a`, secondary `#1ebdc4`)
+- Typography: branding notes include Space Grotesk/Inter-based typography
+   updates across headings, body, and UI elements
+
+## Editing Styles
+
+1. Update SCSS in `assets/scss/_variables_project.scss` (buttons, badges,
+    sidebar, code, tokens).
+2. Rebuild with `hugo --cleanDestinationDir` or run `hugo server` to regenerate
+    site CSS in `public/`.
+
+## Content Structure
+
+- `content/en` holds pages and landing content
+- `assets/` contains SCSS, fonts, and icons
+- `layouts/` has partial overrides
+- `static/` can serve generated API docs (for example under `static/classes`)
+
+## Running a Container Locally
+
+You can run solo-docs inside a [Docker](https://docs.docker.com/) container.
+The container uses a volume bound to this repo.
+
+1. Build the Docker image:
+
+```bash
+docker-compose build
+```
+
+1. Run the image:
+
+```bash
+docker-compose up
+```
+
+You can run both with:
+
+```bash
+docker-compose up --build
+```
+
+Open `http://localhost:1313` to verify it is working.
 
 ### Cleanup
 
-To stop Docker Compose, on your terminal window, press **Ctrl + C**.
+Stop Docker Compose with `Ctrl + C`.
 
-To remove the produced images run:
+Remove produced images:
 
 ```bash
 docker-compose rm
 ```
 
-For more information see the [Docker Compose documentation][].
+For more information see [Docker Compose documentation][].
 
-## Using a local Docsy clone
+## Using a Local Docsy Clone
 
-Make sure your installed go version is `1.18` or higher.
+Make sure your installed Go version is `1.18` or higher.
 
-Clone the latest version of the docsy theme into the parent folder of your
-project. The newly created repo should now reside in a sibling folder of your
-site's root folder.
+Clone Docsy to a sibling folder:
 
-```shell
+```bash
 cd root-of-your-site
 git clone --branch v0.12.0 https://github.com/google/docsy.git ../docsy
 ```
 
-Now run:
+Then run:
 
-```shell
+```bash
 HUGO_MODULE_WORKSPACE=docsy.work hugo server --ignoreVendorPaths "**"
 ```
 
-or, when using npm, prepend `local` to the script you want to invoke, e.g.:
+Or use npm:
 
-```shell
+```bash
 npm run local serve
 ```
 
-By using the `HUGO_MODULE_WORKSPACE` directive (either directly or via prefix
-`local` when using npm), the server now watches all files and directories inside
-the sibling directory `../docsy` , too. Any changes inside the local `docsy`
-theme clone are now immediately picked up (hot reload), you can instantly see
-the effect of your local edits.
+This lets Hugo hot-reload local changes from `../docsy` too.
 
-In the command above, we used the environment variable `HUGO_MODULE_WORKSPACE`
-to tell hugo about the local workspace file `docsy.work`. Alternatively, you can
-declare the workspace file inside your settings file `hugo.toml`:
+## Notes
 
-```toml
-[module]
-  workspace = "docsy.work"
-```
+- `navbar_logo` is enabled in `hugo.yaml`; placing the SVG at
+   `assets/icons/logo.svg` is enough for it to render.
+- For quick local preview, use `hugo --cleanDestinationDir` + `hugo server`
+   rather than heavier full pipelines.
+- For color/contrast tweaks, adjust CSS variables in
+   `_variables_project.scss` and rebuild.
 
-Your project's `hugo.toml` file already contains these lines, the directive for
-workspace assignment is commented out, however. Remove the two trailing comment
-characters '//' so that this line takes effect.
+Recent Hiero branding notes:
+
+- Hiero logo added at `assets/icons/logo.svg`
+- Palette/token updates in `assets/scss/_variables_project.scss`
+- Component styling updates for buttons, badges, sidebar, callouts, cards,
+   inputs, and typography scale
+
+Accessibility contrast notes (against white):
+
+- Primary `#C91F47`: 5.57
+- Primary dark `#A31835`: 7.67
+- Body gray `#666666`: 5.74
+- Light gray `#888888`: 3.54 (use carefully for small/critical text)
 
 ## Troubleshooting
 
-As you run the website locally, you may run into the following error:
+- Hugo not found: ensure Go is installed and `$(go env GOPATH)/bin` is on
+   `PATH`.
+- Styles not updating: rerun `hugo --cleanDestinationDir` or restart
+   `hugo server`.
+- Typedoc missing: regenerate typedoc from your API docs/tooling project and
+   copy output to `static/`.
+
+You may also encounter these Hugo errors while running locally:
 
 ```console
 $ hugo server
 WARN 2023/06/27 16:59:06 Module "project" is not compatible with this Hugo version; run "hugo mod graph" for more information.
 Start building sites …
 hugo v0.101.0-466fa43c16709b4483689930a4f9ac8add5c9f66+extended windows/amd64 BuildDate=2022-06-16T07:09:16Z VendorInfo=gohugoio
-Error: Error building site: "C:\Users\foo\path\to\docsy-example\content\en\_index.md:5:1": failed to extract shortcode: template for shortcode "blocks/cover" not found
+Error: Error building site: "C:\Users\foo\path\to\solo-docs\content\en\_index.md:5:1": failed to extract shortcode: template for shortcode "blocks/cover" not found
 Built in 27 ms
 ```
 
-This error occurs if you are running an outdated version of Hugo. As of docsy
-theme version `v0.12.0`, hugo version `0.146.0` or higher is required. See this
-[section](https://www.docsy.dev/docs/get-started/docsy-as-module/installation-prerequisites/#install-hugo)
-of the user guide for instructions on how to install Hugo.
-
-Or you may be confronted with the following error:
+This usually means Hugo is outdated. Install a newer Hugo extended release.
 
 ```console
 $ hugo server
@@ -188,12 +195,7 @@ Built in 288 ms
 Error: Error building site: TOCSS: failed to transform "scss/main.scss" (text/x-scss): resource "scss/scss/main.scss_9fadf33d895a46083cdd64396b57ef68" not found in file cache
 ```
 
-This error occurs if you have not installed the extended version of Hugo. See
-this
-[section](https://www.docsy.dev/docs/get-started/docsy-as-module/installation-prerequisites/#install-hugo)
-of the user guide for instructions on how to install Hugo.
-
-Or you may encounter the following error:
+This usually means you are not using Hugo extended.
 
 ```console
 $ hugo server
@@ -201,19 +203,9 @@ $ hugo server
 Error: failed to download modules: binary with name "go" not found
 ```
 
-This error occurs if the `go` programming language is not available on your
-system. See this
-[section](https://www.docsy.dev/docs/get-started/docsy-as-module/installation-prerequisites/#install-go-language)
-of the user guide for instructions on how to install `go`.
+This means Go is not available in your shell.
 
-[alternate dashboard]: https://app.netlify.com/sites/goldydocs/deploys
-[deploys]: https://app.netlify.com/sites/docsy-example/deploys
 [Docsy user guide]: https://docsy.dev/docs
-[Docsy]: https://github.com/google/docsy
-[example.docsy.dev]: https://example.docsy.dev
-[Hugo theme module]:
-  https://gohugo.io/hugo-modules/use-modules/#use-a-module-for-a-theme
-[Netlify]: https://netlify.com
 [Docker Compose documentation]: https://docs.docker.com/compose/gettingstarted/
 
-<!-- cSpell:ignore hugo docsy TOCSS -->
+<!-- cSpell:ignore hugo docsy TOCSS typedoc -->
