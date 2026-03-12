@@ -14,9 +14,45 @@ hugo mod graph
 
 For Docsy documentation, see [Docsy user guide][].
 
+## Auto-Update From Solo Releases
+
+This repository is updated automatically when a new release is published in
+`hiero-ledger/solo`.
+
+High-level flow:
+
+1. A release is published in `solo`.
+2. `solo/.github/workflows/flow-trigger-solo-docs-update.yaml` sends a
+   `repository_dispatch` event (`solo-release`) to `solo-docs`.
+3. `solo-docs/.github/workflows/flow-update-docs.yaml` receives the event.
+4. The workflow checks out `solo` at the released tag into `solo-src/`.
+5. It builds and installs `solo` from source so docs are generated from the
+   exact released code.
+6. It runs:
+   - `node scripts/executeUpdateDocs.mjs <version>`
+   - `node scripts/generateHelp.mjs`
+7. It commits generated files back to this repo:
+   - `content/en/docs/step-by-step-guide.md`
+   - `content/en/docs/advanced-deployments.md`
+   - `content/en/docs/solo-commands.md`
+   - `content/en/examples/_index.md`
+
+The workflow can also be run manually using `workflow_dispatch` with a version
+input (tag or `main`).
+
+Script roles:
+
+- `scripts/updateDocs.mjs`: runs lifecycle commands, captures output, and renders
+  template-based docs.
+- `scripts/generateHelp.mjs`: builds the CLI reference from `solo --help` output.
+- `scripts/utilities.mjs`: shared command execution and template substitution
+  helpers.
+
+Templates used for generation are in `content/en/templates/`.
+
 ## Prerequisites
 
-- Node 18+ and npm
+- Node 22+ and npm
 - Go (for Hugo extended and Hugo modules)
 - Hugo extended 0.145.0 or newer
 
