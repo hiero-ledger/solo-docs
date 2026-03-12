@@ -1,4 +1,0 @@
----
-# cSpell:disable
-title: اخبار
----
