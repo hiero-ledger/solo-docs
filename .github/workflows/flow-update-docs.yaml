@@ -1,0 +1,215 @@
+##
+# Copyright (C) 2023-2024 Hedera Hashgraph, LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+##
+
+# Regenerates all automated documentation pages whenever a new Solo release is
+# published. This workflow is triggered in one of two ways:
+#
+#   1. Automatically - via a repository_dispatch event (type: "solo-release")
+#      sent from the hiero-ledger/solo repo's release workflow. The event
+#      payload contains `version` (the release tag, e.g. "v0.66.0") and
+#      `release_url`.
+#
+#   2. Manually - via workflow_dispatch, allowing maintainers to re-generate
+#      docs for any existing tag or for `main` without waiting for a release.
+#
+# What this workflow does (in order):
+#   1.  Check out this (solo-docs) repo onto the runner.
+#   2.  Check out the hiero-ledger/solo repo at the requested release tag into
+#       the sub-directory ./solo-src/.
+#   3.  Set up Node.js, task (go-task), kubectl, Helm, and Kind.
+#   4.  Build solo from the checked-out source and install it globally so the
+#       `solo` binary is on PATH for the generation scripts to call.
+#   5.  Run scripts/executeUpdateDocs.mjs - spins up a Kind cluster, runs
+#       the full Solo CLI lifecycle, captures output, renders Markdown templates
+#       into content/en/docs/.
+#   6.  Run scripts/generateHelp.mjs - runs `solo --help` at every command
+#       depth and writes content/en/docs/solo-commands.md.
+#   7.  Commit any changed files back to this repo on the main branch so that
+#       the next Hugo build picks up the freshly generated content.
+#
+# Required secrets (none beyond GITHUB_TOKEN - which is automatic):
+#   The workflow uses the built-in GITHUB_TOKEN with `contents: write` so it
+#   can push the generated doc files back.
+
+name: "Update Generated Docs"
+
+on:
+  # Triggered automatically from hiero-ledger/solo when a release is published.
+  repository_dispatch:
+    types: [solo-release]
+
+  # Allow manual re-runs for any tag or for `main`.
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Solo release tag to generate docs for (e.g. v0.66.0) or 'main'"
+        required: false
+        default: "main"
+
+# Allow only one doc-update run at a time to prevent conflicting commits.
+concurrency:
+  group: update-docs
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  update-docs:
+    name: Generate and commit docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+        with:
+          egress-policy: audit
+
+      # Resolve the release version.
+      # For repository_dispatch: use client_payload.version (set by solo's
+      #   flow-trigger-solo-docs-update.yaml).
+      # For workflow_dispatch:   use the manual `version` input.
+      - name: Resolve release version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            VERSION="${{ github.event.client_payload.version }}"
+          else
+            VERSION="${{ inputs.version }}"
+          fi
+          # Fallback to 'main' if neither path provided a value.
+          VERSION="${VERSION:-main}"
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "Generating docs for Solo version: ${VERSION}"
+
+      # Checkout solo-docs (this repo).
+      - name: Checkout solo-docs
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Checkout hiero-ledger/solo at the release tag.
+      # The solo source tree is needed to:
+      #   - Build and install the `solo` binary from source.
+      #   - Provide examples/README.md which is embedded in the examples page.
+      # It is checked out into ./solo-src/ so it doesn't conflict with this
+      # repo's own files.
+      - name: Checkout hiero-ledger/solo at ${{ steps.version.outputs.version }}
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: hiero-ledger/solo
+          ref: ${{ steps.version.outputs.version }}
+          path: solo-src
+
+      # Tool setup.
+      - name: Setup Node.js 22
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: 22
+
+      - name: Install Task (go-task)
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611 # v2.0.0
+        with:
+          version: 3.39.2
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install kubectl
+        uses: step-security/setup-kubectl@fa3574e17195eaed56b1e9d9095c58d0aee24f03 # v4.0.1
+        with:
+          version: "v1.27.3"
+
+      - name: Setup Helm
+        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+        with:
+          version: "v3.12.3"
+
+      - name: Setup Kind
+        uses: helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
+        with:
+          install_only: true
+          node_image: kindest/node:v1.31.4@sha256:2cb39f7295fe7eafee0842b1052a599a4fb0f8bcf3f83d96c7f4864c357c6c30
+          version: v0.26.0
+          kubectl_version: v1.31.4
+          verbosity: 3
+          wait: 120s
+
+      # Build and install solo from source.
+      # This ensures the `solo` binary on PATH matches the exact release tag
+      # being documented, rather than whatever is published on npm.
+      - name: Build solo from source
+        working-directory: solo-src
+        run: |
+          npm install
+          task build
+
+      - name: Install solo globally from local build
+        working-directory: solo-src
+        run: |
+          # Install the freshly built local package globally so `solo` is on PATH.
+          npm install -g .
+          # Symlink the local build over the global install for local command calls.
+          npm link
+          which solo
+          solo --version
+
+      # Install solo-docs script dependencies.
+      - name: Install solo-docs dependencies (kleur etc.)
+        run: npm install
+
+      # Run the documentation generation scripts.
+      # SOLO_SOURCE_DIR tells the scripts where to find the solo source tree
+      # (used to resolve examples/README.md which is embedded in the docs).
+      - name: Generate step-by-step guide and advanced-deployments docs
+        env:
+          SOLO_SOURCE_DIR: ${{ github.workspace }}/solo-src
+        run: |
+          echo "::group::Running executeUpdateDocs.mjs"
+          node scripts/executeUpdateDocs.mjs "${{ steps.version.outputs.version }}"
+          echo "::endgroup::"
+
+      - name: Generate CLI command reference (solo-commands.md)
+        run: |
+          echo "::group::Running generateHelp.mjs"
+          node scripts/generateHelp.mjs
+          echo "::endgroup::"
+
+      # Print a short generated output preview for reviewers.
+      - name: Show generated step-by-step-guide.md preview
+        run: |
+          echo "::group::content/en/docs/step-by-step-guide.md"
+          sed -n '1,120p' content/en/docs/step-by-step-guide.md
+          echo "::endgroup::"
+
+      # Commit and push generated files back to solo-docs.
+      # Only the rendered content files (not build/ logs) are committed.
+      # The commit is a no-op if none of the watched files changed.
+      - name: Commit and push generated docs
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
+        with:
+          commit_message: "docs: auto-update generated docs for ${{ steps.version.outputs.version }}"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          # Only stage the rendered Markdown output - not build/ logs or solo-src/.
+          file_pattern: |
+            content/en/docs/step-by-step-guide.md
+            content/en/docs/advanced-deployments.md
+            content/en/docs/solo-commands.md
+            content/en/examples/_index.md
