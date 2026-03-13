@@ -81,6 +81,31 @@ This command performs the following actions:
 | Explorer UI    | Web interface for viewing accounts and transactions. |
 | JSON RPC Relay | Ethereum-compatible JSON RPC interface.              |
 
+
+{{< details summary="Multiple Node Deployment - for testing consensus scenarios" >}}
+
+To deploy multiple consensus nodes, pass the `--num-consensus-nodes` flag:
+
+```bash
+solo one-shot single deploy --num-consensus-nodes 3
+```
+This deploys 3 consensus nodes along with the same components as the
+single-node setup (mirror node, explorer, relay).
+
+> **Note:** Multiple node deployments require more resources. Ensure you have
+> at least **16 GB of memory** and **8 CPU cores** allocated to Docker before
+> running this command. See
+> [System Readiness](/onboarding/system-readiness#hardware-requirements) for
+> the full multi-node requirements.
+
+When finished, destroy the network as usual:
+
+```bash
+solo one-shot single destroy
+```
+
+{{< /details >}}
+
 ### Verify the network
 
 After the one-shot deployment completes, verify that the Kubernetes workloads are healthy.
