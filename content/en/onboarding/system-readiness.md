@@ -15,19 +15,28 @@ Before running `solo one-shot single deploy`, ensure your local environment meet
 
 ## Hardware Requirements
 
-Solo deploys a fully functioning Hiero test network locally, including consensus nodes, a mirror node, and supporting services.
-Your machine must meet the following minimum specifications for a single-node network:
+Solo's resource requirements depend on your deployment size:
 
-| Requirement | Minimum                            | Recommended                      |
-|-------------|------------------------------------|----------------------------------|
-| Memory      | 12 GB                              | 16 GB (for smoother performance) |
-| CPU         | 6 cores                            | 8 cores                          |
-| Storage     | 20 GB free disk space              | –                                |
-| OS          | macOS, Linux, or Windows with WSL2 | –                                |
+| Configuration | Minimum RAM | Recommended RAM | Minimum CPU | Minimum Storage |
+|---|---|---|---|---|
+| Single-node | 12 GB | 16 GB | 6 cores (8 recommended) | 20 GB free |
+| Multi-node (3+ nodes) | 16 GB | 24 GB | 8 cores | 20 GB free |
+
+> **Note:** If you are using Docker Desktop, ensure the resource limits under
+> **Settings → Resources** are set to at least these values - Docker caps usage
+> independently of your machine's total available memory.
 
 ## Software Requirements
 
-The following tools are required to run Solo. Install the versions listed before proceeding.
+Solo manages most of its own dependencies depending on how you install it:
+
+- **Homebrew install** (`brew install hiero-ledger/tools/solo`) - automatically installs Node.js in addition to Solo.
+- **`one-shot` commands** — automatically install Kind, kubectl, Helm, and Podman (an alternative to Docker) if they are not already present.
+
+You do not need to pre-install these tools manually before running Solo.
+
+The only hard requirement before you begin is a **container runtime** - either [Docker Desktop](https://www.docker.com/products/docker-desktop) or [Podman](https://podman.io/). Solo cannot install a container runtime on your behalf.
+
 
 | Tool           | Required Version         | Where to get it                                                                   |
 |----------------|--------------------------|-----------------------------------------------------------------------------------|
@@ -38,6 +47,7 @@ The following tools are required to run Solo. Install the versions listed before
 | Helm           | v3.14.2                  | [helm.sh](https://helm.sh/docs/intro/install/)                                    |
 | Docker         | See Docker section below | [docker.com](https://www.docker.com/products/docker-desktop)                      |
 | k9s (optional) | >= v0.27.4               | [k9scli.io](https://k9scli.io/topics/install/)                                    |
+
 
 ## Docker
 
