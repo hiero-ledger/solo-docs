@@ -71,7 +71,7 @@ To allocate the required resources in Docker Desktop:
 
 ## Platform Setup
 
-Choose your platform and follow the steps below to install all required dependencies before proceeding to Quickstart:
+Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platform below to install the required container runtime and configure your environment, before proceeding to Quickstart:
 
 {{< tabpane >}}
 
