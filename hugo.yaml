@@ -17,6 +17,8 @@ module:
     - path: github.com/google/docsy
       disable: false
   mounts:
+    - source: content/en
+      target: content
     - source: build/
       target: content/docs
       includeFiles:
@@ -49,7 +51,6 @@ module:
 # cSpell:ignore goldmark github hugo readingtime docsy subdir lastmod pygments linenos catmullrom norsk gu slugorcontentbasename
 
 # Language settings
-contentDir: content/en
 defaultContentLanguage: en
 defaultContentLanguageInSubdir: false
 # Useful when translating.
