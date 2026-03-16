@@ -15,7 +15,7 @@ Before you deploy a local Hiero test network with `solo one-shot single deploy`,
 Solo's resource requirements depend on your deployment size:
 
 | Configuration | Minimum RAM | Recommended RAM | Minimum CPU | Minimum Storage |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | Single-node | 12 GB | 16 GB | 6 cores (8 recommended) | 20 GB free |
 | Multi-node (3+ nodes) | 16 GB | 24 GB | 8 cores | 20 GB free |
 
@@ -36,8 +36,8 @@ The only hard requirement before you begin is a **container runtime** - either [
 
 | Tool           | Required Version         | Where to get it                                                                   |
 |----------------|--------------------------|-----------------------------------------------------------------------------------|
-| Node.js        | >= 22.0.0 (lts/jod)     | [nodejs.org](https://nodejs.org/en/download)                                      |
-| Kind           | >= v0.29.0               | [kind.sigs.k8s.io](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) |
+| Node.js        | >= 22.0.0 (lts/jod)      | [nodejs.org](https://nodejs.org/en/download)                                      |
+| Kind           | >= v0.29.0               | [kind.sigs.k8s.io](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)  |
 | Kubernetes     | >= v1.32.2               | Installed automatically by Kind                                                   |
 | Kubectl        | >= v1.32.2               | [kubernetes.io](https://kubernetes.io/docs/tasks/tools/)                          |
 | Helm           | v3.14.2                  | [helm.sh](https://helm.sh/docs/intro/install/)                                    |
@@ -253,7 +253,7 @@ The following tools are not required but are recommended for monitoring and mana
 The table below shows the full compatibility matrix for the current and recent Solo releases:
 
 | Solo Version | Node.js | Kind | Solo Chart | Hedera | Kubernetes | Kubectl | Helm | k9s | Docker Resources | Release Date | End of Support |
-|---|---|---|---|---|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0.59.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.62.0 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-02-27 | 2026-03-27 |
 | 0.58.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.62.0 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-02-25 | 2026-05-25 |
 | 0.57.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.60.2 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-02-19 | 2026-03-19 |

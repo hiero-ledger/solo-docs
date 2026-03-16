@@ -1,13 +1,13 @@
 ---
 title: "Managing Your Network"
-weight: 3
+weight: 1
 description: >
   Learn how to start, stop, and restart consensus nodes, capture logs and
   diagnostics, and upgrade your Solo network to a new Hiero version.
 type: docs
 ---
 
-## Overview
+# Managing Your Network
 
 This guide covers day-to-day management operations for a running Solo network,
 including starting, stopping, and restarting nodes, capturing logs, and upgrading the network.
