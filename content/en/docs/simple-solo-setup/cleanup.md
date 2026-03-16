@@ -1,13 +1,13 @@
 ---
 title: "Cleanup"
-weight: 20
+weight: 4
 description: >
   Learn how to properly destroy a Solo network deployment, manage resource
   usage, and perform a full reset when the standard destroy command fails.
 type: docs
 ---
 
-# Cleanup
+## Overview
 
 This guide covers how to tear down a Solo network deployment, understand
 resource usage, and perform a full reset when needed.
@@ -17,7 +17,6 @@ resource usage, and perform a full reset when needed.
 Before proceeding, ensure you have completed the following:
 
 - [**Quickstart**](/onboarding/quickstart) — you have a running Solo network deployed using `solo one-shot single deploy`.
-
 
 ## Destroying Your Network
 
@@ -50,7 +49,6 @@ clean state.
 > `solo one-shot single destroy` fails or your Solo state is corrupted. For
 > normal teardown, always use `solo one-shot single destroy` instead.
 
-
   ```bash
   # Delete only Solo-managed Kind clusters (names starting with "solo")
   kind get clusters | grep '^solo' | while read cluster; do
@@ -66,6 +64,4 @@ clean state.
 > Always use the `grep '^solo'` filter when listing clusters - omitting it will delete every Kind cluster on
 > your machine, including any unrelated to Solo.
 
-
 - To redeploy after a full reset, follow the [Quickstart](/onboarding/quickstart) guide.
-

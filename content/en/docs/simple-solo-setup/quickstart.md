@@ -1,17 +1,17 @@
 ---
-title: "Solo Quickstart"
-weight: 30
+title: "Quickstart"
+weight: 2
 description: >
   Deploy a local Hiero test network with a single command using the Solo CLI.
-  This guide covers installing Solo, running the one-shot deployment, verifying
-  the network, and accessing local service endpoints.
 type: docs
 ---
 
-# Solo Quickstart
+## Overview
 
 Solo Quickstart provides a single, one-shot command path to deploy a running Hiero test network using the Solo CLI tool.
-This guide assumes basic familiarity with command-line interfaces and Docker.
+This guide covers installing Solo, running the one-shot deployment, verifying the network, and accessing local service endpoints.
+
+> **Note:** This guide assumes basic familiarity with command-line interfaces and Docker.
 
 ## Prerequisites
 
@@ -81,7 +81,6 @@ This command performs the following actions:
 | Explorer UI    | Web interface for viewing accounts and transactions. |
 | JSON RPC Relay | Ethereum-compatible JSON RPC interface.              |
 
-
 {{< details summary="Multiple Node Deployment - for testing consensus scenarios" >}}
 
 To deploy multiple consensus nodes, pass the `--num-consensus-nodes` flag:
@@ -89,6 +88,7 @@ To deploy multiple consensus nodes, pass the `--num-consensus-nodes` flag:
 ```bash
 solo one-shot single deploy --num-consensus-nodes 3
 ```
+
 This deploys 3 consensus nodes along with the same components as the
 single-node setup (mirror node, explorer, relay).
 

@@ -1,17 +1,14 @@
 ---
-title: "System Readiness"
-weight: 20
+title: "Prerequisites"
+weight: 1
 description: >
   Verify hardware and software requirements before deploying a local Hiero
-  test network with Solo. Covers minimum memory, CPU, storage, supported
-  operating systems, required tool versions, and platform-specific setup
-  steps for macOS, Linux, and Windows (WSL2).
+  test network with Solo. 
 type: docs
 ---
 
-# System Readiness
-
-Before running `solo one-shot single deploy`, ensure your local environment meets the hardware and software requirements listed on this page.
+## Overview
+Before you deploy a local Hiero test network with `solo one-shot single deploy`, your machine must meet specific hardware, operating system, and tooling requirements. This page walks you through the minimum and recommended memory, CPU, and storage, supported platforms (macOS, Linux, and Windows via WSL2), and the required versions of Docker/Podman, Node.js, and Kubernetes tooling. By the end of this page, you will have your container runtime installed, platform-specific settings configured, and all Solo prerequisites in place so you can move on to the Quickstart and create a local network with a single command.
 
 ## Hardware Requirements
 
@@ -37,7 +34,6 @@ You do not need to pre-install these tools manually before running Solo.
 
 The only hard requirement before you begin is a **container runtime** - either [Docker Desktop](https://www.docker.com/products/docker-desktop) or [Podman](https://podman.io/). Solo cannot install a container runtime on your behalf.
 
-
 | Tool           | Required Version         | Where to get it                                                                   |
 |----------------|--------------------------|-----------------------------------------------------------------------------------|
 | Node.js        | >= 22.0.0 (lts/jod)     | [nodejs.org](https://nodejs.org/en/download)                                      |
@@ -47,7 +43,6 @@ The only hard requirement before you begin is a **container runtime** - either [
 | Helm           | v3.14.2                  | [helm.sh](https://helm.sh/docs/intro/install/)                                    |
 | Docker         | See Docker section below | [docker.com](https://www.docker.com/products/docker-desktop)                      |
 | k9s (optional) | >= v0.27.4               | [k9scli.io](https://k9scli.io/topics/install/)                                    |
-
 
 ## Docker
 
@@ -78,6 +73,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 {{< tab header="macOS" lang="bash" >}}
 
  1. Install Homebrew (if not already installed):
+
     ```sh
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     ```
@@ -94,6 +90,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     ```
 
  4. Install Solo (this installs all other dependencies automatically):
+
     ```sh
     brew tap hiero-ledger/tools
     brew update
@@ -101,6 +98,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     ```
 
  5. Verify the installation:
+
     ```sh
     solo --version
     ```
@@ -110,17 +108,20 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 {{< tab header="Linux" lang="bash" >}}
 
  1. Install Homebrew for Linux:
+
     ```sh
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     ```
 
     Add Homebrew to your PATH:
+
     ```sh
     echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     ```
 
  2. Install Docker Engine (for Ubuntu/Debian):
+
     ```sh
     sudo apt-get update
     sudo apt-get install -y docker.io
@@ -128,9 +129,11 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     sudo systemctl start docker
     sudo usermod -aG docker ${USER}
     ```
+
     Log out and back in for the group changes to take effect.
 
  3. Install kubectl:
+
     ```sh
     sudo apt update && sudo apt install -y ca-certificates curl
     ARCH="$(dpkg --print-architecture)"
@@ -146,6 +149,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     ```
 
  5. Install Solo (this installs all other dependencies automatically):
+
     ```sh
     brew tap hiero-ledger/tools
     brew update
@@ -153,6 +157,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     ```
 
  6. Verify the installation:
+
     ```sh
     solo --version
     ```
@@ -168,11 +173,13 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
  ```
 
  1. Install Homebrew for Linux:
+
     ```sh
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     ```
 
     Add Homebrew to your PATH:
+
     ```sh
     echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -184,6 +191,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     - Allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory
 
  3. Install kubectl:
+
     ```sh
     sudo apt update && sudo apt install -y ca-certificates curl
     ARCH="$(dpkg --print-architecture)"
@@ -199,6 +207,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     ```
 
  5. Install Solo (this installs all other dependencies automatically):
+
     ```sh
     brew tap hiero-ledger/tools
     brew update
@@ -206,6 +215,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     ```
 
  6. Verify the installation:
+
     ```sh
     solo --version
     ```

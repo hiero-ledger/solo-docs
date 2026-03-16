@@ -1,13 +1,13 @@
 ---
 title: "Managing Your Network"
-weight: 10
+weight: 3
 description: >
   Learn how to start, stop, and restart consensus nodes, capture logs and
   diagnostics, and upgrade your Solo network to a new Hiero version.
 type: docs
 ---
 
-# Managing Your Network
+## Overview
 
 This guide covers day-to-day management operations for a running Solo network,
 including starting, stopping, and restarting nodes, capturing logs, and upgrading the network.
@@ -18,7 +18,6 @@ Before proceeding, ensure you have completed the following:
 
 - [**System Readiness**](/onboarding/system-readiness) - your local environment meets all hardware and software requirements.
 - [**Quickstart**](/onboarding/quickstart) - you have a running Solo network deployed using `solo one-shot single deploy`.
-
 
 ## Find Your Deployment Name
 
@@ -33,6 +32,7 @@ Expected output:
   ```bash
   solo-deployment-<hash>
   ```
+
 Use the value returned from this command as `<deployment-name>` in all commands on this page.
 
 ## Stopping and Starting Nodes
@@ -98,6 +98,7 @@ You can also retrieve logs for a specific pod directly using `kubectl`:
   ```bash
   kubectl logs -n <namespace> <pod-name>
   ```
+
 Replace <namespace> and <pod-name> with the values from your deployment.
 You can find the available pods and namespaces by running:
 
@@ -118,4 +119,3 @@ Replace <version> with the target Hiero version, for example v0.59.0.
 > **Note:** Check the [Version Compatibility Reference](/onboarding/system-readiness#version-compatibility-reference)
 > in the System Readiness guide to confirm the Hiero version supported by your
 > current Solo release before upgrading.
-

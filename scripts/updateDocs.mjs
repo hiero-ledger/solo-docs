@@ -63,7 +63,6 @@ export async function update () {
 
   // ── Path constants ────────────────────────────────────────────────────────────
   // Where generated Markdown pages land (served by Hugo).
-  // In solo-docs the Hugo content lives at the repo root, not under docs/site/.
   const TARGET_DIR = 'content/en';
   const TARGET_DIR_DOCS = 'content/en/docs';
   // Where the Markdown templates live (contain $VARIABLE placeholders).

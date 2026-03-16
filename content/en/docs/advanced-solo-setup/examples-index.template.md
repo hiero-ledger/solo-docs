@@ -1,7 +1,7 @@
 ---
-title: Examples
+title: Examples Hub
 linkTitle: Examples
-menu: {main: {weight: 30, pre: <i class='fa-solid fa-address-book'></i>}}
+weight: 3
 type: docs
 ---
 
