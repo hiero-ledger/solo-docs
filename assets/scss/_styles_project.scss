@@ -1,0 +1,1715 @@
+// ============================================================================
+// HIERO DOCUMENTATION THEME — Project Styles
+// Loaded AFTER all Bootstrap and Docsy styles.
+// Add custom CSS rules and Docsy/Bootstrap overrides here.
+// SCSS variables (e.g. $primary) are available from _variables_project.scss.
+// See: https://www.docsy.dev/docs/content/lookandfeel/#project-style-files
+// ============================================================================
+
+// --- 1. DESIGN TOKENS (CSS CUSTOM PROPERTIES) ---
+
+:root {
+  // Brand Palette (Hiero Colors)
+  --color-primary: #b81a56;
+  --color-primary-dark: #992350;
+  --color-primary-light: #d92d6a;
+  --color-primary-very-light: #f9e4ed;
+  --color-secondary: #1ebdc4;
+  --color-gradient-start: #992350;
+  --color-gradient-end: #b81a56;
+
+  // UI Neutrals
+  --color-bg-white: #ffffff;
+  --color-bg-light: #f5f5f5;
+  --color-border: #e0e0e0;
+  --color-text-dark: #333333;
+  --color-text-body: #666666;
+  --color-text-light: #888888;
+
+  // Typography Stacks
+  --font-family-primary: 'Space Grotesk', -apple-system, system-ui, sans-serif;
+  --font-family-mono: 'Courier New', monospace;
+
+  // Spacing Scale (4px base)
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+
+  // Shape & Elevation
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  --shadow-sm: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0px 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0px 8px 24px rgba(0, 0, 0, 0.12);
+
+  // Motion
+  --transition-duration: 0.2s;
+  --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Force light mode
+  color-scheme: light;
+}
+
+// --- 2. BOOTSTRAP CSS VARIABLE OVERRIDES ---
+// Override Bootstrap 5 CSS custom properties to align with Hiero design tokens.
+
+:root {
+  --bs-body-color: var(--color-text-dark);
+  --bs-body-bg: var(--color-bg-white);
+  --bs-border-color: var(--color-border);
+  --bs-link-color: var(--color-primary);
+}
+
+// --- 3. BASE TYPOGRAPHY ---
+
+body {
+  font-family: var(--font-family-primary);
+  font-size: 0.9375rem; // 15px
+  color: var(--color-text-body);
+  line-height: 1.6;
+  letter-spacing: 0px;
+  background-color: var(--color-bg-white);
+  padding-top: 1rem; // Offset for fixed navbar height
+}
+
+// Headings
+// Font sizes and margins are controlled by Bootstrap (via SCSS variables in
+// _variables_project.scss). Only override visual properties that cannot be
+// done through variables, and scope tightly where possible.
+// Scope heading color override to page content so cover/title sections can
+// inherit contextual colors (e.g. hero white text), matching live behavior.
+.td-content h1,
+.td-content h2,
+.td-content h3,
+.td-content h4,
+.td-content h5,
+.td-content h6 {
+  color: var(--color-text-dark);
+}
+
+h1 {
+  letter-spacing: -1px;
+}
+
+// Scoped to doc content only so it doesn't bleed into home page section headings.
+.td-content h2 {
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 8px;
+}
+// h2–h6: inherit Bootstrap/Docsy margins and sizes; no additional CSS overrides needed.
+
+p {
+  margin-bottom: 16px;
+}
+
+small,
+.small {
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+}
+
+// --- 4. NAVIGATION & SIDEBAR ---
+
+.td-sidebar {
+  background: var(--color-bg-white);
+  width: 300px;
+  border-right: 1px solid var(--color-border);
+
+  .nav-link {
+    font-size: 0.875rem;
+    font-weight: 300 !important;
+    color: var(--color-text-body);
+    padding: 12px 16px;
+    transition: all var(--transition-duration) var(--transition-timing);
+
+    &:hover {
+      background: var(--color-bg-light);
+      color: var(--color-text-dark);
+      box-shadow: var(--shadow-sm);
+      border-radius: 6px;
+    }
+
+    &.active,
+    &.is-active {
+      color: var(--color-primary);
+      border-left: 4px solid var(--color-primary);
+      padding-left: 10px;
+    }
+  }
+}
+
+.td-sidebar-toc {
+  padding-top: 2.5rem !important;
+}
+
+.tree-root .td-sidebar-nav-active-item {
+  border-left: 0;
+  padding-left: 0;
+  font-weight: 700 !important;
+}
+
+// --- 5. LINKS & INLINE ELEMENTS ---
+
+a,
+main a {
+  color: var(--color-primary);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-primary-dark);
+    text-decoration: underline;
+  }
+
+  &:visited {
+    color: #8b0e28;
+  }
+}
+
+// External Link Indicator
+a[target='_blank']::after {
+  content: ' \f35d';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.75em;
+  margin-left: 4px;
+}
+
+// Hide external icon if link contains only an image/icon
+a[target='_blank']:has(> i:only-child)::after,
+a[target='_blank']:has(> svg:only-child)::after,
+a[target='_blank']:has(> img:only-child)::after {
+  content: '';
+}
+
+// --- 6. BUTTONS ---
+
+.btn {
+  border-radius: 8px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: none;
+  border: none;
+  background-image: none !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.btn-primary,
+.hero-btn-primary {
+  background: white !important;
+  color: var(--color-primary) !important;
+  border: none !important;
+
+  &:hover {
+    background: #f5f5f5 !important;
+    color: var(--color-primary) !important;
+  }
+  &:active {
+    background: #e8e8e8 !important;
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary,
+.hero-btn-secondary {
+  background: transparent !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: white !important;
+    color: white !important;
+  }
+}
+
+.btn-outline-light {
+  background: transparent !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: white !important;
+    color: white !important;
+  }
+}
+
+.btn-light {
+  background: white !important;
+  color: var(--color-primary) !important;
+
+  &:hover {
+    background: #f5f5f5 !important;
+  }
+}
+
+// --- 7. UI COMPONENTS (CARDS, FORMS, BADGES) ---
+
+// Cards
+.card,
+.td-card {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+  transition: all 0.3s var(--transition-timing);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+}
+
+// Forms
+input,
+textarea,
+select {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 10px 12px;
+
+  &:focus {
+    outline: none;
+    border: 2px solid var(--color-primary);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+// Badges & Callouts
+.badge,
+.tag,
+.badge-primary {
+  background: var(--color-primary-very-light);
+  color: var(--color-primary);
+  padding: 4px 8px;
+  border-radius: 16px;
+  font-weight: 600;
+}
+
+.callout,
+.alert-callout {
+  background: var(--color-primary-very-light);
+  border-left: 4px solid var(--color-primary);
+  padding: 16px;
+  border-radius: 4px;
+}
+
+// --- 8. CODE & PREFORMATTED ---
+
+pre,
+code,
+kbd,
+samp {
+  font-family: var(--font-family-mono);
+  font-size: 0.875rem;
+}
+
+pre {
+  padding: 12px 16px;
+  border-radius: 4px;
+  overflow: auto;
+}
+
+// Only apply to inline code, not code blocks with syntax highlighting
+p > code,
+li > code,
+td > code {
+  background: var(--color-bg-light);
+  color: var(--color-text-dark);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+// --- 9. NAVBAR OVERRIDES ---
+
+.td-navbar {
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid #e5e5e5 !important;
+  min-height: 90px !important;
+  padding: 1rem 0 !important;
+  align-items: center;
+
+  .container-fluid {
+    align-items: center;
+  }
+
+  // Newer Docsy wraps navbar content in .td-navbar-container.
+  .td-navbar-container {
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  // Keep text links aligned with icon controls (theme/search) on desktop.
+  .navbar-nav {
+    align-items: center;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  svg {
+    height: 40px !important;
+    display: block;
+  }
+
+  .navbar-brand__logo {
+    display: inline-flex;
+    align-items: center;
+  }
+  .navbar-brand__name {
+    color: #000000 !important;
+    font-weight: 400 !important;
+    font-size: 2rem !important;
+    line-height: 1.1;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    color: #000000 !important;
+    font-weight: 400 !important;
+    font-size: 0.9375rem !important;
+    line-height: 1.2 !important;
+    text-shadow: none !important;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.2s ease !important;
+    border-bottom: 2px solid transparent !important;
+    text-decoration: none !important;
+
+    &:hover {
+      color: var(--color-primary) !important;
+      text-decoration: none !important;
+    }
+
+    &.active,
+    &[aria-current='page'] {
+      color: var(--color-primary) !important;
+      border-bottom-color: var(--color-primary) !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  .td-site-title {
+    color: #000000 !important;
+    font-weight: 600 !important;
+    text-shadow: none !important;
+  }
+
+  // Navbar toggle button
+  .navbar-toggler {
+    border-color: #e5e5e5 !important;
+
+    &:focus {
+      box-shadow: none !important;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .td-navbar .td-navbar-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .td-navbar .navbar-nav .nav-link {
+    min-height: 2.5rem;
+  }
+}
+
+// Keep navbar alignment and opacity consistent across Docsy markup variants.
+.td-navbar .td-navbar__main {
+  display: flex;
+  align-items: center;
+}
+
+// Newer Docsy can apply transparent/blurred cover navbar by default.
+// Force the same solid navbar look as live v0.60.0.
+.td-navbar.td-navbar-cover.td-navbar-transparent {
+  --bs-bg-opacity: 1;
+  --td-navbar-backdrop-filter: none;
+  --td-navbar-border-bottom: 1px solid #e5e5e5;
+}
+
+// Maintain light theme in navbar even if Bootstrap detects dark preference
+.td-navbar[data-bs-theme='dark'] {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e5e5 !important;
+
+  .nav-link {
+    color: #000000 !important;
+
+    &:hover {
+      color: var(--color-primary) !important;
+    }
+
+    &.active,
+    &[aria-current='page'] {
+      color: var(--color-primary) !important;
+      border-bottom-color: var(--color-primary) !important;
+      font-weight: 600 !important;
+    }
+  }
+
+  .td-site-title {
+    color: #000000 !important;
+  }
+}
+
+// --- 10. UTILITIES ---
+
+.td-page-meta {
+  display: none;
+}
+
+// Newer Docsy uses a mobile min-height calc for .td-outer.
+// Live v0.60.0 uses full viewport height, so normalize to match.
+.td-outer {
+  min-height: 100vh;
+}
+
+.text-muted,
+.td-muted {
+  color: var(--color-text-light) !important;
+}
+
+// Intentionally do not override Bootstrap utility colors globally.
+// Live v0.60.0 behavior relies on Bootstrap's generated .text-* utilities.
+
+.expandCollapse {
+  font-size: x-small;
+  vertical-align: sub;
+}
+
+// --- 11. FOOTER STYLES ---
+
+.td-footer {
+  background-color: #000000 !important;
+  padding: 2rem 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+
+  * {
+    color: #ffffff !important;
+  }
+
+  .container {
+    text-align: center !important;
+    max-width: 100% !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  // Hide default footer links
+  .td-footer__links,
+  .td-footer__links-list,
+  nav {
+    display: none !important;
+  }
+
+  // Center footer content
+  .td-footer__content {
+    text-align: center !important;
+    max-width: 100% !important;
+  }
+}
+
+// Footer copyright text
+.td-footer__copyright {
+  text-align: center !important;
+  font-size: 0.875rem;
+  color: #ffffff !important;
+  margin: 0 !important;
+
+  a {
+    color: #ffffff !important;
+    text-decoration: underline;
+
+    &:hover {
+      color: #cccccc !important;
+    }
+  }
+}
+
+// Core Capabilities icons should use the Solo primary accent consistently.
+// Scope this override to avoid changing icon colors globally.
+.core-capabilities .text-primary,
+.core-capabilities .text-success {
+  color: var(--color-primary) !important;
+}
+
+// --- 12. GRADIENT BACKGROUNDS & COVER BLOCK ---
+
+// First section after cover — increase padding for feature blocks
+.td-cover-block + section {
+  padding-top: 7rem !important;
+  padding-bottom: 7rem !important;
+}
+
+@media (min-width: 768px) {
+  .td-cover-block + section {
+    padding-top: 8rem !important;
+    padding-bottom: 8rem !important;
+  }
+}
+
+.features-section h1 {
+  color: var(--color-primary) !important;
+}
+
+.gradient-bg {
+  background: linear-gradient(to bottom right, #992350, #d92d6a, #b81a56) !important;
+  padding: 4rem 0;
+  margin-left: -15px;
+  margin-right: -15px;
+  width: calc(100% + 30px);
+  color: white;
+
+  * {
+    color: white !important;
+  }
+}
+
+.td-cover-block {
+  background: linear-gradient(to bottom right, #992350, #f92d6a, #b81a56) !important;
+  padding-top: 7.5rem !important;
+  padding-bottom: 5rem !important;
+  min-height: 50vh !important;
+}
+
+// Primary color sections
+.td-block--primary {
+  background: linear-gradient(to bottom right, #992350, #f92d6a, #b81a56) !important;
+
+  * {
+    color: white !important;
+  }
+}
+
+.cover-title {
+  font-size: 7.5rem;
+  font-weight: 400;
+  margin: 2rem 0 -0.5rem 0;
+  letter-spacing: -2px;
+  color: #ffffff !important;
+}
+
+.cover-lead {
+  font-size: 1.5rem !important;
+  letter-spacing: -1px;
+  margin-bottom: 1.3rem;
+}
+
+// Lead text styling in cover sections
+.lead {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+// CTA Button Styles
+.cta-btn,
+.hero-btn {
+  padding: 14px 32px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  background-image: none !important;
+}
+
+.cta-btn-primary,
+.hero-btn-primary {
+  background: white !important;
+  color: var(--color-primary) !important;
+
+  &:hover {
+    background: #f5f5f5 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: var(--color-primary) !important;
+  }
+}
+
+.cta-btn-secondary,
+.hero-btn-secondary {
+  background: transparent !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: white !important;
+    color: white !important;
+  }
+}
+
+// --- 13. DARK MODE ---
+// Provide an explicit dark palette that preserves Hiero brand accents while
+// improving contrast for long-form reading and code-heavy docs pages.
+
+[data-bs-theme='dark'] {
+  color-scheme: dark;
+  --color-bg-white: #12151c;
+  --color-bg-light: #1b2230;
+  --color-border: #2c3749;
+  --color-text-dark: #eef3ff;
+  --color-text-body: #d6deef;
+  --color-text-light: #aab7cf;
+  --color-primary-very-light: #2a2030;
+  --shadow-sm: 0px 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0px 6px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0px 12px 28px rgba(0, 0, 0, 0.5);
+  --bs-body-color: var(--color-text-body);
+  --bs-body-bg: var(--color-bg-white);
+  --bs-border-color: var(--color-border);
+  --bs-link-color: #ff7ca9;
+}
+
+
+[data-bs-theme='dark'] body,
+[data-bs-theme='dark'] .td-sidebar,
+[data-bs-theme='dark'] .td-sidebar-toc,
+[data-bs-theme='dark'] .td-content,
+[data-bs-theme='dark'] .td-main,
+[data-bs-theme='dark'] .td-outer {
+  background-color: var(--color-bg-white) !important;
+  color: var(--color-text-body);
+}
+
+// Component-level dark mode fixes for Docsy/Bootstrap elements that can inherit
+// conflicting foreground/background colors.
+[data-bs-theme='dark'] {
+  .td-content,
+  .td-main,
+  .td-outer,
+  .td-content p,
+  .td-content li,
+  .td-content td,
+  .td-content th,
+  .td-content label,
+  .td-content dt,
+  .td-content dd {
+    color: var(--color-text-body);
+  }
+
+  // Override earlier light-forced navbar rule with stronger, later selectors.
+  .td-navbar,
+  .td-navbar[data-bs-theme='dark'] {
+    background-color: #111723 !important;
+    border-bottom: 1px solid var(--color-border) !important;
+  }
+
+  .td-navbar .nav-link,
+  .td-navbar .navbar-brand__name,
+  .td-navbar .td-site-title,
+  .td-navbar[data-bs-theme='dark'] .nav-link,
+  .td-navbar[data-bs-theme='dark'] .navbar-brand__name,
+  .td-navbar[data-bs-theme='dark'] .td-site-title {
+    color: #edf2ff !important;
+  }
+
+  .td-navbar .nav-link:hover,
+  .td-navbar[data-bs-theme='dark'] .nav-link:hover {
+    color: #ff9fc2 !important;
+  }
+
+  .td-navbar .nav-link.active,
+  .td-navbar .nav-link[aria-current='page'],
+  .td-navbar[data-bs-theme='dark'] .nav-link.active,
+  .td-navbar[data-bs-theme='dark'] .nav-link[aria-current='page'] {
+    color: #ff9fc2 !important;
+    border-bottom-color: #ff9fc2 !important;
+    font-weight: 600 !important;
+  }
+
+  .td-navbar .navbar-toggler,
+  .td-navbar[data-bs-theme='dark'] .navbar-toggler {
+    border-color: var(--color-border) !important;
+  }
+
+  .text-dark,
+  .text-black,
+  .text-body {
+    color: var(--color-text-dark) !important;
+  }
+
+  .text-secondary,
+  .text-body-secondary,
+  .text-muted,
+  .td-muted,
+  .small,
+  small {
+    color: var(--color-text-light) !important;
+  }
+
+  .bg-white,
+  .bg-light,
+  .bg-body,
+  .bg-body-secondary,
+  .bg-body-tertiary {
+    background-color: #171d29 !important;
+    color: var(--color-text-body) !important;
+  }
+
+  .td-box--white,
+  .td-box--light {
+    color: var(--color-text-body) !important;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    li,
+    span,
+    strong {
+      color: inherit !important;
+    }
+
+  }
+
+  // Keep adjacent homepage sections visually distinct in dark mode.
+  .td-box--white {
+    background-color: #171d29 !important;
+
+    .td-arrow-down::before {
+      border-color: #171d29 transparent transparent transparent !important;
+    }
+  }
+
+  .td-box--light {
+    background-color: #1d2534 !important;
+
+    .td-arrow-down::before {
+      border-color: #1d2534 transparent transparent transparent !important;
+    }
+  }
+
+  .td-box--light p > a,
+  .td-box--white p > a,
+  .td-box--light span > a,
+  .td-box--white span > a {
+    color: #ff8eb5 !important;
+
+    &:hover,
+    &:focus {
+      color: #ffb1cb !important;
+    }
+  }
+
+  .pageinfo,
+  .alert {
+    color: #eef3ff !important;
+    background-color: #1a2230 !important;
+    border-color: #2f3a4e !important;
+  }
+
+  .pageinfo p,
+  .pageinfo li,
+  .pageinfo strong,
+  .alert p,
+  .alert li,
+  .alert strong,
+  .alert .alert-heading,
+  .pageinfo .alert-heading {
+    color: inherit !important;
+  }
+
+  .alert-primary,
+  .pageinfo-primary,
+  .alert-note,
+  .alert-nb {
+    background-color: #2a1a28 !important;
+    border-left-color: #e76493 !important;
+  }
+
+  .alert-secondary,
+  .pageinfo-secondary {
+    background-color: #13282c !important;
+    border-left-color: #37d3d8 !important;
+  }
+
+  .alert-success,
+  .pageinfo-success,
+  .alert-tip {
+    background-color: #153025 !important;
+    border-left-color: #46c087 !important;
+  }
+
+  .alert-info,
+  .pageinfo-info,
+  .alert-important {
+    background-color: #0f2835 !important;
+    border-left-color: #4ec9ff !important;
+  }
+
+  .alert-warning,
+  .pageinfo-warning,
+  .alert-caution {
+    background-color: #33270d !important;
+    border-left-color: #ffcc55 !important;
+    color: #fff3cf !important;
+  }
+
+  .alert-danger,
+  .pageinfo-danger {
+    background-color: #32171d !important;
+    border-left-color: #ff6e82 !important;
+  }
+
+  .alert-light,
+  .pageinfo-light,
+  .alert-dark,
+  .pageinfo-dark {
+    background-color: #1f2736 !important;
+    border-left-color: #90a1c5 !important;
+  }
+
+  .dropdown-menu,
+  .dropdown-menu.show,
+  .navbar-nav .dropdown-menu {
+    background-color: #141b28 !important;
+    border-color: var(--color-border) !important;
+    box-shadow: var(--shadow-md);
+  }
+
+  .dropdown-item,
+  .td-navbar .td-lang-menu .dropdown-item {
+    color: #e7edfc !important;
+
+    &:hover,
+    &:focus {
+      color: #ffffff !important;
+      background-color: #263149 !important;
+    }
+
+    &.active,
+    &:active {
+      color: #ffffff !important;
+      background-color: #7f2851 !important;
+    }
+  }
+
+  .breadcrumb,
+  .td-breadcrumbs .breadcrumb {
+    color: var(--color-text-light);
+  }
+
+  .breadcrumb-item,
+  .breadcrumb-item + .breadcrumb-item::before {
+    color: var(--color-text-light);
+  }
+
+  .breadcrumb-item.active {
+    color: #edf2ff;
+  }
+
+  .page-link {
+    color: #ff9dbf;
+    background-color: #171d29;
+    border-color: var(--color-border);
+  }
+
+  .page-link:hover,
+  .page-link:focus {
+    color: #ffd6e6;
+    background-color: #263149;
+    border-color: #3b4861;
+  }
+
+  .page-item.active .page-link {
+    color: #ffffff;
+    background-color: #8f1a49;
+    border-color: #8f1a49;
+  }
+
+  .table {
+    color: #e8eefc;
+    border-color: var(--color-border);
+  }
+
+  .table > :not(caption) > * > * {
+    color: inherit;
+    background-color: #151b27;
+    border-bottom-color: var(--color-border);
+  }
+
+  .table-striped > tbody > tr:nth-of-type(odd) > *,
+  .td-content table:not(.td-initial) > tbody > tr:nth-of-type(odd) > * {
+    background-color: #1b2230;
+  }
+
+  .table thead th {
+    color: #f4f7ff;
+    background-color: #1f2737;
+  }
+
+  .list-group-item,
+  .list-group-item-action {
+    color: #e1e8f9;
+    background-color: #161d2a;
+    border-color: var(--color-border);
+  }
+
+  .list-group-item-action:hover,
+  .list-group-item-action:focus {
+    color: #ffffff;
+    background-color: #243049;
+  }
+
+  .list-group-item.active {
+    color: #ffffff;
+    background-color: #84234f;
+    border-color: #84234f;
+  }
+
+  .form-control,
+  .form-select,
+  .input-group-text {
+    color: #edf2ff;
+    background-color: #141b28;
+    border-color: var(--color-border);
+  }
+
+  .form-control::placeholder {
+    color: #94a4c2;
+    opacity: 1;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    color: #f3f7ff;
+    background-color: #151d2b;
+    border-color: #8f1a49;
+    box-shadow: 0 0 0 0.2rem rgba(184, 26, 86, 0.25);
+  }
+
+  // Sidebar and section nav hierarchy
+  .td-sidebar,
+  .td-sidebar__inner,
+  .td-sidebar-nav,
+  .td-sidebar-nav__section,
+  .td-sidebar-nav__section-title,
+  .td-sidebar .td-sidebar-link,
+  .td-sidebar .td-sidebar-link__section,
+  .td-sidebar .td-sidebar-link__page,
+  .td-sidebar .btn-link,
+  .td-sidebar__toggle {
+    color: #d6deef !important;
+  }
+
+  .td-sidebar-nav__section-title a,
+  .td-sidebar .td-sidebar-link__page,
+  .td-sidebar .td-sidebar-link__section {
+    color: #d6deef !important;
+  }
+
+  .td-sidebar-nav a:hover,
+  .td-sidebar-nav a:focus,
+  .td-sidebar a:hover,
+  .td-sidebar a:focus,
+  .td-sidebar-nav .td-sidebar-link.active,
+  .td-sidebar-nav a.active {
+    color: #ff9fc2 !important;
+  }
+
+  .td-sidebar-nav .td-sidebar-link.tree-root {
+    border-bottom-color: var(--color-border) !important;
+  }
+
+  .tree-root .td-sidebar-nav-active-item {
+    color: #ffd7e6 !important;
+  }
+
+  // Right-side TOC and sticky page meta
+  .td-sidebar-toc {
+    border-left-color: var(--color-border) !important;
+  }
+
+  .td-toc-title,
+  .td-toc-title__text,
+  .td-toc nav a,
+  .td-toc #TableOfContents a,
+  .td-sidebar-toc .td-page-meta a {
+    color: #c8d4ec !important;
+  }
+
+  .td-toc #TableOfContents a:hover,
+  .td-toc #TableOfContents a:focus {
+    color: #f4f8ff !important;
+    background-color: #243049 !important;
+  }
+
+  .td-toc #TableOfContents a.active {
+    color: #ffffff !important;
+    border-left-color: #ff8eb5 !important;
+    background-color: #31253a !important;
+  }
+
+  // Section indexes and article teasers
+  .article-teaser.card,
+  .article-teaser,
+  .article-meta {
+    // background-color: #171e2b;
+    color: var(--color-text-body);
+    border-color: var(--color-border);
+  }
+
+  .td-content .section-index .entry {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .section-index h5 a,
+  .article-teaser h3 a,
+  .article-teaser .h3 a {
+    color: #edf3ff !important;
+  }
+
+  // Keep heading links visually distinct from body text in dark mode.
+  .td-content h3 a,
+  .td-content .h3 a,
+  .td-content h4 a,
+  .td-content .h4 a,
+  .td-content h5 a,
+  .td-content .h5 a,
+  .section-index h5 a,
+  .section-index .h5 a {
+    color: #f3f7ff !important;
+    font-weight: 700 !important;
+  }
+
+  .td-content h3 a:hover,
+  .td-content .h3 a:hover,
+  .td-content h4 a:hover,
+  .td-content .h4 a:hover,
+  .td-content h5 a:hover,
+  .td-content .h5 a:hover,
+  .section-index h5 a:hover,
+  .section-index .h5 a:hover {
+    color: #ffb4cf !important;
+  }
+
+  // Taxonomy/tag cloud and tag chips
+  .taxonomy-terms-cloud .taxonomy-title,
+  .taxonomy-terms-article .taxonomy-title,
+  .taxonomy-title,
+  .taxonomy-label,
+  .all-taxonomy-terms {
+    color: #e7eefc !important;
+    border-bottom-color: var(--color-border) !important;
+  }
+
+  .taxonomy-term {
+    background: #33445f !important;
+    border: 1px solid #4a6186 !important;
+    color: #f5f8ff !important;
+  }
+
+  // Keep taxonomy tags as visible chips in dark mode.
+  .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-term,
+  .taxo-tags .taxonomy-term {
+    background: #33445f !important;
+    border: 1px solid #4a6186 !important;
+    color: #f5f8ff !important;
+  }
+
+  .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-term:hover,
+  .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-term:focus,
+  .taxo-tags .taxonomy-term:hover,
+  .taxo-tags .taxonomy-term:focus {
+    background: #473252 !important;
+    border-color: #8f5f78 !important;
+    color: #ffffff !important;
+  }
+
+  // Keep only chips highlighted; taxonomy wrapper stays transparent.
+  .taxonomy.taxonomy-terms-article.taxo-tags,
+  .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-terms,
+  .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-terms li {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+
+  .taxonomy-term:hover,
+  .taxonomy-term:focus {
+    background: #473252 !important;
+    border-color: #8f5f78 !important;
+    color: #ffffff !important;
+  }
+
+  .taxonomy-count {
+    background-color: #1b2638 !important;
+    color: #e3ebff !important;
+  }
+
+  .taxo-text-tags .taxonomy-term,
+  .taxo-fruits .taxonomy-term,
+  .taxo-text-tags li + li::before {
+    color: #b6c4de !important;
+  }
+
+  .taxo-text-tags .taxonomy-term:hover,
+  .taxo-fruits .taxonomy-term:hover,
+  .taxo-text-tags .taxonomy-term:hover .taxonomy-count,
+  .taxo-fruits .taxonomy-term:hover .taxonomy-count {
+    color: #ffd0e2 !important;
+  }
+
+  // Syntax-highlighted code blocks and copy button contrast
+  .td-content .highlight pre,
+  .td-content pre,
+  .td-content pre > code,
+  .td-content .chroma,
+  .td-content .chroma code,
+  .td-content .chroma .line,
+  .td-content .chroma .cl {
+    background-color: #0f141e !important;
+    color: #eaf0ff !important;
+    border-color: #2d394d !important;
+  }
+
+  .td-content p code,
+  .td-content li > code,
+  .td-content table code,
+  p > code,
+  li > code,
+  td > code {
+    background-color: #222c3f !important;
+    color: #f5f8ff !important;
+  }
+
+  .td-content .highlight pre button.td-click-to-copy {
+    color: #b8c6e1 !important;
+  }
+
+  .td-content .highlight pre button.td-click-to-copy:hover,
+  .td-content .highlight pre button.td-click-to-copy:focus {
+    color: #ffffff !important;
+    background-color: #27344c !important;
+  }
+
+  // Chroma token tuning for clearer syntax distinction on dark backgrounds.
+  .td-content .chroma .c,
+  .td-content .chroma .c1,
+  .td-content .chroma .cm,
+  .td-content .chroma .ch,
+  .td-content .chroma .cp,
+  .td-content .chroma .cpf {
+    color: #98a7c4 !important;
+  }
+
+  .td-content .chroma .k,
+  .td-content .chroma .kc,
+  .td-content .chroma .kd,
+  .td-content .chroma .kn,
+  .td-content .chroma .kp,
+  .td-content .chroma .kr,
+  .td-content .chroma .kt {
+    color: #ff9cc0 !important;
+  }
+
+  .td-content .chroma .s,
+  .td-content .chroma .sa,
+  .td-content .chroma .sb,
+  .td-content .chroma .sc,
+  .td-content .chroma .dl,
+  .td-content .chroma .sd,
+  .td-content .chroma .s1,
+  .td-content .chroma .s2,
+  .td-content .chroma .se,
+  .td-content .chroma .sh,
+  .td-content .chroma .si,
+  .td-content .chroma .sx,
+  .td-content .chroma .sr,
+  .td-content .chroma .ss {
+    color: #9ad6ff !important;
+  }
+
+  .td-content .chroma .m,
+  .td-content .chroma .mb,
+  .td-content .chroma .mf,
+  .td-content .chroma .mh,
+  .td-content .chroma .mi,
+  .td-content .chroma .mo {
+    color: #ffd58b !important;
+  }
+
+  .td-content .chroma .na,
+  .td-content .chroma .nc,
+  .td-content .chroma .nd,
+  .td-content .chroma .ne,
+  .td-content .chroma .nf,
+  .td-content .chroma .nl,
+  .td-content .chroma .nn,
+  .td-content .chroma .nt,
+  .td-content .chroma .nv,
+  .td-content .chroma .nx,
+  .td-content .chroma .o {
+    color: #b9e1a7 !important;
+  }
+
+  // Final contrast hardening for docs pages (tables, tabs, and side panels).
+  .td-sidebar,
+  .td-sidebar__inner,
+  .td-sidebar-nav,
+  #td-section-nav {
+    background-color: #121925 !important;
+  }
+
+  .td-sidebar-nav__section-title,
+  .td-sidebar-nav__section-title a,
+  .td-sidebar-nav__section-title a span,
+  .td-sidebar .td-sidebar-link,
+  .td-sidebar .td-sidebar-link__section,
+  .td-sidebar .td-sidebar-link__page {
+    color: #aebbd4 !important;
+  }
+
+  .td-sidebar-nav__section-title a:hover,
+  .td-sidebar-nav__section-title a:focus,
+  .td-sidebar .td-sidebar-link:hover,
+  .td-sidebar .td-sidebar-link:focus {
+    color: #dce8ff !important;
+    background-color: #202a3d !important;
+  }
+
+  .td-sidebar .td-sidebar-link.active,
+  .td-sidebar-nav a.active,
+  .td-sidebar-nav-active-item {
+    color: #ffb4cf !important;
+    border-left-color: #ff8eb5 !important;
+    font-weight: 700 !important;
+  }
+
+  .td-sidebar-toc,
+  .td-sidebar-toc .td-page-meta,
+  .td-sidebar-toc .td-toc {
+    background-color: #121925 !important;
+    color: #dce5f8 !important;
+  }
+
+  .td-sidebar-toc .td-page-meta a,
+  .td-sidebar-toc .td-page-meta a i,
+  .td-sidebar-toc .td-toc-title,
+  .td-sidebar-toc .td-toc-title__text,
+  .td-sidebar-toc .td-toc nav a,
+  .td-sidebar-toc #TableOfContents a {
+    color: #aebbd4 !important;
+  }
+
+  .td-sidebar-toc #TableOfContents a:hover,
+  .td-sidebar-toc #TableOfContents a:focus {
+    background-color: #263149 !important;
+    color: #e8f0ff !important;
+  }
+
+  .td-sidebar-toc #TableOfContents a.active {
+    color: #ffbfd5 !important;
+    border-left-color: #ff8eb5 !important;
+    font-weight: 700 !important;
+  }
+
+  // Keep foldable-nav carets visible and stateful in dark mode.
+  nav.foldable-nav .ul-1 .with-child > label::before {
+    color: #9fb0cc !important;
+  }
+
+  nav.foldable-nav .ul-1 .with-child > input:checked ~ label::before {
+    color: #ff9fc2 !important;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    nav.foldable-nav .ul-1 .with-child > label:hover::before,
+    nav.foldable-nav .ul-1 .with-child > input:checked ~ label:hover::before {
+      color: #ffd0e2 !important;
+    }
+  }
+
+  // Table variables are used by Bootstrap row/cell paint logic.
+  .td-content table:not(.td-initial),
+  .td-table:not(.td-initial),
+  .table {
+    --bs-table-color: #ebf1ff;
+    --bs-table-bg: transparent;
+    --bs-table-border-color: #2f3c53;
+    --bs-table-striped-color: #f4f8ff;
+    --bs-table-striped-bg: rgba(148, 164, 194, 0.12);
+    --bs-table-active-color: #ffffff;
+    --bs-table-active-bg: rgba(148, 164, 194, 0.18);
+    --bs-table-hover-color: #ffffff;
+    --bs-table-hover-bg: rgba(148, 164, 194, 0.16);
+    color: var(--bs-table-color) !important;
+    background-color: transparent !important;
+    border-color: var(--bs-table-border-color) !important;
+  }
+
+  .td-content table:not(.td-initial) > :not(caption) > * > *,
+  .td-table:not(.td-initial) > :not(caption) > * > *,
+  .table > :not(caption) > * > * {
+    color: var(--bs-table-color) !important;
+    background-color: transparent !important;
+    border-bottom-color: var(--bs-table-border-color) !important;
+  }
+
+  .td-content table:not(.td-initial) thead th,
+  .td-table:not(.td-initial) thead th,
+  .table thead th {
+    color: #ffffff !important;
+    background-color: rgba(32, 44, 65, 0.9) !important;
+  }
+
+  .td-content table:not(.td-initial) a,
+  .table a {
+    color: #ff9fc2 !important;
+  }
+
+  .td-content table:not(.td-initial) a:hover,
+  .table a:hover {
+    color: #ffd0e2 !important;
+  }
+
+  .nav.nav-tabs,
+  .tab-content {
+    background-color: transparent !important;
+    color: #e7eefc !important;
+    border-color: #2f3c53 !important;
+  }
+
+  .tab-content .tab-pane {
+    background-color: transparent !important;
+  }
+
+  .tab-body {
+    background-color: #141d2c !important;
+    color: #e7eefc !important;
+    border-color: #2f3c53 !important;
+  }
+
+  .nav-tabs .nav-link {
+    color: #ccd8f1 !important;
+    background-color: #151d2b !important;
+    border-color: #2f3c53 !important;
+  }
+
+  .nav-tabs .nav-link:hover,
+  .nav-tabs .nav-link:focus {
+    color: #ffffff !important;
+    background-color: #263149 !important;
+    border-color: #3b4963 !important;
+  }
+
+  .nav-tabs .nav-link.active,
+  .nav-tabs .nav-item.show .nav-link,
+  .tab-content > .active {
+    color: #ffffff !important;
+    background-color: #2b2138 !important;
+    border-color: #4a3a58 #4a3a58 #2b2138 !important;
+  }
+
+  .tab-content .tab-pane,
+  .tab-content .tab-pane p,
+  .tab-content .tab-pane li,
+  .tab-content .tab-pane span,
+  .tab-content .tab-pane strong,
+  .tab-content .tab-pane code {
+    color: #e7eefc !important;
+  }
+}
+
+// Fallback for browsers/sessions where theme attribute is not set to dark but
+// OS preference is dark (e.g., early render or custom script timing).
+@media (prefers-color-scheme: dark) {
+  html:not([data-bs-theme='light']) {
+    .td-navbar,
+    .td-navbar[data-bs-theme='dark'] {
+      background-color: #111723 !important;
+      border-bottom: 1px solid var(--color-border) !important;
+    }
+
+    .td-navbar .nav-link,
+    .td-navbar .navbar-brand__name,
+    .td-navbar .td-site-title,
+    .td-navbar[data-bs-theme='dark'] .nav-link,
+    .td-navbar[data-bs-theme='dark'] .navbar-brand__name,
+    .td-navbar[data-bs-theme='dark'] .td-site-title {
+      color: #edf2ff !important;
+    }
+
+    .td-navbar .nav-link:hover,
+    .td-navbar[data-bs-theme='dark'] .nav-link:hover {
+      color: #ff9fc2 !important;
+    }
+
+    .td-navbar .nav-link.active,
+    .td-navbar .nav-link[aria-current='page'],
+    .td-navbar[data-bs-theme='dark'] .nav-link.active,
+    .td-navbar[data-bs-theme='dark'] .nav-link[aria-current='page'] {
+      color: #ff9fc2 !important;
+      border-bottom-color: #ff9fc2 !important;
+    }
+
+    .td-sidebar,
+    .td-sidebar__inner,
+    .td-sidebar-nav,
+    #td-section-nav,
+    .td-sidebar-toc,
+    .td-sidebar-toc .td-page-meta,
+    .td-sidebar-toc .td-toc {
+      background-color: #121925 !important;
+      color: #dce5f8 !important;
+    }
+
+    .td-sidebar-nav__section-title,
+    .td-sidebar-nav__section-title a,
+    .td-sidebar-nav__section-title a span,
+    .td-sidebar .td-sidebar-link,
+    .td-sidebar .td-sidebar-link__section,
+    .td-sidebar .td-sidebar-link__page,
+    .td-sidebar-toc .td-page-meta a,
+    .td-sidebar-toc .td-page-meta a i,
+    .td-sidebar-toc .td-toc-title,
+    .td-sidebar-toc .td-toc-title__text,
+    .td-sidebar-toc .td-toc nav a,
+    .td-sidebar-toc #TableOfContents a {
+      color: #aebbd4 !important;
+    }
+
+    .td-sidebar-nav__section-title a:hover,
+    .td-sidebar-nav__section-title a:focus,
+    .td-sidebar .td-sidebar-link:hover,
+    .td-sidebar .td-sidebar-link:focus,
+    .td-sidebar-toc #TableOfContents a:hover,
+    .td-sidebar-toc #TableOfContents a:focus {
+      color: #e8f0ff !important;
+      background-color: #263149 !important;
+    }
+
+    .td-sidebar .td-sidebar-link.active,
+    .td-sidebar-nav a.active,
+    .td-sidebar-nav-active-item,
+    .td-sidebar-toc #TableOfContents a.active {
+      color: #ffbfd5 !important;
+      font-weight: 700 !important;
+    }
+
+    .td-sidebar-toc #TableOfContents a.active {
+      border-left-color: #ff8eb5 !important;
+    }
+
+    nav.foldable-nav .ul-1 .with-child > label::before {
+      color: #9fb0cc !important;
+    }
+
+    nav.foldable-nav .ul-1 .with-child > input:checked ~ label::before {
+      color: #ff9fc2 !important;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      nav.foldable-nav .ul-1 .with-child > label:hover::before,
+      nav.foldable-nav .ul-1 .with-child > input:checked ~ label:hover::before {
+        color: #ffd0e2 !important;
+      }
+    }
+
+    .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-term,
+    .taxo-tags .taxonomy-term {
+      background: #33445f !important;
+      border: 1px solid #4a6186 !important;
+      color: #f5f8ff !important;
+    }
+
+    .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-term:hover,
+    .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-term:focus,
+    .taxo-tags .taxonomy-term:hover,
+    .taxo-tags .taxonomy-term:focus {
+      background: #473252 !important;
+      border-color: #8f5f78 !important;
+      color: #ffffff !important;
+    }
+
+    .taxonomy.taxonomy-terms-article.taxo-tags,
+    .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-terms,
+    .taxonomy.taxonomy-terms-article.taxo-tags .taxonomy-terms li {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .taxonomy-term {
+      background: #33445f !important;
+      border: 1px solid #4a6186 !important;
+      color: #f5f8ff !important;
+    }
+
+    .taxonomy-term:hover,
+    .taxonomy-term:focus {
+      background: #473252 !important;
+      border-color: #8f5f78 !important;
+      color: #ffffff !important;
+    }
+
+    .taxonomy-count {
+      background-color: #1b2638 !important;
+      color: #e3ebff !important;
+    }
+
+    .td-box--white {
+      background-color: #171d29 !important;
+    }
+
+    .td-box--light {
+      background-color: #1d2534 !important;
+    }
+
+    .td-box--white .td-arrow-down::before {
+      border-color: #171d29 transparent transparent transparent !important;
+    }
+
+    .td-box--light .td-arrow-down::before {
+      border-color: #1d2534 transparent transparent transparent !important;
+    }
+
+    .td-content table:not(.td-initial),
+    .td-table:not(.td-initial),
+    .td-box table:not(.td-initial),
+    .table {
+      --bs-table-color: #ebf1ff;
+      --bs-table-bg: transparent;
+      --bs-table-border-color: #2f3c53;
+      --bs-table-striped-color: #f4f8ff;
+      --bs-table-striped-bg: rgba(148, 164, 194, 0.12);
+      --bs-table-active-color: #ffffff;
+      --bs-table-active-bg: rgba(148, 164, 194, 0.18);
+      --bs-table-hover-color: #ffffff;
+      --bs-table-hover-bg: rgba(148, 164, 194, 0.16);
+      color: var(--bs-table-color) !important;
+      background-color: transparent !important;
+      border-color: var(--bs-table-border-color) !important;
+    }
+
+    .td-content .section-index .entry {
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .td-content table:not(.td-initial) > :not(caption) > * > *,
+    .td-table:not(.td-initial) > :not(caption) > * > *,
+    .td-box table:not(.td-initial) > :not(caption) > * > *,
+    .table > :not(caption) > * > * {
+      color: var(--bs-table-color) !important;
+      background-color: transparent !important;
+      border-bottom-color: var(--bs-table-border-color) !important;
+    }
+
+    .td-content table:not(.td-initial) thead th,
+    .td-table:not(.td-initial) thead th,
+    .td-box table:not(.td-initial) thead th,
+    .table thead th {
+      color: #ffffff !important;
+      background-color: rgba(32, 44, 65, 0.9) !important;
+    }
+
+    .nav.nav-tabs,
+    .tab-content {
+      background-color: transparent !important;
+      color: #e7eefc !important;
+      border-color: #2f3c53 !important;
+    }
+
+    .tab-content .tab-pane {
+      background-color: transparent !important;
+    }
+
+    .tab-body {
+      background-color: #141d2c !important;
+      color: #e7eefc !important;
+      border-color: #2f3c53 !important;
+    }
+
+    .nav-tabs .nav-link {
+      color: #ccd8f1 !important;
+      background-color: #151d2b !important;
+      border-color: #2f3c53 !important;
+    }
+
+    .nav-tabs .nav-link.active,
+    .nav-tabs .nav-item.show .nav-link,
+    .tab-content > .active,
+    .tab-content .tab-pane,
+    .tab-content .tab-pane p,
+    .tab-content .tab-pane li,
+    .tab-content .tab-pane span,
+    .tab-content .tab-pane strong,
+    .tab-content .tab-pane code {
+      color: #e7eefc !important;
+    }
+  }
+}
+
+// Keep taxonomy/tag text in light mode aligned with Docsy defaults.
+[data-bs-theme='light'],
+html:not([data-bs-theme='dark']) {
+  .taxonomy-term {
+    background: var(--bs-secondary-bg);
+    color: var(--bs-body-color) !important;
+  }
+
+  .taxo-text-tags .taxonomy-term,
+  .taxo-fruits .taxonomy-term,
+  .taxo-text-tags li + li::before {
+    color: #6c757d !important;
+  }
+
+  .taxo-text-tags .taxonomy-term:hover,
+  .taxo-fruits .taxonomy-term:hover {
+    color: #0d6efd !important;
+  }
+}
+

@@ -1,0 +1,37 @@
+// ============================================================================
+// HIERO DOCUMENTATION THEME — Variable Overrides
+// Loaded BEFORE Bootstrap and Docsy variables.
+// Only SCSS variable declarations belong here — no CSS rules.
+// CSS rules go in _styles_project.scss.
+// See: https://www.docsy.dev/docs/content/lookandfeel/#project-style-files
+// ============================================================================
+
+// --- DOCSY FEATURE FLAGS ---
+// Google Fonts loading is handled automatically by Docsy when enabled here.
+$enable-dark-mode:        false;
+$td-enable-google-fonts:  true;
+$td-google-font-name:     'Space Grotesk';
+$td-google-font-family:   'Space+Grotesk:300,400,500,600,700';
+
+// --- BOOTSTRAP VARIABLE OVERRIDES ---
+// Defined before Bootstrap so its !default values do not override them.
+$primary:                 #b81a56 !default;
+$primary-dark:            #992350 !default;
+$secondary:               #1ebdc4 !default;
+$light:                   #f5f5f5 !default;
+$white:                   #ffffff !default;
+$dark:                    #333333 !default;
+$body-bg:                 #ffffff !default;
+$text-muted:              #888888 !default;
+$success:                 #b81a56 !default; // Use Hiero primary instead of green
+
+$font-family-base:        'Space Grotesk', sans-serif !default;
+$font-family-monospace:   'Courier New', monospace !default;
+$border-radius:           8px !default;
+$border-radius-lg:        8px !default;
+
+// --- HEADING OVERRIDES ---
+// Heading font-sizes intentionally use Bootstrap's responsive defaults.
+// To set a custom size, add it here (e.g. $h1-font-size: 3rem;) so Bootstrap
+// generates a properly responsive rule. Never set font-size in _styles_project.scss.
+$headings-font-weight:    600; // Bootstrap default: 500
