@@ -1,5 +1,5 @@
 ---
-title: "Adding, Updating, and Removing Consensus Nodes"
+title: "Dynamic Addion, Updation, and Removal of Consensus Nodes"
 weight: 5
 description: >
   Learn how to dynamically add, update, and delete consensus nodes in a
