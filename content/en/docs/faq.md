@@ -1,6 +1,6 @@
 ---
-title: "FAQ"
-weight: 50
+title: "FAQs"
+weight: 5
 description: >
     Frequently asked questions about the Solo CLI tool.
 type: docs
@@ -69,7 +69,7 @@ It is defined in Hiero source code [Link](https://github.com/hiero-ledger/hiero-
 
 ### What is the difference between ECDSA keys and ED25519 keys?
 
-See https://docs.hedera.com/hedera/core-concepts/keys-and-signatures for a detailed answer.
+See <https://docs.hedera.com/hedera/core-concepts/keys-and-signatures> for a detailed answer.
 
 ### Where can I find the EVM compatible private key?
 
@@ -112,13 +112,13 @@ For example:
 ```bash
 helm repo list
 
-NAME                 	URL                                                       
-haproxy-ingress      	https://haproxy-ingress.github.io/charts                  
-haproxytech          	https://haproxytech.github.io/helm-charts                 
-metrics-server       	https://kubernetes-sigs.github.io/metrics-server/         
-metallb              	https://metallb.github.io/metallb                         
-mirror               	https://hashgraph.github.io/hedera-mirror-node/charts     
-hedera-json-rpc-relay	https://hashgraph.github.io/hedera-json-rpc-relay/charts
+NAME                  URL                                                       
+haproxy-ingress       https://haproxy-ingress.github.io/charts                  
+haproxytech           https://haproxytech.github.io/helm-charts                 
+metrics-server        https://kubernetes-sigs.github.io/metrics-server/         
+metallb               https://metallb.github.io/metallb                         
+mirror                https://hashgraph.github.io/hedera-mirror-node/charts     
+hedera-json-rpc-relay https://hashgraph.github.io/hedera-json-rpc-relay/charts
 ```
 
 Next run the command to remove the repo:

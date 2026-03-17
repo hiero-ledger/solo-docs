@@ -1,7 +1,7 @@
 ---
 title: Examples Hub
 linkTitle: Examples
-weight: 3
+weight: 10
 type: docs
 ---
 

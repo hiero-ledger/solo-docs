@@ -1,6 +1,6 @@
 ---
 title: "Using Network Load Generator with Solo"
-weight: 110
+weight: 2
 description: >
     This document describes how to use Network Load Generator with Solo.
 type: docs
@@ -17,25 +17,25 @@ To use the Network Load Generator with Solo, follow these steps:
 npx @hashgraph/solo:@latest one-shot single deploy
 ```
 
-2. Use the `rapid-fire` commands to install the NLG chart and start a load test:
+1. Use the `rapid-fire` commands to install the NLG chart and start a load test:
 
 ```bash
 @hashgraph/solo:@latest rapid-fire load start --deployment my-deployment --args '"-c 3 -a 10 -t 60"' --test CryptoTransferLoadTest
 ```
 
-3. In a separate terminal, you can start a different load test:
+1. In a separate terminal, you can start a different load test:
 
 ```bash
 @hashgraph/solo:@latest rapid-fire load start --deployment my-deployment --args '"-c 3 -a 10 -t 60"' --test NftTransferLoadTest
 ```
 
-4. To stop the load test early use the `stop` command:
+1. To stop the load test early use the `stop` command:
 
 ```bash
 @hashgraph/solo:@latest rapid-fire load stop --deployment my-deployment --test CryptoTransferLoadTest
 ```
 
-5. To stop all running load tests and uninstall the NLG chart, use the `destroy` command:
+1. To stop all running load tests and uninstall the NLG chart, use the `destroy` command:
 
 ```bash
 @hashgraph/solo:@latest rapid-fire destroy all --deployment my-deployment

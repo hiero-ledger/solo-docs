@@ -1,6 +1,6 @@
 ---
 title: "Updated CLI Command Mappings"
-weight: 35
+weight: 3
 description: >
     A mapping of CLI commands from < v0.44.0 to >= v0.44.0
 type: docs

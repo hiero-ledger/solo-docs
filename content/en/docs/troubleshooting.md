@@ -1,6 +1,6 @@
 ---
 title: "Troubleshooting"
-weight: 55
+weight: 4
 description: >
   Solutions to common issues when using Solo, plus guidance on getting help.
 type: docs
@@ -36,6 +36,7 @@ kubectl describe pod -n "${SOLO_NAMESPACE}" <pod-name>
 #### Resource Allocation
 
 Ensure Docker has adequate resources:
+
 - **Memory**: At least 12 GB (16 GB recommended)
 - **CPU**: At least 6 cores (8 recommended)
 - **Disk**: At least 20 GB free
@@ -237,9 +238,11 @@ kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>
 ### 3. GitHub Issues
 
 Report bugs or request features:
-- **Repository**: https://github.com/hiero-ledger/solo/issues
+
+- **Repository**: <https://github.com/hiero-ledger/solo/issues>
 
 When opening an issue, include:
+
 - Solo version (`solo --version`)
 - Operating system and version
 - Docker/Kubernetes versions
@@ -250,8 +253,9 @@ When opening an issue, include:
 ### 4. Community Support
 
 Join the community for discussions and help:
+
 - **Hedera Discord**: Look for the `#solo` channel
-- **Hiero Community**: https://hiero.org/community
+- **Hiero Community**: <https://hiero.org/community>
 
 ## Frequently Asked Questions
 
@@ -280,12 +284,14 @@ solo --version -o json
 ### Where are my keys stored?
 
 Keys are stored in `~/.solo/cache/keys/`. This directory contains:
+
 - TLS certificates (`hedera-node*.crt`, `hedera-node*.key`)
 - Signing keys (`s-private-node*.pem`, `s-public-node*.pem`)
 
 ### How do I connect my application to the local network?
 
 Use these endpoints:
+
 - **gRPC (Hedera SDK)**: `localhost:50211`, Node ID: `0.0.3`
 - **JSON RPC (Ethereum tools)**: `http://localhost:7546`
 - **Mirror Node REST**: `http://localhost:5551/api/v1/`

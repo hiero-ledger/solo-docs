@@ -1,6 +1,6 @@
 ---
 title: "Using Solo with Hiero JavaScript SDK"
-weight: 70 
+weight: 1 
 description: >
     This page describes how to use Solo with Hiero JavaScript SDK. 
     It includes instructions for setting up a local Solo network, creating test accounts, and running example scripts.

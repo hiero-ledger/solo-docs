@@ -1,6 +1,6 @@
 ---
 title: "Solo CI Workflow"
-weight: 130
+weight: 5
 description: >
     This document describes how to use Solo in CI.
 type: docs
@@ -14,6 +14,7 @@ You’ll verify that your runner meets Docker resource requirements, install the
 You can use GitHub runners or self-hosted runners to deploy Solo.
 
 ### Minimum Requirements
+
 - 6 CPU cores
 - 12 GB of memory
 
@@ -33,6 +34,7 @@ Add the following step to your workflow to verify your Docker environment:
       echo "CPU cores: $cpus"
       echo "Memory: ${mem_gb} GB"
 ```
+
 Expected Output:
 CPU cores: 6
 Memory: 12 GB
@@ -138,5 +140,3 @@ Here’s the full workflow combining all the steps above:
       kind create cluster -n "${SOLO_CLUSTER_NAME}"
       solo one-shot single deploy | tee solo-deploy.log
 ```
-
-

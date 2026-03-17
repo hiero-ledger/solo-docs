@@ -70,7 +70,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 
 {{< tabpane >}}
 
-{{< tab header="macOS" lang="bash" >}}
+{{< tab header="macOS" lang="macos" >}}
 
  1. Install Homebrew (if not already installed):
 
@@ -105,7 +105,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 
 {{< /tab >}}
 
-{{< tab header="Linux" lang="bash" >}}
+{{< tab header="Linux" lang="linux" >}}
 
  1. Install Homebrew for Linux:
 
@@ -164,7 +164,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 
 {{< /tab >}}
 
-{{< tab header="Windows (WSL2)" lang="bash" >}}
+{{< tab header="Windows (WSL2)" lang="wsl2" >}}
 
  Before proceeding, run the following command in Windows PowerShell (as Administrator), then reboot and open the Ubuntu terminal. All subsequent commands must be run inside the Ubuntu (WSL2) terminal.
 

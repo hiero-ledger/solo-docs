@@ -1,6 +1,6 @@
 ---
 title: "Using Solo with Mirror Node"
-weight: 60
+weight: 7
 description: >
     This document describes how to use Solo with Mirror Node.
 type: docs
