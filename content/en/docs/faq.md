@@ -32,6 +32,10 @@ npx @hashgraph/solo:@latest one-shot falcon deploy --values-file falcon-values.y
 
 The falcon deployment allows you to configure all network components (consensus nodes, mirror node, explorer, relay, and block node) through a single YAML configuration file.
 
+### Can I run Solo on a remote server?
+
+Yes. Solo can deploy to any Kubernetes cluster, not just a local Kind cluster. For remote-cluster and more advanced deployment flows, see [Advanced Solo Setup](advanced-solo-setup/_index.md).
+
 More documentation can be found here:
 
 * [Solo User Guide](solo-user-guide/#one-shot-deployment)
@@ -100,6 +104,14 @@ kubectl get pods -A | grep -v kube-system
 
 All Solo-related pods should be in a `Running` or `Completed` state before the endpoints become available.
 
+### How do I connect my application to the local network?
+
+Use these endpoints:
+
+* **gRPC (Hedera SDK)**: `localhost:50211`, Node ID: `0.0.3`
+* **JSON RPC (Ethereum tools)**: `http://localhost:7546`
+* **Mirror Node REST**: `http://localhost:5551/api/v1/`
+
 ### What should I do if `solo one-shot single destroy` fails or my Solo state is corrupted?
 
 > **Warning:** This is a last resort. Always try `solo one-shot single destroy` first.
@@ -119,6 +131,19 @@ rm -rf ~/.solo
 > **Warning:** Always use the `grep '^solo'` filter above — omitting it will delete **every** Kind cluster on your machine, including those unrelated to Solo.
 
 After a full reset, you can redeploy by following the [Quickstart](../simple-solo-setup/quickstart) guide.
+
+If you want to reset everything and start fresh immediately, run:
+
+```bash
+# Delete only Solo-managed clusters and Solo config
+kind get clusters | grep '^solo' | while read cluster; do
+  kind delete cluster -n "$cluster"
+done
+rm -rf ~/.solo
+
+# Deploy fresh
+solo one-shot single deploy
+```
 
 ---
 
@@ -243,6 +268,22 @@ Create funded test accounts with:
 ```bash
 solo ledger account create --deployment <deployment-name> --hbar-amount 100
 ```
+
+### How do I check which version of Solo I'm running?
+
+```bash
+solo --version
+
+# For machine-readable output:
+solo --version -o json
+```
+
+### Where are my keys stored?
+
+Keys are stored in `~/.solo/cache/keys/`. This directory contains:
+
+* TLS certificates (`hedera-node*.crt`, `hedera-node*.key`)
+* Signing keys (`s-private-node*.pem`, `s-public-node*.pem`)
 
 ### Why does resource usage grow during testing?
 
