@@ -201,7 +201,7 @@ jobs:
       # Only the rendered content files (not build/ logs) are committed.
       # The commit is a no-op if none of the watched files changed.
       - name: Commit and push generated docs
-        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
+        uses: step-security/git-auto-commit-action@905c3cd6e9ed2b67b4d46ff401fdb6d745d0ff9d # v7.1.0
         with:
           commit_message: "docs: auto-update generated docs for ${{ steps.version.outputs.version }}"
           commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
