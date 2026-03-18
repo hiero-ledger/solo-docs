@@ -53,12 +53,12 @@ kubectl describe pod -n "${SOLO_NAMESPACE}" <pod-name>
 
 #### Common Causes and Fixes
 
-| Symptom | Cause | Solution |
-|---------|-------|----------|
-| `Pending` state | Insufficient resources | Increase Docker memory/CPU allocation |
-| `Pending` state | Storage issues | Check available disk space, restart Docker |
-| `CrashLoopBackOff` | Container failing to start | Check pod logs: `kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>` |
-| `ImagePullBackOff` | Can't pull container images | Check internet connection, Docker Hub rate limits |
+| Symptom            | Cause                       | Solution                                                           |
+| ------------------ | --------------------------- | ------------------------------------------------------------------ |
+| `Pending` state    | Insufficient resources      | Increase Docker memory/CPU allocation                              |
+| `Pending` state    | Storage issues              | Check available disk space, restart Docker                         |
+| `CrashLoopBackOff` | Container failing to start  | Check pod logs: `kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>`   |
+| `ImagePullBackOff` | Can't pull container images | Check internet connection, Docker Hub rate limits                  |
 
 ### CrashLoopBackOff Causes and Remediation
 
@@ -288,10 +288,10 @@ This creates logs and diagnostic files in `~/.solo/logs/`.
 
 ### Key Log Files
 
-| File | Description |
-|------|-------------|
-| `~/.solo/logs/solo.log` | Solo CLI command logs |
-| `~/.solo/logs/hashgraph-sdk.log` | SDK transaction logs |
+| File                              | Description           |
+| --------------------------------- | --------------------- |
+| `~/.solo/logs/solo.log`           | Solo CLI command logs |
+| `~/.solo/logs/hashgraph-sdk.log`  | SDK transaction logs  |
 
 ### Kubernetes Diagnostics
 
