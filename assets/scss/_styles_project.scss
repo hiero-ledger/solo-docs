@@ -473,6 +473,23 @@ td > code {
   align-items: center;
 }
 
+@media (max-width: 767.98px) {
+  .td-breadcrumbs {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+
+  .td-main main[role='main'] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .td-content {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+}
+
 // Newer Docsy can apply transparent/blurred cover navbar by default.
 // Force the same solid navbar look as live v0.60.0.
 .td-navbar.td-navbar-cover.td-navbar-transparent {
