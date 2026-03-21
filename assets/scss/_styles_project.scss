@@ -141,6 +141,14 @@ small,
   }
 }
 
+.td-sidebar__inner {
+  padding-top: 0.75rem;
+}
+
+.td-breadcrumbs {
+  padding-top: 0.75rem;
+}
+
 .td-sidebar-toc {
   background-color: var(--color-bg-white);
 }
@@ -150,6 +158,14 @@ small,
 @media (min-width: 1200px) {
   .td-main > .row.flex-xl-nowrap {
     align-items: stretch;
+  }
+
+  .td-sidebar__inner {
+    padding-top: 1rem;
+  }
+
+  .td-breadcrumbs {
+    padding-top: 1rem;
   }
 
   .td-main > .row.flex-xl-nowrap > .td-sidebar,
