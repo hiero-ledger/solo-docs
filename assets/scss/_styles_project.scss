@@ -144,6 +144,28 @@ small,
 
 .td-sidebar-toc {
   padding-top: 2.5rem !important;
+  background-color: var(--color-bg-white);
+}
+
+// Balance left nav and right ToC on wide screens and let main content absorb
+// extra horizontal space so there is no trailing gap to the right.
+@media (min-width: 1200px) {
+  .td-main > .row.flex-xl-nowrap {
+    align-items: stretch;
+  }
+
+  .td-main > .row.flex-xl-nowrap > .td-sidebar,
+  .td-main > .row.flex-xl-nowrap > .td-sidebar-toc {
+    flex: 0 0 clamp(16rem, 17vw, 20rem);
+    max-width: clamp(16rem, 17vw, 20rem);
+    width: auto;
+  }
+
+  .td-main > .row.flex-xl-nowrap > main[role='main'] {
+    flex: 1 1 auto;
+    max-width: none;
+    min-width: 0;
+  }
 }
 
 .tree-root .td-sidebar-nav-active-item {
