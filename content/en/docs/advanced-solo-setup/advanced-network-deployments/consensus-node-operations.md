@@ -72,10 +72,6 @@ appear in the `prepare` step.
       created in your current working directory. Do not delete it until `execute` has
       completed successfully.
 
-   
-
-
-
 ## Adding a Node to an Existing Network
   You can dynamically add a new consensus node to a running network without taking the network offline. 
   This process involves three stages: preparing the node's keys and configuration, submitting the on-chain transaction, and executing the addition.
