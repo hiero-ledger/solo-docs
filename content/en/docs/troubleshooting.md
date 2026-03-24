@@ -8,211 +8,372 @@ type: docs
 
 This guide covers common issues you may encounter when using Solo and how to resolve them.
 
+## Quick Navigation
+
+Use this page when something is failing and you need to diagnose or recover quickly.
+
+- [Troubleshooting installation and upgrades](#troubleshooting-installation-and-upgrades)
+- [Pods not reaching Ready state](#pods-not-reaching-ready-state)
+- [CrashLoopBackOff causes and remediation](#crashloopbackoff-causes-and-remediation)
+- [Resource constraint errors (CPU / RAM / Disk)](#resource-constraint-errors-cpu--ram--disk)
+- [Getting help](#getting-help)
+
+## Related Operational Topics
+
+If you are looking for setup or day-to-day usage guidance rather than failure diagnosis, start with these pages:
+
+- [One-command deployment options and variants](faq.md#one-command-deployment-options-and-variants)
+- [How to fully destroy a network and clean up resources](simple-solo-setup/cleanup.md)
+- [How to access exposed services (mirror node, relay, explorer)](faq.md#accessing-exposed-services)
+- [Common usage patterns and gotchas](faq.md#common-usage-patterns-and-gotchas)
+
 ## Common Issues and Solutions
 
-### Pods Not Starting
+### Troubleshooting Installation and Upgrades
 
-If pods remain in `Pending` or `CrashLoopBackOff` state:
+Installation and upgrade failures are common, especially when older installs or previous deployments are still present.
 
-#### Check Pod Events
+### Symptoms
+
+You are likely hitting an installation or upgrade problem if:
+
+- `solo` fails to start after changing versions.
+- `solo one-shot single deploy` fails early with validation or environment errors.
+- Commands report missing dependencies or incompatible versions.
+- A new deployment fails immediately after a previous network was not destroyed.
+
+### Quick Checks
+
+1. **Confirm installation method**
+
+   If you previously installed Solo via npm and are now using Homebrew, remove the legacy npm install to avoid conflicts:
+
+   ```bash
+   # Remove legacy npm-based Solo (if present)
+   if command -v npm >/dev/null 2>&1; then
+     npm uninstall -g @hashgraph/solo || true
+   fi
+   ```
+
+   Then reinstall Solo using the steps in the [Quickstart](simple-solo-setup/quickstart.md).
+
+2. **Verify system resources**
+
+     - Ensure your machine and Docker (or other container runtime) meet the minimum requirements described in  
+   [System readiness](simple-solo-setup/system-readiness.md#hardware-requirements).
+
+     - If Docker Desktop or your container runtime is configured below these values, increase the allocations and retry the install or deploy.
+
+3. **Clean up previous deployments**
+
+   If an upgrade or redeploy fails, first run a standard destroy:
+
+   ```bash
+   solo one-shot single destroy
+   ```
+---
+
+### Pods not reaching Ready state
+
+If pods remain in `Pending`, `Init`, `ContainerCreating`, or `CrashLoopBackOff`, follow this sequence to identify the blocker.
+
+1. Check readiness and restarts
+
+   ```bash
+   # Show readiness and restart count for each pod
+   kubectl get pods -n "${SOLO_NAMESPACE}" \
+     -o custom-columns=NAME:.metadata.name,PHASE:.status.phase,READY:.status.containerStatuses[*].ready,RESTARTS:.status.containerStatuses[*].restartCount
+   ```
+
+2. Inspect pod events
+
+   ```bash
+   # List all pods in your namespace
+   kubectl get pods -n "${SOLO_NAMESPACE}"
+
+   # Describe a specific pod to see events
+   kubectl describe pod -n "${SOLO_NAMESPACE}" <pod-name>
+   ```
+
+3. Map symptoms to likely causes
+
+   | Symptom            | Likely cause                | Next step                                                           |
+   | ------------------ | --------------------------- | ------------------------------------------------------------------- |
+   | `Pending`          | Insufficient resources      | Increase Docker memory/CPU allocation, then retry                   |
+   | `Pending`          | Storage issues              | Check disk space, free space if needed, restart Docker              |
+   | `CrashLoopBackOff` | Container failing to start  | Check pod logs: `kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>`    |
+   | `ImagePullBackOff` | Can't pull container images | Check internet connectivity and Docker Hub rate limits              |
+
+### CrashLoopBackOff causes and remediation
+
+If a pod repeatedly restarts and enters `CrashLoopBackOff`, inspect current logs, previous logs, and events:
 
 ```bash
-# List all pods in your namespace
-kubectl get pods -n "${SOLO_NAMESPACE}"
+# Current container logs
+kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>
 
-# Describe a specific pod to see events
+# Previous container logs (captures startup failures)
+kubectl logs -n "${SOLO_NAMESPACE}" <pod-name> --previous
+
+# Pod events and failure reasons
 kubectl describe pod -n "${SOLO_NAMESPACE}" <pod-name>
 ```
 
-#### Common Causes and Fixes
+Common causes include invalid runtime configuration, missing dependencies, and insufficient memory.
 
-| Symptom | Cause | Solution |
-|---------|-------|----------|
-| `Pending` state | Insufficient resources | Increase Docker memory/CPU allocation |
-| `Pending` state | Storage issues | Check available disk space, restart Docker |
-| `CrashLoopBackOff` | Container failing to start | Check pod logs: `kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>` |
-| `ImagePullBackOff` | Can't pull container images | Check internet connection, Docker Hub rate limits |
+- Recommended remediation sequence:
 
-#### Resource Allocation
+  1. If events mention `OOMKilled` or repeated liveness probe failures, increase Docker CPU/RAM and retry.
+  2. If the issue started after a failed upgrade or deploy, run the cleanup steps in **Old installation artifacts** and redeploy.
+  3. If only one node is affected, refresh or restart it:
+  
+     ```bash
+     solo consensus node refresh --node-aliases node1 --deployment "${SOLO_DEPLOYMENT}"
+     # or
+     solo consensus node restart --deployment "${SOLO_DEPLOYMENT}"
+     ```
 
-Ensure Docker has adequate resources:
+  #### Resource allocation:
+  
+  - Ensure your machine and Docker (or other container runtime) meet the minimum requirements described in [System readiness](simple-solo-setup/system-readiness.md#hardware-requirements).
+  
+  - On Docker Desktop, check: **Settings > Resources**.
 
-- **Memory**: At least 12 GB (16 GB recommended)
-- **CPU**: At least 6 cores (8 recommended)
-- **Disk**: At least 20 GB free
+### Resource constraint errors (CPU / RAM / Disk)
 
-On Docker Desktop, check: **Settings > Resources**
+Resource pressure is a common cause of `Pending` pods, slow startup, and repeated restarts.
 
-### Connection Refused Errors
+1. Check Kubernetes-level CPU and memory utilization:
 
-If you can't connect to network endpoints:
+   ```bash
+   kubectl top nodes
+   kubectl top pods -n "${SOLO_NAMESPACE}"
+   ```
 
-#### Check Service Endpoints
+2. Check host and Docker disk usage:
 
-```bash
-# List all services
-kubectl get svc -n "${SOLO_NAMESPACE}"
+   ```bash
+   # Host disk availability
+   df -h
 
-# Check if endpoints are populated
-kubectl get endpoints -n "${SOLO_NAMESPACE}"
-```
+   # Docker disk usage (if using Docker)
+   docker system df
+   ```
 
-#### Manual Port Forwarding
+3. Compare against the recommended local baseline:
 
-If automatic port forwarding isn't working:
+See [System readiness](simple-solo-setup/system-readiness.md#hardware-requirements) for the recommended memory, CPU, and disk values.
 
-```bash
-# Consensus Node (gRPC)
-kubectl port-forward svc/haproxy-node1-svc -n "${SOLO_NAMESPACE}" 50211:50211 &
+---
 
-# Explorer UI
-kubectl port-forward svc/hiero-explorer -n "${SOLO_NAMESPACE}" 8080:8080 &
+### Connection refused errors
 
-# Mirror Node gRPC
-kubectl port-forward svc/mirror-1-grpc -n "${SOLO_NAMESPACE}" 5600:5600 &
+If you cannot connect to Solo network endpoints from your machine, use this sequence to isolate the issue.
 
-# Mirror Node REST
-kubectl port-forward svc/mirror-1-rest -n "${SOLO_NAMESPACE}" 5551:80 &
+1. Verify services and endpoints inside the cluster
 
-# JSON RPC Relay
-kubectl port-forward svc/relay-node1-hedera-json-rpc-relay -n "${SOLO_NAMESPACE}" 7546:7546 &
-```
+   ```bash
+   # List all services
+   kubectl get svc -n "${SOLO_NAMESPACE}"
 
-### Node Synchronization Issues
+   # Check if endpoints are populated
+   kubectl get endpoints -n "${SOLO_NAMESPACE}"
+   ```
 
-If nodes aren't forming consensus or transactions aren't being processed:
+   - If the service exists but has **no endpoints**, the backing pods are not Ready.  
+     See [Pods not reaching Ready state](#pods-not-reaching-ready-state).
 
-#### Check Node Status
+2. Use manual port forwarding (bypass automation)
 
-```bash
-# Download state information
-solo consensus state download --deployment "${SOLO_DEPLOYMENT}" --node-aliases node1
+   If automatic port forwarding (from `solo` commands or your environment) is not working, forward the required services manually:
 
-# Check logs for gossip issues
-kubectl logs -n "${SOLO_NAMESPACE}" network-node-0 | grep -i gossip
-```
+   ```bash
+   # Consensus node (gRPC)
+   kubectl port-forward svc/haproxy-node1-svc -n "${SOLO_NAMESPACE}" 50211:50211 &
 
-#### Restart Problematic Nodes
+   # Explorer UI
+   kubectl port-forward svc/hiero-explorer -n "${SOLO_NAMESPACE}" 8080:8080 &
 
-```bash
-# Refresh a specific node
-solo consensus node refresh --node-aliases node1 --deployment "${SOLO_DEPLOYMENT}"
+   # Mirror node gRPC
+   kubectl port-forward svc/mirror-1-grpc -n "${SOLO_NAMESPACE}" 5600:5600 &
 
-# Or restart all nodes
-solo consensus node restart --deployment "${SOLO_DEPLOYMENT}"
-```
+   # Mirror node REST
+   kubectl port-forward svc/mirror-1-rest -n "${SOLO_NAMESPACE}" 5551:80 &
 
-### Mirror Node Not Importing Records
+   # JSON-RPC relay
+   kubectl port-forward svc/relay-node1-hedera-json-rpc-relay -n "${SOLO_NAMESPACE}" 7546:7546 &
+   ```
 
-If the mirror node isn't showing new transactions:
+3. Confirm the expected endpoints and ports
 
-#### Verify Pinger is Running
+   After forwarding, connect to the local ports shown above (for example, `http://localhost:8080` for the explorer).  
+   For the standard exposed endpoints after a successful one-shot deployment, see [How to access exposed services (mirror node, relay, explorer)](faq.md#accessing-exposed-services).
 
-The `--pinger` flag should have been used when deploying the mirror node. The pinger sends periodic transactions to ensure record files are created.
+---
 
-```bash
-# Check if pinger pod is running
-kubectl get pods -n "${SOLO_NAMESPACE}" | grep pinger
-```
+### Node synchronization issues
 
-#### Redeploy Mirror Node with Pinger
+If nodes are not forming consensus or transactions are not being processed, follow these steps.
 
-```bash
-# Destroy existing mirror node
-solo mirror node destroy --deployment "${SOLO_DEPLOYMENT}" --force
+1. Check node state and gossip logs:
 
-# Redeploy with pinger enabled
-solo mirror node add --deployment "${SOLO_DEPLOYMENT}" --cluster-ref kind-${SOLO_CLUSTER_NAME} --enable-ingress --pinger
-```
+   ```bash
+   # Download state information for a node
+   solo consensus state download --deployment "${SOLO_DEPLOYMENT}" --node-aliases node1
 
-### Helm Repository Errors
+   # Check logs for gossip-related issues
+   kubectl logs -n "${SOLO_NAMESPACE}" network-node-0 | grep -i gossip
+   ```
 
-If you see errors like `repository name already exists`:
+   Look for repeated connection failures, timeouts, or gossip disconnection messages.
 
-```bash
-# List current Helm repos
-helm repo list
+2. Restart problematic nodes:
 
-# Remove conflicting repository
-helm repo remove <repo-name>
+   ```bash
+   # Refresh a specific node
+   solo consensus node refresh --node-aliases node1 --deployment "${SOLO_DEPLOYMENT}"
 
-# Example: remove hedera-json-rpc-relay
-helm repo remove hedera-json-rpc-relay
-```
+   # Or restart all nodes
+   solo consensus node restart --deployment "${SOLO_DEPLOYMENT}"
+   ```
 
-### Kind Cluster Issues
+   After restarting, submit a small test transaction and verify that it reaches consensus.
 
-#### Cluster Won't Start
+### Mirror node not importing records
 
-```bash
-# Delete and recreate the cluster
-kind delete cluster -n "${SOLO_CLUSTER_NAME}"
-kind create cluster -n "${SOLO_CLUSTER_NAME}"
-```
+If the mirror node is not showing new transactions, first confirm that records are being generated and imported.
 
-#### Docker Context Issues
+1. Verify the pinger is running
 
-Ensure Docker is running and the correct context is set:
+   The `--pinger` flag should be enabled when deploying the mirror node. The pinger sends periodic transactions so that record files are created.
 
-```bash
-# Check Docker is running
-docker ps
+   ```bash
+   # Check if pinger pod is running
+   kubectl get pods -n "${SOLO_NAMESPACE}" | grep pinger
+   ```
 
-# On macOS/Windows, ensure Docker Desktop is started
-# On Linux, ensure the Docker daemon is running:
-sudo systemctl start docker
-```
+2. Redeploy the mirror node with pinger enabled
 
-### Old Installation Artifacts
+   If the pinger is missing or misconfigured:
 
-Previous Solo installations can cause issues. Clean up Solo-managed clusters:
+   ```bash
+   # Destroy the existing mirror node
+   solo mirror node destroy --deployment "${SOLO_DEPLOYMENT}" --force
 
-```bash
-# Delete only Solo-managed Kind clusters (names starting with "solo")
-kind get clusters | grep '^solo' | while read cluster; do
-  kind delete cluster -n "$cluster"
-done
+   # Redeploy with pinger enabled
+   solo mirror node add \
+     --deployment "${SOLO_DEPLOYMENT}" \
+     --cluster-ref kind-${SOLO_CLUSTERNAME} \
+     --enable-ingress \
+     --pinger
+   ```
+### Helm repository errors
 
-# Remove Solo configuration and cache
-rm -rf ~/.solo
-```
+If you see errors such as `repository name already exists`, you likely have a conflicting Helm repo entry.
 
-## Collecting Diagnostic Information
+1. List current Helm repositories:
 
-Before seeking help, collect diagnostic information:
+   ```bash
+   helm repo list
+   ```
 
-### Solo Diagnostics
+2. Remove the conflicting repository:
 
-```bash
-# Capture comprehensive diagnostics
-solo consensus diagnostics all --deployment "${SOLO_DEPLOYMENT}"
-```
+   ```bash
+   helm repo remove <repo-name>
 
-This creates logs and diagnostic files in `~/.solo/logs/`.
+   # Example: remove hedera-json-rpc-relay
+   helm repo remove hedera-json-rpc-relay
+   ```
 
-### Key Log Files
+Re-run the Solo command that configures Helm after removing the conflict.
 
-| File | Description |
-|------|-------------|
-| `~/.solo/logs/solo.log` | Solo CLI command logs |
-| `~/.solo/logs/hashgraph-sdk.log` | SDK transaction logs |
+### Kind cluster issues
 
-### Kubernetes Diagnostics
+Problems starting or accessing the Kind cluster often present as cluster creation failures or missing nodes.
+
+1. Cluster will not start or is in a bad state:
+
+   ```bash
+   # Delete and recreate the cluster
+   kind delete cluster -n "${SOLO_CLUSTER_NAME}"
+   kind create cluster -n "${SOLO_CLUSTER_NAME}"
+   ```
+
+2. Docker context or daemon issues
+
+   Ensure Docker is running and the correct context is active:
+
+   ```bash
+   # Check Docker is running
+   docker ps
+
+   # On macOS/Windows, ensure Docker Desktop is started.
+   # On Linux, ensure the Docker daemon is running:
+   sudo systemctl start docker
+   ```
+
+### Cleanup and reset (old installation artifacts)
+
+Previous Solo installations can cause conflicts during new deployments.  
+For the full teardown and full reset procedure, see the [Cleanup guide](simple-solo-setup/cleanup.md).
+
+At a high level:
+
+1. Run a standard destroy first:
+
+   ```bash
+   solo one-shot single destroy
+   ```
+
+2. If `destroy` fails or Solo state is corrupted, perform a [full reset](simple-solo-setup/cleanup.md#full-reset), which:
+   - Deletes Solo-managed Kind clusters (names starting with `solo`).
+   - Removes the Solo home directory (`~/.solo`).
+
+---
+
+## Collecting diagnostic information
+
+Before seeking help, collect the following diagnostics so issues can be reproduced and analyzed.
+
+### Solo diagnostics
+
+1. Capture comprehensive diagnostics for the deployment:
+
+   ```bash
+   solo deployment diagnostics all --deployment "${SOLO_DEPLOYMENT}"
+   ```
+
+   This creates logs and diagnostic files under `~/.solo/logs/`.
+
+### Key log files
+
+These files are often requested when reporting issues:
+
+| File                             | Description                          |
+| -------------------------------- | ------------------------------------ |
+| `~/.solo/logs/solo.log`          | Solo CLI command logs                |
+| `~/.solo/logs/hashgraph-sdk.log` | SDK transaction logs from Solo client |
+
+### Kubernetes diagnostics
+
+Collect basic cluster and namespace information:
 
 ```bash
 # Cluster info
 kubectl cluster-info
 
-# All resources in namespace
+# All resources in the Solo namespace
 kubectl get all -n "${SOLO_NAMESPACE}"
 
-# Recent events
+# Recent events in the namespace (sorted by time)
 kubectl get events -n "${SOLO_NAMESPACE}" --sort-by='.lastTimestamp'
 
-# Node resource usage
+# Node and pod resource usage
 kubectl top nodes
 kubectl top pods -n "${SOLO_NAMESPACE}"
 ```
+---
 
 ## Getting Help
 
@@ -230,10 +391,10 @@ kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>
 
 ### 2. Documentation
 
-- [Solo User Guide](solo-user-guide.md) - Basic setup and usage
-- [Advanced Deployments](advanced-deployments.md) - Complex deployment scenarios
-- [FAQ](faq.md) - Common questions and answers
-- [CLI Commands](solo-commands.md) - Complete command reference
+- [Quickstart](simple-solo-setup/quickstart.md) - Basic setup and usage.
+- [Advanced Solo Setup](advanced-solo-setup/_index.md) - Complex deployment scenarios.
+- [FAQ](faq.md) - Common questions and answers.
+- [Solo CLI User Manual](advanced-solo-setup/solo-cli.md) - Command reference and examples.
 
 ### 3. GitHub Issues
 
@@ -257,45 +418,4 @@ Join the community for discussions and help:
 - **Hedera Discord**: Look for the `#solo` channel
 - **Hiero Community**: <https://hiero.org/community>
 
-## Frequently Asked Questions
-
-### How do I reset everything and start fresh?
-
-```bash
-# Delete only Solo-managed clusters and Solo config
-kind get clusters | grep '^solo' | while read cluster; do
-  kind delete cluster -n "$cluster"
-done
-rm -rf ~/.solo
-
-# Deploy fresh
-solo one-shot single deploy
-```
-
-### How do I check which version of Solo I'm running?
-
-```bash
-solo --version
-
-# For machine-readable output:
-solo --version -o json
-```
-
-### Where are my keys stored?
-
-Keys are stored in `~/.solo/cache/keys/`. This directory contains:
-
-- TLS certificates (`hedera-node*.crt`, `hedera-node*.key`)
-- Signing keys (`s-private-node*.pem`, `s-public-node*.pem`)
-
-### How do I connect my application to the local network?
-
-Use these endpoints:
-
-- **gRPC (Hedera SDK)**: `localhost:50211`, Node ID: `0.0.3`
-- **JSON RPC (Ethereum tools)**: `http://localhost:7546`
-- **Mirror Node REST**: `http://localhost:5551/api/v1/`
-
-### Can I run Solo on a remote server?
-
-Yes, Solo can deploy to any Kubernetes cluster. See [Advanced Deployments](advanced-deployments.md#connecting-to-a-remote-cluster) for details.
+---
