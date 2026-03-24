@@ -116,7 +116,6 @@ small,
 
 .td-sidebar {
   background: var(--color-bg-white);
-  width: 300px;
   border-right: 1px solid var(--color-border);
 
   .nav-link {
@@ -142,8 +141,45 @@ small,
   }
 }
 
+.td-sidebar__inner {
+  padding-top: 0.75rem;
+}
+
+.td-breadcrumbs {
+  padding-top: 0.75rem;
+}
+
 .td-sidebar-toc {
-  padding-top: 2.5rem !important;
+  background-color: var(--color-bg-white);
+}
+
+// Balance left nav and right ToC on wide screens and let main content absorb
+// extra horizontal space so there is no trailing gap to the right.
+@media (min-width: 1200px) {
+  .td-main > .row.flex-xl-nowrap {
+    align-items: stretch;
+  }
+
+  .td-sidebar__inner {
+    padding-top: 1rem;
+  }
+
+  .td-breadcrumbs {
+    padding-top: 1rem;
+  }
+
+  .td-main > .row.flex-xl-nowrap > .td-sidebar,
+  .td-main > .row.flex-xl-nowrap > .td-sidebar-toc {
+    flex: 0 0 clamp(16rem, 17vw, 20rem);
+    max-width: clamp(16rem, 17vw, 20rem);
+    width: auto;
+  }
+
+  .td-main > .row.flex-xl-nowrap > main[role='main'] {
+    flex: 1 1 auto;
+    max-width: none;
+    min-width: 0;
+  }
 }
 
 .tree-root .td-sidebar-nav-active-item {
@@ -451,6 +487,23 @@ td > code {
 .td-navbar .td-navbar__main {
   display: flex;
   align-items: center;
+}
+
+@media (max-width: 767.98px) {
+  .td-breadcrumbs {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+
+  .td-main main[role='main'] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .td-content {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
 }
 
 // Newer Docsy can apply transparent/blurred cover navbar by default.
