@@ -1,6 +1,6 @@
 ---
 title: "Dynamically add, update, and remove Consensus Nodes"
-weight: 4
+weight: 3
 description: >
   Learn how to dynamically add, update, and remove consensus nodes in a
   running Solo network without taking the network offline.
