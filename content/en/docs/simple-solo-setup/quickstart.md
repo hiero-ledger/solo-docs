@@ -86,7 +86,7 @@ This command performs the following actions:
 To deploy multiple consensus nodes, pass the `--num-consensus-nodes` flag:
 
 ```bash
-solo one-shot single deploy --num-consensus-nodes 3
+solo one-shot multiple deploy --num-consensus-nodes 3
 ```
 
 This deploys 3 consensus nodes along with the same components as the
@@ -101,7 +101,7 @@ single-node setup (mirror node, explorer, relay).
 When finished, destroy the network as usual:
 
 ```bash
-solo one-shot single destroy
+solo one-shot multiple destroy
 ```
 
 {{< /details >}}
