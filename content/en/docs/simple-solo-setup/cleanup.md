@@ -30,10 +30,21 @@ solo one-shot single destroy
 
 This command performs the following actions:
 
-- Removes all deployed pods and services.
-- Cleans up the Kubernetes namespace.
+- Removes all deployed pods and services in the Solo namespace..
+- Cleans up the Kubernetes namespace, which also removes associated PVCs when namespace deletion completes successfully.
 - Deletes the Kind cluster.
 - Updates Solo's internal state.
+
+> **Note:** `solo one-shot single destroy` does **not** delete the underlying Kind cluster. If you created a Solo network on a local Kind cluster, the cluster remains until you delete it manually.
+
+### Failure modes and rerunning destroy
+
+If `solo one-shot single destroy` fails part-way through (for example, due to an earlier deploy error), some resources may remain:
+
+- The Solo namespace or one or more PVCs may not be deleted, which can leave Docker volumes appearing as “in use”.
+- The destroy commands are designed to be idempotent, so you can safely rerun `solo one-shot single destroy` to complete cleanup.
+
+If rerunning destroy does not release the resources, use the **Full Reset** procedure below to force a clean state.
 
 ## Resource Usage
 
@@ -63,5 +74,13 @@ clean state.
 > remove your Solo home directory (`~/.solo`).
 > Always use the `grep '^solo'` filter when listing clusters - omitting it will delete every Kind cluster on
 > your machine, including any unrelated to Solo.
+
+After deleting the Kind cluster, Kubernetes resources (including namespaces and PVCs) and their associated volumes should be released. If Docker still reports unused volumes that you want to remove, you can optionally run:
+
+```bash
+# Optional: remove all unused Docker volumes
+docker volume prune
+```
+> **Warning:** `docker volume prune` removes all unused Docker volumes on your machine, not just those created by Solo. Only run this command if you understand its impact.
 
 - To redeploy after a full reset, follow the [Quickstart](/onboarding/quickstart) guide.
