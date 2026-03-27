@@ -1,7 +1,7 @@
 ---
 title: "Step-by-Step Manual Deployment"
 description: "Deploy each Solo network component individually for maximum control over configuration and debugging."
-weight: 2
+weight: 3
 type: docs
 ---
 
