@@ -158,6 +158,8 @@ authenticate the operator account. Create a `.env` file at the root of the
   # Target the local Solo network
   export HEDERA_NETWORK="local-node"
   EOF
+  # Load the variables into your current shell session
+  source .env
   ```
 
   > **Important:** `OPERATOR_KEY` must be set to the `privateKey` value, not the
