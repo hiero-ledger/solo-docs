@@ -1,5 +1,5 @@
 ---
-title: "Advanced Network Deployments"
+title: "Network Deployments"
 description: >
   Step-by-step workflows and Helm-level customization for users who need
   full control over how a Solo network is initialized, configured, and scaled.

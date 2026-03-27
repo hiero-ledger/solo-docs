@@ -1,6 +1,6 @@
 ---
 title: "Using Network Load Generator with Solo"
-weight: 110
+weight: 2
 description: >
     Learn how to run load tests against a Solo network using the Network Load Generator (NLG).
 type: docs
