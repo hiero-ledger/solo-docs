@@ -5,3 +5,13 @@ package-lock.json
 .hugo_build.lock
 /build/
 /.dryrun/
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.idea/.gitignore
+/.idea/copilot.data.migration.ask2agent.xml
+/.idea/GitLink.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/prettier.xml
+/.idea/solo-docs.iml
+/.idea/vcs.xml

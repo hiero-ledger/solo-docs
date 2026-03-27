@@ -66,6 +66,8 @@ concurrency:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 defaults:
   run:
@@ -74,8 +76,7 @@ defaults:
 jobs:
   update-docs:
     name: Generate and commit docs
-    runs-on: ubuntu-latest
-
+    runs-on: hl-solo-docs-lin
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
@@ -105,111 +106,41 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Checkout hiero-ledger/solo at the release tag.
-      # The solo source tree is needed to:
-      #   - Build and install the `solo` binary from source.
-      #   - Provide examples/README.md which is embedded in the examples page.
-      # It is checked out into ./solo-src/ so it doesn't conflict with this
-      # repo's own files.
-      - name: Checkout hiero-ledger/solo at ${{ steps.version.outputs.version }}
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          repository: hiero-ledger/solo
-          ref: ${{ steps.version.outputs.version }}
-          path: solo-src
-
       # Tool setup.
-      - name: Setup Node.js 22
+      - name: Setup Node.js
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: 22
+          node-version: 24
 
-      - name: Install Task (go-task)
-        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611 # v2.0.0
+      # hugo action setup
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@75d2e84710de30f6ff7268e08f310b60ef14033f # v3.0.0
         with:
-          version: 3.39.2
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          hugo-version: "0.156.0"
+          extended: true
 
-      - name: Install kubectl
-        uses: step-security/setup-kubectl@fa3574e17195eaed56b1e9d9095c58d0aee24f03 # v4.0.1
+      # setup pages
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
         with:
-          version: "v1.27.3"
+          enablement: true
 
-      - name: Setup Helm
-        uses: azure/setup-helm@1a275c3b69536ee54be43f2070a358922e12c8d4 # v4.3.1
+      # npm ci
+      - name: Install npm dependencies
+        run: npm ci
+
+      # hugo build
+      - name: Build Hugo site
+        run: npm run build:production
+
+      # upload go gh-pages
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
-          version: "v3.12.3"
+          path: public
 
-      - name: Setup Kind
-        uses: helm/kind-action@92086f6be054225fa813e0a4b13787fc9088faab # v1.13.0
-        with:
-          install_only: true
-          node_image: kindest/node:v1.31.4@sha256:2cb39f7295fe7eafee0842b1052a599a4fb0f8bcf3f83d96c7f4864c357c6c30
-          version: v0.26.0
-          kubectl_version: v1.31.4
-          verbosity: 3
-          wait: 120s
-
-      # Build and install solo from source.
-      # This ensures the `solo` binary on PATH matches the exact release tag
-      # being documented, rather than whatever is published on npm.
-      - name: Build solo from source
-        working-directory: solo-src
-        run: |
-          npm install
-          task build
-
-      - name: Install solo globally from local build
-        working-directory: solo-src
-        run: |
-          # Install the freshly built local package globally so `solo` is on PATH.
-          npm install -g .
-          # Symlink the local build over the global install for local command calls.
-          npm link
-          which solo
-          solo --version
-
-      # Install solo-docs script dependencies.
-      - name: Install solo-docs dependencies (kleur etc.)
-        run: npm install
-
-      # Run the documentation generation scripts.
-      # SOLO_SOURCE_DIR tells the scripts where to find the solo source tree
-      # (used to resolve examples/README.md which is embedded in the docs).
-      - name: Generate step-by-step guide and advanced-deployments docs
-        env:
-          SOLO_SOURCE_DIR: ${{ github.workspace }}/solo-src
-        run: |
-          echo "::group::Running executeUpdateDocs.mjs"
-          node scripts/executeUpdateDocs.mjs "${{ steps.version.outputs.version }}"
-          echo "::endgroup::"
-
-      - name: Generate CLI command reference (solo-commands.md)
-        run: |
-          echo "::group::Running generateHelp.mjs"
-          node scripts/generateHelp.mjs
-          echo "::endgroup::"
-
-      # Print a short generated output preview for reviewers.
-      - name: Show generated step-by-step-guide.md preview
-        run: |
-          echo "::group::content/en/docs/step-by-step-guide.md"
-          sed -n '1,120p' content/en/docs/step-by-step-guide.md
-          echo "::endgroup::"
-
-      # Commit and push generated files back to solo-docs.
-      # Only the rendered content files (not build/ logs) are committed.
-      # The commit is a no-op if none of the watched files changed.
-      - name: Commit and push generated docs
-        uses: step-security/git-auto-commit-action@905c3cd6e9ed2b67b4d46ff401fdb6d745d0ff9d # v7.1.0
-        with:
-          commit_message: "docs: auto-update generated docs for ${{ steps.version.outputs.version }}"
-          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          commit_user_name: "github-actions[bot]"
-          commit_user_email: "github-actions[bot]@users.noreply.github.com"
-          # Only stage the rendered Markdown output - not build/ logs or solo-src/.
-          file_pattern: |
-            content/en/docs/step-by-step-guide.md
-            content/en/docs/advanced-deployments.md
-            content/en/docs/solo-commands.md
-            content/en/examples/_index.md
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
