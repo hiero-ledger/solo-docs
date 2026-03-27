@@ -1,6 +1,11 @@
 ---
 title: "Step-by-Step Manual Deployment"
-description: "Deploy each Solo network component individually for maximum control over configuration and debugging."
+description: >
+  Deploy each Solo network component individually for maximum control over
+  configuration and debugging. Execute each step manually through the Solo CLI
+  and integrate Solo into bespoke automation pipelines.
+categories: ["Advanced", "Deployment"]
+tags: ["advanced", "operator", "manual-deployment", "cli"]
 weight: 2
 type: docs
 ---
@@ -18,9 +23,9 @@ in isolation, or integrate Solo into a bespoke automation pipeline.
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/onboarding/system-readiness) — your local environment
+- [**System Readiness**](/docs/advanced-solo-setup/system-readiness) — your local environment
   meets all hardware and software requirements (Docker, kind, kubectl, helm, Solo).
-- [**Quickstart**](/onboarding/quickstart) — you have a running Kind cluster and
+- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Kind cluster and
   have run `solo init` at least once.
 - Set your environment variables if you have not already done so:
 
@@ -50,14 +55,15 @@ Before proceeding, ensure you have completed the following:
     -n "${SOLO_NAMESPACE}" \
     --deployment "${SOLO_DEPLOYMENT}"
   ```
+
 - **Expected Output**:
 
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: cluster-ref config connect --cluster-ref kind-solo --context kind-solo
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : cluster-ref config connect --cluster-ref kind-solo --context kind-solo
   **********************************************************************************
   Initialize
   ✔ Initialize 
@@ -75,7 +81,7 @@ Before proceeding, ensure you have completed the following:
 
 - Attach the cluster to your deployment and specify the number of consensus nodes:
 
-    #### 1. Single node:
+  #### 1. Single node:
 
     ```bash
     solo deployment cluster attach \
@@ -84,9 +90,9 @@ Before proceeding, ensure you have completed the following:
       --num-consensus-nodes 1
     ```
 
-    #### 2. Multiple nodes (e.g., --num-consensus-nodes 3):
+  #### 2. Multiple nodes (e.g., --num-consensus-nodes 3):
 
-    ```bash 
+    ```bash
     solo deployment cluster attach \
       --deployment "${SOLO_DEPLOYMENT}" \
       --cluster-ref kind-${SOLO_CLUSTER_NAME} \
@@ -95,7 +101,7 @@ Before proceeding, ensure you have completed the following:
 
 - **Expected Output**:
 
-  ```bash 
+  ```bash
   solo-deployment_ADD_CLUSTER_OUTPUT
   ```
 
@@ -111,16 +117,17 @@ Before proceeding, ensure you have completed the following:
     --tls-keys \
     --deployment "${SOLO_DEPLOYMENT}"
   ```
+
   PEM key files are written to `~/.solo/cache/keys/`.
 
 - **Example output**:
 
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: keys consensus generate --gossip-keys --tls-keys --deployment solo-deployment
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : keys consensus generate --gossip-keys --tls-keys --deployment solo-deployment
   **********************************************************************************
   Initialize
   ✔ Initialize 
@@ -155,10 +162,10 @@ into the cluster setup namespace:
 
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: cluster-ref config setup --cluster-setup-namespace solo-cluster
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : cluster-ref config setup --cluster-setup-namespace solo-cluster
   **********************************************************************************
   Check dependencies
   Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
@@ -197,10 +204,10 @@ HAProxy, Envoy, and MinIO:
 
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: consensus network deploy --deployment solo-deployment --release-tag v0.66.0
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : consensus network deploy --deployment solo-deployment --release-tag v0.66.0
   **********************************************************************************
   Check dependencies
   Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
@@ -288,10 +295,10 @@ HAProxy, Envoy, and MinIO:
 
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: consensus node setup --deployment solo-deployment --release-tag v0.66.0
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : consensus node setup --deployment solo-deployment --release-tag v0.66.0
   **********************************************************************************
   Load configuration
   ✔ Load configuration [0.2s]
@@ -337,10 +344,10 @@ HAProxy, Envoy, and MinIO:
 
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: consensus node start --deployment solo-deployment
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : consensus node start --deployment solo-deployment
   **********************************************************************************
   Check dependencies
   Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
@@ -415,12 +422,13 @@ submitting record files. The `--enable-ingress` flag installs the HAProxy
 ingress controller for the mirror node REST API.
 
 - **Example output**:
+
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: mirror node add --deployment solo-deployment --cluster-ref kind-solo --enable-ingress --quiet-mode
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : mirror node add --deployment solo-deployment --cluster-ref kind-solo --enable-ingress --quiet-mode
   **********************************************************************************
   Check dependencies
   Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
@@ -486,12 +494,13 @@ ingress controller for the mirror node REST API.
   ```
 
 - **Example output**:
+
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: explorer node add --deployment solo-deployment --cluster-ref kind-solo --quiet-mode
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : explorer node add --deployment solo-deployment --cluster-ref kind-solo --quiet-mode
   **********************************************************************************
   Check dependencies
   Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
@@ -542,12 +551,13 @@ endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.):
   ```
 
 - **Example output**:
+
   ```bash
   ******************************* Solo *********************************************
-  Version			: 0.63.0
-  Kubernetes Context	: kind-solo
-  Kubernetes Cluster	: kind-solo
-  Current Command		: relay node add --node-aliases node1 --deployment solo-deployment --cluster-ref kind-solo
+  Version   : 0.63.0
+  Kubernetes Context : kind-solo
+  Kubernetes Cluster : kind-solo
+  Current Command  : relay node add --node-aliases node1 --deployment solo-deployment --cluster-ref kind-solo
   **********************************************************************************
   Check dependencies
   Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
@@ -581,10 +591,9 @@ endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.):
   Using requested port 7546
   ✔ Enable port forwarding for relay node [0.1s]
   Stopping port-forward for port [30212]
-  ``` 
+  ```
 
 ---
-
 
 </details>
 
@@ -597,8 +606,8 @@ When you are done, destroy components in the reverse order of deployment.
 > **Important:** Always destroy components before destroying the network. Skipping
 > this order can leave orphaned Helm releases and PVCs in your cluster.
 
-
 ### 1. Destroy JSON-RPC Relay
+
 ```bash
 solo relay node destroy \
   -i node1 \
@@ -606,8 +615,8 @@ solo relay node destroy \
   --cluster-ref kind-${SOLO_CLUSTER_NAME}
 ```
 
-
 ### 2. Destroy Mirror Node
+
 ```bash
 solo mirror node destroy \
   --deployment "${SOLO_DEPLOYMENT}" \
@@ -615,6 +624,7 @@ solo mirror node destroy \
 ```
 
 ### 3. Destroy Explorer
+
 ```bash
 solo explorer node destroy \
   --deployment "${SOLO_DEPLOYMENT}" \
@@ -622,9 +632,11 @@ solo explorer node destroy \
 ```
 
 ### 4. Destroy the Network
+
 ```bash
 solo consensus network destroy \
   --deployment "${SOLO_DEPLOYMENT}" \
   --force
 ```
+
 ---
