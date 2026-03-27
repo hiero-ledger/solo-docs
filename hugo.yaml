@@ -131,13 +131,13 @@ outputs:
 params:
   taxonomy:
     # set taxonomyCloud = [] to hide taxonomy clouds
-    taxonomyCloud: [tags, categories]
+    taxonomyCloud: [categories, tags]
 
     # If used, must have same length as taxonomyCloud
-    taxonomyCloudTitle: [Tag Cloud, Categories]
+    taxonomyCloudTitle: [Categories, Tag Cloud]
 
     # set taxonomyPageHeader = [] to hide taxonomies on the page headers
-    taxonomyPageHeader: [tags, categories]
+    taxonomyPageHeader: [categories, tags]
 
   privacy_policy: https://policies.google.com/privacy
 
