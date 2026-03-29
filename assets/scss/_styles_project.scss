@@ -677,6 +677,13 @@ td > code {
   * {
     color: white !important;
   }
+
+  // Primary CTA buttons sit on a white background — preserve the brand color
+  // for text and icons so they remain legible against the white button face.
+  .cta-btn-primary,
+  .cta-btn-primary * {
+    color: var(--color-primary) !important;
+  }
 }
 
 .td-cover-block {

@@ -53,7 +53,7 @@ appear in the `prepare` step.
       `hedera-node*.crt` and `hedera-node*.key` under `~/.solo/cache/keys/`.
 
     When adding a new node, Solo generates a fresh key pair and stores it
-    alongside the keys for existing nodes in the same directory. For more detail, see [Where are my keys stored?](/docs/faq/#where-are-my-keys-stored).
+    alongside the keys for existing nodes in the same directory. For more detail, see [Where are my keys stored?](/docs/faq/#5-where-are-my-keys-stored).
 
 2. **Persistent Volume Claims (PVCs)**
 

@@ -24,9 +24,9 @@ This guide covers three debugging workflows:
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/docs/advanced-solo-setup/system-readiness) — your local environment
+- [**System Readiness**](/docs/simple-solo-setup/system-readiness) — your local environment
   meets all hardware and software requirements.
-- [**Quickstart**](/onboarding/quickstart) — you have a running Solo cluster and
+- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Solo cluster and
   are familiar with the basic Solo workflow.
 
 You will also need:

@@ -1,0 +1,19 @@
+<script>
+  // Expand all foldable sidebar sections by default.
+  // Docsy's foldable-nav uses hidden checkboxes; checking them opens the section.
+  // Individual sections can still be collapsed by the user after load.
+  (function () {
+    function expandSidebarSections() {
+      document
+        .querySelectorAll('nav.foldable-nav input[type="checkbox"]')
+        .forEach(function (cb) {
+          cb.checked = true;
+        });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', expandSidebarSections);
+    } else {
+      expandSidebarSections();
+    }
+  })();
+</script>
