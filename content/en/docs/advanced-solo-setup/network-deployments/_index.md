@@ -1,9 +1,12 @@
 ---
-title: "Network Deployments"
-description: >
-  Step-by-step workflows and Helm-level customization for users who need
-  full control over how a Solo network is initialized, configured, and scaled.
-tags: [solo, docs]
+title: "Advanced Network Deployments"
+description: >-
+  Step-by-step workflows and component-level customization for users who need
+  full control over network initialization, configuration, and scaling.
+  Explore YAML-driven deployments, manual orchestration, dynamic node management,
+  and extensive reference documentation.
+categories: ["Advanced", "Deployment"]
+tags: ["advanced", "operator", "deployment", "manual-deployment"]
 weight: 1
 ---
 

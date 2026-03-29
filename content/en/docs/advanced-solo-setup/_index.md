@@ -1,6 +1,11 @@
 ---
 title: Advanced Solo Setup
-description: Advanced options for customizing solo setup as per your needs.
-tags: [solo, docs]
+description: >-
+  Deep-dive into advanced deployment methods, network customization, and
+  operational management. This section covers YAML-driven deployments,
+  manual component orchestration, dynamic node management, and CI/CD integration.
+  Ideal for DevOps engineers and system administrators requiring full control.
+categories: ["Advanced", "Deployment"]
+tags: ["advanced", "operator"]
 weight: 2
 ---

@@ -3,7 +3,10 @@ title: "Attach JVM Debugger and Retrieve Logs"
 weight: 3
 description: >
   Learn how to attach a JVM debugger to a running Hiero Consensus Node,
-  retrieve logs for analysis, and save and restore network state files.
+  retrieve logs for analysis, and save and restore network state files along with 
+  essential tools for developers and deep-level troubleshooting.
+categories: ["Advanced"]
+tags: ["advanced", "developer", "jvm", "debugging"]
 type: docs
 ---
 
@@ -21,7 +24,7 @@ This guide covers three debugging workflows:
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/onboarding/system-readiness) — your local environment
+- [**System Readiness**](/docs/advanced-solo-setup/system-readiness) — your local environment
   meets all hardware and software requirements.
 - [**Quickstart**](/onboarding/quickstart) — you have a running Solo cluster and
   are familiar with the basic Solo workflow.
@@ -150,7 +153,6 @@ When Solo reaches the active-check phase for `node2`, it pauses and displays:
   Check node: node3,
 ? JVM debugger setup for node2. Continue when debugging is complete? (y/N)
 ```
-
 
 At this point, launch the remote debug configuration in IntelliJ IDEA. The
 node will stop at your breakpoint:
@@ -329,4 +331,5 @@ solo consensus node states -i node1,node2,node3 --deployment "${SOLO_DEPLOYMENT}
 # Restart the network using the uploaded state
 solo consensus node start --deployment "${SOLO_DEPLOYMENT}" --state-file network-node1-0-state.zip
 ```
+
 ---

@@ -2,7 +2,11 @@
 title: "FAQs"
 weight: 5
 description: >
-    Frequently asked questions about the Solo CLI tool.
+  Frequently asked questions about the Solo CLI tool, covering deployment options,
+  configuration choices, resource requirements, and common usage patterns. Find
+  quick answers to typical Solo questions.
+categories: ["Troubleshooting"]
+tags: ["beginner", "troubleshooting", "deployment", "operations"]
 type: docs
 ---
 
@@ -17,26 +21,28 @@ You can run one of the following commands depending on your needs:
     ```bash
     brew install hiero-ledger/tools/solo
     ```
-    For more information on Single Node Deployment, see [Quickstart](simple-solo-setup/quickstart.md#deploy-a-local-network-one-shot)
+
+    For more information on Single Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
 
 2. **Multiple Node Deployment (for testing consensus scenarios):**
 
     ```bash
     solo one-shot multiple deploy --num-consensus-nodes 3
     ```
-    For more information on Multiple Node Deployment, see [Quickstart](simple-solo-setup/quickstart.md#deploy-a-local-network-one-shot)
+
+    For more information on Multiple Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
 
 3. **Advanced Deployment (with custom configuration file):**
 
     ```bash
     solo one-shot falcon deploy --values-file falcon-values.yaml
     ```
-    - For more information on Advanced Deployment (with custom configuration file), see the [Advanced Solo Setup](advanced-solo-setup/_index.md)
 
+    - For more information on Advanced Deployment (with custom configuration file), see the [Advanced Solo Setup](/docs/advanced-solo-setup)
 
 ### Can I run Solo on a remote server?
 
-Yes. Solo can deploy to any Kubernetes cluster, not just a local Kind cluster. For remote-cluster and more advanced deployment flows, see [Advanced Solo Setup](advanced-solo-setup/_index.md).
+Yes. Solo can deploy to any Kubernetes cluster, not just a local Kind cluster. For remote-cluster and more advanced deployment flows, see [Advanced Solo Setup](/docs/advanced-solo-setup).
 
 ---
 
@@ -51,21 +57,24 @@ You can run one of the following commands depending on how you deployed:
     ```bash
     solo one-shot single destroy
     ```
-    For more information on Single Node Teardown, see [Quickstart](simple-solo-setup/quickstart.md#deploy-a-local-network-one-shot)
+
+    For more information on Single Node Teardown, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
 
 2. **Multiple Node Teardown:**
 
     ```bash
     solo one-shot multiple destroy
     ```
-    For more information on Multiple Node Teardown, see [Quickstart](simple-solo-setup/quickstart.md#deploy-a-local-network-one-shot)
+
+    For more information on Multiple Node Teardown, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
 
 3. **Advanced Deployment Teardown:**
 
     ```bash
     solo one-shot falcon destroy
     ```
-    For more information on Advanced Deployment Teardown (with custom configuration file), see the [Advanced Solo Setup](advanced-solo-setup/_index.md)
+
+    For more information on Advanced Deployment Teardown (with custom configuration file), see the [Advanced Solo Setup](/docs/advanced-solo-setup)
 
 ### Why should I destroy my network before redeploying?
 
@@ -117,9 +126,9 @@ After running `solo one-shot single deploy`, the following services are availabl
 
 Use these endpoints:
 
-* **gRPC (Hedera SDK)**: `localhost:50211`, Node ID: `0.0.3`
-* **JSON RPC (Ethereum tools)**: `http://localhost:7546`
-* **Mirror Node REST**: `http://localhost:5551/api/v1/`
+- **gRPC (Hedera SDK)**: `localhost:50211`, Node ID: `0.0.3`
+- **JSON RPC (Ethereum tools)**: `http://localhost:7546`
+- **Mirror Node REST**: `http://localhost:5551/api/v1/`
 
 ### What should I do if `solo one-shot single destroy` fails or my Solo state is corrupted?
 
@@ -176,9 +185,9 @@ You can run `solo ledger system init` anytime after `solo consensus node start`.
     302a300506032b65700321000aa8e21064c61eab86e2a9c164565b4e7a9a4146106e0a6cd03a8c395a110e92
     ```
 
-    - Unless changed it is the private key for the default operator account `0.0.2` of the consensus network.
-    
-    - It is defined in [Hiero source code](https://github.com/hiero-ledger/hiero-consensus-node/blob/develop/hedera-node/data/onboard/GenesisPrivKey.txt)
+  - Unless changed it is the private key for the default operator account `0.0.2` of the consensus network.
+
+  - It is defined in [Hiero source code](https://github.com/hiero-ledger/hiero-consensus-node/blob/develop/hedera-node/data/onboard/GenesisPrivKey.txt)
 
 ### 3. What is the difference between ECDSA keys and ED25519 keys?
 ED25519 is Hedera’s native key type, while ECDSA (secp256k1) is used for EVM/Ethereum-style tooling and compatibility.  
@@ -192,8 +201,8 @@ You will need to use ECDSA keys for EVM tooling compatibility.  If you take the 
 
 Keys are stored in `~/.solo/cache/keys/`. This directory contains:
 
-* TLS certificates (`hedera-node*.crt`, `hedera-node*.key`)
-* Signing keys (`s-private-node*.pem`, `s-public-node*.pem`)
+- TLS certificates (`hedera-node*.crt`, `hedera-node*.key`)
+- Signing keys (`s-private-node*.pem`, `s-public-node*.pem`)
 
 ### 6. How do I get the key for an account?
 
@@ -296,6 +305,7 @@ The mirror node accumulates transaction history while the network is running. If
     ```bash
     brew install k9s
     ```
+
 - Then run `k9s` to launch. It is especially helpful for watching pod startup progress during deployment.
 
 ---

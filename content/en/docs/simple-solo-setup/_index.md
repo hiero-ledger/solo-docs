@@ -1,6 +1,10 @@
 ---
 title: Simple Solo Setup
-description: What does your user need to know to try your project?
-tags: [solo, docs]
+description: >-
+  Get started with Solo quickly. This section guides you through prerequisites,
+  one-command deployment, network management, and cleanup. Perfect for developers
+  and testers getting their first Hiero network running locally.
+categories: ["Getting Started", "Deployment"]
+tags: ["beginner", "one-shot", "deployment"]
 weight: 1
 ---

@@ -1,6 +1,12 @@
 ---
 title: Documentation
 linkTitle: Docs
+description: >-
+  Comprehensive guide to Solo: deploy Hiero consensus networks locally with
+  one command or full manual control. Covers setup, deployment methods,
+  operations, advanced features, integration, and troubleshooting.
+categories: ["Getting Started"]
+tags: ["beginner", "advanced", "cli", "deployment"]
 menu: { main: { weight: 1 } }
 ---
 

@@ -3,6 +3,10 @@ title: "Troubleshooting"
 weight: 4
 description: >
   Solutions to common issues when using Solo, plus guidance on getting help.
+  This document covers installation problems, pod readiness issues, resource constraints,
+  and how to find additional support.
+categories: ["Troubleshooting"]
+tags: ["troubleshooting", "debugging", "kubernetes", "operations"]
 type: docs
 ---
 
@@ -22,10 +26,10 @@ Use this page when something is failing and you need to diagnose or recover quic
 
 If you are looking for setup or day-to-day usage guidance rather than failure diagnosis, start with these pages:
 
-- [One-command deployment options and variants](faq.md#one-command-deployment-options-and-variants)
-- [How to fully destroy a network and clean up resources](simple-solo-setup/cleanup.md)
-- [How to access exposed services (mirror node, relay, explorer)](faq.md#accessing-exposed-services)
-- [Common usage patterns and gotchas](faq.md#common-usage-patterns-and-gotchas)
+- [One-command deployment options and variants](/docs/faqs#one-command-deployment-options-and-variants)
+- [How to fully destroy a network and clean up resources](/docs/simple-solo-setup/cleanup)
+- [How to access exposed services (mirror node, relay, explorer)](/docs/faqs#accessing-exposed-services)
+- [Common usage patterns and gotchas](/docs/faqs#common-usage-patterns-and-gotchas)
 
 ## Common Issues and Solutions
 
@@ -55,12 +59,12 @@ You are likely hitting an installation or upgrade problem if:
    fi
    ```
 
-   Then reinstall Solo using the steps in the [Quickstart](simple-solo-setup/quickstart.md).
+   Then reinstall Solo using the steps in the [Quickstart](/docs/simple-solo-setup/quickstart).
 
 2. **Verify system resources**
 
      - Ensure your machine and Docker (or other container runtime) meet the minimum requirements described in  
-   [System readiness](simple-solo-setup/system-readiness.md#hardware-requirements).
+   [System readiness](/docs/simple-solo-setup/system-readiness#hardware-requirements).
 
      - If Docker Desktop or your container runtime is configured below these values, increase the allocations and retry the install or deploy.
 
@@ -71,6 +75,7 @@ You are likely hitting an installation or upgrade problem if:
    ```bash
    solo one-shot single destroy
    ```
+
 ---
 
 ### Pods not reaching Ready state
@@ -135,7 +140,7 @@ Common causes include invalid runtime configuration, missing dependencies, and i
 
   #### Resource allocation:
   
-  - Ensure your machine and Docker (or other container runtime) meet the minimum requirements described in [System readiness](simple-solo-setup/system-readiness.md#hardware-requirements).
+  - Ensure your machine and Docker (or other container runtime) meet the minimum requirements described in [System readiness](/docs/simple-solo-setup/system-readiness#hardware-requirements).
   
   - On Docker Desktop, check: **Settings > Resources**.
 
@@ -162,7 +167,7 @@ Resource pressure is a common cause of `Pending` pods, slow startup, and repeate
 
 3. Compare against the recommended local baseline:
 
-See [System readiness](simple-solo-setup/system-readiness.md#hardware-requirements) for the recommended memory, CPU, and disk values.
+See [System readiness](/docs/simple-solo-setup/system-readiness#hardware-requirements) for the recommended memory, CPU, and disk values.
 
 ---
 
@@ -207,7 +212,7 @@ If you cannot connect to Solo network endpoints from your machine, use this sequ
 3. Confirm the expected endpoints and ports
 
    After forwarding, connect to the local ports shown above (for example, `http://localhost:8080` for the explorer).  
-   For the standard exposed endpoints after a successful one-shot deployment, see [How to access exposed services (mirror node, relay, explorer)](faq.md#accessing-exposed-services).
+   For the standard exposed endpoints after a successful one-shot deployment, see [How to access exposed services (mirror node, relay, explorer)](/docs/faqs#accessing-exposed-services).
 
 ---
 
@@ -267,6 +272,7 @@ If the mirror node is not showing new transactions, first confirm that records a
      --enable-ingress \
      --pinger
    ```
+
 ### Helm repository errors
 
 If you see errors such as `repository name already exists`, you likely have a conflicting Helm repo entry.
@@ -316,7 +322,7 @@ Problems starting or accessing the Kind cluster often present as cluster creatio
 ### Cleanup and reset (old installation artifacts)
 
 Previous Solo installations can cause conflicts during new deployments.  
-For the full teardown and full reset procedure, see the [Cleanup guide](simple-solo-setup/cleanup.md).
+For the full teardown and full reset procedure, see the [Cleanup guide](/docs/simple-solo-setup/cleanup).
 
 At a high level:
 
@@ -326,7 +332,7 @@ At a high level:
    solo one-shot single destroy
    ```
 
-2. If `destroy` fails or Solo state is corrupted, perform a [full reset](simple-solo-setup/cleanup.md#full-reset), which:
+2. If `destroy` fails or Solo state is corrupted, perform a [full reset](/docs/simple-solo-setup/cleanup#full-reset), which:
    - Deletes Solo-managed Kind clusters (names starting with `solo`).
    - Removes the Solo home directory (`~/.solo`).
 
@@ -350,10 +356,10 @@ Before seeking help, collect the following diagnostics so issues can be reproduc
 
 These files are often requested when reporting issues:
 
-| File                             | Description                          |
-| -------------------------------- | ------------------------------------ |
-| `~/.solo/logs/solo.log`          | Solo CLI command logs                |
-| `~/.solo/logs/hashgraph-sdk.log` | SDK transaction logs from Solo client |
+| File                              | Description                           |
+| --------------------------------- | ------------------------------------- |
+| `~/.solo/logs/solo.log`           | Solo CLI command logs                 |
+| `~/.solo/logs/hashgraph-sdk.log`  | SDK transaction logs from Solo client |
 
 ### Kubernetes diagnostics
 
@@ -373,6 +379,7 @@ kubectl get events -n "${SOLO_NAMESPACE}" --sort-by='.lastTimestamp'
 kubectl top nodes
 kubectl top pods -n "${SOLO_NAMESPACE}"
 ```
+
 ---
 
 ## Getting Help
@@ -391,10 +398,10 @@ kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>
 
 ### 2. Documentation
 
-- [Quickstart](simple-solo-setup/quickstart.md) - Basic setup and usage.
-- [Advanced Solo Setup](advanced-solo-setup/_index.md) - Complex deployment scenarios.
-- [FAQ](faq.md) - Common questions and answers.
-- [Solo CLI User Manual](advanced-solo-setup/solo-cli.md) - Command reference and examples.
+- [Quickstart](/docs/simple-solo-setup/quickstart) - Basic setup and usage.
+- [Advanced Solo Setup](/docs/advanced-solo-setup) - Complex deployment scenarios.
+- [FAQ](/docs/faqs) - Common questions and answers.
+- [Solo CLI User Manual](/docs/advanced-solo-setup/solo-cli) - Command reference and examples.
 
 ### 3. GitHub Issues
 

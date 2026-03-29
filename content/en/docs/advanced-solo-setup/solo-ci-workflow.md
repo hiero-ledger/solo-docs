@@ -2,7 +2,11 @@
 title: "Solo CI Workflow"
 weight: 5
 description: >
-    Learn how to integrate Solo into a GitHub Actions CI pipeline - covering runner requirements, tool installation, and automated network deployment.
+  Learn how to integrate Solo into a GitHub Actions CI pipeline covering runner
+  requirements, tool installation, and automated network deployment within CI
+  environments. Set up fresh isolated Solo networks for each CI run.
+categories: ["Advanced"]
+tags: ["advanced", "developer", "ci-cd", "testing"]
 type: docs
 ---
 
@@ -16,9 +20,9 @@ fresh environments with no pre-installed tools.
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/onboarding/system-readiness) — your local environment
+- [**System Readiness**](/docs/simple-solo-setup/system-readiness) — your local environment
   meets all hardware and software requirements.
-- [**Quickstart**](/onboarding/quickstart) — you are familiar with the basic Solo
+- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you are familiar with the basic Solo
   workflow and the `solo one-shot single deploy` command.
 
 This guide assumes you are integrating Solo into a GitHub Actions workflow
@@ -50,7 +54,9 @@ your workflow:
         echo "CPU cores: $cpus"
         echo "Memory: ${mem_gb} GB"
   ```
+
 **Expected Output:**
+
   ```yaml
     CPU cores: 6
     Memory: 12 GB
@@ -165,5 +171,3 @@ The following is the full workflow combining all steps above. Copy this into you
       kind create cluster -n "${SOLO_CLUSTER_NAME}"
       solo one-shot single deploy | tee solo-deploy.log
 ```
-
-
