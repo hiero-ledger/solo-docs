@@ -1,4 +1,3 @@
-
 ---
 title: "Using Solo with Hiero JavaScript SDK"
 weight: 1
@@ -21,13 +20,13 @@ to submit your first transaction.
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/onboarding/system-readiness):
+- [**System Readiness**](/docs/simple-solo-setup/system-readiness):
   - Your local environment meets all hardware and software requirements, including Docker, kubectl, and Solo.
 
   - You will need the following tools installed:
 
     | Requirement | Version | Purpose |
-    |---|---|---|
+    | --- | --- | --- |
     | [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Latest | Runs the Solo cluster containers |
     | [Solo](/onboarding/system-readiness) | Latest | Deploys and manages the local network |
     | [Node.js](https://nodejs.org/) | v18 or higher | Runs the SDK examples |
@@ -48,6 +47,7 @@ network with the mirror node and Hiero Explorer:
 git clone https://github.com/hiero-ledger/solo.git
 cd solo
 ```
+
 ```bash
 # Launch a local Solo network with mirror node and Hiero Explorer
 cd scripts
@@ -55,6 +55,7 @@ task default-with-mirror
 ```
 
 This command starts:
+
 - Creates a local Kind Kubernetes cluster.
 - Deploys a local Hiero consensus node.
 - A mirror node for transaction history queries , and Hiero Explorer.
@@ -92,7 +93,7 @@ and query responses from the network.
     --hbar-amount 100
   ```
 
-- **Example output:** 
+- **Example output:**
 
   ```bash
   *** new account created ***
@@ -106,7 +107,6 @@ and query responses from the network.
 
 Note the `accountId` value (`0.0.1007` in this example). You will use it in the
 next step.
-
 
 ### Retrieve the Private Key
 
@@ -192,6 +192,7 @@ Solo network, waits for consensus, and prints the resulting receipt.
   ```
 
 **What happened:**
+
 1. The SDK built an `AccountCreateTransaction` signed by your operator key.
 2. The transaction was submitted to the Solo consensus node.
 3. The SDK polled for the transaction receipt until consensus was reached.
@@ -214,6 +215,7 @@ them. Run the topic creation example:
   ```
 
 **What happened:**
+
 1. The SDK submitted a `TopicCreateTransaction`.
 2. After consensus, the receipt returned a new topic ID (`0.0.1008`).
 3. A test message was published and its sequence number confirmed.
@@ -243,7 +245,7 @@ This removes the local consensus node, mirror node, and all associated data volu
 after reaching consensus. A receipt includes:
 
   | Field | Description |
-  |---|---|
+  | --- | --- |
   | `status` | `SUCCESS` if consensus was reached, otherwise an error code |
   | `accountId` | Set when an account was created |
   | `topicId` | Set when a topic was created |
@@ -301,9 +303,10 @@ npm run solo-test -- ledger file create \
 ```
 
   This command:
-  - Creates a new file on the network and returns a system-assigned file ID.
-  - Automatically splits files larger than 4 KB into chunks using `FileAppendTransaction`.
-  - Verifies that the uploaded content matches the local file.
+
+- Creates a new file on the network and returns a system-assigned file ID.
+- Automatically splits files larger than 4 KB into chunks using `FileAppendTransaction`.
+- Verifies that the uploaded content matches the local file.
 
 **Example output:**
 
@@ -331,7 +334,6 @@ npm run solo-test -- ledger file create \
   📄 File ID: 0.0.1234
   ```
 
-
 ### Update an existing file
 
   ```bash
@@ -342,9 +344,10 @@ npm run solo-test -- ledger file create \
   ```
 
   This command:
-  - Verifies the file exists on the network (errors if not found).
-  - Replaces the file content and re-verifies the upload.
-  - Automatically handles chunking for large files (>4 KB).
+
+- Verifies the file exists on the network (errors if not found).
+- Replaces the file content and re-verifies the upload.
+- Automatically handles chunking for large files (>4 KB).
 
 **Example output:**
 
@@ -411,13 +414,12 @@ transactions reached consensus and view their receipts.
 
 ---
 
-
 ## Retrieving Logs
 
 Solo writes logs to `~/.solo/logs/`:
 
 | Log File | Contents |
-|---|---|
+| --- | --- |
 | `solo.log` | All Solo CLI command output and lifecycle events |
 | `hashgraph-sdk.log` | SDK-level transaction submissions and responses sent to network nodes |
 
@@ -429,7 +431,7 @@ the SDK and your local Solo network.
 ## Troubleshooting
 
 | Symptom | Likely Cause | Fix |
-|---|---|---|
+| --- | --- | --- |
 | `INVALID_SIGNATURE` receipt error | `OPERATOR_KEY` set to public key instead of private key | Re-check your `.env` - use the `privateKey` field value |
 | `INSUFFICIENT_TX_FEE` | Operator account has no HBAR | Re-create the account with `--hbar-amount 100` |
 | SDK cannot connect | Solo network not running or Docker not started | Run `task default-with-mirror` and wait for full startup |

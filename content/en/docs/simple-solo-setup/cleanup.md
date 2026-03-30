@@ -3,7 +3,10 @@ title: "Cleanup"
 weight: 4
 description: >
   Learn how to properly destroy a Solo network deployment, manage resource
-  usage, and perform a full reset when the standard destroy command fails.
+  usage, and perform a full reset when the standard destroy command fails along with
+  how to clean up resources safely and completely.
+categories: ["Operations"]
+tags: ["operations", "cli", "kubernetes"]
 type: docs
 ---
 
@@ -16,7 +19,7 @@ resource usage, and perform a full reset when needed.
 
 Before proceeding, ensure you have completed the following:
 
-- [**Quickstart**](/onboarding/quickstart) — you have a running Solo network deployed using `solo one-shot single deploy`.
+- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Solo network deployed using `solo one-shot single deploy`.
 
 ## Destroying Your Network
 
@@ -81,6 +84,7 @@ After deleting the Kind cluster, Kubernetes resources (including namespaces and 
 # Optional: remove all unused Docker volumes
 docker volume prune
 ```
+
 > **Warning:** `docker volume prune` removes all unused Docker volumes on your machine, not just those created by Solo. Only run this command if you understand its impact.
 
-- To redeploy after a full reset, follow the [Quickstart](/onboarding/quickstart) guide.
+- To redeploy after a full reset, follow the [Quickstart](/docs/simple-solo-setup/quickstart) guide.

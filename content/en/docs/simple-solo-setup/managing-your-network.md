@@ -4,6 +4,9 @@ weight: 3
 description: >
   Learn how to start, stop, and restart consensus nodes, capture logs and
   diagnostics, and upgrade your Solo network to a new Hiero version.
+  Master day-to-day network operations and troubleshooting.
+categories: ["Operations"]
+tags: ["operations", "cli", "consensus-nodes"]
 type: docs
 ---
 
@@ -16,8 +19,8 @@ including starting, stopping, and restarting nodes, capturing logs, and upgradin
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/onboarding/system-readiness) - your local environment meets all hardware and software requirements.
-- [**Quickstart**](/onboarding/quickstart) - you have a running Solo network deployed using `solo one-shot single deploy`.
+- **[System Readiness](/docs/simple-solo-setup/system-readiness)** - your local environment meets all hardware and software requirements.
+- **[Quickstart](/docs/simple-solo-setup/quickstart)** - you have a running Solo network deployed using `solo one-shot single deploy`.
 
 ## Find Your Deployment Name
 
@@ -58,7 +61,7 @@ Use this command to stop and start all nodes in a single operation:
 solo consensus node restart --deployment <deployment-name>
 ```
 
-To verify pod status after any of the above commands, see [Verify the network](/onboarding/quickstart#verify-the-network) in the Quickstart guide.
+To verify pod status after any of the above commands, see [Verify the network](/docs/simple-solo-setup/quickstart#verify-the-network) in the Quickstart guide.
 
 ## Viewing Logs
 
@@ -114,6 +117,6 @@ solo consensus network upgrade --deployment <deployment-name> --upgrade-version 
 
 Replace <version> with the target Hiero version, for example v0.59.0.
 
-> **Note:** Check the [Version Compatibility Reference](/onboarding/system-readiness#version-compatibility-reference)
+> **Note:** Check the [Version Compatibility Reference](/docs/simple-solo-setup/system-readiness#version-compatibility-reference)
 > in the System Readiness guide to confirm the Hiero version supported by your
 > current Solo release before upgrading.

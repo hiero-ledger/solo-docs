@@ -1,9 +1,12 @@
 ---
-title: "Prerequisites"
+title: "System Readiness"
 weight: 1
 description: >
   Verify hardware and software requirements before deploying a local Hiero
-  test network with Solo. 
+  test network with Solo. Check system prerequisites, install Docker/Podman,
+  configure platform-specific settings, and ensure your machine is ready.
+categories: ["Getting Started", "Prerequisites"]
+tags: ["beginner", "installation", "prerequisites", "docker", "system-requirements", "kubernetes"]
 type: docs
 ---
 
@@ -68,28 +71,28 @@ To allocate the required resources in Docker Desktop:
 
 Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platform below to install the required container runtime and configure your environment, before proceeding to Quickstart:
 
-{{< tabpane >}}
+{{< tabpane text=true >}}
 
-{{< tab header="macOS" lang="macos" >}}
+{{% tab header="macOS" lang="macos" %}}
 
- 1. Install Homebrew (if not already installed):
+1. Install Homebrew (if not already installed):
 
     ```sh
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     ```
 
- 2. Install Docker Desktop:
+2. Install Docker Desktop:
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
     - Start Docker Desktop and allocate at least 12 GB of memory:
     - Docker Desktop > Settings > Resources > Memory
 
- 3. Remove existing npm-based installs:
+3. Remove existing npm-based installs:
     <!--lint ignore no-undefined-references-->
     ```sh
     [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hashgraph/solo >/dev/null 2>&1 || /bin/true }
     ```
 
- 4. Install Solo (this installs all other dependencies automatically):
+4. Install Solo (this installs all other dependencies automatically):
 
     ```sh
     brew tap hiero-ledger/tools
@@ -97,17 +100,17 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     brew install solo
     ```
 
- 5. Verify the installation:
+5. Verify the installation:
 
     ```sh
     solo --version
     ```
 
-{{< /tab >}}
+{{% /tab %}}
 
-{{< tab header="Linux" lang="linux" >}}
+{{% tab header="Linux" lang="linux" %}}
 
- 1. Install Homebrew for Linux:
+1. Install Homebrew for Linux:
 
     ```sh
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -120,7 +123,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     ```
 
- 2. Install Docker Engine (for Ubuntu/Debian):
+2. Install Docker Engine (for Ubuntu/Debian):
 
     ```sh
     sudo apt-get update
@@ -132,7 +135,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 
     Log out and back in for the group changes to take effect.
 
- 3. Install kubectl:
+3. Install kubectl:
 
     ```sh
     sudo apt update && sudo apt install -y ca-certificates curl
@@ -142,13 +145,13 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     sudo mv kubectl /usr/local/bin/kubectl
     ```
 
- 4. Remove existing npm-based installs:
+4. Remove existing npm-based installs:
     <!--lint ignore no-undefined-references-->
     ```sh
     [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hashgraph/solo >/dev/null 2>&1 || /bin/true }
     ```
 
- 5. Install Solo (this installs all other dependencies automatically):
+5. Install Solo (this installs all other dependencies automatically):
 
     ```sh
     brew tap hiero-ledger/tools
@@ -156,23 +159,23 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     brew install solo
     ```
 
- 6. Verify the installation:
+6. Verify the installation:
 
     ```sh
     solo --version
     ```
 
-{{< /tab >}}
+{{% /tab %}}
 
-{{< tab header="Windows (WSL2)" lang="wsl2" >}}
+{{% tab header="Windows (WSL2)" lang="wsl2" %}}
 
- Before proceeding, run the following command in Windows PowerShell (as Administrator), then reboot and open the Ubuntu terminal. All subsequent commands must be run inside the Ubuntu (WSL2) terminal.
+1. Run the following command in Windows PowerShell (as Administrator), then reboot and open the Ubuntu terminal. All subsequent commands must be run inside the Ubuntu (WSL2) terminal.
 
- ```sh
- wsl --install Ubuntu
- ```
+   ```sh
+   wsl --install Ubuntu
+   ```
 
- 1. Install Homebrew for Linux:
+2. Install Homebrew for Linux:
 
     ```sh
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -185,12 +188,12 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     ```
 
- 2. Install Docker Desktop for Windows:
+3. Install Docker Desktop for Windows:
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
     - Enable WSL2 integration: Docker Desktop > Settings > Resources > WSL Integration
     - Allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory
 
- 3. Install kubectl:
+4. Install kubectl:
 
     ```sh
     sudo apt update && sudo apt install -y ca-certificates curl
@@ -200,13 +203,13 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     sudo mv kubectl /usr/local/bin/kubectl
     ```
 
- 4. Remove existing npm-based installs:
+5. Remove existing npm-based installs:
     <!--lint ignore no-undefined-references-->
     ```sh
     [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hashgraph/solo >/dev/null 2>&1 || /bin/true }
     ```
 
- 5. Install Solo (this installs all other dependencies automatically):
+6. Install Solo (this installs all other dependencies automatically):
 
     ```sh
     brew tap hiero-ledger/tools
@@ -214,15 +217,15 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     brew install solo
     ```
 
- 6. Verify the installation:
+7. Verify the installation:
 
     ```sh
     solo --version
     ```
 
- > **Important:** Always run Solo commands from the WSL2 terminal, not from Windows PowerShell or Command Prompt.
+> **Important:** Always run Solo commands from the WSL2 terminal, not from Windows PowerShell or Command Prompt.
 
-{{< /tab >}}
+{{% /tab %}}
 
 {{< /tabpane >}}
 
@@ -262,7 +265,7 @@ The table below shows the full compatibility matrix for the current and recent S
 | 0.54.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.59.0 | v0.68.6+ | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-01-27 | 2026-04-27 |
 | 0.52.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.26.0 | v0.58.1 | v0.67.2+ | >= v1.27.3 | >= v1.27.3 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2025-12-11 | 2026-03-11 |
 
-For a list of legacy releases, see the [legacy versions documentation](https://solo.hiero.org/v0.59.1/docs/legacy-versions/).
+For a list of legacy releases, see the [legacy versions documentation](http://github.com/hiero-ledger/solo/blob/main/docs/legacy-versions.md).
 
 ## Troubleshooting Installation
 

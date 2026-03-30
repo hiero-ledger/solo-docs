@@ -3,6 +3,10 @@ title: "Quickstart"
 weight: 2
 description: >
   Deploy a local Hiero test network with a single command using the Solo CLI.
+  This guide covers installation, one-shot deployment, network verification,
+  and accessing local service endpoints.
+categories: ["Getting Started", "Deployment"]
+tags: ["beginner", "one-shot", "deployment", "cli"]
 type: docs
 ---
 
@@ -18,7 +22,7 @@ This guide covers installing Solo, running the one-shot deployment, verifying th
 Before you begin, ensure you have completed the following:
 
 - System Readiness:
-  - Prepare your local environment (Docker, Kind, Kubernetes, and related tooling) by following the **[System Readiness](/system-readiness.md)** guide.
+  - Prepare your local environment (Docker, Kind, Kubernetes, and related tooling) by following the **[System Readiness](/docs/simple-solo-setup/system-readiness)** guide.
 
 > **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
 > Detailed version requirements, OS-specific notes, and optional tools are documented in **System Readiness**.
@@ -95,7 +99,7 @@ single-node setup (mirror node, explorer, relay).
 > **Note:** Multiple node deployments require more resources. Ensure you have
 > at least **16 GB of memory** and **8 CPU cores** allocated to Docker before
 > running this command. See
-> [System Readiness](/onboarding/system-readiness#hardware-requirements) for
+> [System Readiness](/docs/simple-solo-setup/system-readiness#hardware-requirements) for
 > the full multi-node requirements.
 
 When finished, destroy the network as usual:

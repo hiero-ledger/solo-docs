@@ -2,7 +2,11 @@
 title: "Using Network Load Generator with Solo"
 weight: 2
 description: >
-    Learn how to run load tests against a Solo network using the Network Load Generator (NLG).
+  Learn how to run load tests against a Solo network using the Network Load
+  Generator (NLG). Generate realistic transaction flows and stress-test your
+  deployment to verify performance under load.
+categories: ["Advanced", "Operations"]
+tags: ["advanced", "operator", "testing"]
 type: docs
 ---
 
@@ -16,9 +20,9 @@ integration tests.
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/onboarding/system-readiness) — your local environment
+- [**System Readiness**](/docs/simple-solo-setup/system-readiness) — your local environment
   meets all hardware and software requirements.
-- [**Quickstart**](/onboarding/quickstart) — you have a running Solo network
+- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Solo network
   and are familiar with the basic Solo workflow.
 
 ## Step 1: Start a Load Test
@@ -32,6 +36,7 @@ begin a load test against your deployment.
   --args '"-c 3 -a 10 -t 60"' \
   --test CryptoTransferLoadTest
  ```
+
 Replace `<deployment-name>` with your deployment name. You can find it by running:
 
 ```bash
@@ -55,6 +60,7 @@ test runs independently against the same deployment:
   --args '"-c 3 -a 10 -t 60"' \
   --test NftTransferLoadTest
 ```
+
 ## Step 3: Stop a Specific Load Test
 
 To stop a single running load test before it completes, use the `stop` command:
@@ -74,11 +80,9 @@ To stop all running load tests and uninstall the NLG Helm chart:
   --deployment <deployment-name>
  ```
 
-
 ## Complete Example
 
 For an end-to-end walkthrough with a full configuration, see the [examples/rapid-fire](https://github.com/hiero-ledger/solo/tree/main/examples/rapid-fire).
 
-
 ## Available Tests and Arguments
-A full list of all available `rapid-fire` commands can be found in [Solo CLI Commands](solo-commands.md/#rapid-fire).
+A full list of all available `rapid-fire` commands can be found in [Solo CLI User Manual](/docs/advanced-solo-setup/solo-cli#rapid-fire).
