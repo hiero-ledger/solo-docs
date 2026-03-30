@@ -39,10 +39,10 @@
 #       depth and writes content/en/docs/solo-commands.md.
 #   7.  Commit any changed files back to this repo on the main branch so that
 #       the next Hugo build picks up the freshly generated content.
+#   8.  Build the Hugo site with GitHub Pages baseURL and deploy to GitHub Pages.
 #
-# Required secrets (none beyond GITHUB_TOKEN - which is automatic):
-#   The workflow uses the built-in GITHUB_TOKEN with `contents: write` so it
-#   can push the generated doc files back.
+# Required secrets:
+#   - GITHUB_TOKEN: built-in token with `contents: write` for pushing generated docs
 
 name: "Update Generated Docs"
 
@@ -58,6 +58,19 @@ on:
         description: "Solo release tag to generate docs for (e.g. v0.66.0) or 'main'"
         required: false
         default: "main"
+      deployment_target:
+        description: "Deployment target for baseURL (used for testing different URLs)"
+        required: false
+        default: "gh-pages"
+        type: choice
+        options:
+          - gh-pages
+          - solo.hiero.org
+          - custom
+      custom_baseurl:
+        description: "Custom baseURL (required if deployment_target is 'custom')"
+        required: false
+        default: ""
 
 # Allow only one doc-update run at a time to prevent conflicting commits.
 concurrency:
@@ -100,6 +113,49 @@ jobs:
           echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
           echo "Generating docs for Solo version: ${VERSION}"
 
+      # Resolve the baseURL for Hugo build based on deployment target.
+      # For repository_dispatch: use GitHub Pages (automatic production deployment)
+      # For workflow_dispatch: use deployment_target input (gh-pages, solo.hiero.org, or custom)
+      - name: Resolve baseURL
+        id: baseurl
+        run: |
+          DEPLOYMENT_TARGET="${{ inputs.deployment_target }}"
+
+          # For automatic deployments, always use GitHub Pages
+          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            DEPLOYMENT_TARGET="gh-pages"
+            echo "Auto-deployment detected: using GitHub Pages baseURL"
+          fi
+
+          # Set baseURL based on deployment target
+          case "${DEPLOYMENT_TARGET}" in
+            gh-pages)
+              BASEURL="https://hiero-ledger.github.io/solo-docs/"
+              echo "✓ Deployment target: GitHub Pages"
+              ;;
+            solo.hiero.org)
+              BASEURL="https://solo.hiero.org/"
+              echo "✓ Deployment target: solo.hiero.org"
+              ;;
+            custom)
+              CUSTOM_URL="${{ inputs.custom_baseurl }}"
+              if [[ -z "${CUSTOM_URL}" ]]; then
+                echo "Error: custom deployment_target selected but custom_baseurl is empty"
+                exit 1
+              fi
+              # Ensure URL ends with /
+              BASEURL="${CUSTOM_URL%/}/"
+              echo "✓ Deployment target: Custom URL"
+              ;;
+            *)
+              echo "Error: Unknown deployment_target '${DEPLOYMENT_TARGET}'"
+              exit 1
+              ;;
+          esac
+
+          echo "baseurl=${BASEURL}" >> "${GITHUB_OUTPUT}"
+          echo "Using baseURL: ${BASEURL}"
+
       # Checkout solo-docs (this repo).
       - name: Checkout solo-docs
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -115,8 +171,8 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # pinned to v6.3.0
         with:
-          go-version-file: 'go.mod'
-          go-version: '1.23.3'
+          go-version-file: "go.mod"
+          go-version: "1.23.3"
 
       # hugo action setup
       - name: Setup Hugo
@@ -136,9 +192,9 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      # hugo build
+      # hugo build with resolved baseURL for the selected deployment target
       - name: Build Hugo site
-        run: npm run build:production
+        run: npm run build:production -- --baseURL "${{ steps.baseurl.outputs.baseurl }}"
 
       # upload go gh-pages
       - name: Upload Pages Artifact
