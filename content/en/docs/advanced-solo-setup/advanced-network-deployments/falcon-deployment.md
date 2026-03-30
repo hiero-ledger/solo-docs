@@ -56,7 +56,7 @@ When you run Falcon deployment, Solo executes the same end-to-end deployment
 sequence used by its one-shot workflows:
 
 1. Connect to the Kubernetes cluster.
-2. Create a deployment and attach the cluster.
+2. Create a deployment and attach the cluster reference.
 3. Set up shared cluster components.
 4. Generate gossip and TLS keys.
 5. Deploy the consensus network and, if enabled, the block node (in parallel).
@@ -85,11 +85,9 @@ For the full list of supported CLI flags per section, see the
 
 ## Create a Falcon Values File
 
-Create a file named `falcon-values.yaml`. This file controls every component of
-your Solo deployment.
+Create a YAML file to control every component of your Solo deployment. The file can have any name -`falcon-values.yaml` is used throughout this guide as a convention.
 
-> **Note:** Keys within each section must be the full CLI flag name including the `--` prefix
-> -for example, `--release-tag`, not `release-tag` or `-r`. Any section you omit
+> **Note:** Keys within each section must be the full CLI flag name including the `--` prefix - for example, `--release-tag`, not `release-tag` or `-r`. Any section you omit
 > from the file is skipped, and Solo uses the built-in defaults for that component.
 
 ### Example: Single-Node Falcon Deployment
@@ -236,6 +234,8 @@ Available toggles and their defaults:
 | `--deploy-explorer` | `true` | Include the explorer in the deployment. |
 | `--deploy-relay` | `true` | Include the JSON RPC relay in the deployment. |
 
+> **Important**: The explorer and relay both depend on the mirror node. Setting `--deploy-mirror-node=false` while keeping `--deploy-explorer=true` or `--deploy-relay=true` is not a supported configuration and will result in a failed deployment.
+
 This is useful when you want to:
 
 - Reduce resource usage in CI jobs.
@@ -354,10 +354,9 @@ This directory typically contains:
 - `notes` - human-readable deployment summary
 - `versions` - component versions recorded at deploy time
 - `forwards` - port-forward configuration
-- `accounts.json` - predefined test account keys and IDs, grouped into three
-  categories: ECDSA Alias accounts (EVM-compatible, include a `publicAddress`
-  field), ECDSA accounts (non-EVM), and ED25519 accounts. The file also
-  includes the system operator account.
+- `accounts.json` - predefined test account keys and IDs. All accounts are
+  ECDSA Alias accounts (EVM-compatible) and include a `publicAddress` field.
+  The file also includes the system operator account.
 
 This makes Falcon especially useful for automation, because the deployment
 artifacts are written to a predictable path after each run.
