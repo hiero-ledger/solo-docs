@@ -408,5 +408,18 @@ In practice:
 
 ## Reference
 
-- [**Falcon Values File Reference**](/docs/advanced-solo-setup/advanced-network-deployments/falcon-flags-reference) -  full list of supported CLI flags, types, and defaults for every section.
+- [**Falcon Values File Reference**](/docs/advanced-solo-setup/advanced-network-deployments/falcon-flags-reference) - full list of supported CLI flags, types, and defaults for every section.
 - [**Upstream example values file**](https://github.com/hiero-ledger/solo/tree/main/examples/one-shot-falcon) - working reference from the Solo repository.
+
+> **Tip:** If you are creating a values file for the first time, start from the
+> annotated template in the Solo repository rather than writing one from scratch:
+>
+> **[`examples/one-shot-falcon/falcon-values.yaml`](https://github.com/hiero-ledger/solo/blob/main/examples/one-shot-falcon/falcon-values.yaml)**
+>
+> This file includes all supported sections and flags with inline comments
+> explaining each option. Copy it, remove what you do not need, and adjust the
+> values for your environment.
+
+---
+
+
