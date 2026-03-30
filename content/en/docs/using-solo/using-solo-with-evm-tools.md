@@ -2,13 +2,13 @@
 title: "Using Solo with EVM Tools"
 weight: 2
 description: >
-  Point your existing Ethereum tooling (Hardhat, ethers.js, and MetaMask) at a local Hiero network via the JSON-RPC relay. This document covers enabling the relay, creating and configuring a Hardhat project, deploying a Solidity contract, and configuring wallets.
+  Point your existing Ethereum tooling (Hardhat, ethers.js, and MetaMask) at a local Hiero network via the  Hiero JSON-RPC relay. This document covers enabling the relay, creating and configuring a Hardhat project, deploying a Solidity contract, and configuring wallets.
 type: docs
 ---
 
 ## Overview
 
-Hiero is EVM-compatible. The **JSON-RPC relay** exposes a standard Ethereum
+Hiero is EVM-compatible. The  Hiero **JSON-RPC relay** exposes a standard Ethereum
 JSON-RPC interface on your local Solo network, letting you use familiar EVM tools
 without modification.
 
@@ -20,8 +20,6 @@ This guide walks you through:
 - Deploying and interacting with a Solidity contract.
 - Verifying transactions via the Explorer and Mirror Node.
 - Configuring ethers.js and MetaMask.
-
----
 
 ## Prerequisites
 
@@ -45,7 +43,7 @@ You will also need:
 
 The easiest way to start a Solo network with the relay pre-configured is via
 `one-shot single deploy`, which provisions the consensus node, mirror node,
-Hiero Explorer, and the JSON-RPC relay in a single step:
+Hiero Mirror Node Explorer, and the Hiero JSON-RPC relay in a single step:
 
 ```bash
 npx @hashgraph/solo one-shot single deploy
@@ -54,8 +52,8 @@ npx @hashgraph/solo one-shot single deploy
 This command:
 
 - Creates a local Kind Kubernetes cluster.
-- Deploys a Hiero consensus node, mirror node, and Hiero Explorer.
-- Deploys the **JSON-RPC relay** and exposes it at `http://localhost:7546`.
+- Deploys a Hiero consensus node, mirror node, and Hiero Mirror Node Explorer.
+- Deploys the Hiero **JSON-RPC relay** and exposes it at `http://localhost:7546`.
 - Generates three groups of pre-funded accounts, including ECDSA (EVM-compatible) accounts.
 
 > **Relay endpoint summary:**
@@ -68,28 +66,22 @@ This command:
 
 ### Adding the Relay to an Existing Deployment
 
-If you already have a running Solo network without the relay, add it with:
+If you already have a running Solo network without the relay, see [**Step 10: Deploy JSON-RPC Relay**](/docs/advanced-solo-setup/network-deployments/manual-deployment/#10-deploy-json-rpc-relay) in the Step-by-Step Manual Deployment guide for full instructions, then return here once your relay is running on `http://localhost:7546`.
 
-```bash
-solo relay node add -i node1 --deployment "${SOLO_DEPLOYMENT}"
-```
 
-To remove it:
-
-```bash
-solo relay node destroy --deployment "${SOLO_DEPLOYMENT}"
-```
+To remove the relay when you no longer need it, see [**Cleanup Step 1: Destroy JSON-RPC Relay**](/docs/advanced-solo-setup/network-deployments/manual-deployment/#1-destroy-json-rpc-relay) in the same guide.
 
 ---
 
 ## Step 2: Retrieve Your ECDSA Account and Private Key
 
-Hiero requires EVM-compatible **ECDSA** accounts for EVM tooling. Standard
-ED25519 accounts used by the Hiero native SDK are **not** compatible with
-Hardhat, ethers.js, or MetaMask.
+`one-shot single deploy` creates ECDSA alias accounts, which are required for EVM tooling such as Hardhat, ethers.js, and MetaMask. 
+These accounts and their private keys are saved to a cache directory on completion.
 
-- After `one-shot single deploy` completes, ECDSA account private keys are saved
-to a file named after your deployment. To find your deployment name, run:
+> Note: ED25519 accounts are not compatible with Hardhat, ethers.js, or MetaMask when used via the JSON-RPC interface. 
+> Always use the ECDSA keys from accounts.json for EVM tooling.
+
+- To find your deployment name, run:
 
   ```bash
   cat ~/.solo/cache/last-one-shot-deployment.txt
@@ -100,18 +92,19 @@ to a file named after your deployment. To find your deployment name, run:
   ```bash
   ~/.solo/cache/one-shot-<deployment-name>/accounts.json
   ```
+
+- Open that file to retrieve your ECDSA keys and EVM address. Each account entry contains:
+  - An **ECDSA private key** - 64 hex characters with a `0x` prefix (e.g. `0x105d0050...`).
+  - An **ECDSA public key** - the corresponding public key.
+  - An **EVM address** - derived from the public key (e.g. `0x70d379d473e2005bb054f50a1d9322f45acb215a`). In Hiero terminology, this means the account has an EVM address aliased from its ECDSA public key.
   
-
-- Open that file to retrieve your ECDSA private keys. They follow the standard
-Ethereum format (64 hex characters with a `0x` prefix):
-
   ```bash
   0x105d0050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524
   0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7
   ...
   ```
 
-- Export one as an environment variable for use in the steps below - **never
+- Export the private key for one account as an environment variable - **never
 hardcode private keys in source files**:
 
   ```bash
@@ -320,7 +313,7 @@ npx hardhat run scripts/send-tx.ts --network solo
 
 Confirm your transactions reached consensus using any of the following:
 
-### Hiero Explorer
+### Hiero Mirror Node Explorer
 
 ```url
 http://localhost:8080/localnet/dashboard
@@ -329,16 +322,19 @@ http://localhost:8080/localnet/dashboard
 Search by account address, transaction hash, or contract address to view
 transaction details and receipts.
 
-### Mirror Node REST API
+### Hiero Mirror Node REST API
 
 ```url
-http://localhost:5551/api/v1/transactions?limit=5
+http://localhost:8081/api/v1/transactions?limit=5
 ```
 
 Returns the five most recent transactions in JSON format. Useful for scripted
 verification.
 
-### JSON-RPC (eth_getTransactionReceipt)
+> Note: `localhost:5551` (the legacy Mirror Node REST API) is being phased out. 
+> Always use `localhost:8081` to ensure compatibility with all endpoints.
+
+### Hiero JSON RPC Relay (eth_getTransactionReceipt)
 
 ```bash
 curl -X POST http://localhost:7546 \
