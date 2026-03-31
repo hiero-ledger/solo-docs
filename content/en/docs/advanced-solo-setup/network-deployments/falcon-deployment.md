@@ -1,5 +1,5 @@
 ---
-title: "Falcon Deployment"
+title: "One-shot Falcon Deployment"
 description: >
   Deploy a complete Solo network from a single YAML file for repeatable advanced setups,
   CI pipelines, and custom component configuration. Falcon combines simplicity with
@@ -12,11 +12,11 @@ type: docs
 
 ## Overview
 
-Falcon deployment is Solo's YAML-driven one-shot workflow. It uses the same core
+One-shot Falcon deployment is Solo's YAML-driven one-shot workflow. It uses the same core
 deployment pipeline as `solo one-shot single deploy`, but lets you inject
 component-specific flags through a single values file.
 
-Use Falcon deployment when you need a repeatable advanced setup, want to check a
+One-shot use Falcon deployment when you need a repeatable advanced setup, want to check a
 complete deployment into source control, or need to customise component flags
 without running every Solo command manually.
 
