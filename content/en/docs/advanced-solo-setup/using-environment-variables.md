@@ -1,6 +1,6 @@
 ---
 title: "Using Environment Variables"
-weight: 4
+weight: 5
 description: >
   A comprehensive reference of all environment variables supported by Solo,
   including their purposes, default values, and expected formats. Configure

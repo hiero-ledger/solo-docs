@@ -1,6 +1,6 @@
 ---
 title: "Solo CI Workflow"
-weight: 5
+weight: 6
 description: >
   Learn how to integrate Solo into a GitHub Actions CI pipeline covering runner
   requirements, tool installation, and automated network deployment within CI
