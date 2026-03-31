@@ -478,7 +478,7 @@ Before proceeding, ensure you have completed the following:
 
 ---
 
-### 9. Deploy Explorer
+### 9. Deploy Hiero Explorer
 
 - Deploy the Hiero Explorer, a web UI for browsing transactions and accounts:
 
