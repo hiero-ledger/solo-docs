@@ -3,6 +3,8 @@ title: "Customizing Solo with Tasks"
 weight: 4
 description: >
   Use the Task runner to deploy and customize Solo networks, then explore maintained GitHub example projects for common workflows.
+categories: ["Advanced", "Deployment"]
+tags: ["advanced", "operator", "tasks", "deployment"]
 type: docs
 ---
 

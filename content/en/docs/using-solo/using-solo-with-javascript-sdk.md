@@ -4,6 +4,8 @@ weight: 1
 description: >
   Walk through submitting your first transaction to a local Solo network
   using the Hiero JavaScript SDK.
+categories: ["Integration", "Developer"]
+tags: ["developer", "javascript-sdk", "transactions"]
 type: docs
 ---
 
