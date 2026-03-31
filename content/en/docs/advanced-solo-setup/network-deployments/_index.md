@@ -7,6 +7,6 @@ description: >-
   and extensive reference documentation.
 categories: ["Advanced", "Deployment"]
 tags: ["advanced", "operator", "deployment", "manual-deployment"]
-weight: 1
+weight: 2
 ---
 

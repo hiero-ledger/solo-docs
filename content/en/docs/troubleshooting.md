@@ -401,7 +401,7 @@ kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>
 - [Quickstart](/docs/simple-solo-setup/quickstart) - Basic setup and usage.
 - [Advanced Solo Setup](/docs/advanced-solo-setup) - Complex deployment scenarios.
 - [FAQs](/docs/faqs) - Common questions and answers.
-- [Solo CLI User Manual](/docs/advanced-solo-setup/solo-cli) - Command reference and examples.
+- [Solo CLI Reference](/docs/advanced-solo-setup/cli/solo-cli) - Canonical command and flag reference.
 
 ### 3. GitHub Issues
 
