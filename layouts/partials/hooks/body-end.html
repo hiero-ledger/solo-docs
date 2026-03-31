@@ -17,3 +17,59 @@
     }
   })();
 </script>
+
+<script>
+  // Enable typeahead behavior for Docsy offline search.
+  // Docsy binds search rendering to the "change" event (Enter/blur), so we
+  // dispatch debounced "change" events while typing.
+  (function () {
+    function enableTypeaheadSearch() {
+      if (!window.jQuery) {
+        return;
+      }
+
+      var $ = window.jQuery;
+      var debounceMs = 150;
+
+      $('.td-search input').each(function () {
+        var $input = $(this);
+
+        if ($input.data('typeaheadBound')) {
+          return;
+        }
+
+        $input.data('typeaheadBound', true);
+
+        var timerId = null;
+
+        $input.on('input', function () {
+          var el = this;
+
+          if (timerId) {
+            clearTimeout(timerId);
+          }
+
+          timerId = setTimeout(function () {
+            // Avoid Docsy's default "change" handler forcibly blurring input.
+            var originalBlur = $.fn.blur;
+            $.fn.blur = function () {
+              return this;
+            };
+
+            try {
+              $(el).trigger('change');
+            } finally {
+              $.fn.blur = originalBlur;
+            }
+          }, debounceMs);
+        });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', enableTypeaheadSearch);
+    } else {
+      enableTypeaheadSearch();
+    }
+  })();
+</script>
