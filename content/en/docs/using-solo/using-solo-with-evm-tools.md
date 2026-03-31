@@ -3,6 +3,8 @@ title: "Using Solo with EVM Tools"
 weight: 2
 description: >
   Point your existing Ethereum tooling (Hardhat, ethers.js, and MetaMask) at a local Hiero network via the  Hiero JSON-RPC relay. This document covers enabling the relay, creating and configuring a Hardhat project, deploying a Solidity contract, and configuring wallets.
+categories: ["Integration", "Developer"]
+tags: ["developer", "evm", "hardhat", "solidity", "json-rpc", "smart-contracts"]
 type: docs
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: "Advanced Network Deployments"
+title: "Network Deployments"
 description: >-
   Step-by-step workflows and component-level customization for users who need
   full control over network initialization, configuration, and scaling.

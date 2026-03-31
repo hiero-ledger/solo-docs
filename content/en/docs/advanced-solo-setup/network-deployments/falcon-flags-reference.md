@@ -6,7 +6,7 @@ description: >
   source of truth when customizing Falcon deployments.
 categories: ["Reference", "Advanced"]
 tags: ["advanced", "operator", "falcon", "cli", "configuration"]
-weight: 4
+weight: 2
 type: docs
 ---
 

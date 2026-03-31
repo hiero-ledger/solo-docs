@@ -3,6 +3,8 @@ title: "Customizing Solo with Tasks"
 weight: 4
 description: >
   Use the Task runner to deploy and customize Solo networks, then explore maintained GitHub example projects for common workflows.
+categories: ["Advanced", "Deployment"]
+tags: ["advanced", "operator", "tasks", "deployment"]
 type: docs
 ---
 
@@ -64,7 +66,7 @@ Visit the [Task installation guide](https://taskfile.dev/installation/) for addi
 
 The Solo repository uses a modular Task architecture located in the `scripts/` directory:
 
-```
+```text
 scripts/
 ├── Taskfile.yml                    # Main entry point (includes other Taskfiles)
 ├── Taskfile.scripts.yml            # Core deployment and management tasks
@@ -121,11 +123,11 @@ task default-with-mirror
 
 This configuration includes:
 
-| Component | Description |
-|-----------|-------------|
-| **Consensus Nodes** | 2 consensus nodes running Hiero |
-| **Mirror Node** | Stores and serves historical transaction data |
-| **Explorer UI** | Web interface for viewing accounts and transactions at `http://localhost:8080` |
+| Component          | Description                                   |
+| ------------------ | --------------------------------------------- |
+| **Consensus Node** | 2 consensus nodes running Hiero               |
+| **Mirror Node**    | Stores and serves historical transaction data |
+| **Explorer UI**    | Web interface for viewing accounts            |
 
 Access the Explorer at: `http://localhost:8080`
 
@@ -141,12 +143,12 @@ task default-with-relay
 
 This configuration includes:
 
-| Component | Description |
-|-----------|-------------|
-| **Consensus Nodes** | 2 consensus nodes running Hiero |
-| **Mirror Node** | Stores and serves historical transaction data |
-| **Explorer UI** | Web interface for viewing accounts and transactions at `http://localhost:8080` |
-| **JSON-RPC Relay** | Ethereum-compatible JSON-RPC interface at `http://localhost:7546` |
+| Component          | Description                                   |
+| ------------------ | --------------------------------------------- |
+| **Consensus Node** | 2 consensus nodes running Hiero               |
+| **Mirror Node**    | Stores and serves historical transaction data |
+| **Explorer UI**    | Web interface for viewing accounts            |
+| **JSON-RPC Relay** | Ethereum-compatible JSON-RPC interface        |
 
 Access the services at:
 
@@ -161,16 +163,16 @@ The Taskfile includes a comprehensive set of targets for deploying and managing 
 
 These targets handle the primary deployment lifecycle:
 
-| Task | Description |
-|------|-------------|
-| `default` | Complete deployment workflow: install dependencies, create cluster, deploy network (same as running `task`) |
-| `install` | Initialize cluster, create deployment, and setup consensus network |
-| `destroy` | Tear down the consensus network |
-| `clean` | Full cleanup: destroy network, remove cache, logs, and temporary files |
-| `start` | Start all consensus nodes |
-| `stop` | Stop all consensus nodes |
+| Task      | Description                                                    |
+| --------- | -------------------------------------------------------------- |
+| `default` | Complete deployment workflow for Solo                          |
+| `install` | Initialize cluster, create deployment, and setup consensus net |
+| `destroy` | Tear down the consensus network                                |
+| `clean`   | Full cleanup: destroy network, remove cache, logs, and files   |
+| `start`   | Start all consensus nodes                                      |
+| `stop`    | Stop all consensus nodes                                       |
 
-**Example: Deploy, then clean up**
+### Example: Deploy, then clean up
 
 ```bash
 cd scripts
@@ -191,22 +193,22 @@ task clean
 
 When cleaning up, you can selectively remove specific components:
 
-| Task | Description |
-|------|-------------|
-| `clean:cache` | Remove the Solo cache directory (`~/.solo/cache`) |
-| `clean:logs` | Remove the Solo logs directory (`~/.solo/logs`) |
-| `clean:tmp` | Remove temporary deployment files |
+| Task           | Description                                            |
+| -------------- | ------------------------------------------------------ |
+| `clean:cache`  | Remove the Solo cache directory (`~/.solo/cache`)      |
+| `clean:logs`   | Remove the Solo logs directory (`~/.solo/logs`)        |
+| `clean:tmp`    | Remove temporary deployment files                      |
 
 ### Mirror Node Management
 
 Add, configure, or remove mirror nodes from an existing deployment:
 
-| Task | Description |
-|------|-------------|
-| `solo:mirror-node` | Add a mirror node to the current deployment |
-| `solo:destroyer-mirror-node` | Remove the mirror node from the deployment |
+| Task                          | Description                                       |
+| ----------------------------- | ------------------------------------------------- |
+| `solo:mirror-node`            | Add a mirror node to the current deployment       |
+| `solo:destroyer-mirror-node`  | Remove the mirror node from the deployment        |
 
-**Example: Add mirror node to running network**
+### Example: Add mirror node to running network
 
 ```bash
 cd scripts
@@ -225,12 +227,12 @@ task solo:destroyer-mirror-node
 
 Deploy or remove the Hiero Explorer for transaction/account viewing:
 
-| Task | Description |
-|------|-------------|
-| `solo:explorer` | Add explorer UI to the current deployment |
-| `solo:destroy-explorer` | Remove explorer UI from the deployment |
+| Task                      | Description                                    |
+| ------------------------- | ---------------------------------------------- |
+| `solo:explorer`           | Add explorer UI to the current deployment      |
+| `solo:destroy-explorer`   | Remove explorer UI from the deployment         |
 
-**Example: Deploy network with explorer**
+### Example: Deploy network with explorer
 
 ```bash
 cd scripts
@@ -245,12 +247,12 @@ task solo:explorer
 
 Deploy or remove the Relay for Ethereum-compatible access:
 
-| Task | Description |
-|------|-------------|
-| `solo:relay` | Add JSON-RPC relay to the current deployment |
-| `solo:destroy-relay` | Remove JSON-RPC relay from the deployment |
+| Task                  | Description                                      |
+| --------------------- | ------------------------------------------------ |
+| `solo:relay`          | Add JSON-RPC relay to the current deployment     |
+| `solo:destroy-relay`  | Remove JSON-RPC relay from the deployment        |
 
-**Example: Add relay to running network**
+### Example: Add relay to running network
 
 ```bash
 cd scripts
@@ -265,12 +267,12 @@ task solo:relay
 
 Deploy or remove block nodes for streaming block data:
 
-| Task | Description |
-|------|-------------|
-| `solo:block:add` | Add a block node to the current deployment |
-| `solo:block:destroy` | Remove the block node from the deployment |
+| Task                | Description                                        |
+| ------------------- | -------------------------------------------------- |
+| `solo:block:add`    | Add a block node to the current deployment         |
+| `solo:block:destroy`| Remove the block node from the deployment          |
 
-**Example: Deploy network with block node**
+### Example: Deploy network with block node
 
 ```bash
 cd scripts
@@ -285,16 +287,15 @@ task solo:block:add
 
 Low-level tasks for managing clusters and network infrastructure:
 
-| Task | Description |
-|------|-------------|
-| `cluster:create` | Create a Kind (Kubernetes in Docker) cluster |
-| `cluster:destroy` | Delete the Kind cluster |
-| `solo:cluster:setup` | Setup cluster infrastructure and prerequisites |
-| `solo:init` | Initialize Solo (download tools and templates) |
-| `solo:deployment:create` | Create a new deployment configuration |
-| `solo:deployment:attach` | Attach an existing cluster to a deployment |
-| `solo:network:deploy` | Deploy the consensus network to the cluster |
-| `solo:network:destroy` | Destroy the consensus network |
+| Task                        | Description                                                |\n| --------------------------- | ---------------------------------------------------------- |
+| `cluster:create`            | Create a Kind (Kubernetes in Docker) cluster               |
+| `cluster:destroy`           | Delete the Kind cluster                                    |
+| `solo:cluster:setup`        | Setup cluster infrastructure and prerequisites             |
+| `solo:init`                 | Initialize Solo (download tools and templates)             |
+| `solo:deployment:create`    | Create a new deployment configuration                      |
+| `solo:deployment:attach`    | Attach an existing cluster to a deployment                 |
+| `solo:network:deploy`       | Deploy the consensus network to the cluster                |
+| `solo:network:destroy`      | Destroy the consensus network                              |
 
 > **Tip:** Unless you need custom cluster management, use the higher-level tasks like `default`, `install`, or `destroy` which orchestrate these infrastructure tasks automatically.
 
@@ -302,13 +303,13 @@ Low-level tasks for managing clusters and network infrastructure:
 
 Helpful tasks for inspecting and managing running networks:
 
-| Task | Description |
-|------|-------------|
-| `show:ips` | Display the external IPs of all network nodes |
-| `solo:node:logs` | Retrieve logs from consensus nodes |
-| `solo:freeze:restart` | Execute a freeze/restart upgrade workflow for testing version upgrades |
+| Task                    | Description                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------- |
+| `show:ips`              | Display the external IPs of all network nodes                                   |
+| `solo:node:logs`        | Retrieve logs from consensus nodes                                              |
+| `solo:freeze:restart`   | Execute a freeze/restart upgrade workflow for testing version upgrades          |
 
-**Example: View network IPs and logs**
+### Example: View network IPs and logs
 
 ```bash
 cd scripts
@@ -324,26 +325,26 @@ task solo:node:logs
 
 Deploy external databases for specialized configurations:
 
-| Task | Description |
-|------|-------------|
-| `solo:external-database` | Setup external PostgreSQL database with Helm for the deployment |
+| Task                     | Description                                            |
+| ------------------------ | ------------------------------------------------------ |
+| `solo:external-database` | Setup external PostgreSQL database with Helm           |
 
 ## Advanced Configuration with Environment Variables
 
 You can customize Task behavior by setting environment variables before running tasks. Common variables include:
 
 | Variable | Description | Default |
-|----------|-------------|---------|
+| --- | --- | --- |
 | `SOLO_NETWORK_SIZE` | Number of consensus nodes | `1` |
-| `SOLO_NAMESPACE` | Kubernetes namespace for the deployment | `solo-e2e` |
-| `CONSENSUS_NODE_VERSION` | Consensus node version to deploy | `v0.65.1` |
+| `SOLO_NAMESPACE` | Kubernetes namespace | `solo-e2e` |
+| `CONSENSUS_NODE_VERSION` | Consensus node version | `v0.65.1` |
 | `MIRROR_NODE_VERSION` | Mirror node version | `v0.138.0` |
 | `RELAY_VERSION` | JSON-RPC Relay version | `v0.70.0` |
 | `EXPLORER_VERSION` | Explorer UI version | `v25.1.1` |
 
 For a comprehensive reference of all available environment variables, see [Using Environment Variables](/docs/advanced-solo-setup/using-environment-variables/).
 
-**Example: Deploy with custom versions**
+### Example: Deploy with custom versions
 
 ```bash
 cd scripts
@@ -500,7 +501,7 @@ task clean
 
 ### Common Issues
 
-**Task command not found**
+#### Task command not found
 
 Ensure Task is installed and on your PATH:
 
@@ -509,7 +510,7 @@ which task
 task --version
 ```
 
-**Taskfile not found**
+#### Taskfile not found
 
 Run Task commands from the `scripts/` directory or an `examples/` subdirectory where a Taskfile.yml exists:
 
@@ -518,7 +519,7 @@ cd scripts
 task default
 ```
 
-**Insufficient resources**
+#### Insufficient resources
 
 Some deployments require significant resources. Verify your Docker has at least 12 GB of memory and 6 CPU cores allocated:
 
@@ -526,7 +527,7 @@ Some deployments require significant resources. Verify your Docker has at least 
 docker info --format 'CPU: {{.NCPU}}, Memory: {{.MemTotal | div 1000000000}}GB'
 ```
 
-**Cluster cleanup issues**
+#### Cluster cleanup issues
 
 If the cluster becomes unstable, perform a full cleanup:
 

@@ -6,7 +6,7 @@ description: >
   full customization using the Solo values file format.
 categories: ["Advanced", "Deployment"]
 tags: ["advanced", "operator", "falcon", "deployment"]
-weight: 3
+weight: 1
 type: docs
 ---
 
@@ -146,6 +146,8 @@ not by section entries in the values file:
 > Solo intentionally ignores `--deployment` values from section content during
 > Falcon argument expansion. Set the deployment name on the command line if you
 > need a specific name.
+
+<br/>
 
 > **Tip:** When not specified, Falcon uses these defaults: `--deployment one-shot`,
 > `--namespace one-shot`, `--cluster-ref one-shot`, and `--num-consensus-nodes 1`.
@@ -421,5 +423,3 @@ In practice:
 > values for your environment.
 
 ---
-
-
