@@ -85,4 +85,4 @@ To stop all running load tests and uninstall the NLG Helm chart:
 For an end-to-end walkthrough with a full configuration, see the [examples/rapid-fire](https://github.com/hiero-ledger/solo/tree/main/examples/rapid-fire).
 
 ## Available Tests and Arguments
-A full list of all available `rapid-fire` commands can be found in [Solo CLI User Manual](/docs/advanced-solo-setup/solo-cli#rapid-fire).
+A full list of all available `rapid-fire` commands can be found in [Solo CLI Reference](/docs/advanced-solo-setup/cli/solo-cli#rapid-fire).
