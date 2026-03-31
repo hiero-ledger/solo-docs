@@ -200,6 +200,38 @@ Accessibility contrast notes (against white):
 - Body gray `#666666`: 5.74
 - Light gray `#888888`: 3.54 (use carefully for small/critical text)
 
+## Deployment
+
+The docs are published via the `flow-update-docs.yaml` workflow. Deployment behavior depends on how the workflow is triggered:
+
+### Automatic Deployments (repository_dispatch)
+
+When triggered automatically by a new Solo release, the site is built with the GitHub Pages baseURL
+and deployed to `https://hiero-ledger.github.io/solo-docs/`.
+
+### Manual Deployments (workflow_dispatch)
+
+When manually triggered, you can select the deployment target to determine the baseURL used during the Hugo build:
+
+- **GitHub Pages** (default): Builds with `https://hiero-ledger.github.io/solo-docs/`
+- **solo.hiero.org**: Builds with `https://solo.hiero.org/`
+- **Custom URL**: Builds with any custom baseURL you provide (e.g., `https://staging-docs.example.com`)
+
+This flexibility allows testing the site with different baseURLs before production deployment.
+
+**How to manually trigger:**
+
+Navigate to GitHub Actions → "Update Generated Docs" workflow → "Run workflow":
+
+1. Enter a version tag (e.g., `v0.66.0`) or `main` for the default branch
+2. Select your deployment target from the dropdown
+3. If using "Custom URL", provide the baseURL in the custom_baseurl field
+
+### GitHub Pages Details
+
+The Hugo build uses a GitHub Pages-specific baseURL (`https://hiero-ledger.github.io/solo-docs/`)
+to ensure CSS, JavaScript, and other assets load correctly in the GitHub Pages subdirectory context.
+
 ## Troubleshooting
 
 - Hugo not found: ensure Go is installed and `$(go env GOPATH)/bin` is on
