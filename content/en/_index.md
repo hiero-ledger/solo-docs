@@ -11,10 +11,10 @@ description: Deploy and manage Hiero networks with ease
     An opinionated CLI tool to deploy and manage standalone Hiero Ledger test networks locally or in the cloud
   </p>
   <div class="d-flex flex-wrap justify-content-center gap-3 mb-4">
-    <a class="hero-btn hero-btn-primary" href="/docs/simple-solo-setup">
+    <a class="hero-btn hero-btn-primary" href="docs/simple-solo-setup/">
       <i class="fas fa-rocket me-2"></i>Get Started
     </a>
-    <a class="hero-btn hero-btn-secondary" href="/docs">
+    <a class="hero-btn hero-btn-secondary" href="docs/">
       <i class="fas fa-book me-2"></i>Documentation
     </a>
     <a class="hero-btn hero-btn-secondary" href="https://github.com/hiero-ledger/solo" target="_blank">
