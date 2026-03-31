@@ -3,8 +3,11 @@ title: Solo
 
 menu:
   main:
+    - name: Examples Hub
+      weight: 3
+      url: https://github.com/hiero-ledger/solo/tree/main/examples
     - name: Release Notes
-      weight: 40
+      weight: 4
       url: https://github.com/hiero-ledger/solo/releases
 
 module:
