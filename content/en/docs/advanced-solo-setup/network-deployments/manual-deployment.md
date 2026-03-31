@@ -6,7 +6,7 @@ description: >
   and integrate Solo into bespoke automation pipelines.
 categories: ["Advanced", "Deployment"]
 tags: ["advanced", "operator", "manual-deployment", "cli"]
-weight: 2
+weight: 3
 type: docs
 ---
 
