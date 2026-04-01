@@ -1,279 +1,72 @@
-# Solo Docs Site
+# Solo Documentation Site
 
-## Overview
+## What is Solo?
 
-This repository contains the Hugo + Docsy site for Solo. It ships with Hiero
-branding (logo, palette, typography) and a lightweight build/preview workflow.
+Solo is a command-line tool for deploying and managing Hedera network nodes and services on Kubernetes. This repository contains the official technical documentation site for Solo, built with Hugo and the Docsy theme.
 
-Solo Docs uses Docsy as a Hugo module. You can inspect module dependencies
-with:
-
-```console
-hugo mod graph
-```
-
-For Docsy documentation, see [Docsy user guide][].
-
-## Auto-Update From Solo Releases
-
-This repository is updated automatically when a new release is published in
-`hiero-ledger/solo`.
-
-High-level flow:
-
-1. A release is published in `solo`.
-2. `solo/.github/workflows/flow-trigger-solo-docs-update.yaml` sends a
-   `repository_dispatch` event (`solo-release`) to `solo-docs`.
-3. `solo-docs/.github/workflows/flow-update-docs.yaml` receives the event.
-4. The workflow checks out `solo` at the released tag into `solo-src/`.
-5. It builds and installs `solo` from source so docs are generated from the
-   exact released code.
-6. It runs:
-   - `node scripts/executeUpdateDocs.mjs <version>`
-   - `node scripts/generateHelp.mjs`
-7. It commits generated files back to this repo:
-   - `content/en/docs/step-by-step-guide.md`
-   - `content/en/docs/advanced-deployments.md`
-   - `content/en/docs/solo-commands.md`
-   - `content/en/examples/_index.md`
-
-The workflow can also be run manually using `workflow_dispatch` with a version
-input (tag or `main`).
-
-Script roles:
-
-- `scripts/updateDocs.mjs`: runs lifecycle commands, captures output, and renders
-  template-based docs.
-- `scripts/generateHelp.mjs`: builds the CLI reference from `solo --help` output.
-- `scripts/utilities.mjs`: shared command execution and template substitution
-  helpers.
-
-Templates used for generation are in `content/en/templates/`.
-
-## Prerequisites
-
-- Node 22+ and npm
-- Go (for Hugo extended and Hugo modules)
-- Hugo extended 0.145.0 or newer
+The documentation covers:
+- **Simple Setup**: Quick start guides for basic Solo deployments
+- **Advanced Setup**: Complex network configurations and custom deployments
+- **Using Solo**: Command reference and operational guides
+- **Troubleshooting**: Common issues and solutions
 
 ## Quick Start
 
-1. Install site dependencies and Hugo modules:
+### Prerequisites
+- Node.js 22+
+- Go (for Hugo extended)
+- Hugo extended 0.145.0+
 
-```bash
-npm install
-```
+### Build and Preview
 
-1. Build the site (no Kind required):
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```bash
-hugo --cleanDestinationDir
-```
+2. Build the site:
+   ```bash
+   hugo --cleanDestinationDir
+   ```
 
-This outputs the generated site to `public/`.
+3. Preview locally:
+   ```bash
+   hugo server -D --baseURL http://localhost:1313/ --cleanDestinationDir
+   ```
+   or simply
+   ```bash
+   hugo serve
+   ```
 
-1. Run with live reload:
+   Open `http://localhost:1313/` in your browser.
 
-```bash
-hugo server -D --baseURL http://localhost:1313/main/ --cleanDestinationDir
-```
+## How to Contribute
 
-Open `http://localhost:1313/main/` in your browser.
+We welcome contributions to improve the Solo documentation! Whether you're fixing typos, adding new guides, or improving existing content, here's how to get started:
 
-## Common Commands
+### For Content Contributors
+- **New to contributing?** Start with our [Contributing Guide](CONTRIBUTING.md)
+- **Found an issue?** [Open an issue](https://github.com/hiero-ledger/solo-docs/issues) or submit a pull request
+- **Need help?** Check our [troubleshooting guide](content/en/docs/troubleshooting.md)
 
-- Full docs site build: `hugo --cleanDestinationDir`
-- Local preview with live reload:
-   `hugo server -D --baseURL http://localhost:1313/main/ --cleanDestinationDir`
-- Clean generated artifacts: `npm run clean`
+### For Developers
+- **Technical contributions**: See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup
+- **Auto-generated content**: Documentation is automatically updated from Solo releases via GitHub Actions
 
-Note: Typedoc generation is not a native Hugo command. If you use generated API
-docs, run the typedoc command from your API docs/tooling project, then copy its
-output to `static/` as needed.
+## Documentation Structure
 
-## Branding and Theming
-
-- Logo: `assets/icons/logo.svg` (Docsy inlines it via `navbar_logo`)
-- Design tokens and component overrides:
-   `assets/scss/_variables_project.scss`
-- Colors: Hiero palette is defined as CSS variables (primary `#b81a56`,
-   primary-dark `#992350`, primary-light `#d92d6a`, secondary `#1ebdc4`)
-- Typography: branding notes include Space Grotesk/Inter-based typography
-   updates across headings, body, and UI elements
-
-## Editing Styles
-
-1. Update SCSS in `assets/scss/_variables_project.scss` (buttons, badges,
-    sidebar, code, tokens).
-2. Rebuild with `hugo --cleanDestinationDir` or run `hugo server` to regenerate
-    site CSS in `public/`.
-
-## Content Structure
-
-- `content/en` holds pages and landing content
-- `assets/` contains SCSS, fonts, and icons
-- `layouts/` has partial overrides
-- `static/` can serve generated API docs (for example under `static/classes`)
-
-## Running a Container Locally
-
-You can run solo-docs inside a [Docker](https://docs.docker.com/) container.
-The container uses a volume bound to this repo.
-
-1. Build the Docker image:
-
-```bash
-docker-compose build
-```
-
-1. Run the image:
-
-```bash
-docker-compose up
-```
-
-You can run both with:
-
-```bash
-docker-compose up --build
-```
-
-Open `http://localhost:1313` to verify it is working.
-
-### Cleanup
-
-Stop Docker Compose with `Ctrl + C`.
-
-Remove produced images:
-
-```bash
-docker-compose rm
-```
-
-For more information see [Docker Compose documentation][].
-
-## Using a Local Docsy Clone
-
-Make sure your installed Go version is `1.18` or higher.
-
-Clone Docsy to a sibling folder:
-
-```bash
-cd root-of-your-site
-git clone --branch v0.12.0 https://github.com/google/docsy.git ../docsy
-```
-
-Then run:
-
-```bash
-HUGO_MODULE_WORKSPACE=docsy.work hugo server --ignoreVendorPaths "**"
-```
-
-Or use npm:
-
-```bash
-npm run local serve
-```
-
-This lets Hugo hot-reload local changes from `../docsy` too.
-
-## Notes
-
-- `navbar_logo` is enabled in `hugo.yaml`; placing the SVG at
-   `assets/icons/logo.svg` is enough for it to render.
-- For quick local preview, use `hugo --cleanDestinationDir` + `hugo server`
-   rather than heavier full pipelines.
-- For color/contrast tweaks, adjust CSS variables in
-   `_variables_project.scss` and rebuild.
-
-Recent Hiero branding notes:
-
-- Hiero logo added at `assets/icons/logo.svg`
-- Palette/token updates in `assets/scss/_variables_project.scss`
-- Component styling updates for buttons, badges, sidebar, callouts, cards,
-   inputs, and typography scale
-
-Accessibility contrast notes (against white):
-
-- Primary `#C91F47`: 5.57
-- Primary dark `#A31835`: 7.67
-- Body gray `#666666`: 5.74
-- Light gray `#888888`: 3.54 (use carefully for small/critical text)
+- `content/en/docs/` - Main documentation content
+- `content/en/docs/simple-solo-setup/` - Getting started guides
+- `content/en/docs/advanced-solo-setup/` - Advanced configuration
+- `content/en/docs/using-solo/` - Usage and operations
+- `content/en/docs/troubleshooting.md` - Common issues and solutions
 
 ## Deployment
 
-The docs are published via the `flow-update-docs.yaml` workflow. Deployment behavior depends on how the workflow is triggered:
+The site is automatically deployed to [solo.hiero.org](https://solo.hiero.org/) when new Solo releases are published. Manual deployments can be triggered via GitHub Actions.
 
-### Automatic Deployments (repository_dispatch)
+## Support
 
-When triggered automatically by a new Solo release, the site is built with the GitHub Pages baseURL
-and deployed to `https://hiero-ledger.github.io/solo-docs/`.
-
-### Manual Deployments (workflow_dispatch)
-
-When manually triggered, you can select the deployment target to determine the baseURL used during the Hugo build:
-
-- **GitHub Pages** (default): Builds with `https://hiero-ledger.github.io/solo-docs/`
-- **solo.hiero.org**: Builds with `https://solo.hiero.org/`
-- **Custom URL**: Builds with any custom baseURL you provide (e.g., `https://staging-docs.example.com`)
-
-This flexibility allows testing the site with different baseURLs before production deployment.
-
-**How to manually trigger:**
-
-Navigate to GitHub Actions → "Update Generated Docs" workflow → "Run workflow":
-
-1. Enter a version tag (e.g., `v0.66.0`) or `main` for the default branch
-2. Select your deployment target from the dropdown
-3. If using "Custom URL", provide the baseURL in the custom_baseurl field
-
-### GitHub Pages Details
-
-The Hugo build uses a GitHub Pages-specific baseURL (`https://hiero-ledger.github.io/solo-docs/`)
-to ensure CSS, JavaScript, and other assets load correctly in the GitHub Pages subdirectory context.
-
-## Troubleshooting
-
-- Hugo not found: ensure Go is installed and `$(go env GOPATH)/bin` is on
-   `PATH`.
-- Styles not updating: rerun `hugo --cleanDestinationDir` or restart
-   `hugo server`.
-- Typedoc missing: regenerate typedoc from your API docs/tooling project and
-   copy output to `static/`.
-
-You may also encounter these Hugo errors while running locally:
-
-```console
-$ hugo server
-WARN 2023/06/27 16:59:06 Module "project" is not compatible with this Hugo version; run "hugo mod graph" for more information.
-Start building sites …
-hugo v0.101.0-466fa43c16709b4483689930a4f9ac8add5c9f66+extended windows/amd64 BuildDate=2022-06-16T07:09:16Z VendorInfo=gohugoio
-Error: Error building site: "C:\Users\foo\path\to\solo-docs\content\en\_index.md:5:1": failed to extract shortcode: template for shortcode "blocks/cover" not found
-Built in 27 ms
-```
-
-This usually means Hugo is outdated. Install a newer Hugo extended release.
-
-```console
-$ hugo server
-
-INFO 2021/01/21 21:07:55 Using config file:
-Building sites … INFO 2021/01/21 21:07:55 syncing static files to /
-Built in 288 ms
-Error: Error building site: TOCSS: failed to transform "scss/main.scss" (text/x-scss): resource "scss/scss/main.scss_9fadf33d895a46083cdd64396b57ef68" not found in file cache
-```
-
-This usually means you are not using Hugo extended.
-
-```console
-$ hugo server
-
-Error: failed to download modules: binary with name "go" not found
-```
-
-This means Go is not available in your shell.
-
-[Docsy user guide]: https://docsy.dev/docs
-[Docker Compose documentation]: https://docs.docker.com/compose/gettingstarted/
-
-<!-- cSpell:ignore hugo docsy TOCSS typedoc -->
+- **Documentation Issues**: [GitHub Issues](https://github.com/hiero-ledger/solo-docs/issues)
+- **Solo Tool Issues**: [Solo Repository](https://github.com/hiero-ledger/solo)
+- **Community**: Check our [community contributions](content/en/docs/community-contributions.md) guide
