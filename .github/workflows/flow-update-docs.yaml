@@ -92,7 +92,7 @@ jobs:
     runs-on: hl-solo-docs-lin
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2 # v2+ with Node.js 24 support
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
         with:
           egress-policy: audit
 
@@ -161,24 +161,24 @@ jobs:
 
       # Checkout solo-docs (this repo).
       - name: Checkout solo-docs
-        uses: actions/checkout@v4 # v4.x with Node.js 24 support
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       # Tool setup.
       - name: Setup Node.js
-        uses: actions/setup-node@v6 # v6+ with Node.js 24 support
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
         with:
           node-version: 24
 
       - name: Setup Go
-        uses: actions/setup-go@v5 # v5+ with Node.js 24 support
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
           go-version: "1.23.3"
 
       # hugo action setup
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v3 # v3+ with Node.js 24 support
+        uses: peaceiris/actions-hugo@75d2e84710de30f6ff7268e08f310b60ef14033f # v3.0.0
         with:
           hugo-version: "0.156.0"
           extended: true
@@ -186,7 +186,7 @@ jobs:
       # setup pages
       - name: Setup Pages
         id: pages
-        uses: actions/configure-pages@v5 # v5+ with Node.js 24 support
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
         with:
           enablement: true
 
@@ -200,11 +200,11 @@ jobs:
 
       # upload go gh-pages
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v4 # v4+ with Node.js 24 support
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
         with:
           path: public
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # v4+ with Node.js 24 support
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
