@@ -128,11 +128,9 @@ Confirm that all Solo-related pods are in a `Running` or `Completed` state.
 
 After the one-shot deployment completes and all pods are running, your local services are available at the following endpoints:
 
-| Service               | Endpoint                | Description                            |
-|-----------------------|-------------------------|----------------------------------------|
-| Explorer UI           | `http://localhost:8080` | Web UI for inspecting the network.     |
-| Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for transactions.        |
-| Mirror node REST API  | `http://localhost:5551` | REST API for queries.                  |
-| JSON RPC relay        | `localhost:7546`        | Ethereum-compatible JSON RPC endpoint. |
-
-Open `http://localhost:8080` in your browser to explore your network.
+| Service               | Endpoint                | Description                            | Verfication
+|-----------------------|-------------------------|----------------------------------------|-------------------------------------|
+| Explorer UI           | `http://localhost:38080`| Web UI for inspecting the network.     | Open URL in your broswer to view the network explorer |
+| Consensus node (gRPC) | `localhost:35211`       | gRPC endpoint for transactions.        | `nc -zv localhost 35211`            |
+| Mirror node REST API  | `http://localhost:38081`| REST API for queries.                  | http://localhost:38081/api/v1/transactions |
+| JSON RPC relay | `localhost:37546` | Ethereum-compatible JSON RPC endpoint. | <code>curl -X POST http://localhost:37546 -H 'Content-Type: application/json'<br>-d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'</code> |
