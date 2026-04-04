@@ -424,5 +424,3 @@ Join the community for discussions and help:
 
 - **Hedera Discord**: Look for the `#solo` channel
 - **Hiero Community**: <https://hiero.org/community>
-
----

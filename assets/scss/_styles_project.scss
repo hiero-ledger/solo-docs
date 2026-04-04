@@ -205,6 +205,58 @@ main a {
   }
 }
 
+.td-docs-page-nav__inner {
+  align-items: stretch;
+}
+
+.td-docs-page-nav {
+  margin-bottom: 0;
+}
+
+.td-docs-page-nav__link {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 100%;
+  padding: 0.25rem 0 0.4rem;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+.td-docs-page-nav + .td-page-meta__lastmod {
+  margin-top: 0.5rem !important;
+  padding-top: 0 !important;
+}
+
+.td-docs-page-nav__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-light);
+}
+
+.td-docs-page-nav__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+}
+
+@media (min-width: 768px) {
+  .td-docs-page-nav__link {
+    width: calc(50% - 0.5rem);
+  }
+
+  .td-docs-page-nav__link--next {
+    margin-left: auto;
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
 // External Link Indicator
 a[target='_blank']::after {
   content: ' \f35d';
