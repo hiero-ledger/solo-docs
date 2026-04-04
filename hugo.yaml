@@ -104,7 +104,7 @@ imaging:
 # Language configuration
 languages:
   en:
-    languageName: English
+    label: English
     title: Solo
     params:
       description: Solo is a tool for deploying and managing Hiero Ledger Consensus Node Networks.
