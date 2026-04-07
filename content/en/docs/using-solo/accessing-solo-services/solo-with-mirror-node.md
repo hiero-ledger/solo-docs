@@ -14,10 +14,10 @@ type: docs
 The Hiero Mirror Node stores the full transaction history of your local Solo network
 and exposes it through several interfaces:
 
-  - A **web-based block explorer** (Hiero Mirror Node Explorer) at `http://localhost:8080`.
-  - A **REST API** via the mirror-ingress service at `http://localhost:8081`
+- A **web-based block explorer** (Hiero Mirror Node Explorer) at `http://localhost:8080`.
+- A **REST API** via the mirror-ingress service at `http://localhost:8081`
     (recommended entry point-routes to the correct REST implementation).
-  - A **gRPC endpoint** for mirror node subscriptions.
+- A **gRPC endpoint** for mirror node subscriptions.
 
 This guide walks you through adding Mirror Node and the Hiero Explorer to a
 Solo network, and shows you how to query transaction data and create accounts.
@@ -37,6 +37,7 @@ Before proceeding, ensure you have completed the following:
   ```bash
   cat ~/.solo/cache/last-one-shot-deployment.txt
   ```
+
 ---
 
 ## Step 1: Deploy Solo with Mirror Node
@@ -47,7 +48,6 @@ Before proceeding, ensure you have completed the following:
 > or the [Task Tool](/docs/advanced-solo-setup/customizing-solo-with-tasks),
 > Mirror Node is already running -
 > skip to [Step 2: Access the Mirror Node Explorer](#step-2-access-the-mirror-node-explorer).
-
 
 ### Fresh manual Deployment
 
@@ -105,8 +105,8 @@ solo explorer node add \
 
 > **Note:** The `--pinger` flag in `solo mirror node add` starts a background
 > service that sends transactions to the network at regular intervals. This is
-> **required** because mirror node record files are only imported when a new 
-> record file is created - without it, the mirror node will appear empty until 
+> **required** because mirror node record files are only imported when a new
+> record file is created - without it, the mirror node will appear empty until
 > the next transaction occurs naturally.
 
 ---
@@ -162,6 +162,7 @@ curl -s "http://localhost:8081/api/v1/accounts/0.0.2"
 > out. Always use `localhost:8081` to ensure compatibility with all endpoints.
 
 If you need to access it directly:
+
   ```bash
   kubectl port-forward svc/mirror-1-rest -n "${SOLO_NAMESPACE}" 5551:80 &
   curl -s "http://${REST_IP:-127.0.0.1}:5551/api/v1/transactions?limit=1"
@@ -200,7 +201,7 @@ In most cases you should use `localhost:8081` instead.
 ## Port Reference
 
 | Service | Local Port | Access Method |
-|---------|------------|---------------|
+| --- | --- | --- |
 | Hiero Explorer | `8080` | Browser (`--enable-ingress`) |
 | Mirror Node (all-in-one) | `8081` | HTTP (`--enable-ingress`) |
 | Mirror Node REST API | `5551` | `kubectl port-forward` |
@@ -217,6 +218,7 @@ them without redeploying:
 ```bash
 solo deployment refresh port-forwards
 ```
+
 ---
 
 ## Tearing Down
@@ -235,7 +237,3 @@ solo explorer node destroy --deployment "${SOLO_DEPLOYMENT}" --force
 
 For full network teardown, see
 [**Step-by-Step Manual Deployment-Cleanup**](/docs/advanced-solo-setup/network-deployments/manual-deployment/#cleanup).
-
----
-
-

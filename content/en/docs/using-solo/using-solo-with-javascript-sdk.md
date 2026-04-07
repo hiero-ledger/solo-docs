@@ -439,5 +439,3 @@ the SDK and your local Solo network.
 | `INSUFFICIENT_TX_FEE` | Operator account has no HBAR | Re-create the account with `--hbar-amount 100` |
 | SDK cannot connect | Solo network not running or Docker not started | Run `task default-with-mirror` and wait for full startup |
 | `HEDERA_NETWORK` not recognized | `.env` not sourced | Run `source .env` before executing example scripts |
-
----

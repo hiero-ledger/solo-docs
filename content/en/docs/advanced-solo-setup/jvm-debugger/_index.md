@@ -331,5 +331,3 @@ solo consensus node states -i node1,node2,node3 --deployment "${SOLO_DEPLOYMENT}
 # Restart the network using the uploaded state
 solo consensus node start --deployment "${SOLO_DEPLOYMENT}" --state-file network-node1-0-state.zip
 ```
-
----

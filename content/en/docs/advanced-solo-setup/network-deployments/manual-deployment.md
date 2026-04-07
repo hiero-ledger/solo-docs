@@ -638,5 +638,3 @@ solo consensus network destroy \
   --deployment "${SOLO_DEPLOYMENT}" \
   --force
 ```
-
----

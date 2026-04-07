@@ -61,7 +61,7 @@ This command:
 > **Relay endpoint summary:**
 >
 > | Property | Value |
-> |---|---|
+> | --- | --- |
 > | RPC URL | `http://localhost:7546` |
 > | Chain ID | `298` |
 > | Currency symbol | `HBAR` |
@@ -70,17 +70,16 @@ This command:
 
 If you already have a running Solo network without the relay, see [**Step 10: Deploy JSON-RPC Relay**](/docs/advanced-solo-setup/network-deployments/manual-deployment/#10-deploy-json-rpc-relay) in the Step-by-Step Manual Deployment guide for full instructions, then return here once your relay is running on `http://localhost:7546`.
 
-
 To remove the relay when you no longer need it, see [**Cleanup Step 1: Destroy JSON-RPC Relay**](/docs/advanced-solo-setup/network-deployments/manual-deployment/#1-destroy-json-rpc-relay) in the same guide.
 
 ---
 
 ## Step 2: Retrieve Your ECDSA Account and Private Key
 
-`one-shot single deploy` creates ECDSA alias accounts, which are required for EVM tooling such as Hardhat, ethers.js, and MetaMask. 
+`one-shot single deploy` creates ECDSA alias accounts, which are required for EVM tooling such as Hardhat, ethers.js, and MetaMask.
 These accounts and their private keys are saved to a cache directory on completion.
 
-> Note: ED25519 accounts are not compatible with Hardhat, ethers.js, or MetaMask when used via the JSON-RPC interface. 
+> Note: ED25519 accounts are not compatible with Hardhat, ethers.js, or MetaMask when used via the JSON-RPC interface.
 > Always use the ECDSA keys from accounts.json for EVM tooling.
 
 - To find your deployment name, run:
@@ -333,7 +332,7 @@ http://localhost:8081/api/v1/transactions?limit=5
 Returns the five most recent transactions in JSON format. Useful for scripted
 verification.
 
-> Note: `localhost:5551` (the legacy Mirror Node REST API) is being phased out. 
+> Note: `localhost:5551` (the legacy Mirror Node REST API) is being phased out.
 > Always use `localhost:8081` to ensure compatibility with all endpoints.
 
 ### Hiero JSON RPC Relay (eth_getTransactionReceipt)
@@ -355,7 +354,7 @@ To connect MetaMask to your local Solo network:
 2. Enter the following values:
 
    | Field | Value |
-   |---|---|
+   | --- | --- |
    | Network name | `Solo Local` |
    | New RPC URL | `http://localhost:7546` |
    | Chain ID | `298` |
@@ -415,7 +414,7 @@ details.
 ## Troubleshooting
 
 | Symptom | Likely Cause | Fix |
-|---|---|---|
+| --- | --- | --- |
 | `connection refused` on port `7546` | Relay not running | Run `one-shot single deploy` or `solo relay node add` |
 | `invalid sender` or signature error | Using ED25519 key instead of ECDSA | Use ECDSA keys from `accounts.json` |
 | Hardhat `chainId` mismatch error | Missing or wrong `chainId` in config | Set `chainId: 298` in `hardhat.config.ts` |
@@ -431,5 +430,3 @@ details.
 - [Solo deployment with Hardhat Example](/examples/hardhat-with-solo/).
 - [Configuring Hardhat with Hiero Local Node](https://docs.hedera.com/hedera/tutorials/smart-contracts/configuring-hardhat-with-hiero-local-node-a-step-by-step-guide) - the Hedera tutorial this guide is modelled on.
 - [Retrieving Logs](/docs/jvm-debugger/) - for debugging network-level issues.
-
----

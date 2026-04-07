@@ -421,5 +421,3 @@ In practice:
 > This file includes all supported sections and flags with inline comments
 > explaining each option. Copy it, remove what you do not need, and adjust the
 > values for your environment.
-
----

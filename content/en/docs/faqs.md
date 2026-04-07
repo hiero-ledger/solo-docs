@@ -307,5 +307,3 @@ The mirror node accumulates transaction history while the network is running. If
     ```
 
 - Then run `k9s` to launch. It is especially helpful for watching pod startup progress during deployment.
-
----
