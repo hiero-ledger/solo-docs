@@ -40,7 +40,7 @@ Install the latest Solo CLI globally using one of the following methods:
 - **npm** (alternatively, install Solo via npm):
 
   ```bash
-  npm install -g @hashgraph/solo@latest
+  npm install -g @hiero-ledger/solo@latest
   ```
 
 ### Verify the installation

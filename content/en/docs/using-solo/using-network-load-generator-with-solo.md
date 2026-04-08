@@ -31,7 +31,7 @@ Use the `rapid-fire load start` command to install the NLG Helm chart and
 begin a load test against your deployment.
 
  ```bash
-    npx @hashgraph/solo@latest rapid-fire load start \
+    npx @hiero-ledger/solo@latest rapid-fire load start \
   --deployment <deployment-name> \
   --args '"-c 3 -a 10 -t 60"' \
   --test CryptoTransferLoadTest
@@ -55,7 +55,7 @@ You can run additional load tests in parallel from a separate terminal. Each
 test runs independently against the same deployment:
 
 ```bash
-    npx @hashgraph/solo@latest rapid-fire load start \
+    npx @hiero-ledger/solo@latest rapid-fire load start \
   --deployment <deployment-name> \
   --args '"-c 3 -a 10 -t 60"' \
   --test NftTransferLoadTest
@@ -66,7 +66,7 @@ test runs independently against the same deployment:
 To stop a single running load test before it completes, use the `stop` command:
 
 ```bash
-    npx @hashgraph/solo@latest rapid-fire load stop \
+    npx @hiero-ledger/solo@latest rapid-fire load stop \
   --deployment <deployment-name> \
   --test CryptoTransferLoadTest
 ```
@@ -76,7 +76,7 @@ To stop a single running load test before it completes, use the `stop` command:
 To stop all running load tests and uninstall the NLG Helm chart:
 
 ```bash
-    npx @hashgraph/solo@latest rapid-fire destroy all \
+    npx @hiero-ledger/solo@latest rapid-fire destroy all \
   --deployment <deployment-name>
  ```
 

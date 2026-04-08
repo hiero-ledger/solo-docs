@@ -89,7 +89,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 3. Remove existing npm-based installs:
     <!--lint ignore no-undefined-references-->
     ```sh
-    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hashgraph/solo >/dev/null 2>&1 || /bin/true }
+    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hiero-ledger/solo >/dev/null 2>&1 || /bin/true }
     ```
 
 4. Install Solo (this installs all other dependencies automatically):
@@ -148,7 +148,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 4. Remove existing npm-based installs:
     <!--lint ignore no-undefined-references-->
     ```sh
-    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hashgraph/solo >/dev/null 2>&1 || /bin/true }
+    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hiero-ledger/solo >/dev/null 2>&1 || /bin/true }
     ```
 
 5. Install Solo (this installs all other dependencies automatically):
@@ -206,7 +206,7 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 5. Remove existing npm-based installs:
     <!--lint ignore no-undefined-references-->
     ```sh
-    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hashgraph/solo >/dev/null 2>&1 || /bin/true }
+    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hiero-ledger/solo >/dev/null 2>&1 || /bin/true }
     ```
 
 6. Install Solo (this installs all other dependencies automatically):
@@ -236,7 +236,7 @@ If you need more control over dependencies or are contributing to Solo developme
 > **Note:** Node.js >= 22.0.0 and Kind must be installed separately before using this method.
 
 ```bash
-npm install -g @hashgraph/solo
+npm install -g @hiero-ledger/solo
 ```
 
 ## Optional Tools
