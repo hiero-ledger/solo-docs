@@ -48,7 +48,7 @@ The easiest way to start a Solo network with the relay pre-configured is via
 Hiero Mirror Node Explorer, and the Hiero JSON-RPC relay in a single step:
 
 ```bash
-npx @hashgraph/solo one-shot single deploy
+npx @hiero-ledger/solo one-shot single deploy
 ```
 
 This command:
@@ -377,7 +377,7 @@ the pre-allocated HBAR balance.
 When finished, destroy the Solo deployment and all associated containers:
 
 ```bash
-npx @hashgraph/solo one-shot single destroy
+npx @hiero-ledger/solo one-shot single destroy
 ```
 
 If you added the relay manually to an existing deployment:

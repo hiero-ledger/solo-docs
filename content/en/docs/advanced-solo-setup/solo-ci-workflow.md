@@ -97,7 +97,7 @@ breaking changes from newer releases and cause unexpected workflow failures.
     - name: Install Solo CLI
       run: |
         set -euo pipefail
-        npm install -g @hashgraph/solo@0.48.0
+        npm install -g @hiero-ledger/solo@0.68.0
         solo --version
         kind --version
   ```
@@ -156,7 +156,7 @@ The following is the full workflow combining all steps above. Copy this into you
   - name: Install Solo CLI
     run: |
       set -euo pipefail
-      npm install -g @hashgraph/solo@0.48.0
+      npm install -g @hiero-ledger/solo@0.68.0
       solo --version
       kind --version
       

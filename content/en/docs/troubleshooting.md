@@ -55,7 +55,7 @@ You are likely hitting an installation or upgrade problem if:
    ```bash
    # Remove legacy npm-based Solo (if present)
    if command -v npm >/dev/null 2>&1; then
-     npm uninstall -g @hashgraph/solo || true
+     npm uninstall -g @hiero-ledger/solo || true
    fi
    ```
 
