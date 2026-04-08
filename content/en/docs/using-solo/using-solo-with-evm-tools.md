@@ -48,7 +48,7 @@ The easiest way to start a Solo network with the relay pre-configured is via
 Hiero Mirror Node Explorer, and the Hiero JSON-RPC relay in a single step:
 
 ```bash
-npx  one-shot single deploy
+npx @hiero-ledger/solo one-shot single deploy
 ```
 
 This command:
