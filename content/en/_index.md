@@ -144,7 +144,7 @@ comprehensive documentation, and sensible defaults. Get a working network in min
     <a href="https://discord.com/channels/905194001349627914/1364886813017247775" target="_blank" class="text-white me-4">
       <i class="fab fa-discord fa-2x"></i>
     </a>
-    <a href="https://www.npmjs.com/package/@hashgraph/solo" target="_blank" class="text-white">
+    <a href="https://www.npmjs.com/package/@hiero-ledger/solo" target="_blank" class="text-white">
       <i class="fab fa-npm fa-2x"></i>
     </a>
   </div>
