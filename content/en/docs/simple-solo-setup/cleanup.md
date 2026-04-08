@@ -33,12 +33,10 @@ solo one-shot single destroy
 
 This command performs the following actions:
 
-- Removes all deployed pods and services in the Solo namespace..
-- Cleans up the Kubernetes namespace, which also removes associated PVCs when namespace deletion completes successfully.
-- Deletes the Kind cluster.
-- Updates Solo's internal state.
-
-> **Note:** `solo one-shot single destroy` does **not** delete the underlying Kind cluster. If you created a Solo network on a local Kind cluster, the cluster remains until you delete it manually.
+- Uninstalls all component Helm releases (consensus, mirror, relay, explorer).
+- Removes the Solo cluster chart and disconnects the cluster reference.
+- Deletes the deployment from Solo's local configuration and clears the cache.
+- Does NOT delete the Kind cluster - the cluster persists after destroy.
 
 ### Failure modes and rerunning destroy
 
