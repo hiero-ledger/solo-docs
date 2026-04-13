@@ -148,7 +148,7 @@ Use these endpoints:
 
     > **Warning:** Always use the `grep '^solo'` filter above — omitting it will delete **every** Kind cluster on your machine, including those unrelated to Solo.
 
-  After a full reset, you can redeploy by following the [Quickstart](../simple-solo-setup/quickstart) guide.
+  After a full reset, you can redeploy by following the [Quickstart](/docs/simple-solo-setup/quickstart) guide.
 
 - If you want to reset everything and start fresh immediately, run:
 

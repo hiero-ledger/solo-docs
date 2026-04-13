@@ -545,8 +545,8 @@ kind delete cluster --name solo-e2e
 
 After deploying a network with Task, explore:
 
-- **[Using the JavaScript SDK](/docs/using-solo/javascript-sdk)**: Interact with your network programmatically
-- **[Using Network Load Generator](/docs/using-solo/solo-with-network-load-generator)**: Stress test your network
+- **[Using the JavaScript SDK](/docs/using-solo/using-solo-with-javascript-sdk)**: Interact with your network programmatically
+- **[Using Network Load Generator](/docs/using-solo/using-network-load-generator-with-solo)**: Stress test your network
 - **[Environment Variables Reference](/docs/advanced-solo-setup/using-environment-variables)**: Fine-tune deployment behavior
 - **[Solo CI Workflow](/docs/advanced-solo-setup/solo-ci-workflow)**: Integrate Solo deployments into CI/CD pipelines
 

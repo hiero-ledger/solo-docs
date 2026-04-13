@@ -44,7 +44,7 @@ Before proceeding, ensure you have completed the following:
 
 > **Note:** If you deployed your network using
 > [one-shot](/docs/simple-solo-setup/quickstart),
-> [Falcon](/docs/advanced-solo-setup/advanced-network-deployments/falcon-deployment),
+> [Falcon](/docs/advanced-solo-setup/network-deployments/falcon-deployment),
 > or the [Task Tool](/docs/advanced-solo-setup/customizing-solo-with-tasks),
 > Mirror Node is already running -
 > skip to [Step 2: Access the Mirror Node Explorer](#step-2-access-the-mirror-node-explorer).
@@ -136,7 +136,7 @@ solo ledger account create --deployment solo-deployment --hbar-amount 100
 Open the Explorer at `http://localhost:8080` to see the new accounts and their
 transactions recorded by the Mirror Node.
 
-You can also use the [Hiero JavaScript SDK](/docs/using-solo/javascript-sdk)
+You can also use the [Hiero JavaScript SDK](/docs/using-solo/using-solo-with-javascript-sdk)
 to create a topic, submit a message, and subscribe to it.
 
 ---

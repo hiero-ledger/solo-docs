@@ -81,7 +81,7 @@ to the underlying Solo subcommands.
 | `blockNode` | `solo block node add` (when `ONE_SHOT_WITH_BLOCK_NODE=true`) |
 
 For the full list of supported CLI flags per section, see the
-[**Falcon Values File Reference**](/docs/advanced-solo-setup/advanced-network-deployments/falcon-flags-reference).
+[**Falcon Values File Reference**](/docs/advanced-solo-setup/network-deployments/falcon-flags-reference).
 
 ## Create a Falcon Values File
 
@@ -399,7 +399,7 @@ destroy unless you pass `--deployment` explicitly.
 Use Falcon deployment when you want a single, repeatable command backed by a
 versioned YAML file.
 
-Use [**Step-by-Step Manual Deployment**](/docs/advanced-solo-setup/advanced-network-deployments/manual-deployment)
+Use [**Step-by-Step Manual Deployment**](/docs/advanced-solo-setup/network-deployments/manual-deployment)
 when you need to pause between steps, inspect intermediate state, or debug a
 specific deployment phase in isolation.
 
@@ -410,7 +410,7 @@ In practice:
 
 ## Reference
 
-- [**Falcon Values File Reference**](/docs/advanced-solo-setup/advanced-network-deployments/falcon-flags-reference) - full list of supported CLI flags, types, and defaults for every section.
+- [**Falcon Values File Reference**](/docs/advanced-solo-setup/network-deployments/falcon-flags-reference) - full list of supported CLI flags, types, and defaults for every section.
 - [**Upstream example values file**](https://github.com/hiero-ledger/solo/tree/main/examples/one-shot-falcon) - working reference from the Solo repository.
 
 > **Tip:** If you are creating a values file for the first time, start from the
