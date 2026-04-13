@@ -8,6 +8,7 @@ description: >
 categories: ["Advanced", "Operations"]
 tags: ["advanced", "operator", "consensus-nodes", "operations"]
 type: docs
+nav_next: /docs/advanced-solo-setup/jvm-debugger/
 ---
 
 ## Overview

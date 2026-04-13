@@ -6,6 +6,7 @@ description: >
 categories: ["Advanced", "Deployment"]
 tags: ["advanced", "operator", "tasks", "deployment"]
 type: docs
+nav_prev: /docs/advanced-solo-setup/jvm-debugger/
 ---
 
 ## Overview

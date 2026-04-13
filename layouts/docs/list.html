@@ -1,6 +1,7 @@
+{{ define "main" }}
 <div class="td-content">
 	<h1>{{ .Title }}</h1>
-	{{ with .Params.description }}<div class="lead">{{ . | markdownify }}</div>{{ end }}
+  {{ with .Params.description }}<div class="lead">{{ . | markdownify }}</div>{{ end }}
 	<header class="article-meta">
 		{{ partial "taxonomy_terms_article_wrapper.html" . -}}
 		{{ if (and (not .Params.hide_readingtime) (.Site.Params.ui.readingtime.enable)) -}}
@@ -9,9 +10,10 @@
 	</header>
 	{{ .Render "_td-content-after-header" -}}
 	{{ .Content }}
+	{{ partial "section-index.html" . -}}
 	{{/* Allow explicit cross-section prev/next overrides via front matter */}}
-	{{ $previous := .NextInSection -}}
-	{{ $next := .PrevInSection -}}
+	{{ $previous := false -}}
+	{{ $next := false -}}
 	{{ with .Params.nav_prev }}{{ $previous = site.GetPage . }}{{ end -}}
 	{{ with .Params.nav_next }}{{ $next = site.GetPage . }}{{ end -}}
 	{{ if or $previous $next -}}
@@ -23,12 +25,12 @@
 				<span class="td-docs-page-nav__title">{{ $previous.Title }}</span>
 			</a>
 			{{ end -}}
-				{{ if $next -}}
+			{{ if $next -}}
 			<a class="td-docs-page-nav__link td-docs-page-nav__link--next" href="{{ $next.RelPermalink }}" rel="next" aria-label="{{ T "ui_pager_next" }} - {{ $next.Title }}">
 				<span class="td-docs-page-nav__label">{{ T "ui_pager_next" }} &rarr;</span>
 				<span class="td-docs-page-nav__title">{{ $next.Title }}</span>
 			</a>
-				{{ end -}}
+			{{ end -}}
 		</div>
 	</nav>
 	{{ end -}}
@@ -37,6 +39,6 @@
 		<br />
 		{{- partial "disqus-comment.html" . -}}
 	{{ end -}}
-	{{ partial "page-meta-lastmod.html" . }}
+	{{ partial "page-meta-lastmod.html" . -}}
 </div>
-{{/**/ -}}
+{{ end -}}
