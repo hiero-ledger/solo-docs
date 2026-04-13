@@ -69,7 +69,7 @@
     "kleur": "^4.1.5"
   },
   "optionalDependencies": {
-    "npm-check-updates": "^20.0.0",
+    "npm-check-updates": "^20.0.2",
     "prettier": "^3.8.2"
   },
   "engines": {
