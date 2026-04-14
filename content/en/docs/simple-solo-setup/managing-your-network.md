@@ -100,12 +100,17 @@ You can also retrieve logs for a specific pod directly using `kubectl`:
   kubectl logs -n <namespace> <pod-name>
   ```
 
-Replace <namespace> and <pod-name> with the values from your deployment.
-You can find the available pods and namespaces by running:
+> **Important:** Solo namespaces are not fixed to `solo`. Each deployment receives a generated namespace of the form `solo-<8-character-uuid>` (for example `solo-a1b2c3d4`).
+
+To find your deployment namespace, run:
 
   ```bash
   kubectl get pods -A | grep -v kube-system
   ```
+
+Then locate your deployment's pods and use the `NAMESPACE` column. Alternatively, the namespace suffix matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt`.
+
+Replace `<namespace>` and `<pod-name>` with the values from your deployment.
 
 ## Updating the Network
 
