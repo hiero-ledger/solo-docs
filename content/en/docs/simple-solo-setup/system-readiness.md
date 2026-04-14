@@ -30,12 +30,18 @@ Solo's resource requirements depend on your deployment size:
 
 Solo manages most of its own dependencies depending on how you install it:
 
-- **Homebrew install** (`brew install hiero-ledger/tools/solo`) - automatically installs Node.js in addition to Solo.
-- **`one-shot` commands** — automatically install Kind, kubectl, Helm, and Podman (an alternative to Docker) if they are not already present.
+- **Homebrew install** (`brew install hiero-ledger/tools/solo`) - automatically installs Node.js and Solo, plus kubectl and Helm as dependencies.
+- **`one-shot` commands** — automatically install **Kind** and **Podman** (if Docker is not found). **kubectl and Helm are not auto-installed** and must be pre-installed.
 
-You do not need to pre-install these tools manually before running Solo.
+### Pre-installation Requirements
 
-The only hard requirement before you begin is a **container runtime** - either [Docker Desktop](https://www.docker.com/products/docker-desktop) or [Podman](https://podman.io/). Solo cannot install a container runtime on your behalf.
+Before running `solo one-shot single deploy`, you **must** have:
+- A **container runtime**: either [Docker Desktop](https://www.docker.com/products/docker-desktop) (macOS/Windows) or Docker Engine/Podman (Linux). Solo cannot install a container runtime.
+- **kubectl** and **Helm**: Solo requires these pre-installed. The `one-shot` command checks for their presence but does not install them.
+  - **Homebrew users**: These are installed automatically as dependencies of the `solo` formula.
+  - **npm install users** (Linux/WSL2): Install kubectl and Helm manually before running Solo.
+
+> **Important:** The `one-shot` deployment will fail immediately if kubectl or Helm are missing, even on macOS/Windows where Homebrew typically installs them as dependencies.
 
 | Tool           | Required Version         | Where to get it                                                                   |
 |----------------|--------------------------|-----------------------------------------------------------------------------------|
@@ -49,12 +55,14 @@ The only hard requirement before you begin is a **container runtime** - either [
 
 ## Docker
 
-Solo requires Docker Desktop (macOS, Windows) or Docker Engine / Podman (Linux) with the following minimum resource allocation:
+Solo requires Docker Desktop (macOS, Windows) or Docker Engine / Podman (Linux) with sufficient resources:
 
-- **Memory**: at least 12 GB allocated to Docker.
-- **CPU**: at least 6 cores allocated to Docker.
+- **Memory**: at least 12 GB available for containers.
+- **CPU**: at least 6 cores available for containers.
 
-### Configure Docker Desktop Resources
+### Configure Resources by Platform
+
+#### macOS and Windows (Docker Desktop)
 
 To allocate the required resources in Docker Desktop:
 
@@ -66,6 +74,18 @@ To allocate the required resources in Docker Desktop:
    <!-- Add the Docker Desktop screenshot here -->
 
 > **Note:** If Docker Desktop does not have enough memory or CPU allocated, the one-shot deployment will fail or produce unhealthy pods.
+
+#### Linux
+
+Docker Engine on Linux uses system memory directly and does not have a resource allocation interface like Docker Desktop.
+
+**Resource Check:**
+- Ensure your machine has **at least 12 GB of free RAM** available before running `solo one-shot single deploy`.
+- Check available memory with: `free -h`
+- If you have insufficient RAM, the deployment may fail or pods may become unhealthy.
+
+**Podman on Linux:**
+If using Podman instead of Docker Engine, ensure your system has at least 12 GB of free RAM available.
 
 ## Platform Setup
 
@@ -86,21 +106,13 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     - Start Docker Desktop and allocate at least 12 GB of memory:
     - Docker Desktop > Settings > Resources > Memory
 
-3. Remove existing npm-based installs:
-    <!--lint ignore no-undefined-references-->
-    ```sh
-    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hiero-ledger/solo >/dev/null 2>&1 || /bin/true }
-    ```
-
-4. Install Solo (this installs all other dependencies automatically):
+3. Install Solo (this installs all other dependencies automatically):
 
     ```sh
-    brew tap hiero-ledger/tools
-    brew update
-    brew install solo
+    brew install hiero-ledger/tools/solo
     ```
 
-5. Verify the installation:
+4. Verify the installation:
 
     ```sh
     solo --version
@@ -145,21 +157,13 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     sudo mv kubectl /usr/local/bin/kubectl
     ```
 
-4. Remove existing npm-based installs:
-    <!--lint ignore no-undefined-references-->
-    ```sh
-    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hiero-ledger/solo >/dev/null 2>&1 || /bin/true }
-    ```
-
-5. Install Solo (this installs all other dependencies automatically):
+4. Install Solo (this installs all other dependencies automatically):
 
     ```sh
-    brew tap hiero-ledger/tools
-    brew update
-    brew install solo
+    brew install hiero-ledger/tools/solo
     ```
 
-6. Verify the installation:
+5. Verify the installation:
 
     ```sh
     solo --version
@@ -203,21 +207,13 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     sudo mv kubectl /usr/local/bin/kubectl
     ```
 
-5. Remove existing npm-based installs:
-    <!--lint ignore no-undefined-references-->
-    ```sh
-    [[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hiero-ledger/solo >/dev/null 2>&1 || /bin/true }
-    ```
-
-6. Install Solo (this installs all other dependencies automatically):
+4. Install Solo (this installs all other dependencies automatically):
 
     ```sh
-    brew tap hiero-ledger/tools
-    brew update
-    brew install solo
+    brew install hiero-ledger/tools/solo
     ```
 
-7. Verify the installation:
+5. Verify the installation:
 
     ```sh
     solo --version
@@ -270,6 +266,17 @@ For a list of legacy releases, see the [legacy versions documentation](http://gi
 ## Troubleshooting Installation
 
 If you experience issues installing or upgrading Solo (for example, conflicts with a previous installation), you may need to clean up your environment first.
+
+### Clean up legacy npm installations
+
+If you previously installed Solo via npm (for example, from older workshops or documentation), remove the legacy installation to avoid conflicts:
+
+```bash
+# Remove legacy npm-based Solo installation (if present)
+[[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hiero-ledger/solo >/dev/null 2>&1 || /bin/true }
+```
+
+### Full environment reset
 
 > **Warning:** The commands below will delete Solo-managed Kind clusters and remove your Solo home directory (`~/.solo`).
 
