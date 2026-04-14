@@ -30,7 +30,7 @@ Before proceeding, ensure you have completed the following:
     | Requirement | Version | Purpose |
     | --- | --- | --- |
     | [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Latest | Runs the Solo cluster containers |
-    | [Solo](/onboarding/system-readiness) | Latest | Deploys and manages the local network |
+    | [Solo](/docs/simple-solo-setup/system-readiness) | Latest | Deploys and manages the local network |
     | [Node.js](https://nodejs.org/) | v18 or higher | Runs the SDK examples |
     | [Taskfile](https://taskfile.dev/installation/) | Latest | Runs convenience scripts in the Solo repo |
 

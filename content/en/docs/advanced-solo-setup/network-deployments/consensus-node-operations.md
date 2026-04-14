@@ -8,6 +8,7 @@ description: >
 categories: ["Advanced", "Operations"]
 tags: ["advanced", "operator", "consensus-nodes", "operations"]
 type: docs
+nav_next: /docs/advanced-solo-setup/jvm-debugger/
 ---
 
 ## Overview
@@ -25,7 +26,7 @@ Before proceeding, ensure you have:
   following methods:
   1. [**Quickstart**](/docs/simple-solo-setup/quickstart) - single command deployment using
      `solo one-shot single deploy`.
-  2. [**Manual Deployment**](/docs/advanced-solo-setup/advanced-network-deployments/manual-deployment) - step-by-step
+  2. [**Manual Deployment**](/docs/advanced-solo-setup/network-deployments/manual-deployment) - step-by-step
      deployment with full control over each component.
 
 - Set the required environment variables as described below:
@@ -53,7 +54,7 @@ appear in the `prepare` step.
       `hedera-node*.crt` and `hedera-node*.key` under `~/.solo/cache/keys/`.
 
     When adding a new node, Solo generates a fresh key pair and stores it
-    alongside the keys for existing nodes in the same directory. For more detail, see [Where are my keys stored?](/docs/faq/#5-where-are-my-keys-stored).
+    alongside the keys for existing nodes in the same directory. For more detail, see [Where are my keys stored?](/docs/faqs/#5-where-are-my-keys-stored).
 
 2. **Persistent Volume Claims (PVCs)**
 

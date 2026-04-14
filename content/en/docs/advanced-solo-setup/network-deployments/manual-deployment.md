@@ -23,7 +23,7 @@ in isolation, or integrate Solo into a bespoke automation pipeline.
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/docs/advanced-solo-setup/system-readiness) — your local environment
+- [**System Readiness**](/docs/simple-solo-setup/system-readiness) — your local environment
   meets all hardware and software requirements (Docker, kind, kubectl, helm, Solo).
 - [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Kind cluster and
   have run `solo init` at least once.

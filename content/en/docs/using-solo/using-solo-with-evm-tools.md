@@ -406,7 +406,7 @@ task destroy
 ```
 
 This is useful for CI pipelines. See the
-[Solo deployment with Hardhat Example](/examples/hardhat-with-solo/) for full
+[Solo deployment with Hardhat Example](https://github.com/hiero-ledger/solo/tree/main/examples/hardhat-with-solo) for full
 details.
 
 ---
@@ -427,6 +427,6 @@ details.
 
 ## Further Reading
 
-- [Solo deployment with Hardhat Example](/examples/hardhat-with-solo/).
+- [Solo deployment with Hardhat Example](https://github.com/hiero-ledger/solo/tree/main/examples/hardhat-with-solo).
 - [Configuring Hardhat with Hiero Local Node](https://docs.hedera.com/hedera/tutorials/smart-contracts/configuring-hardhat-with-hiero-local-node-a-step-by-step-guide) - the Hedera tutorial this guide is modelled on.
-- [Retrieving Logs](/docs/jvm-debugger/) - for debugging network-level issues.
+- [Retrieving Logs](/docs/advanced-solo-setup/jvm-debugger/) - for debugging network-level issues.

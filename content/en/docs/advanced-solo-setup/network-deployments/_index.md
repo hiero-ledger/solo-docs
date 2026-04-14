@@ -8,5 +8,7 @@ description: >-
 categories: ["Advanced", "Deployment"]
 tags: ["advanced", "operator", "deployment", "manual-deployment"]
 weight: 2
+nav_prev: /docs/advanced-solo-setup/using-environment-variables/
+nav_next: /docs/advanced-solo-setup/jvm-debugger/
 ---
 

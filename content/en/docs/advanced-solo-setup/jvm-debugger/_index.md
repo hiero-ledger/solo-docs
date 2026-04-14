@@ -8,6 +8,8 @@ description: >
 categories: ["Advanced"]
 tags: ["advanced", "developer", "jvm", "debugging"]
 type: docs
+nav_prev: /docs/advanced-solo-setup/network-deployments/consensus-node-operations/
+nav_next: /docs/advanced-solo-setup/customizing-solo-with-tasks/
 ---
 
 ## Overview

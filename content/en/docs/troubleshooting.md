@@ -423,4 +423,4 @@ When opening an issue, include:
 Join the community for discussions and help:
 
 - **Hedera Discord**: Look for the `#solo` channel
-- **Hiero Community**: <https://hiero.org/community>
+- **Contribute to Hiero**: <https://hiero.org/#contribute>
