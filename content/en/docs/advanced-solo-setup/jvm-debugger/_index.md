@@ -87,8 +87,8 @@ To download `hgcaa.log` and `swirlds.log` as a zip archive without entering
 the container shell, run:
 
 ```bash
-# Downloads logs to ~/.solo/logs/<namespace>/<timestamp>/
-solo consensus diagnostics all --deployment solo-deployment
+# Downloads logs to ~/.solo/logs/<namespace>/<timestamp>
+solo deployment diagnostics all --deployment solo-deployment
 ```
 
 ---
@@ -189,14 +189,14 @@ solo deployment config create --namespace "${SOLO_NAMESPACE}" --deployment "${SO
 solo deployment cluster attach --deployment "${SOLO_DEPLOYMENT}" --cluster-ref ${SOLO_CLUSTER_NAME} --num-consensus-nodes 3
 solo keys consensus generate --deployment "${SOLO_DEPLOYMENT}" --gossip-keys --tls-keys -i node1,node2,node3
 
-solo consensus network deploy --deployment "${SOLO_DEPLOYMENT}" -i node1,node2,node3 --pvcs true
+solo consensus network deploy --deployment "${SOLO_DEPLOYMENT}" -i node1,node2,node3 --pvcs
 solo consensus node setup --deployment "${SOLO_DEPLOYMENT}" -i node1,node2,node3 --local-build-path ../hiero-consensus-node/hedera-node/data
 solo consensus node start --deployment "${SOLO_DEPLOYMENT}" -i node1,node2,node3
 
 solo consensus node add --deployment "${SOLO_DEPLOYMENT}" --gossip-keys --tls-keys \
   --debug-node-alias node4 \
   --local-build-path ../hiero-consensus-node/hedera-node/data \
-  --pvcs true
+  --pvcs
 ```
 
 ### Example 3 — Debug a node during a node update operation
@@ -233,7 +233,7 @@ solo consensus node update --deployment "${SOLO_DEPLOYMENT}" \
   --new-account-number 0.0.7 \
   --gossip-public-key ./s-public-node2.pem \
   --gossip-private-key ./s-private-node2.pem \
-  --release-tag v0.59.5
+  --release-tag v0.71.0
 ```
 
 ### Example 4 — Debug a node during a node delete operation
@@ -328,7 +328,7 @@ solo consensus node start --deployment "${SOLO_DEPLOYMENT}" -i node1,node2,node3
 solo consensus node stop --deployment "${SOLO_DEPLOYMENT}"
 
 # Upload previously saved state files
-solo consensus node states -i node1,node2,node3 --deployment "${SOLO_DEPLOYMENT}"
+solo consensus node state download  -i node1,node2,node3 --deployment "${SOLO_DEPLOYMENT}"
 
 # Restart the network using the uploaded state
 solo consensus node start --deployment "${SOLO_DEPLOYMENT}" --state-file network-node1-0-state.zip
