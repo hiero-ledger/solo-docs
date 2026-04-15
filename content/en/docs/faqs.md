@@ -95,12 +95,12 @@ After running `solo one-shot single deploy`, the following services are availabl
 
 | Service               | Endpoint                | Description                                      |
 | --------------------- | ----------------------- | ------------------------------------------------ |
-| Explorer UI           | `http://localhost:8080` | Web UI for inspecting accounts and transactions. |
+| Explorer UI           | `http://localhost:8080/localnet/dashboard` | Web UI for inspecting accounts and transactions. |
 | Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for submitting transactions.       |
 | Mirror node REST API  | `http://localhost:5551` | REST API for querying historical data.           |
 | JSON RPC relay        | `localhost:7546`        | Ethereum-compatible JSON RPC endpoint.           |
 
-- Open `http://localhost:8080` in your browser to start exploring your local network.
+- Open `http://localhost:8080/localnet/dashboard` in your browser to start exploring your local network.
 
 - To verify these services are reachable, you can run a quick health check:
 

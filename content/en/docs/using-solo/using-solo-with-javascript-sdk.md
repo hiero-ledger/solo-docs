@@ -41,29 +41,23 @@ Before proceeding, ensure you have completed the following:
 
 ## Step 1: Launch a Local Solo Network
 
-Clone the Solo repository and navigate into the `scripts` directory, then start the
-network with the mirror node and Hiero Explorer:
+Start the network with a single consensus node, mirror node, and Hiero Explorer:
 
 ```bash
-# Clone Solo repo
-git clone https://github.com/hiero-ledger/solo.git
-cd solo
+solo one-shot single deploy
 ```
 
-```bash
-# Launch a local Solo network with mirror node and Hiero Explorer
-cd scripts
-task default-with-mirror
-```
-
-This command starts:
+This command:
 
 - Creates a local Kind Kubernetes cluster.
 - Deploys a local Hiero consensus node.
-- A mirror node for transaction history queries , and Hiero Explorer.
+- Deploys a mirror node for transaction history queries and the Hiero Explorer.
 
 Once complete, the Hiero Explorer is available at:
 [http://localhost:8080/localnet/dashboard](http://localhost:8080/localnet/dashboard).
+
+> **Note for contributors:** If you are working from a cloned Solo repository, you
+> can use `task default-with-mirror` from the `scripts/` directory as an alternative.
 
 ---
 
@@ -87,13 +81,14 @@ and query responses from the network.
 
 - With your Solo network running, create a funded operator account with 100 HBAR that your scripts will use to sign and pay for transactions.
 
-- From the `solo` repository root, run:
-
   ```bash
-  npm run solo-test -- ledger account create \
+  solo ledger account create \
     --deployment solo-deployment \
     --hbar-amount 100
   ```
+
+  > **Note for contributors:** If you are working from a cloned Solo repository, you
+  > can run `npm run solo-test -- ledger account create ...` as an alternative.
 
 - **Example output:**
 
@@ -115,10 +110,10 @@ next step.
 - To sign transactions you need the account's **private key**. Retrieve it with:
 
   ```bash
-  npm run solo-test -- ledger account info \
-  --account-id 0.0.1007 \
-  --deployment solo-deployment \
-  --private-key
+  solo ledger account info \
+    --account-id 0.0.1007 \
+    --deployment solo-deployment \
+    --private-key
   ```
 
 - **Expected output:**
@@ -152,13 +147,13 @@ authenticate the operator account. Create a `.env` file at the root of the
   cat > .env <<EOF
 
   # Operator account ID (accountId from Step 3)
-  export OPERATOR_ID="0.0.1007"
+  OPERATOR_ID="0.0.1007"
 
   # Operator private key (not publicKey) from Step 3
-  export OPERATOR_KEY="302e020100300506032b657004220420411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7"
+  OPERATOR_KEY="302e020100300506032b657004220420411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7"
 
   # Target the local Solo network
-  export HEDERA_NETWORK="local-node"
+  HEDERA_NETWORK="local-node"
   EOF
 
   # Load the variables into your current shell session
@@ -170,8 +165,9 @@ authenticate the operator account. Create a `.env` file at the root of the
   > `302e...`.
 
 - When `HEDERA_NETWORK` is set to `"local-node"`, the SDK automatically connects to
-the Solo consensus node at `localhost:50211` and the mirror node REST API at
-`localhost:5551`.
+the Solo consensus node at `localhost:50211` (gRPC) and the mirror node at
+`localhost:5600` (mirror gRPC, used for event subscriptions). Port `5551` is the
+mirror node REST API port used by browser clients, not the Node.js SDK.
 
 ---
 
@@ -263,7 +259,7 @@ after reaching consensus. A receipt includes:
     AccountCreateTransaction,
     PrivateKey,
     Hbar,
-  } from "@hashgraph/sdk";
+  } from "@hiero-ledger/sdk";
 
   // Configure the client to connect to the local Solo network
   const client = Client.forLocalNode();
@@ -424,10 +420,10 @@ Solo writes logs to `~/.solo/logs/`:
 | Log File | Contents |
 | --- | --- |
 | `solo.log` | All Solo CLI command output and lifecycle events |
-| `hashgraph-sdk.log` | SDK-level transaction submissions and responses sent to network nodes |
 
-These logs are useful for debugging failed transactions or connectivity issues between
-the SDK and your local Solo network.
+The Solo log is useful for debugging connectivity issues between the SDK and your local Solo network.
+
+The Hiero JavaScript SDK uses [Pino](https://getpino.io/) for logging and writes to the console by default. It does not write to a file on its own. To configure file-based SDK logging, see the [Pino documentation](https://getpino.io/#/docs/transports).
 
 ---
 
