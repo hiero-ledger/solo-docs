@@ -91,7 +91,7 @@ These accounts and their private keys are saved to a cache directory on completi
 - Then open the accounts file at:
 
   ```bash
-  ~/.solo/cache/one-shot-<deployment-name>/accounts.json
+  ~/.solo/one-shot-<deployment-name>/accounts.json
   ```
 
 - Open that file to retrieve your ECDSA keys and EVM address. Each account entry contains:
