@@ -268,7 +268,7 @@ If the mirror node is not showing new transactions, first confirm that records a
    # Redeploy with pinger enabled
    solo mirror node add \
      --deployment "${SOLO_DEPLOYMENT}" \
-     --cluster-ref kind-${SOLO_CLUSTERNAME} \
+     --cluster-ref kind-${SOLO_CLUSTER_NAME} \
      --enable-ingress \
      --pinger
    ```
@@ -359,7 +359,6 @@ These files are often requested when reporting issues:
 | File                              | Description                           |
 | --------------------------------- | ------------------------------------- |
 | `~/.solo/logs/solo.log`           | Solo CLI command logs                 |
-| `~/.solo/logs/hashgraph-sdk.log`  | SDK transaction logs from Solo client |
 
 ### Kubernetes diagnostics
 

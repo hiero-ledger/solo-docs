@@ -88,7 +88,7 @@ the container shell, run:
 
 ```bash
 # Downloads logs to ~/.solo/logs/<namespace>/<timestamp>/
-solo consensus diagnostics all --deployment solo-deployment
+solo deployment diagnostics all --deployment solo-deployment
 ```
 
 ---
@@ -133,7 +133,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -181,7 +180,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -214,7 +212,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -251,7 +248,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -314,7 +310,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -328,7 +323,7 @@ solo consensus node start --deployment "${SOLO_DEPLOYMENT}" -i node1,node2,node3
 solo consensus node stop --deployment "${SOLO_DEPLOYMENT}"
 
 # Upload previously saved state files
-solo consensus node states -i node1,node2,node3 --deployment "${SOLO_DEPLOYMENT}"
+solo consensus state download -i node1,node2,node3 --deployment "${SOLO_DEPLOYMENT}"
 
 # Restart the network using the uploaded state
 solo consensus node start --deployment "${SOLO_DEPLOYMENT}" --state-file network-node1-0-state.zip
