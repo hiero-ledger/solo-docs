@@ -132,7 +132,7 @@ After the one-shot deployment completes and all pods are running, your local ser
 
 | Service               | Endpoint                | Description                            | Verification
 |-----------------------|-------------------------|----------------------------------------|-------------------------------------|
-| Explorer UI           | `http://localhost:8080`| Web UI for inspecting the network.     | Open URL in your browser to view the network explorer |
+| Explorer UI           | `http://localhost:38080`| Web UI for inspecting the network.     | Open URL in your browser to view the network explorer |
 | Consensus node (gRPC) | `localhost:30211`       | gRPC endpoint for transactions.        | `nc -zv localhost 35211`            |
-| Mirror node REST API  | `http://localhost:8081`| REST API for queries.                  | http://localhost:38081/api/v1/transactions |
-| JSON RPC relay | `localhost:7546` | Ethereum-compatible JSON RPC endpoint. | <code>curl -X POST http://localhost:37546 -H 'Content-Type: application/json'<br>-d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'</code> |
+| Mirror node REST API  | `http://localhost:38081`| REST API for queries.                  | http://localhost:38081/api/v1/transactions |
+| JSON RPC relay | `localhost:37546` | Ethereum-compatible JSON RPC endpoint. | <code>curl -X POST http://localhost:37546 -H 'Content-Type: application/json'<br>-d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'</code> |
