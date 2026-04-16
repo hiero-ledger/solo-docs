@@ -130,7 +130,7 @@ This configuration includes:
 | **Mirror Node**    | Stores and serves historical transaction data |
 | **Explorer UI**    | Web interface for viewing accounts            |
 
-Access the Explorer at: `http://localhost:8080`
+Access the Explorer at: `http://localhost:8080/localnet/dashboard`
 
 ### Deploy Network with Relay and Explorer
 
@@ -153,7 +153,7 @@ This configuration includes:
 
 Access the services at:
 
-- Explorer: `http://localhost:8080`
+- Explorer: `http://localhost:8080/localnet/dashboard`
 - JSON-RPC Relay: `http://localhost:7546`
 
 ## Available Taskfile Targets
@@ -241,7 +241,7 @@ cd scripts
 task default
 task solo:explorer
 
-# Access at http://localhost:8080
+# Access at http://localhost:8080/localnet/dashboard
 ```
 
 ### JSON-RPC Relay Management

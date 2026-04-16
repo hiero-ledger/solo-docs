@@ -14,7 +14,7 @@ type: docs
 The Hiero Mirror Node stores the full transaction history of your local Solo network
 and exposes it through several interfaces:
 
-- A **web-based block explorer** (Hiero Mirror Node Explorer) at `http://localhost:8080`.
+- A **web-based block explorer** (Hiero Mirror Node Explorer) at `http://localhost:8080/localnet/dashboard`.
 - A **REST API** via the mirror-ingress service at `http://localhost:8081`
     (recommended entry point-routes to the correct REST implementation).
 - A **gRPC endpoint** for mirror node subscriptions.
@@ -116,7 +116,7 @@ solo explorer node add \
 Once Mirror Node is running, open the Hiero Explorer in your browser at:
 
 ```url
-http://localhost:8080
+http://localhost:8080/localnet/dashboard
 ```
 
 The Explorer lets you browse accounts, transactions, tokens, and contracts on
@@ -133,7 +133,7 @@ solo ledger account create --deployment solo-deployment --hbar-amount 100
 solo ledger account create --deployment solo-deployment --hbar-amount 100
 ```
 
-Open the Explorer at `http://localhost:8080` to see the new accounts and their
+Open the Explorer at `http://localhost:8080/localnet/dashboard` to see the new accounts and their
 transactions recorded by the Mirror Node.
 
 You can also use the [Hiero JavaScript SDK](/docs/using-solo/using-solo-with-javascript-sdk)
