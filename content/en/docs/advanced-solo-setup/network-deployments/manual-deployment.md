@@ -25,8 +25,7 @@ Before proceeding, ensure you have completed the following:
 
 - [**System Readiness**](/docs/simple-solo-setup/system-readiness) — your local environment
   meets all hardware and software requirements (Docker, kind, kubectl, helm, Solo).
-- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Kind cluster and
-  have run `solo init` at least once.
+- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Kind cluster.
 - Set your environment variables if you have not already done so:
 
   ```bash
@@ -39,6 +38,10 @@ Before proceeding, ensure you have completed the following:
 ---
 
 ## Deployment Steps
+
+> **Note:** Version numbers and release tags in the example output blocks below reflect the
+> version used when this guide was written. Your output will show the version you have installed,
+> which may differ.
 
 ### 1. Connect Cluster and Create Deployment
 
@@ -615,18 +618,18 @@ solo relay node destroy \
   --cluster-ref kind-${SOLO_CLUSTER_NAME}
 ```
 
-### 2. Destroy Mirror Node
+### 2. Destroy Explorer
 
 ```bash
-solo mirror node destroy \
+solo explorer node destroy \
   --deployment "${SOLO_DEPLOYMENT}" \
   --force
 ```
 
-### 3. Destroy Explorer
+### 3. Destroy Mirror Node
 
 ```bash
-solo explorer node destroy \
+solo mirror node destroy \
   --deployment "${SOLO_DEPLOYMENT}" \
   --force
 ```

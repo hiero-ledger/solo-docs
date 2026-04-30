@@ -71,12 +71,14 @@ Install Kind to create and manage a local Kubernetes cluster in your workflow.
       uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3
       with:
         install_only: true
-        node_image: kindest/node:v1.31.4@sha256:2cb39f7295fe7eafee0842b1052a599a4fb0f8bcf3f83d96c7f4864c357c6c30
-        version: v0.26.0
-        kubectl_version: v1.31.4
+        node_image: kindest/node:v1.32.2@sha256:3966f21e12b760f6585bde7140cae5e8cdc0e52b37a6f90ce39834b6e72e3f49
+        version: v0.29.0
+        kubectl_version: v1.32.2
         verbosity: 3
         wait: 120s
   ```
+  > **Important:** Kind version must be **v0.29.0 or later** and  Kubernetes version must be **v1.32.2 or late**r. Solo enforces this 
+  > minimum version at runtime. Installing an older version will cause deployment failures.
 
 ## Step 2: Install Node.js
 
@@ -97,7 +99,7 @@ breaking changes from newer releases and cause unexpected workflow failures.
     - name: Install Solo CLI
       run: |
         set -euo pipefail
-        npm install -g @hiero-ledger/solo@0.68.0
+        npm install -g @hiero-ledger/solo@<version>
         solo --version
         kind --version
   ```
@@ -124,50 +126,108 @@ a fully functional local Hiero network, including:
         solo one-shot single deploy | tee solo-deploy.log
   ```
 
+## Cleanup
+
+After the workflow completes, destroy the Solo deployment and delete the Kind
+cluster to avoid leaving resources behind.
+
+  ```yaml
+    - name: Destroy Solo deployment
+      env:
+        SOLO_DEPLOYMENT: solo-deployment
+      run: |
+        set -euo pipefail
+        solo one-shot single destroy --deployment "${SOLO_DEPLOYMENT}"
+  ```
+
+  ```yaml
+    - name: Delete Kind cluster
+      env:
+        SOLO_CLUSTER_NAME: solo
+      run: |
+        set -euo pipefail
+        kind delete cluster -n "${SOLO_CLUSTER_NAME}"
+  ```
+
 ## Complete Example Workflow
 
 The following is the full workflow combining all steps above. Copy this into your
 .github/workflows/ directory as a starting point.
 
 ```yaml
+name: Solo CI Example
 
-  - name: Check Docker Resources
-    run: |
-      read cpus mem <<<"$(docker info --format '{{.NCPU}} {{.MemTotal}}')"
-      mem_gb=$(awk -v m="$mem" 'BEGIN{printf "%.1f", m/1000000000}')
-      echo "CPU cores: $cpus"
-      echo "Memory: ${mem_gb} GB"
-      
-  - name: Setup Kind
-    uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3
-    with:
-      install_only: true
-      node_image: kindest/node:v1.31.4@sha256:2cb39f7295fe7eafee0842b1052a599a4fb0f8bcf3f83d96c7f4864c357c6c30
-      version: v0.26.0
-      kubectl_version: v1.31.4
-      verbosity: 3
-      wait: 120s
+on:
+  workflow_dispatch:
+    inputs:
+      solo_version:
+        description: 'Solo CLI version to install'
+        required: false
+        default: '0.69.0'
+      kind_version:
+        description: 'Kind version to install (minimum v0.29.0)'
+        required: false
+        default: 'v0.29.0'
+      kubectl_version:
+        description: 'kubectl version to install (minimum v1.32.2)'
+        required: false
+        default: 'v1.32.2'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Docker Resources
+        run: |
+          read cpus mem <<<"$(docker info --format '{{.NCPU}} {{.MemTotal}}')"
+          mem_gb=$(awk -v m="$mem" 'BEGIN{printf "%.1f", m/1000000000}')
+          echo "CPU cores: $cpus"
+          echo "Memory: ${mem_gb} GB"
+          
+      - name: Setup Kind
+        uses: helm/kind-action@a1b0e391336a6ee6713a0583f8c6240d70863de3
+        with:
+          install_only: true
+          node_image: kindest/node:v1.32.2@sha256:3966f21e12b760f6585bde7140cae5e8cdc0e52b37a6f90ce39834b6e72e3f49
+          version: v0.29.0
+          kubectl_version: v1.32.2
+          verbosity: 3
+          wait: 120s
          
-  - name: Set up Node.js
-    uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-    with:
-      node-version: 22.12.0
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.12.0
       
-  - name: Install Solo CLI
-    run: |
-      set -euo pipefail
-      npm install -g @hiero-ledger/solo@0.68.0
-      solo --version
-      kind --version
+      - name: Install Solo CLI
+        run: |
+          set -euo pipefail
+          npm install -g @hiero-ledger/solo@<version>
+          solo --version
+          kind --version
       
-  - name: Deploy Solo
-    env:
-      SOLO_CLUSTER_NAME: solo
-      SOLO_NAMESPACE: solo
-      SOLO_CLUSTER_SETUP_NAMESPACE: solo-cluster
-      SOLO_DEPLOYMENT: solo-deployment
-    run: |
-      set -euo pipefail
-      kind create cluster -n "${SOLO_CLUSTER_NAME}"
-      solo one-shot single deploy | tee solo-deploy.log
+      - name: Deploy Solo
+        env:
+          SOLO_CLUSTER_NAME: solo
+          SOLO_NAMESPACE: solo
+          SOLO_CLUSTER_SETUP_NAMESPACE: solo-cluster
+          SOLO_DEPLOYMENT: solo-deployment
+        run: |
+          set -euo pipefail
+          kind create cluster -n "${SOLO_CLUSTER_NAME}"
+          solo one-shot single deploy | tee solo-deploy.log
+
+      - name: Destroy Solo deployment
+        env:
+          SOLO_DEPLOYMENT: solo-deployment
+        run: |
+          set -euo pipefail
+          solo one-shot single destroy --deployment "${SOLO_DEPLOYMENT}"
+
+      - name: Delete Kind cluster
+        env:
+          SOLO_CLUSTER_NAME: solo
+        run: |
+          set -euo pipefail
+          kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 ```

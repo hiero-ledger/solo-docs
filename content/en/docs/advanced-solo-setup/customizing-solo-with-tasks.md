@@ -288,7 +288,8 @@ task solo:block:add
 
 Low-level tasks for managing clusters and network infrastructure:
 
-| Task                        | Description                                                |\n| --------------------------- | ---------------------------------------------------------- |
+| Task                        | Description                                                |
+| --------------------------- | ---------------------------------------------------------- |
 | `cluster:create`            | Create a Kind (Kubernetes in Docker) cluster               |
 | `cluster:destroy`           | Delete the Kind cluster                                    |
 | `solo:cluster:setup`        | Setup cluster infrastructure and prerequisites             |

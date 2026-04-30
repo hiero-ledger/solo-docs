@@ -63,6 +63,34 @@ solo consensus node restart --deployment <deployment-name>
 
 To verify pod status after any of the above commands, see [Verify the network](/docs/simple-solo-setup/quickstart#verify-the-network) in the Quickstart guide.
 
+### Verify Network is Working
+
+To confirm your Hedera network is fully operational, create a test account using the Ledger account creation command:
+
+```bash
+solo account create --deployment <deployment-name>
+```
+
+Example output:
+
+```
+✓ Account created: 0.0.1001
+  Alias: myaccount
+  Balance: 1000 ℏ
+```
+
+Once the account is created, verify it in the web-based Explorer UI:
+
+1. Open your browser to **http://localhost:38080**
+2. In the search bar, enter the account ID (e.g., `0.0.1001`)
+3. View the account details, balance, and transaction history
+
+This confirms that:
+* The network is processing transactions
+* The consensus node is responding correctly
+* The mirror node is indexing transactions
+* The explorer is displaying data properly
+
 ## Viewing Logs
 
 To capture logs and diagnostic information for your deployment:
