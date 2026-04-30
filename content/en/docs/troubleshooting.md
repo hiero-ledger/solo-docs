@@ -211,7 +211,7 @@ If you cannot connect to Solo network endpoints from your machine, use this sequ
 
 3. Confirm the expected endpoints and ports
 
-   After forwarding, connect to the local ports shown above (for example, `http://localhost:8080` for the explorer).  
+   After forwarding, connect to the local ports shown above (for example, `http://localhost:8080/localnet/dashboard` for the explorer).  
    For the standard exposed endpoints after a successful one-shot deployment, see [How to access exposed services (mirror node, relay, explorer)](/docs/faqs#accessing-exposed-services).
 
 ---

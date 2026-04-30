@@ -80,5 +80,4 @@ For full current syntax and flags, see [Solo CLI Reference](/docs/advanced-solo-
 
 ## Notes
 
-- Current command tree includes additional commands not present in legacy CLI (for example `ledger account predefined`, `deployment refresh port-forwards`, and `consensus node collect-jfr`).
-- Legacy mappings are intended for migration support only. Prefer documenting and scripting the current command paths.
+- Current command tree includes additional commands not present in legacy CLI (for example `ledger account predefined`, `rapid-fire load start`, and `consensus node collect-jfr`).
