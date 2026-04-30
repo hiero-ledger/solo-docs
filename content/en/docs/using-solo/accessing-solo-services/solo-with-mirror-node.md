@@ -66,8 +66,7 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-# Initialize Solo and configure cluster
-solo init
+# Configure cluster
 solo cluster-ref config setup \
   --cluster-setup-namespace "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect \
@@ -212,11 +211,13 @@ In most cases you should use `localhost:8081` instead.
 
 ## Restoring Port-Forwards
 
-If port-forwards are interrupted-for example after a system restart-restore
-them without redeploying:
+If port-forwards are interrupted — for example after a system restart — restore
+them by re-running the relevant component add commands. These commands are
+idempotent and will reattach port-forwards without redeploying:
 
 ```bash
-solo deployment refresh port-forwards
+solo mirror node add --deployment "${SOLO_DEPLOYMENT}"
+solo explorer node add --deployment "${SOLO_DEPLOYMENT}"
 ```
 
 ---

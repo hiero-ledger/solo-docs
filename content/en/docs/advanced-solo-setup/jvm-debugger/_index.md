@@ -133,7 +133,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -181,7 +180,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -214,7 +212,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -251,7 +248,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -314,7 +310,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
