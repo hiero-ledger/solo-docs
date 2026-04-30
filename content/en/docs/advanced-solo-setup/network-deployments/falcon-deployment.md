@@ -16,9 +16,7 @@ One-shot Falcon deployment is Solo's YAML-driven one-shot workflow. It uses the 
 deployment pipeline as `solo one-shot single deploy`, but lets you inject
 component-specific flags through a single values file.
 
-One-shot use Falcon deployment when you need a repeatable advanced setup, want to check a
-complete deployment into source control, or need to customise component flags
-without running every Solo command manually.
+Use One-shot Falcon deployment when you need a repeatable advanced setup, want to check a complete deployment into source control, or need to customise component flags without running every Solo command manually.
 
 Falcon is especially useful for:
 
@@ -36,19 +34,8 @@ Falcon is especially useful for:
 
 Before proceeding, ensure you have completed the following:
 
-- [**System Readiness**](/docs/simple-solo-setup/system-readiness) -your local environment
-  meets the hardware and software requirements for Solo, Kubernetes, Docker,
-  Kind, kubectl, and Helm.
-- [**Quickstart**](/docs/simple-solo-setup/quickstart) -you are already familiar with the
-  standard one-shot deployment workflow.
-- Set your environment variables if you have not already done so:
-
-  ```bash
-  export SOLO_CLUSTER_NAME=solo
-  export SOLO_NAMESPACE=solo
-  export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster
-  export SOLO_DEPLOYMENT=solo-deployment
-  ```
+- [**System Readiness**](/docs/simple-solo-setup/system-readiness) - your local environment meets the hardware and software requirements for Solo, Kubernetes, Docker, Kind, kubectl, and Helm.
+- [**Quickstart**](/docs/simple-solo-setup/quickstart) -you are already familiar with the standard one-shot deployment workflow.
 
 ## How Falcon Works
 
@@ -64,8 +51,7 @@ sequence used by its one-shot workflows:
 7. Optionally, deploy mirror node, explorer, and relay in parallel for faster
    startup.
 8. Create predefined test accounts.
-9. Write deployment notes, versions, port-forward details, and account data to a
-   local output directory.
+9. Write deployment notes, versions, port-forward details, and account data to a local output directory.
 
 The difference is that Falcon reads a YAML file and maps its top-level sections
 to the underlying Solo subcommands.
@@ -131,14 +117,14 @@ solo one-shot falcon deploy --values-file falcon-values.yaml
 Solo creates a one-shot deployment, applies the values from the YAML file to the
 appropriate subcommands, and then deploys the full environment.
 
-### What Falcon Does Not Read from the File
+### Command-Line Flags (Not in YAML File)
 
-Some Falcon settings are controlled directly by the top-level command flags,
-not by section entries in the values file:
+The following flags are passed on the command line and cannot be set in the YAML file:
+- `--deployment`, `--namespace`, `--cluster-ref`, `--num-consensus-nodes`
+
+Note: `--values-file` specifies which YAML file to load.
 
 - `--values-file` selects the YAML file to load.
-- `--deploy-mirror-node`, `--deploy-explorer`, and `--deploy-relay` control
-  whether those optional components are deployed at all.
 - `--deployment`, `--namespace`, `--cluster-ref`, and `--num-consensus-nodes`
   are top-level one-shot inputs.
 
@@ -214,36 +200,6 @@ want to manage each step manually.
 > [**System Readiness**](/docs/simple-solo-setup/system-readiness), and increase Docker
 > memory and CPU allocation before deploying.
 
-## (Optional) Component Toggles
-
-Falcon can skip optional components at the command line without requiring a
-second YAML file.
-
-For example, to deploy only the consensus network and mirror node:
-
-```bash
-solo one-shot falcon deploy \
-  --values-file falcon-values.yaml \
-  --deploy-explorer=false \
-  --deploy-relay=false
-```
-
-Available toggles and their defaults:
-
-| Flag | Default | Description |
-| ---- | ------- | ----------- |
-| `--deploy-mirror-node` | `true` | Include the mirror node in the deployment. |
-| `--deploy-explorer` | `true` | Include the explorer in the deployment. |
-| `--deploy-relay` | `true` | Include the JSON RPC relay in the deployment. |
-
-> **Important**: The explorer and relay both depend on the mirror node. Setting `--deploy-mirror-node=false` while keeping `--deploy-explorer=true` or `--deploy-relay=true` is not a supported configuration and will result in a failed deployment.
-
-This is useful when you want to:
-
-- Reduce resource usage in CI jobs.
-- Isolate one component during testing.
-- Reuse the same YAML file across multiple deployment profiles.
-
 ## Common Falcon Customisations
 
 Because each YAML section maps directly to the corresponding Solo subcommand,
@@ -283,7 +239,7 @@ Falcon can also include block node configuration.
 > **Note:** Block node workflows are advanced and require higher resource
 > allocation and version compatibility across consensus node, block node, and
 > related components.
->Docker memory must be set to at least 16 GB before deploying with block node enabled.
+> Docker memory must be set to at least 16 GB before deploying with block node enabled.
 >
 > Block node support also requires the
 > `ONE_SHOT_WITH_BLOCK_NODE=true` environment variable to be set before
@@ -327,24 +283,6 @@ relayNode:
 Use block node settings only when your target Solo and component versions are
 known to be compatible.
 
-## Rollback and Failure Behaviour
-
-Falcon deployment enables automatic rollback by default.
-
-If deployment fails after resources have already been created, Solo attempts to
-destroy the one-shot deployment automatically and clean up the namespace.
-
-If you want to preserve the failed deployment for debugging, disable rollback:
-
-```bash
-solo one-shot falcon deploy \
-  --values-file falcon-values.yaml \
-  --no-rollback
-```
-
-Use `--no-rollback` only when you explicitly want to inspect partial resources,
-logs, or Kubernetes objects after a failed run.
-
 ## Deployment Output
 
 After a successful Falcon deployment, Solo writes deployment metadata to
@@ -363,18 +301,9 @@ This directory typically contains:
 This makes Falcon especially useful for automation, because the deployment
 artifacts are written to a predictable path after each run.
 
-To inspect the latest one-shot deployment metadata later, run:
+To inspect deployment output, check the `~/.solo/one-shot-<deployment>/` directory directly.
 
-```bash
-solo one-shot show deployment
-```
-
-If port-forwards are interrupted after deployment - for example after a system
-restart or network disruption - restore them without redeploying:
-
-```bash
-solo deployment refresh port-forwards
-```
+If port-forwards are interrupted after deployment, restore them by rerunning the component commands (such as `solo consensus node start`, `solo mirror node add`, etc.)
 
 ## Destroy a Falcon Deployment
 

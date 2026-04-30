@@ -251,17 +251,22 @@ The following tools are not required but are recommended for monitoring and mana
 
 The table below shows the full compatibility matrix for the current and recent Solo releases:
 
-| Solo Version | Node.js | Kind | Solo Chart | Hedera | Kubernetes | Kubectl | Helm | k9s | Docker Resources | Release Date | End of Support |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 0.59.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.62.0 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-02-27 | 2026-03-27 |
-| 0.58.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.62.0 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-02-25 | 2026-05-25 |
-| 0.57.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.60.2 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-02-19 | 2026-03-19 |
-| 0.56.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.60.2 | v0.68.7-rc.1 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-02-12 | 2026-05-12 |
-| 0.55.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.60.2 | v0.68.7-rc.1 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-02-05 | 2026-03-05 |
-| 0.54.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.59.0 | v0.68.6+ | >= v1.32.2 | >= v1.32.2 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2026-01-27 | 2026-04-27 |
-| 0.52.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.26.0 | v0.58.1 | v0.67.2+ | >= v1.27.3 | >= v1.27.3 | v3.14.2 | >= v0.27.4 | Memory >= 12 GB, CPU >= 6 cores | 2025-12-11 | 2026-03-11 |
+| Solo Version | Node.js | Kind | Solo Chart | Hedera | Kubernetes | Kubectl | Helm | Docker Resources | Release Date | End of Support |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 0.69.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.63.3 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-04-14 | 2026-05-14 |
+| 0.68.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.63.2 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-04-07 | 2026-10-07 |
+| 0.67.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.63.2 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-04-02 | 2026-05-02 |
+| 0.66.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.63.2 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-04-02 | 2026-07-02 |
+| 0.65.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.63.2 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-03-31 | 2026-04-30 |
+| 0.64.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.63.2 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-03-27 | 2026-06-27 |
+| 0.63.0 | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.62.0 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-03-17 | 2026-04-17 |
+| 0.62.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.62.0 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-03-17 | 2026-06-17 |
+| 0.60.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.62.0 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-03-10 | 2026-06-10 |
+| 0.58.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.62.0 | v0.71.0 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-02-25 | 2026-05-25 |
+| 0.56.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.60.2 | v0.68.7-rc.1 | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-02-12 | 2026-05-12 |
+| 0.54.0 (LTS) | >= 22.0.0 (lts/jod) | >= v0.29.0 | v0.59.0 | v0.68.6+ | >= v1.32.2 | >= v1.32.2 | v3.14.2 | Memory >= 12GB, CPU cores >= 6 | 2026-01-27 | 2026-04-27 |
 
-For a list of legacy releases, see the [legacy versions documentation](http://github.com/hiero-ledger/solo/blob/main/docs/legacy-versions.md).
+For a list of legacy releases, see the [legacy versions documentation](https://github.com/hiero-ledger/solo-docs/blob/main/legacy-versions.md).
 
 ## Troubleshooting Installation
 
