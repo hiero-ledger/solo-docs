@@ -55,20 +55,22 @@ This command:
 
 - Creates a local Kind Kubernetes cluster.
 - Deploys a Hiero consensus node, mirror node, and Hiero Mirror Node Explorer.
-- Deploys the Hiero **JSON-RPC relay** and exposes it at `http://localhost:7546`.
+- Deploys the Hiero **JSON-RPC relay** and exposes it at `http://localhost:37546` (Solo 0.63+).
 - Generates three groups of pre-funded accounts, including ECDSA (EVM-compatible) accounts.
 
-> **Relay endpoint summary:**
+> **Relay endpoint summary (Solo 0.63 and later):**
 >
 > | Property | Value |
 > | --- | --- |
-> | RPC URL | `http://localhost:7546` |
+> | RPC URL | `http://localhost:37546` |
 > | Chain ID | `298` |
 > | Currency symbol | `HBAR` |
+>
+> If you are using Solo 0.62 or earlier, the relay is at `http://localhost:7546`.
 
 ### Adding the Relay to an Existing Deployment
 
-If you already have a running Solo network without the relay, see [**Step 10: Deploy JSON-RPC Relay**](/docs/advanced-solo-setup/network-deployments/manual-deployment/#10-deploy-json-rpc-relay) in the Step-by-Step Manual Deployment guide for full instructions, then return here once your relay is running on `http://localhost:7546`.
+If you already have a running Solo network without the relay, see [**Step 10: Deploy JSON-RPC Relay**](/docs/advanced-solo-setup/network-deployments/manual-deployment/#10-deploy-json-rpc-relay) in the Step-by-Step Manual Deployment guide for full instructions, then return here once your relay is running on `http://localhost:37546` (Solo 0.63+) or `http://localhost:7546` (Solo 0.62 and earlier).
 
 To remove the relay when you no longer need it, see [**Cleanup Step 1: Destroy JSON-RPC Relay**](/docs/advanced-solo-setup/network-deployments/manual-deployment/#1-destroy-json-rpc-relay) in the same guide.
 
@@ -161,7 +163,7 @@ const config: HardhatUserConfig = {
   solidity: "0.8.28",
   networks: {
     solo: {
-      url: "http://127.0.0.1:7546",
+      url: "http://127.0.0.1:37546",
       chainId: 298,
       // Load from environment — never commit private keys to source control
       accounts: process.env.SOLO_EVM_PRIVATE_KEY
@@ -317,8 +319,10 @@ Confirm your transactions reached consensus using any of the following:
 ### Hiero Mirror Node Explorer
 
 ```url
-http://localhost:8080/localnet/dashboard
+http://localhost:38080/localnet/dashboard
 ```
+
+> **Note:** If you are using Solo 0.62 or earlier, the Explorer is at `http://localhost:8080/localnet/dashboard`.
 
 Search by account address, transaction hash, or contract address to view
 transaction details and receipts.
@@ -326,19 +330,19 @@ transaction details and receipts.
 ### Hiero Mirror Node REST API
 
 ```url
-http://localhost:8081/api/v1/transactions?limit=5
+http://localhost:38081/api/v1/transactions?limit=5
 ```
 
 Returns the five most recent transactions in JSON format. Useful for scripted
 verification.
 
-> Note: `localhost:5551` (the legacy Mirror Node REST API) is being phased out.
-> Always use `localhost:8081` to ensure compatibility with all endpoints.
+> Note: `localhost:5551` (the legacy Mirror Node REST API direct endpoint) is being phased out.
+> Use `localhost:38081` (Solo 0.63+) or `localhost:8081` (Solo 0.62 and earlier) to ensure compatibility with all endpoints.
 
 ### Hiero JSON RPC Relay (eth_getTransactionReceipt)
 
 ```bash
-curl -X POST http://localhost:7546 \
+curl -X POST http://localhost:37546 \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","method":"eth_getTransactionReceipt","params":["0xYOUR_TX_HASH"],"id":1}'
 ```
@@ -356,10 +360,12 @@ To connect MetaMask to your local Solo network:
    | Field | Value |
    | --- | --- |
    | Network name | `Solo Local` |
-   | New RPC URL | `http://localhost:7546` |
+   | New RPC URL | `http://localhost:37546` |
    | Chain ID | `298` |
    | Currency symbol | `HBAR` |
-   | Block explorer URL | `http://localhost:8080/localnet/dashboard` (optional) |
+   | Block explorer URL | `http://localhost:38080/localnet/dashboard` (optional) |
+
+   > **Note:** If you are using Solo 0.62 or earlier, use `http://localhost:7546` for the RPC URL and `http://localhost:8080/localnet/dashboard` for the block explorer URL.
 
 3. Click **Save** and switch to the **Solo Local** network.
 4. Import an account using an ECDSA private key from `accounts.json`:
@@ -415,13 +421,13 @@ details.
 
 | Symptom | Likely Cause | Fix |
 | --- | --- | --- |
-| `connection refused` on port `7546` | Relay not running | Run `one-shot single deploy` or `solo relay node add` |
+| `connection refused` on port `37546` | Relay not running | Run `one-shot single deploy` or `solo relay node add` |
 | `invalid sender` or signature error | Using ED25519 key instead of ECDSA | Use ECDSA keys from `accounts.json` |
 | Hardhat `chainId` mismatch error | Missing or wrong `chainId` in config | Set `chainId: 298` in `hardhat.config.ts` |
 | MetaMask shows wrong network | Chain ID mismatch | Ensure Chain ID is `298` in MetaMask network settings |
 | `INSUFFICIENT_TX_FEE` on transaction | Account not funded | Use a pre-funded ECDSA account from `accounts.json` |
 | Hardhat test timeout | Network not fully started | Wait for `one-shot` to fully complete before running tests |
-| Port `7546` already in use | Another process is using the port | Run `lsof -i :7546` and stop the conflicting process |
+| Port `37546` already in use | Another process is using the port | Run `lsof -i :37546` and stop the conflicting process |
 
 ---
 

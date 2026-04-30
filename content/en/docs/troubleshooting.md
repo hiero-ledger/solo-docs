@@ -190,28 +190,30 @@ If you cannot connect to Solo network endpoints from your machine, use this sequ
 
 2. Use manual port forwarding (bypass automation)
 
-   If automatic port forwarding (from `solo` commands or your environment) is not working, forward the required services manually:
+   If automatic port forwarding (from `solo` commands or your environment) is not working, forward the required services manually. The local ports below match the Solo 0.63+ defaults — adjust to any available port if needed:
 
    ```bash
-   # Consensus node (gRPC)
-   kubectl port-forward svc/haproxy-node1-svc -n "${SOLO_NAMESPACE}" 50211:50211 &
+   # Consensus node (gRPC) — local port 35211 → service port 50211
+   kubectl port-forward svc/haproxy-node1-svc -n "${SOLO_NAMESPACE}" 35211:50211 &
 
-   # Explorer UI
-   kubectl port-forward svc/hiero-explorer -n "${SOLO_NAMESPACE}" 8080:8080 &
+   # Explorer UI — local port 38080 → service port 8080
+   kubectl port-forward svc/hiero-explorer -n "${SOLO_NAMESPACE}" 38080:8080 &
+
+   # Mirror node ingress (REST API) — local port 38081 → service port 80
+   kubectl port-forward svc/mirror-1-rest -n "${SOLO_NAMESPACE}" 38081:80 &
 
    # Mirror node gRPC
    kubectl port-forward svc/mirror-1-grpc -n "${SOLO_NAMESPACE}" 5600:5600 &
 
-   # Mirror node REST
-   kubectl port-forward svc/mirror-1-rest -n "${SOLO_NAMESPACE}" 5551:80 &
-
-   # JSON-RPC relay
-   kubectl port-forward svc/relay-node1-hedera-json-rpc-relay -n "${SOLO_NAMESPACE}" 7546:7546 &
+   # JSON-RPC relay — local port 37546 → service port 7546
+   kubectl port-forward svc/relay-node1-hedera-json-rpc-relay -n "${SOLO_NAMESPACE}" 37546:7546 &
    ```
+
+   > **Note:** For Solo 0.62 and earlier, use local ports `50211`, `8080`, `5551`, and `7546` respectively.
 
 3. Confirm the expected endpoints and ports
 
-   After forwarding, connect to the local ports shown above (for example, `http://localhost:8080` for the explorer).  
+   After forwarding, connect to the local ports shown above (for example, `http://localhost:38080` for the explorer).  
    For the standard exposed endpoints after a successful one-shot deployment, see [How to access exposed services (mirror node, relay, explorer)](/docs/faqs#accessing-exposed-services).
 
 ---

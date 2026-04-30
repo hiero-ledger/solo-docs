@@ -128,11 +128,53 @@ Confirm that all Solo-related pods are in a `Running` or `Completed` state.
 
 ## Access your local network
 
-After the one-shot deployment completes and all pods are running, your local services are available at the following endpoints:
+After the one-shot deployment completes and all pods are running, Solo sets up port-forwards so you can reach your local services. The endpoints below are the **default** ports for Solo 0.63 and later:
 
-| Service               | Endpoint                | Description                            | Verification
-|-----------------------|-------------------------|----------------------------------------|-------------------------------------|
-| Explorer UI           | `http://localhost:38080`| Web UI for inspecting the network.     | Open URL in your browser to view the network explorer |
-| Consensus node (gRPC) | `localhost:30211`       | gRPC endpoint for transactions.        | `nc -zv localhost 35211`            |
-| Mirror node REST API  | `http://localhost:38081`| REST API for queries.                  | http://localhost:38081/api/v1/transactions |
-| JSON RPC relay | `localhost:37546` | Ethereum-compatible JSON RPC endpoint. | <code>curl -X POST http://localhost:37546 -H 'Content-Type: application/json'<br>-d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'</code> |
+| Service               | Endpoint                 | Description                            | Verification |
+|-----------------------|--------------------------|----------------------------------------|--------------|
+| Explorer UI           | `http://localhost:38080` | Web UI for inspecting the network.     | Open URL in your browser |
+| Consensus node (gRPC) | `localhost:35211`        | gRPC endpoint for transactions.        | `nc -zv localhost 35211` |
+| Mirror node REST API  | `http://localhost:38081` | REST API for queries.                  | `curl http://localhost:38081/api/v1/transactions` |
+| JSON RPC relay        | `http://localhost:37546` | Ethereum-compatible JSON RPC endpoint. | `curl -X POST http://localhost:37546 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'` |
+
+Open `http://localhost:38080` in your browser to explore your network.
+
+### Port availability
+
+The ports above are Solo's defaults. Solo uses `kubectl port-forward` to tunnel traffic from your machine to services running inside Kubernetes. Before opening each tunnel, Solo tries the configured port:
+
+- If the port is free, Solo logs: `Using requested port <port>`.
+- If the port is already occupied (by another process, or by a previous Solo session that did not clean up its port-forwards), Solo finds the next available port and logs: `Using available port <port>`.
+
+The actual ports used are printed at the end of `solo one-shot single deploy` and saved to a file. To see them:
+
+  ```bash
+  cat ~/.solo/one-shot-$(cat ~/.solo/cache/last-one-shot-deployment.txt)/forwards
+  ```
+
+To check deployment info including port assignments:
+
+  ```bash
+  solo deployment config info --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
+  ```
+
+To restore port-forwards after a system restart without redeploying:
+
+  ```bash
+  solo deployment refresh port-forwards --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
+  ```
+
+### Endpoints for Solo 0.62 and earlier
+
+If you are using Solo 0.62 or earlier, the default port-forward targets differ:
+
+| Service               | Endpoint                | Description                            |
+|-----------------------|-------------------------|----------------------------------------|
+| Explorer UI           | `http://localhost:8080` | Web UI for inspecting the network.     |
+| Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for transactions.        |
+| Mirror node REST API  | `http://localhost:8081` | REST API for queries (via mirror-ingress). |
+| JSON RPC relay        | `http://localhost:7546` | Ethereum-compatible JSON RPC endpoint. |
+
+Open `http://localhost:8080` in your browser to explore your network.
+
+> **Note:** `localhost:5551` is the direct Mirror Node REST service, accessible only via manual `kubectl port-forward`, and is being phased out. Always use the ingress-based port (`8081` for Solo 0.62 and earlier, `38081` for Solo 0.63+).

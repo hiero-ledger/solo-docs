@@ -14,10 +14,12 @@ type: docs
 The Hiero Mirror Node stores the full transaction history of your local Solo network
 and exposes it through several interfaces:
 
-- A **web-based block explorer** (Hiero Mirror Node Explorer) at `http://localhost:8080`.
-- A **REST API** via the mirror-ingress service at `http://localhost:8081`
-    (recommended entry point-routes to the correct REST implementation).
+- A **web-based block explorer** (Hiero Mirror Node Explorer) at `http://localhost:38080/localnet/dashboard` (Solo 0.63+) or `http://localhost:8080/localnet/dashboard` (Solo 0.62 and earlier).
+- A **REST API** via the mirror-ingress service at `http://localhost:38081` (Solo 0.63+) or `http://localhost:8081` (Solo 0.62 and earlier)
+    (recommended entry point — routes to the correct REST implementation).
 - A **gRPC endpoint** for mirror node subscriptions.
+
+> **Important:** The port numbers in this document are Solo's default targets. If any port is already in use on your machine when Solo starts, Solo automatically selects the next available port. If an endpoint does not work, check the actual ports assigned to your deployment — see [Port Reference](#port-reference) below.
 
 This guide walks you through adding Mirror Node and the Hiero Explorer to a
 Solo network, and shows you how to query transaction data and create accounts.
@@ -116,8 +118,11 @@ solo explorer node add \
 Once Mirror Node is running, open the Hiero Explorer in your browser at:
 
 ```url
-http://localhost:8080
+http://localhost:38080/localnet/dashboard
 ```
+
+> **Note:** If you are using Solo 0.62 or earlier, the Explorer is at `http://localhost:8080/localnet/dashboard`.
+> If that port does not work, check the actual port assigned to your deployment — see [Port Reference](#port-reference).
 
 The Explorer lets you browse accounts, transactions, tokens, and contracts on
 your Solo network in real time.
@@ -133,8 +138,7 @@ solo ledger account create --deployment solo-deployment --hbar-amount 100
 solo ledger account create --deployment solo-deployment --hbar-amount 100
 ```
 
-Open the Explorer at `http://localhost:8080` to see the new accounts and their
-transactions recorded by the Mirror Node.
+Open the Explorer at `http://localhost:38080/localnet/dashboard` (Solo 0.63+) or `http://localhost:8080/localnet/dashboard` (Solo 0.62 and earlier) to see the new accounts and their transactions recorded by the Mirror Node. If the port does not work, check your actual port assignments — see [Port Reference](#port-reference).
 
 You can also use the [Hiero JavaScript SDK](/docs/using-solo/using-solo-with-javascript-sdk)
 to create a topic, submit a message, and subscribe to it.
@@ -143,23 +147,24 @@ to create a topic, submit a message, and subscribe to it.
 
 ## Step 4: Access Mirror Node APIs
 
-### Option A: Mirror-Ingress (localhost:8081)
+### Option A: Mirror-Ingress (localhost:38081)
 
-Use `localhost:8081` for all Mirror Node REST API access. The mirror-ingress
+Use `localhost:38081` (Solo 0.63+) for all Mirror Node REST API access. The mirror-ingress
 service routes requests to the correct REST implementation automatically. This
 is important because certain endpoints are only supported in the newer
 `rest-java` version.
 
 ```bash
 # List recent transactions
-curl -s "http://localhost:8081/api/v1/transactions?limit=5"
+curl -s "http://localhost:38081/api/v1/transactions?limit=5"
 
 # Get account details
-curl -s "http://localhost:8081/api/v1/accounts/0.0.2"
+curl -s "http://localhost:38081/api/v1/accounts/0.0.2"
 ```
 
-> **Note:** `localhost:5551` (the legacy Mirror Node REST API) is being phased
-> out. Always use `localhost:8081` to ensure compatibility with all endpoints.
+> **Note:** If you are using Solo 0.62 or earlier, use `localhost:8081` instead of `localhost:38081`.
+> `localhost:5551` (the legacy Mirror Node REST API direct endpoint) is being phased
+> out. Always use the mirror-ingress port to ensure compatibility with all endpoints.
 
 If you need to access it directly:
 
@@ -194,11 +199,35 @@ kubectl port-forward service/mirror-1-restjava -n "${SOLO_NAMESPACE}" 8084:80 &
 curl -s "http://${REST_IP:-127.0.0.1}:8084/api/v1/accounts/0.0.2/allowances/nfts"
 ```
 
-In most cases you should use `localhost:8081` instead.
+In most cases you should use `localhost:38081` (Solo 0.63+) or `localhost:8081` (Solo 0.62 and earlier) instead.
 
 ---
 
 ## Port Reference
+
+The ports listed below are Solo's **default** targets. Solo checks each port before opening a tunnel — if the port is already in use, Solo picks the next available one and logs `Using available port <port>`. If an endpoint is not reachable, check the actual ports used by your deployment:
+
+```bash
+# View the saved port-forward assignments
+cat ~/.solo/one-shot-$(cat ~/.solo/cache/last-one-shot-deployment.txt)/forwards
+
+# Or query deployment info directly
+solo deployment config info --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
+```
+
+The default local ports depend on your Solo version:
+
+**Solo 0.63 and later (current defaults):**
+
+| Service | Local Port | Access Method |
+| --- | --- | --- |
+| Hiero Explorer | `38080` | Browser (`--enable-ingress`) |
+| Mirror Node (all-in-one) | `38081` | HTTP (`--enable-ingress`) |
+| Mirror Node REST API | `5551` | `kubectl port-forward` (manual) |
+| Mirror Node gRPC | `5600` | `kubectl port-forward` |
+| Mirror Node REST Java | `8084` | `kubectl port-forward` |
+
+**Solo 0.62 and earlier:**
 
 | Service | Local Port | Access Method |
 | --- | --- | --- |
