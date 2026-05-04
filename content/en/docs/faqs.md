@@ -141,7 +141,7 @@ After running `solo one-shot single deploy`, the following services are availabl
 
     All Solo-related pods should be in a `Running` or `Completed` state before the endpoints become available.
 
-> **Note:** These are Solo's default port targets. If a port is already in use on your machine, Solo automatically selects the next available port. The actual ports used are printed at the end of deployment and saved to `~/.solo/one-shot-<deployment-name>/forwards`. See [Port availability](/docs/simple-solo-setup/quickstart#port-availability) for details.
+> **Note:** These are Solo's default port targets. If a port is already in use on your machine, Solo automatically selects the next available port. The actual ports used are printed at the end of deployment and saved to `~/.solo/<deployment-name>/forwards`. See [Port availability](/docs/simple-solo-setup/quickstart#port-availability) for details.
 
 **Solo 0.62 and earlier** used different default ports:
 
