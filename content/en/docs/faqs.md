@@ -19,15 +19,17 @@ You can run one of the following commands depending on your needs:
 1. **Single Node Deployment (recommended for development):**
 
     ```bash
-    brew install hiero-ledger/tools/solo
+    solo one-shot single deploy
     ```
+
+    > **Prerequisite:** Install Solo first with `brew install hiero-ledger/tools/solo`.
 
     For more information on Single Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
 
 2. **Multiple Node Deployment (for testing consensus scenarios):**
 
     ```bash
-    solo one-shot multiple deploy --num-consensus-nodes 3
+    solo one-shot multi deploy --num-consensus-nodes 3
     ```
 
     For more information on Multiple Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
@@ -63,7 +65,7 @@ You can run one of the following commands depending on how you deployed:
 2. **Multiple Node Teardown:**
 
     ```bash
-    solo one-shot multiple destroy
+    solo one-shot multi destroy
     ```
 
     For more information on Multiple Node Teardown, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
@@ -93,6 +95,7 @@ solo one-shot single deploy
 
 After running `solo one-shot single deploy`, the following services are available on localhost. The ports below are the **defaults for Solo 0.63 and later**:
 
+<<<<<<< docs/ports
 | Service               | Endpoint                 | Description                                      |
 | --------------------- | ------------------------ | ------------------------------------------------ |
 | Explorer UI           | `http://localhost:38080` | Web UI for inspecting accounts and transactions. |
@@ -101,18 +104,34 @@ After running `solo one-shot single deploy`, the following services are availabl
 | JSON RPC relay        | `http://localhost:37546` | Ethereum-compatible JSON RPC endpoint.           |
 
 - Open `http://localhost:38080` in your browser to start exploring your local network.
+=======
+| Service               | Endpoint                | Description                                      |
+| --------------------- | ----------------------- | ------------------------------------------------ |
+| Explorer UI           | `http://localhost:8080/localnet/dashboard` | Web UI for inspecting accounts and transactions. |
+| Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for submitting transactions.       |
+| Mirror node REST API  | `http://localhost:8081` | REST API for querying historical data.           |
+| JSON RPC relay        | `localhost:7546`        | Ethereum-compatible JSON RPC endpoint.           |
+
+- Open `http://localhost:8080/localnet/dashboard` in your browser to start exploring your local network.
+>>>>>>> main
 
 - To verify these services are reachable, you can run a quick health check:
 
     ```bash
     # Mirror node REST API
+<<<<<<< docs/ports
     curl -s "http://localhost:38081/api/v1/transactions?limit=1"
+=======
+    curl -s "http://localhost:8081/api/v1/transactions?limit=1"
+>>>>>>> main
     
     # JSON RPC relay
     curl -s -X POST http://localhost:37546 \
       -H "Content-Type: application/json" \
       --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
     ```
+
+    > **Note:** Port `8081` is the mirror node REST API exposed via ingress after `solo one-shot single deploy`. Port `5551` is only available if you manually run `kubectl port-forward` for the mirror node service.
 
 - If any service is unreachable, confirm that all pods are healthy first:
 
@@ -139,9 +158,15 @@ After running `solo one-shot single deploy`, the following services are availabl
 
 Use these endpoints (Solo 0.63 and later):
 
+<<<<<<< docs/ports
 - **gRPC (Hedera SDK)**: `localhost:35211`, Node ID: `0.0.3`
 - **JSON RPC (Ethereum tools)**: `http://localhost:37546`
 - **Mirror Node REST**: `http://localhost:38081/api/v1/`
+=======
+- **gRPC (Hedera SDK)**: `localhost:50211`, Node ID: `0.0.3`
+- **JSON RPC (Ethereum tools)**: `http://localhost:7546`
+- **Mirror Node REST**: `http://localhost:8081/api/v1/`
+>>>>>>> main
 
 ### What should I do if `solo one-shot single destroy` fails or my Solo state is corrupted?
 
@@ -232,7 +257,7 @@ Keys are stored in `~/.solo/cache/keys/`. This directory contains:
     {
      "accountId": "0.0.1007",
      "privateKey": "302e020100300506032b657004220420411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7",
-     "privateKeyRaw": "411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7"
+     "privateKeyRaw": "411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7",
      "publicKey": "302a300506032b65700321001d8978e647aca1195c54a4d3d5dc469b95666de14e9b6edde8ed337917b96013",
      "balance": 100
     }

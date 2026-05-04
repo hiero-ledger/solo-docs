@@ -2359,46 +2359,6 @@ Options:
 -v,  --version             Show version number             [boolean]
 ```
 
-### deployment refresh
-
-```
-deployment refresh
-
-Refresh port-forward processes for all components in the deployment.
-
-Commands:
-  deployment refresh port-forwards   Refresh and restore killed port-forward processes.
-
-Options:
-
-                                                                                     
-     --dev                 Enable developer mode           [boolean] [default: false]
-     --force-port-forward  Force port forward to access    [boolean] [default: true] 
-                           the network services                                      
--v,  --version             Show version number             [boolean]
-```
-
-#### deployment refresh port-forwards
-
-```
-deployment refresh port-forwards
-
-Refresh and restore killed port-forward processes.
-
-Options:
-
--d,  --deployment          The name the user will          [string] [required]       
-                           reference locally to link to a                            
-                           deployment                                                
-                                                                                     
-     --dev                 Enable developer mode           [boolean] [default: false]
-     --force-port-forward  Force port forward to access    [boolean] [default: true] 
-                           the network services                                      
--q,  --quiet-mode          Quiet mode, do not prompt for   [boolean] [default: false]
-                           confirmation                                              
--v,  --version             Show version number             [boolean]
-```
-
 ### deployment diagnostics
 
 ```
@@ -3728,12 +3688,6 @@ Options:
                             deployment.  For commands that                            
                             take multiple clusters they                               
                             can be separated by commas.                               
-     --deploy-explorer      Deploy explorer as part of      [boolean] [default: true] 
-                            one-shot falcon deployment                                
-     --deploy-mirror-node   Deploy mirror node as part of   [boolean] [default: true] 
-                            one-shot falcon deployment                                
-     --deploy-relay         Deploy relay as part of         [boolean] [default: true] 
-                            one-shot falcon deployment                                
 -d,  --deployment           The name the user will          [string]                  
                             reference locally to link to a                            
                             deployment                                                
@@ -3748,11 +3702,6 @@ Options:
                             pre-genesis deployments                                   
 -q,  --quiet-mode           Quiet mode, do not prompt for   [boolean] [default: false]
                             confirmation                                              
-     --rollback             Automatically clean up          [boolean] [default: false]
-                            resources when deploy fails.                              
-                            Use  --no-rollback  to skip                               
-                            cleanup and keep partial                                  
-                            resources for inspection.                                 
 -f,  --values-file          Comma separated chart values    [string]                  
                             file                                                      
 -v,  --version              Show version number             [boolean]
