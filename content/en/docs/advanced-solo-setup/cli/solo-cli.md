@@ -773,72 +773,92 @@ Installs and configures all consensus nodes for the deployment.
 
 Options:
 
--d,  --deployment                 The name the user will          [string] [required]                                      
-                                  reference locally to link to a                                                           
-                                  deployment                                                                               
-                                                                                                                           
-     --api-permission-properties  api-permission.properties file  [string] [default: "templates/api-permission.properties"]
-                                  for node                                                                                 
-     --app                        Testing app name                [string] [default: "HederaNode.jar"]                     
-     --application-env            the application.env file for    [string] [default: "templates/application.env"]          
-                                  the node provides environment                                                            
-                                  variables to the                                                                         
-                                  solo-container to be used when                                                           
-                                  the hedera platform is started                                                           
-     --application-properties     application.properties file     [string] [default: "templates/application.properties"]   
-                                  for node                                                                                 
-     --aws-bucket                 name of aws storage bucket      [string]                                                 
-     --aws-bucket-prefix          path prefix of aws storage      [string]                                                 
-                                  bucket                                                                                   
-     --aws-bucket-region          name of aws bucket region       [string]                                                 
-     --aws-endpoint               aws storage endpoint URL        [string]                                                 
-     --aws-write-access-key       aws storage access key for      [string]                                                 
-                                  write access                                                                             
-     --aws-write-secrets          aws storage secret key for      [string]                                                 
-                                  write access                                                                             
-     --backup-bucket              name of bucket for backing up   [string]                                                 
-                                  state files                                                                              
-     --backup-endpoint            backup storage endpoint URL     [string]                                                 
-     --backup-provider            backup storage service          [string] [default: "GCS"]                                
-                                  provider, GCS or AWS                                                                     
-     --backup-region              backup storage region           [string] [default: "us-central1"]                        
-     --backup-write-access-key    backup storage access key for   [string]                                                 
-                                  write access                                                                             
-     --backup-write-secrets       backup storage secret key for   [string]                                                 
-                                  write access                                                                             
-     --bootstrap-properties       bootstrap.properties file for   [string] [default: "templates/bootstrap.properties"]     
-                                  node                                                                                     
-     --cache-dir                  Local cache directory           [string] [default: "~/.solo/cache"]           
--l,  --chain-id                   Chain ID                        [string] [default: "298"]                                
-     --chart-dir                  Local chart directory path      [string]                                                 
-                                  (e.g. ~/solo-charts/charts)                                                              
-     --debug-node-alias           Enable default jvm debug port   [string]                                                 
-                                  (5005) for the given node id                                                             
-     --dev                        Enable developer mode           [boolean] [default: false]                               
-     --domain-names               Custom domain names for         [string]                                                 
-                                  consensus nodes mapping for                                                              
-                                  the(e.g. node0=domain.name                                                               
-                                  where key is node alias and                                                              
-                                  value is domain name)with                                                                
-                                  multiple nodes comma separated                                                           
-     --enable-monitoring-support  Enables CRDs for Prometheus     [boolean] [default: true]                                
-                                  and Grafana.                                                                             
-     --envoy-ips                  IP mapping where key = value    [string]                                                 
-                                  is node alias and static ip                                                              
-                                  for envoy proxy, (e.g.:                                                                  
-                                  --envoy-ips                                                                              
-                                  node1=127.0.0.1,node2=127.0.0.1)                                                           
-     --force-port-forward         Force port forward to access    [boolean] [default: true]                                
-                                  the network services                                                                     
-     --gcs-bucket                 name of gcs storage bucket      [string]                                                 
-     --gcs-bucket-prefix          path prefix of google storage   [string]                                                 
-                                  bucket                                                                                   
-     --gcs-endpoint               gcs storage endpoint URL        [string]                                                 
-     --gcs-write-access-key       gcs storage access key for      [string]                                                 
-                                  write access                                                                             
-     --gcs-write-secrets          gcs storage secret key for      [string]                                                 
-                                  write access                                                                             
-     --genesis-throttles-fil
+-d,  --deployment                 The name the user will reference locally to link   [string] [required]
+                                  to a deployment
+
+     --api-permission-properties  api-permission.properties file for node            [string] [default: "templates/api-permission.properties"]
+     --app                        Testing app name                                   [string] [default: "HederaNode.jar"]
+     --application-env            the application.env file for the node provides     [string] [default: "templates/application.env"]
+                                  environment variables to the solo-container to be
+                                  used when the hedera platform is started
+     --application-properties     application.properties file for node               [string] [default: "templates/application.properties"]
+     --aws-bucket                 name of aws storage bucket                         [string]
+     --aws-bucket-prefix          path prefix of aws storage bucket                  [string]
+     --aws-bucket-region          name of aws bucket region                          [string]
+     --aws-endpoint               aws storage endpoint URL                           [string]
+     --aws-write-access-key       aws storage access key for write access            [string]
+     --aws-write-secrets          aws storage secret key for write access            [string]
+     --backup-bucket              name of bucket for backing up state files          [string]
+     --backup-endpoint            backup storage endpoint URL                        [string]
+     --backup-provider            backup storage service provider, GCS or AWS        [string] [default: "GCS"]
+     --backup-region              backup storage region                              [string] [default: "us-central1"]
+     --backup-write-access-key    backup storage access key for write access         [string]
+     --backup-write-secrets       backup storage secret key for write access         [string]
+     --bootstrap-properties       bootstrap.properties file for node                 [string] [default: "templates/bootstrap.properties"]
+     --cache-dir                  Local cache directory                              [string] [default: "/Users/ivoyankov/.solo/cache"]
+-l,  --chain-id                   Chain ID                                           [string] [default: "298"]
+     --chart-dir                  Local chart directory path (e.g.                   [string]
+                                  ~/solo-charts/charts)
+     --debug-node-alias           Enable default jvm debug port (5005) for the       [string]
+                                  given node id
+     --dev                        Enable developer mode                              [boolean] [default: false]
+     --domain-names               Custom domain names for consensus nodes mapping    [string]
+                                  for the(e.g. node0=domain.name where key is node
+                                  alias and value is domain name)with multiple
+                                  nodes comma separated
+     --enable-monitoring-support  Enables CRDs for Prometheus and Grafana.           [boolean] [default: true]
+     --envoy-ips                  IP mapping where key = value is node alias and     [string]
+                                  static ip for envoy proxy, (e.g.:  --envoy-ips
+                                  node1=127.0.0.1,node2=127.0.0.1)
+     --force-port-forward         Force port forward to access the network services  [boolean] [default: true]
+     --gcs-bucket                 name of gcs storage bucket                         [string]
+     --gcs-bucket-prefix          path prefix of google storage bucket               [string]
+     --gcs-endpoint               gcs storage endpoint URL                           [string]
+     --gcs-write-access-key       gcs storage access key for write access            [string]
+     --gcs-write-secrets          gcs storage secret key for write access            [string]
+     --genesis-throttles-file     throttles.json file used during network genesis    [string]
+     --grpc-tls-cert              TLS Certificate path for the gRPC (e.g.            [string]
+                                  "node1=/Users/username/node1-grpc.cert" with
+                                  multiple nodes comma separated)
+     --grpc-tls-key               TLS Certificate key path for the gRPC (e.g.        [string]
+                                  "node1=/Users/username/node1-grpc.key" with
+                                  multiple nodes comma separated)
+     --grpc-web-tls-cert          TLS Certificate path for gRPC Web (e.g.            [string]
+                                  "node1=/Users/username/node1-grpc-web.cert" with
+                                  multiple nodes comma separated)
+     --grpc-web-tls-key           TLC Certificate key path for gRPC Web (e.g.        [string]
+                                  "node1=/Users/username/node1-grpc-web.key" with
+                                  multiple nodes comma separated)
+     --haproxy-ips                IP mapping where key = value is node alias and     [string]
+                                  static ip for haproxy, (e.g.:  --haproxy-ips
+                                  node1=127.0.0.1,node2=127.0.0.1)
+     --jfr-config                 Java Flight Recorder configuration file path       [string]
+     --load-balancer              Enable load balancer for network node proxies      [boolean] [default: false]
+     --log4j2-xml                 log4j2.xml file for node                           [string] [default: "templates/log4j2.xml"]
+-i,  --node-aliases               Comma separated node aliases (empty means all      [string]
+                                  nodes)
+     --pod-log                    Install PodLog custom resource for monitoring      [boolean] [default: false]
+                                  Network Node pod logs
+     --pvcs                       Enable persistent volume claims to store data      [boolean] [default: false]
+                                  outside the pod, required for consensus node add
+-q,  --quiet-mode                 Quiet mode, do not prompt for confirmation         [boolean] [default: false]
+-t,  --release-tag                Release tag to be used (e.g. v0.71.0)              [string] [default: "v0.71.0"]
+     --service-monitor            Install ServiceMonitor custom resource for         [boolean] [default: false]
+                                  monitoring Network Node metrics
+     --settings-txt               settings.txt file for node                         [string] [default: "templates/settings.txt"]
+     --solo-chart-version         Solo testing chart version                         [string] [default: "0.63.3"]
+     --storage-type               storage type for saving stream files, available    [default: "minio_only"]
+                                  options are minio_only, aws_only, gcs_only,
+                                  aws_and_gcs
+     --tss                        Enable hinTS/TSS (CN >= v0.72).                    [boolean] [default: true]
+-f,  --values-file                Comma separated chart values file paths for each   [string]
+                                  cluster (e.g.
+                                  values.yaml,cluster-1=./a/b/values1.yaml,cluster-2=./a/b/values2.yaml)
+-v,  --version                    Show version number                                [boolean]
+     --wraps                      Enable recursive WRAPs aggregation for hinTS/TSS   [boolean] [default: false]
+                                  (CN >= v0.72).
+     --wraps-key-path             Path to a local directory containing pre-existing  [string]
+                                  WRAPs proving key files (.bin)
 ```
 
 #### consensus network destroy
