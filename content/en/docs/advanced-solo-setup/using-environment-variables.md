@@ -153,6 +153,10 @@ commands.
 | `PROMETHEUS_STACK_VERSION` | Release version of the Prometheus Stack to use
 | `GRAFANA_AGENT_VERSION` | Release version of the Grafana Agent to use
 
+> **Tip:** To pin component versions for a `solo one-shot single deploy`, prefix
+> the command with these variables. See the
+> [One-Shot Deployment](#one-shot-deployment) section below for an example.
+
 ---
 
 ## Helm Chart URLs
@@ -184,3 +188,27 @@ commands.
 | --- | --- | ---
 | `ONE_SHOT_WITH_BLOCK_NODE` | Deploy Block Node as part of a one-shot deployment | `false`
 | `MIRROR_NODE_PINGER_TPS` | Transactions per second for the Mirror Node monitor pinger. Set to `0` to disable | `5`
+
+### Pinning Component Versions
+
+`solo one-shot single deploy` does not yet expose CLI flags for pinning
+individual component versions. To run a one-shot deployment against specific
+releases, prefix the command with the
+[Component Versions](#component-versions) environment variables:
+
+```bash
+CONSENSUS_NODE_VERSION=v0.73.0 MIRROR_NODE_VERSION=v0.153.1 solo one-shot single deploy
+```
+
+Any of the `*_VERSION` variables listed in
+[Component Versions](#component-versions) can be combined in the same command
+to pin multiple components at once.
+
+> **Note:**
+>
+> - This is the current recommended approach for version pinning in one-shot
+>   deployments.
+> - CLI flags for version overrides on `one-shot` are planned for Q2 — tracked
+>   in [hiero-ledger/solo#4242](https://github.com/hiero-ledger/solo/issues/4242).
+> - Environment variables will remain valid for one-off overrides after the
+>   CLI flags land, so the form above will continue to work.
