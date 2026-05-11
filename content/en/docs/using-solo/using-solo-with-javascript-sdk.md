@@ -54,7 +54,10 @@ This command:
 - Deploys a mirror node for transaction history queries and the Hiero Explorer.
 
 Once complete, the Hiero Explorer is available at:
-[http://localhost:8080/localnet/dashboard](http://localhost:8080/localnet/dashboard).
+[http://localhost:38080/localnet/dashboard](http://localhost:38080/localnet/dashboard) (Solo 0.63+) or
+[http://localhost:8080/localnet/dashboard](http://localhost:8080/localnet/dashboard) (Solo 0.62 and earlier).
+If the port is in use, Solo picks the next available one — see
+[Port availability](/docs/simple-solo-setup/quickstart#port-availability) to find the active assignment.
 
 > **Note for contributors:** If you are working from a cloned Solo repository, you
 > can use `task default-with-mirror` from the `scripts/` directory as an alternative.
@@ -135,9 +138,9 @@ in the next step.
 
 ## Step 4: Configure the SDK to Connect to Solo
 
-- The Hiero JavaScript SDK uses environment variables to locate the network and
-authenticate the operator account. Create a `.env` file at the root of the
-`hiero-sdk-js` directory:
+- The Hiero JavaScript SDK uses environment variables to authenticate the
+operator account. Create a `.env` file at the root of the `hiero-sdk-js`
+directory:
 
   ```bash
   # Navigate to the SDK root
@@ -151,9 +154,6 @@ authenticate the operator account. Create a `.env` file at the root of the
 
   # Operator private key (not publicKey) from Step 3
   OPERATOR_KEY="302e020100300506032b657004220420411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7"
-
-  # Target the local Solo network
-  HEDERA_NETWORK="local-node"
   EOF
 
   # Load the variables into your current shell session
@@ -164,14 +164,48 @@ authenticate the operator account. Create a `.env` file at the root of the
   > `publicKey`. The private key is the longer DER-encoded string beginning with
   > `302e...`.
 
-- When `HEDERA_NETWORK` is set to `"local-node"`, the SDK automatically connects to
-the Solo consensus node at `localhost:50211` (gRPC) and the mirror node at
-`localhost:5600` (mirror gRPC, used for event subscriptions). Port `5551` is the
-mirror node REST API port used by browser clients, not the Node.js SDK.
+- Configure the client with the **Solo 0.63+** port-forwards using
+  `Client.fromConfig()`. The SDK's built-in `Client.forLocalNode()` preset is
+  hardcoded to `localhost:50211`, which does **not** match Solo 0.63+ defaults
+  (`localhost:35211` for consensus gRPC, `localhost:38081` for the mirror node
+  ingress). Use the explicit network map shown below instead:
+
+  ```typescript
+  import { Client, AccountId } from "@hiero-ledger/sdk";
+
+  // Solo 0.63+ default port-forwards.
+  // For Solo 0.62 and earlier, use 127.0.0.1:50211 and 127.0.0.1:8081.
+  const network = { "127.0.0.1:35211": AccountId.fromString("0.0.3") };
+  const mirrorNetwork = "127.0.0.1:38081";
+
+  const client = Client.fromConfig({
+    network,
+    mirrorNetwork,
+    // Required: the SDK's address-book refresh otherwise pulls in the
+    // hardcoded 50211/50212 ports, which Solo 0.63+ does not expose.
+    scheduleNetworkUpdate: false,
+  });
+  client.setOperator(process.env.OPERATOR_ID!, process.env.OPERATOR_KEY!);
+  ```
+
+  > **Note:** If a port is already in use on your machine, Solo picks the next
+  > available port — see [Port availability](/docs/simple-solo-setup/quickstart#port-availability)
+  > to find the active assignment and substitute it above.
 
 ---
 
 ## Step 5: Submit Your First Transaction
+
+> **Heads up:** The example scripts shipped in `hiero-sdk-js` (e.g.
+> `examples/create-account.js`) call `Client.forLocalNode()`, which is hardcoded
+> to `localhost:50211`. To run them against Solo 0.63+, either edit the example
+> to use the `Client.fromConfig({ network, mirrorNetwork, scheduleNetworkUpdate: false })`
+> pattern from [Step 4](#step-4-configure-the-sdk-to-connect-to-solo), or
+> expose the legacy port manually before running the script:
+>
+> ```bash
+> kubectl port-forward svc/haproxy-node1-svc -n solo-deployment 50211:50211 &
+> ```
 
 ### Example 1: Create an Account (AccountCreateTransaction)
 
@@ -220,7 +254,8 @@ them. Run the topic creation example:
 3. A test message was published and its sequence number confirmed.
 
 Verify both transactions in the Hiero Explorer:
-[http://localhost:8080/localnet/dashboard](http://localhost:8080/localnet/dashboard).
+[http://localhost:38080/localnet/dashboard](http://localhost:38080/localnet/dashboard) (Solo 0.63+) or
+[http://localhost:8080/localnet/dashboard](http://localhost:8080/localnet/dashboard) (Solo 0.62 and earlier).
 
 ---
 
@@ -255,14 +290,20 @@ after reaching consensus. A receipt includes:
 
   ```typescript
   import {
-    Client,
     AccountCreateTransaction,
-    PrivateKey,
+    AccountId,
+    Client,
     Hbar,
+    PrivateKey,
   } from "@hiero-ledger/sdk";
 
-  // Configure the client to connect to the local Solo network
-  const client = Client.forLocalNode();
+  // Configure the client for Solo 0.63+ port-forwards.
+  // For Solo 0.62 and earlier, use 127.0.0.1:50211 and 127.0.0.1:8081.
+  const client = Client.fromConfig({
+    network: { "127.0.0.1:35211": AccountId.fromString("0.0.3") },
+    mirrorNetwork: "127.0.0.1:38081",
+    scheduleNetworkUpdate: false,
+  });
   client.setOperator(
     process.env.OPERATOR_ID!,
     process.env.OPERATOR_KEY!
@@ -405,8 +446,14 @@ While your Solo network is running, open the Hiero Explorer to visually inspect
 submitted transactions, accounts, topics, and files:
 
 ```url
-http://localhost:8080/localnet/dashboard
+http://localhost:38080/localnet/dashboard
 ```
+
+> **Note:** If you are using Solo 0.62 or earlier, the Explorer is at
+> `http://localhost:8080/localnet/dashboard`. If the port is in use, Solo picks
+> the next available one — see
+> [Port availability](/docs/simple-solo-setup/quickstart#port-availability) to
+> find the active assignment.
 
 You can search by account ID, transaction ID, or topic ID to confirm that your
 transactions reached consensus and view their receipts.

@@ -381,7 +381,7 @@ HAProxy, Envoy, and MinIO:
   ✔ Start node: node1 [0.1s]
   ✔ Starting nodes [0.1s]
   Enable port forwarding for debug port and/or GRPC port
-  Using requested port 50211
+  Using requested port 35211
   ✔ Enable port forwarding for debug port and/or GRPC port 
   Check all nodes are ACTIVE
   Check network pod: node1 
