@@ -479,7 +479,7 @@ ingress controller for the mirror node REST API.
   Add mirror node to remote config
   ✔ Add mirror node to remote config 
   Enable port forwarding for mirror ingress controller
-  Using requested port 8081
+  Using requested port 38081
   ✔ Enable port forwarding for mirror ingress controller 
   Stopping port-forward for port [30212]
   ```
@@ -536,7 +536,7 @@ ingress controller for the mirror node REST API.
   ✔ Add explorer to remote config 
   Enable port forwarding for explorer
   No port forward config found for Explorer
-  Using requested port 8080
+  Using requested port 38080
   ✔ Enable port forwarding for explorer [0.1s]
   ```
 
@@ -591,7 +591,7 @@ endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.):
   Add relay component in remote config
   ✔ Add relay component in remote config 
   Enable port forwarding for relay node
-  Using requested port 7546
+  Using requested port 37546
   ✔ Enable port forwarding for relay node [0.1s]
   Stopping port-forward for port [30212]
   ```
