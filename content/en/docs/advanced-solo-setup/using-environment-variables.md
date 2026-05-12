@@ -159,6 +159,33 @@ commands.
 
 ---
 
+## Edge Component Versions
+
+These variables only take effect when `solo one-shot single deploy` or
+`solo one-shot multi deploy` is invoked with the `--edge` flag (`solo one-shot
+falcon deploy` does not accept `--edge` in v0.72.0). They let you point a
+one-shot deploy at arbitrary component tags — release candidates,
+pre-releases, or any other tag the component's registry exposes — without
+rebuilding Solo.
+
+| Component       | Environment Variable           | Falls back to              |
+| --------------- | ------------------------------ | -------------------------- |
+| Consensus Node  | `CONSENSUS_NODE_EDGE_VERSION`  | `CONSENSUS_NODE_VERSION`   |
+| Mirror Node     | `MIRROR_NODE_EDGE_VERSION`     | `MIRROR_NODE_VERSION`      |
+| JSON-RPC Relay  | `RELAY_EDGE_VERSION`           | `RELAY_VERSION`            |
+| Explorer        | `EXPLORER_EDGE_VERSION`        | `EXPLORER_VERSION`         |
+| Block Node      | `BLOCK_NODE_EDGE_VERSION`      | `BLOCK_NODE_VERSION`       |
+| Solo Chart      | `SOLO_CHART_EDGE_VERSION`      | `SOLO_CHART_VERSION`       |
+
+Set only the variables for components you want to override; the rest use their
+compiled-in edge defaults. Without `--edge`, every `*_EDGE_VERSION` variable is
+ignored.
+
+For full usage, examples, version-format rules, and troubleshooting, see
+[One-Shot Deploy with Custom Component Versions](/docs/advanced-solo-setup/one-shot-deploy-with-custom-versions).
+
+---
+
 ## Helm Chart URLs
 
 | Environment Variable | Description | Default Value
