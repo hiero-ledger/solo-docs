@@ -42,7 +42,7 @@ commands.
 | `SOLO_NODE_INTERNAL_GOSSIP_PORT` | Internal gossip port used by the Hiero network | `50111`
 | `SOLO_NODE_EXTERNAL_GOSSIP_PORT` | External gossip port used by the Hiero network | `50111`
 | `SOLO_NODE_DEFAULT_STAKE_AMOUNT` | Default stake amount for a node | `500`
-| `GRPC_PORT` | gRPC port used for local node communication | `50211`
+| `GRPC_PORT` | Local port-forward for consensus node gRPC. Default is `35211` for Solo 0.63+ (changed from `50211` to avoid Windows ephemeral-port conflicts). See [Port availability](/docs/simple-solo-setup/quickstart#port-availability). | `35211`
 | `LOCAL_NODE_START_PORT` | Local node start port for the Solo network | `30212`
 
 ---

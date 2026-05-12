@@ -130,7 +130,7 @@ This configuration includes:
 | **Mirror Node**    | Stores and serves historical transaction data |
 | **Explorer UI**    | Web interface for viewing accounts            |
 
-Access the Explorer at: `http://localhost:8080/localnet/dashboard`
+Access the Explorer at: `http://localhost:38080/localnet/dashboard` (Solo 0.63+) or `http://localhost:8080/localnet/dashboard` (Solo 0.62 and earlier). See [Port availability](/docs/simple-solo-setup/quickstart#port-availability) if the port is in use.
 
 ### Deploy Network with Relay and Explorer
 
@@ -151,10 +151,12 @@ This configuration includes:
 | **Explorer UI**    | Web interface for viewing accounts            |
 | **JSON-RPC Relay** | Ethereum-compatible JSON-RPC interface        |
 
-Access the services at:
+Access the services at (Solo 0.63+ defaults; for Solo 0.62 and earlier use the legacy ports in parentheses):
 
-- Explorer: `http://localhost:8080/localnet/dashboard`
-- JSON-RPC Relay: `http://localhost:7546`
+- Explorer: `http://localhost:38080/localnet/dashboard` (legacy: `http://localhost:8080/localnet/dashboard`)
+- JSON-RPC Relay: `http://localhost:37546` (legacy: `http://localhost:7546`)
+
+> See [Port availability](/docs/simple-solo-setup/quickstart#port-availability) if a port is already in use on your machine.
 
 ## Available Taskfile Targets
 
@@ -241,7 +243,7 @@ cd scripts
 task default
 task solo:explorer
 
-# Access at http://localhost:8080/localnet/dashboard
+# Access at http://localhost:38080/localnet/dashboard (Solo 0.63+) or http://localhost:8080/localnet/dashboard (Solo 0.62 and earlier)
 ```
 
 ### JSON-RPC Relay Management
@@ -261,7 +263,7 @@ cd scripts
 task default-with-mirror
 task solo:relay
 
-# Access JSON-RPC at http://localhost:7546
+# Access JSON-RPC at http://localhost:37546 (Solo 0.63+) or http://localhost:7546 (Solo 0.62 and earlier)
 ```
 
 ### Block Node Management
