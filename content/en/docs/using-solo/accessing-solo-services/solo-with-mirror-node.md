@@ -59,7 +59,7 @@ deployment, run the following commands in sequence:
 ```bash
 # Set environment variables
 export SOLO_CLUSTER_NAME=solo-cluster
-export SOLO_NAMESPACE=solo-e2e
+export SOLO_NAMESPACE=solo-deployment
 export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster-setup
 export SOLO_DEPLOYMENT=solo-deployment
 

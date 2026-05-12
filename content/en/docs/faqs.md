@@ -313,7 +313,7 @@ Most management commands (stop, start, diagnostics) require the deployment name.
 cat ~/.solo/cache/last-one-shot-deployment.txt
 ```
 
-This outputs a value like `solo-deployment-<hash>`. Use it as `<deployment-name>` in subsequent commands.
+This outputs your deployment name — defaults to `one-shot` for one-shot deployments, or the value you passed to `--deployment`. Use it as `<deployment-name>` in subsequent commands.
 
 ### 10. How do I create test accounts after deployment?
 

@@ -148,7 +148,7 @@ The ports above are Solo's defaults. Solo uses `kubectl port-forward` to tunnel 
 
 The actual ports used are printed at the end of `solo one-shot single deploy` and saved to a file.
 
-> **Note:** The commands below use `$(cat ~/.solo/cache/last-one-shot-deployment.txt)` to look up the deployment name automatically. This cache file is **only created by `solo one-shot` commands**. If you deployed using individual CLI commands, this file does not exist - find your deployment name with `solo deployment list` instead, then substitute it in place of the `$(cat ...)` subshell.
+> **Note:** The commands below use `$(cat ~/.solo/cache/last-one-shot-deployment.txt)` to look up the deployment name automatically. This cache file is **only created by `solo one-shot` commands**. If you deployed using individual CLI commands, this file does not exist - find your deployment name with `solo deployment config list` instead, then substitute it in place of the `$(cat ...)` subshell.
 
 To see the active port assignments:
 

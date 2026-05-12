@@ -124,7 +124,7 @@ attachment.
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -172,7 +172,7 @@ adding `node4`.
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -204,7 +204,7 @@ update operation.
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -240,7 +240,7 @@ from the network.
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -289,7 +289,7 @@ The state files are saved under `~/.solo/logs/`:
 
 ```bash
 └── logs
-    ├── solo-e2e
+    ├── solo-deployment
     │   ├── network-node1-0-state.zip
     │   └── network-node2-0-state.zip
     └── solo.log
@@ -302,7 +302,7 @@ starting the nodes:
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 

@@ -24,7 +24,7 @@ This page is the canonical command reference for the Solo CLI.
 
 Solo supports machine-readable output for version output and for command execution flows that honor the output format flag.
 
-```bash
+```text
 solo --version -o json
 solo --version -o yaml
 solo --version -o wide
@@ -744,7 +744,7 @@ Options:
 
 ### consensus network
 
-```
+```text
 consensus network
 
 Ledger/network wide consensus operations such as freeze, upgrade, and deploy. Operates on the entire ledger and all consensus node instances.
@@ -766,7 +766,7 @@ Options:
 
 #### consensus network deploy
 
-```
+```text
 consensus network deploy
 
 Installs and configures all consensus nodes for the deployment.
@@ -863,7 +863,7 @@ Options:
 
 #### consensus network destroy
 
-```
+```text
 consensus network destroy
 
 Removes all consensus network components from the deployment.
@@ -898,7 +898,7 @@ Options:
 
 #### consensus network freeze
 
-```
+```text
 consensus network freeze
 
 Initiates a network freeze for scheduled maintenance or upgrades
@@ -919,7 +919,7 @@ Options:
 
 #### consensus network upgrade
 
-```
+```text
 consensus network upgrade
 
 Upgrades the software version running on all consensus nodes.
@@ -976,7 +976,7 @@ Options:
 
 ### consensus node
 
-```
+```text
 consensus node
 
 List, create, manage, or destroy consensus node instances. Operates on a single consensus node instance at a time.
@@ -1003,7 +1003,7 @@ Options:
 
 #### consensus node setup
 
-```
+```text
 consensus node setup
 
 Setup node with a specific version of Hedera platform
@@ -1043,7 +1043,7 @@ Options:
 
 #### consensus node start
 
-```
+```text
 consensus node start
 
 Start a node
@@ -1085,7 +1085,7 @@ Options:
 
 #### consensus node stop
 
-```
+```text
 consensus node stop
 
 Stop a node
@@ -1108,7 +1108,7 @@ Options:
 
 #### consensus node restart
 
-```
+```text
 consensus node restart
 
 Restart all nodes of the network
@@ -1132,7 +1132,7 @@ Options:
 
 #### consensus node refresh
 
-```
+```text
 consensus node refresh
 
 Reset and restart a node
@@ -1166,7 +1166,7 @@ Options:
 
 #### consensus node add
 
-```
+```text
 consensus node add
 
 Adds a node with a specific version of Hedera platform
@@ -1221,7 +1221,7 @@ Options:
 
 #### consensus node update
 
-```
+```text
 consensus node update
 
 Update a node with a specific version of Hedera platform
@@ -1285,7 +1285,7 @@ Options:
 
 #### consensus node destroy
 
-```
+```text
 consensus node destroy
 
 Delete a node with a specific version of Hedera platform
@@ -1327,7 +1327,7 @@ Options:
 
 #### consensus node collect-jfr
 
-```
+```text
 consensus node collect-jfr
 
 Collect Java Flight Recorder (JFR) files from a node for diagnostics and performance analysis. Requires the node to be running with Java Flight Recorder enabled.
@@ -1349,7 +1349,7 @@ Options:
 
 ### consensus state
 
-```
+```text
 consensus state
 
 List, download, and upload consensus node state backups to/from individual consensus node instances.
@@ -1368,7 +1368,7 @@ Options:
 
 #### consensus state download
 
-```
+```text
 consensus state download
 
 Downloads a signed state from consensus node/nodes.
@@ -1399,7 +1399,7 @@ Options:
 
 ### consensus dev-node-add
 
-```
+```text
 consensus dev-node-add
 
 Dev operations for adding consensus nodes.
@@ -1420,7 +1420,7 @@ Options:
 
 #### consensus dev-node-add prepare
 
-```
+```text
 consensus dev-node-add prepare
 
 Prepares the addition of a node with a specific version of Hedera platform
@@ -1474,7 +1474,7 @@ Options:
 
 #### consensus dev-node-add submit-transactions
 
-```
+```text
 consensus dev-node-add submit-transactions
 
 Submits NodeCreateTransaction and Upgrade transactions to the network nodes
@@ -1554,7 +1554,7 @@ Options:
 
 #### consensus dev-node-add execute
 
-```
+```text
 consensus dev-node-add execute
 
 Executes the addition of a previously prepared node
@@ -1609,7 +1609,7 @@ Options:
 
 ### consensus dev-node-update
 
-```
+```text
 consensus dev-node-update
 
 Dev operations for updating consensus nodes
@@ -1630,7 +1630,7 @@ Options:
 
 #### consensus dev-node-update prepare
 
-```
+```text
 consensus dev-node-update prepare
 
 Prepare the deployment to update a node with a specific version of Hedera platform
@@ -1697,7 +1697,7 @@ Options:
 
 #### consensus dev-node-update submit-transactions
 
-```
+```text
 consensus dev-node-update submit-transactions
 
 Submit transactions for updating a node with a specific version of Hedera platform
@@ -1749,7 +1749,7 @@ Options:
 
 #### consensus dev-node-update execute
 
-```
+```text
 consensus dev-node-update execute
 
 Executes the updating of a node with a specific version of Hedera platform
@@ -1806,7 +1806,7 @@ Options:
 
 ### consensus dev-node-upgrade
 
-```
+```text
 consensus dev-node-upgrade
 
 Dev operations for upgrading consensus nodes
@@ -1827,7 +1827,7 @@ Options:
 
 #### consensus dev-node-upgrade prepare
 
-```
+```text
 consensus dev-node-upgrade prepare
 
 Prepare for upgrading network
@@ -1865,7 +1865,7 @@ Options:
 
 #### consensus dev-node-upgrade submit-transactions
 
-```
+```text
 consensus dev-node-upgrade submit-transactions
 
 Submit transactions for upgrading network
@@ -1903,7 +1903,7 @@ Options:
 
 #### consensus dev-node-upgrade execute
 
-```
+```text
 consensus dev-node-upgrade execute
 
 Executes the upgrading the network
@@ -1941,7 +1941,7 @@ Options:
 
 ### consensus dev-node-delete
 
-```
+```text
 consensus dev-node-delete
 
 Dev operations for delete consensus nodes
@@ -1962,7 +1962,7 @@ Options:
 
 #### consensus dev-node-delete prepare
 
-```
+```text
 consensus dev-node-delete prepare
 
 Prepares the deletion of a node with a specific version of Hedera platform
@@ -2007,7 +2007,7 @@ Options:
 
 #### consensus dev-node-delete submit-transactions
 
-```
+```text
 consensus dev-node-delete submit-transactions
 
 Submits transactions to the network nodes for deleting a node
@@ -2052,7 +2052,7 @@ Options:
 
 #### consensus dev-node-delete execute
 
-```
+```text
 consensus dev-node-delete execute
 
 Executes the deletion of a previously prepared node
@@ -2097,7 +2097,7 @@ Options:
 
 ### consensus dev-freeze
 
-```
+```text
 consensus dev-freeze
 
 Dev operations for freezing consensus nodes
@@ -2117,7 +2117,7 @@ Options:
 
 #### consensus dev-freeze prepare-upgrade
 
-```
+```text
 consensus dev-freeze prepare-upgrade
 
 Prepare the network for a Freeze Upgrade operation
@@ -2143,7 +2143,7 @@ Options:
 
 #### consensus dev-freeze freeze-upgrade
 
-```
+```text
 consensus dev-freeze freeze-upgrade
 
 Performs a Freeze Upgrade operation with on the network after it has been prepared with prepare-upgrade
@@ -2169,7 +2169,7 @@ Options:
 
 ## deployment
 
-```
+```text
 deployment
 
 Create, modify, and delete deployment configurations. Deployments are required for most of the other commands.
@@ -2191,7 +2191,7 @@ Options:
 
 ### deployment cluster
 
-```
+```text
 deployment cluster
 
 View and manage Solo cluster references used by a deployment.
@@ -2210,7 +2210,7 @@ Options:
 
 #### deployment cluster attach
 
-```
+```text
 deployment cluster attach
 
 Attaches a cluster reference to a deployment.
@@ -2255,7 +2255,7 @@ Options:
 
 ### deployment config
 
-```
+```text
 deployment config
 
 List, view, create, delete, and import deployments. These commands affect the local configuration only.
@@ -2277,7 +2277,7 @@ Options:
 
 #### deployment config list
 
-```
+```text
 deployment config list
 
 Lists all local deployment configurations or deployments in a specific cluster.
@@ -2303,7 +2303,7 @@ Options:
 
 #### deployment config create
 
-```
+```text
 deployment config create
 
 Creates a new local deployment configuration.
@@ -2331,7 +2331,7 @@ Options:
 
 #### deployment config delete
 
-```
+```text
 deployment config delete
 
 Removes a local deployment configuration.
@@ -2352,7 +2352,7 @@ Options:
 
 #### deployment config info
 
-```
+```text
 deployment config info
 
 Displays the full status of a deployment including components, versions, and port-forward status.
@@ -2381,7 +2381,7 @@ Options:
 
 ### deployment diagnostics
 
-```
+```text
 deployment diagnostics
 
 Capture diagnostic information such as logs, signed states, and ledger/network/node configurations.
@@ -2403,7 +2403,7 @@ Options:
 
 #### deployment diagnostics all
 
-```
+```text
 deployment diagnostics all
 
 Captures logs, configs, and diagnostic artifacts from all consensus nodes and test connections.
@@ -2424,7 +2424,7 @@ Options:
 
 #### deployment diagnostics debug
 
-```
+```text
 deployment diagnostics debug
 
 Similar to diagnostics all subcommand, but creates a zip archive for easy sharing.
@@ -2448,7 +2448,7 @@ Options:
 
 #### deployment diagnostics connections
 
-```
+```text
 deployment diagnostics connections
 
 Tests connections to Consensus, Relay, Explorer, Mirror and Block nodes.
@@ -2469,7 +2469,7 @@ Options:
 
 #### deployment diagnostics logs
 
-```
+```text
 deployment diagnostics logs
 
 Get logs and configuration files from consensus node/nodes.
@@ -2493,7 +2493,7 @@ Options:
 
 ## explorer
 
-```
+```text
 explorer
 
 Explorer Node operations for creating, modifying, and destroying resources.These commands require the presence of an existing deployment.
@@ -2512,7 +2512,7 @@ Options:
 
 ### explorer node
 
-```
+```text
 explorer node
 
 List, create, manage, or destroy explorer node instances. Operates on a single explorer node instance at a time.
@@ -2533,7 +2533,7 @@ Options:
 
 #### explorer node add
 
-```
+```text
 explorer node add
 
 Adds and configures a new node instance.
@@ -2604,7 +2604,7 @@ Options:
 
 #### explorer node destroy
 
-```
+```text
 explorer node destroy
 
 Deletes the specified node from the deployment.
@@ -2637,7 +2637,7 @@ Options:
 
 #### explorer node upgrade
 
-```
+```text
 explorer node upgrade
 
 Upgrades the specified node in the deployment.
@@ -2710,7 +2710,7 @@ Options:
 
 ## keys
 
-```
+```text
 keys
 
 Consensus key generation operations
@@ -2729,7 +2729,7 @@ Options:
 
 ### keys consensus
 
-```
+```text
 keys consensus
 
 Generate unique cryptographic keys (gossip or grpc TLS keys) for the Consensus Node instances.
@@ -2748,7 +2748,7 @@ Options:
 
 #### keys consensus generate
 
-```
+```text
 keys consensus generate
 
 Generates TLS keys required for consensus node communication.
@@ -2776,7 +2776,7 @@ Options:
 
 ## ledger
 
-```
+```text
 ledger
 
 System, Account, and Crypto ledger-based management operations. These commands require an operational set of consensus nodes and may require an operational mirror node.
@@ -2797,7 +2797,7 @@ Options:
 
 ### ledger system
 
-```
+```text
 ledger system
 
 Perform a full ledger initialization on a new deployment, rekey privileged/system accounts, or setup network staking parameters.
@@ -2816,7 +2816,7 @@ Options:
 
 #### ledger system init
 
-```
+```text
 ledger system init
 
 Re-keys ledger system accounts and consensus node admin keys with uniquely generated ED25519 private keys and will stake consensus nodes.
@@ -2845,7 +2845,7 @@ Options:
 
 ### ledger account
 
-```
+```text
 ledger account
 
 View, list, create, update, delete, and import ledger accounts.
@@ -2867,7 +2867,7 @@ Options:
 
 #### ledger account update
 
-```
+```text
 ledger account update
 
 Updates an existing ledger account.
@@ -2903,7 +2903,7 @@ Options:
 
 #### ledger account create
 
-```
+```text
 ledger account create
 
 Creates a new ledger account.
@@ -2945,7 +2945,7 @@ Options:
 
 #### ledger account info
 
-```
+```text
 ledger account info
 
 Gets the account info including the current amount of HBAR
@@ -2975,7 +2975,7 @@ Options:
 
 #### ledger account predefined
 
-```
+```text
 ledger account predefined
 
 Creates predefined accounts used by one-shot deployments.
@@ -3005,7 +3005,7 @@ Options:
 
 ### ledger file
 
-```
+```text
 ledger file
 
 Upload or update files on the Hiero network.
@@ -3025,7 +3025,7 @@ Options:
 
 #### ledger file create
 
-```
+```text
 ledger file create
 
 Create a new file on the Hiero network
@@ -3046,7 +3046,7 @@ Options:
 
 #### ledger file update
 
-```
+```text
 ledger file update
 
 Update an existing file on the Hiero network
@@ -3069,7 +3069,7 @@ Options:
 
 ## mirror
 
-```
+```text
 mirror
 
 Mirror Node operations for creating, modifying, and destroying resources. These commands require the presence of an existing deployment.
@@ -3088,7 +3088,7 @@ Options:
 
 ### mirror node
 
-```
+```text
 mirror node
 
 List, create, manage, or destroy mirror node instances. Operates on a single mirror node instance at a time.
@@ -3109,7 +3109,7 @@ Options:
 
 #### mirror node add
 
-```
+```text
 mirror node add
 
 Adds and configures a new node instance.
@@ -3188,7 +3188,7 @@ Options:
 
 #### mirror node destroy
 
-```
+```text
 mirror node destroy
 
 Deletes the specified node from the deployment.
@@ -3223,7 +3223,7 @@ Options:
 
 #### mirror node upgrade
 
-```
+```text
 mirror node upgrade
 
 Upgrades the specified node from the deployment.
@@ -3302,7 +3302,7 @@ Options:
 
 ## relay
 
-```
+```text
 relay
 
 RPC Relay Node operations for creating, modifying, and destroying resources. These commands require the presence of an existing deployment.
@@ -3321,7 +3321,7 @@ Options:
 
 ### relay node
 
-```
+```text
 relay node
 
 List, create, manage, or destroy relay node instances. Operates on a single relay node instance at a time.
@@ -3342,7 +3342,7 @@ Options:
 
 #### relay node add
 
-```
+```text
 relay node add
 
 Adds and configures a new node instance.
@@ -3394,7 +3394,7 @@ Options:
 
 #### relay node destroy
 
-```
+```text
 relay node destroy
 
 Deletes the specified node from the deployment.
@@ -3429,7 +3429,7 @@ Options:
 
 #### relay node upgrade
 
-```
+```text
 relay node upgrade
 
 Upgrades the specified node from the deployment.
@@ -3483,7 +3483,7 @@ Options:
 
 ## one-shot
 
-```
+```text
 one-shot
 
 One Shot commands for new and returning users who need a preset environment type. These commands use reasonable defaults to provide a single command out of box experience.
@@ -3505,7 +3505,7 @@ Options:
 
 ### one-shot single
 
-```
+```text
 one-shot single
 
 Creates a uniquely named deployment with a single consensus node, mirror node, block node, relay node, and explorer node.
@@ -3525,7 +3525,7 @@ Options:
 
 #### one-shot single deploy
 
-```
+```text
 one-shot single deploy
 
 Deploys all required components for the selected one shot configuration.
@@ -3566,7 +3566,7 @@ Options:
 
 #### one-shot single destroy
 
-```
+```text
 one-shot single destroy
 
 Removes the deployed resources for the selected one shot configuration.
@@ -3587,7 +3587,7 @@ Options:
 
 ### one-shot multi
 
-```
+```text
 one-shot multi
 
 Creates a uniquely named deployment with multiple consensus nodes, mirror node, block node, relay node, and explorer node.
@@ -3607,7 +3607,7 @@ Options:
 
 #### one-shot multi deploy
 
-```
+```text
 one-shot multi deploy
 
 Deploys all required components for the selected multiple node one shot configuration.
@@ -3651,7 +3651,7 @@ Options:
 
 #### one-shot multi destroy
 
-```
+```text
 one-shot multi destroy
 
 Removes the deployed resources for the selected multiple node one shot configuration.
@@ -3672,7 +3672,7 @@ Options:
 
 ### one-shot falcon
 
-```
+```text
 one-shot falcon
 
 Creates a uniquely named deployment with optional chart values override using --values-file.
@@ -3692,7 +3692,7 @@ Options:
 
 #### one-shot falcon deploy
 
-```
+```text
 one-shot falcon deploy
 
 Deploys all required components for the selected one shot configuration (with optional values file).
@@ -3729,7 +3729,7 @@ Options:
 
 #### one-shot falcon destroy
 
-```
+```text
 one-shot falcon destroy
 
 Removes the deployed resources for the selected one shot configuration (with optional values file).
@@ -3750,7 +3750,7 @@ Options:
 
 ### one-shot show
 
-```
+```text
 one-shot show
 
 Display information about one-shot deployments.
@@ -3769,7 +3769,7 @@ Options:
 
 #### one-shot show deployment
 
-```
+```text
 one-shot show deployment
 
 Display information about the last one-shot deployment including name, versions, and deployed components.
@@ -3790,7 +3790,7 @@ Options:
 
 ## rapid-fire
 
-```
+```text
 rapid-fire
 
 Commands for performing load tests a Solo deployment
@@ -3810,7 +3810,7 @@ Options:
 
 ### rapid-fire load
 
-```
+```text
 rapid-fire load
 
 Run load tests using the network load generator with the selected class.
@@ -3830,7 +3830,7 @@ Options:
 
 #### rapid-fire load start
 
-```
+```text
 rapid-fire load start
 
 Start a rapid-fire load test using the selected class.
@@ -3871,7 +3871,7 @@ Options:
 
 #### rapid-fire load stop
 
-```
+```text
 rapid-fire load stop
 
 Stop any running processes using the selected class.
@@ -3899,7 +3899,7 @@ Options:
 
 ### rapid-fire destroy
 
-```
+```text
 rapid-fire destroy
 
 Uninstall the Network Load Generator Helm chart and clean up resources.
@@ -3918,7 +3918,7 @@ Options:
 
 #### rapid-fire destroy all
 
-```
+```text
 rapid-fire destroy all
 
 Uninstall the Network Load Generator Helm chart and remove all related resources.
