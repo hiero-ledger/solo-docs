@@ -62,16 +62,23 @@ This document describes how to set up a local development environment and contri
 
 ### Logs and debugging
 
-- Solo logs are written to:
+- Solo writes two log files under `$HOME/.solo/logs/`:
 
   ```bash
-  $HOME/.solo/logs/solo.log
+  $HOME/.solo/logs/solo.ndjson   # newline-delimited JSON (authoritative)
+  $HOME/.solo/logs/solo.log      # pretty, human-readable
   ```
 
-- A common debugging pattern is:
+- For human-readable tailing, use `solo.log`:
 
   ```bash
-  tail -f $HOME/.solo/logs/solo.log | jq
+  tail -f $HOME/.solo/logs/solo.log
+  ```
+
+- For structured filtering with `jq`, use `solo.ndjson`:
+
+  ```bash
+  tail -f $HOME/.solo/logs/solo.ndjson | jq
   ```
 
 ## How to Run the Tests

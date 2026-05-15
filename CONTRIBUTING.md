@@ -196,6 +196,83 @@ content/en/docs/
 └── community-contributions.md # Community info
 ```
 
+## Syncing Documentation from the Solo Repository
+
+The Solo application source repository ([hiero-ledger/solo](https://github.com/hiero-ledger/solo)) is the canonical source for some documentation content. When docs are added or changed there, they need to be reflected here.
+
+### Understanding the two repositories
+
+|                           | solo repo                        | solo-docs repo              |
+| ------------------------- | -------------------------------- | --------------------------- |
+| Purpose                   | Application source + internal docs | Public documentation website |
+| User-facing docs path     | `docs/site/content/en/docs/`    | `content/en/docs/`          |
+| Internal/contributing docs | `docs/contributing/`, `DEV.md`  | Not mirrored                |
+
+### What to sync
+
+Only files under `docs/site/content/en/docs/` in the solo repo are candidates for solo-docs. Files in other locations (`docs/contributing/`, `docs/design/`, `docs/plans/`, etc.) are internal to the solo repo and should **not** be synced.
+
+When evaluating a file, ask: **is this content useful to a Solo user or operator?** If it is about Solo internals, code structure, or how to contribute to Solo's source code, leave it in the solo repo only.
+
+### Scenario 1: New file added to the solo repo
+
+When a new `.md` file is added under `docs/site/content/en/docs/` in the solo repo:
+
+1. **Decide whether it belongs in solo-docs** — apply the user/operator test above.
+
+2. **Create the file in solo-docs** at the corresponding path under `content/en/docs/`.
+
+3. **Add Hugo front matter** — the solo repo version may not include it. Every solo-docs file requires:
+
+   ```yaml
+   ---
+   title: "Page Title"
+   weight: <number>
+   description: >
+     One or two sentence description for SEO and navigation.
+   categories: ["Category"]
+   tags: ["tag1", "tag2"]
+   type: docs
+   ---
+   ```
+
+4. **Adapt the style**:
+   - Remove any H1 title (`# Title`) — it becomes the front matter `title`.
+   - Use sentence case for all headings (e.g., "How to configure" not "How To Configure").
+   - Ensure code blocks have a language specifier (` ```bash `, ` ```yaml `, etc.).
+   - Use `${SOLO_NAMESPACE}` and `${SOLO_DEPLOYMENT}` environment-variable format consistently.
+   - Align table column widths with padding to match the surrounding documents.
+
+5. **Set the correct weight** — check the weights of neighboring files to place the new page correctly in the navigation sidebar.
+
+6. **Submit a PR to solo-docs** referencing the originating solo PR.
+
+### Scenario 2: Existing file modified in the solo repo
+
+When an existing `.md` file under `docs/site/content/en/docs/` is changed in the solo repo:
+
+1. **Identify the corresponding file** in solo-docs under `content/en/docs/`.
+
+2. **Port the changes** — apply the same edits, adapting style as described above.
+
+3. **Do not overwrite blindly** — the solo-docs version may have been independently improved. Merge the incoming changes rather than replacing the entire file.
+
+4. **Submit a PR to solo-docs** referencing the originating solo PR (e.g., `Follow-up to hiero-ledger/solo#XXXX`).
+
+### PR title convention for sync work
+
+```
+docs(<filename>): sync <brief description> from hiero-ledger/solo#<PR-number>
+```
+
+Example:
+
+```
+docs(troubleshooting): sync JSON-RPC relay OOM section from hiero-ledger/solo#3921
+```
+
+---
+
 ## Pull Request Process
 
 ### Before Submitting

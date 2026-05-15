@@ -19,15 +19,17 @@ You can run one of the following commands depending on your needs:
 1. **Single Node Deployment (recommended for development):**
 
     ```bash
-    brew install hiero-ledger/tools/solo
+    solo one-shot single deploy
     ```
+
+    > **Prerequisite:** Install Solo first with `brew install hiero-ledger/tools/solo`.
 
     For more information on Single Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
 
 2. **Multiple Node Deployment (for testing consensus scenarios):**
 
     ```bash
-    solo one-shot multiple deploy --num-consensus-nodes 3
+    solo one-shot multi deploy --num-consensus-nodes 3
     ```
 
     For more information on Multiple Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
@@ -63,7 +65,7 @@ You can run one of the following commands depending on how you deployed:
 2. **Multiple Node Teardown:**
 
     ```bash
-    solo one-shot multiple destroy
+    solo one-shot multi destroy
     ```
 
     For more information on Multiple Node Teardown, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
@@ -91,25 +93,25 @@ solo one-shot single deploy
 
 ### How do I access services after deployment?
 
-After running `solo one-shot single deploy`, the following services are available on localhost:
+After running `solo one-shot single deploy`, the following services are available on localhost. The ports below are the **defaults for Solo 0.63 and later**:
 
-| Service               | Endpoint                | Description                                      |
-| --------------------- | ----------------------- | ------------------------------------------------ |
-| Explorer UI           | `http://localhost:8080` | Web UI for inspecting accounts and transactions. |
-| Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for submitting transactions.       |
-| Mirror node REST API  | `http://localhost:5551` | REST API for querying historical data.           |
-| JSON RPC relay        | `localhost:7546`        | Ethereum-compatible JSON RPC endpoint.           |
+| Service               | Endpoint                 | Description                                      |
+| --------------------- | ------------------------ | ------------------------------------------------ |
+| Explorer UI           | `http://localhost:38080` | Web UI for inspecting accounts and transactions. |
+| Consensus node (gRPC) | `localhost:35211`        | gRPC endpoint for submitting transactions.       |
+| Mirror node REST API  | `http://localhost:38081` | REST API for querying historical data.           |
+| JSON RPC relay        | `http://localhost:37546` | Ethereum-compatible JSON RPC endpoint.           |
 
-- Open `http://localhost:8080` in your browser to start exploring your local network.
+- Open `http://localhost:38080` in your browser to start exploring your local network.
 
 - To verify these services are reachable, you can run a quick health check:
 
     ```bash
     # Mirror node REST API
-    curl -s "http://localhost:5551/api/v1/transactions?limit=1"
+    curl -s "http://localhost:38081/api/v1/transactions?limit=1"
     
     # JSON RPC relay
-    curl -s -X POST http://localhost:7546 \
+    curl -s -X POST http://localhost:37546 \
       -H "Content-Type: application/json" \
       --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
     ```
@@ -122,13 +124,26 @@ After running `solo one-shot single deploy`, the following services are availabl
 
     All Solo-related pods should be in a `Running` or `Completed` state before the endpoints become available.
 
+> **Note:** These are Solo's default port targets. If a port is already in use on your machine, Solo automatically selects the next available port. The actual ports used are printed at the end of deployment and saved to `~/.solo/<deployment-name>/forwards`. See [Port availability](/docs/simple-solo-setup/quickstart#port-availability) for details.
+
+**Solo 0.62 and earlier** used different default ports:
+
+| Service               | Endpoint                | Description                                      |
+| --------------------- | ----------------------- | ------------------------------------------------ |
+| Explorer UI           | `http://localhost:8080` | Web UI for inspecting accounts and transactions. |
+| Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for submitting transactions.       |
+| Mirror node REST API  | `http://localhost:8081` | REST API for querying historical data (via mirror-ingress). |
+| JSON RPC relay        | `http://localhost:7546` | Ethereum-compatible JSON RPC endpoint.           |
+
+> **Note:** `localhost:5551` is the direct Mirror Node REST service, accessible only via manual `kubectl port-forward`, and is being phased out. The ingress-based port (`8081` for older Solo, `38081` for Solo 0.63+) is the recommended entry point.
+
 ### How do I connect my application to the local network?
 
-Use these endpoints:
+Use these endpoints (Solo 0.63 and later):
 
-- **gRPC (Hedera SDK)**: `localhost:50211`, Node ID: `0.0.3`
-- **JSON RPC (Ethereum tools)**: `http://localhost:7546`
-- **Mirror Node REST**: `http://localhost:5551/api/v1/`
+- **gRPC (Hedera SDK)**: `localhost:35211`, Node ID: `0.0.3`
+- **JSON RPC (Ethereum tools)**: `http://localhost:37546`
+- **Mirror Node REST**: `http://localhost:38081/api/v1/`
 
 ### What should I do if `solo one-shot single destroy` fails or my Solo state is corrupted?
 
@@ -190,7 +205,8 @@ You can run `solo ledger system init` anytime after `solo consensus node start`.
   - It is defined in [Hiero source code](https://github.com/hiero-ledger/hiero-consensus-node/blob/develop/hedera-node/data/onboard/GenesisPrivKey.txt)
 
 ### 3. What is the difference between ECDSA keys and ED25519 keys?
-ED25519 is Hedera’s native key type, while ECDSA (secp256k1) is used for EVM/Ethereum-style tooling and compatibility.  
+
+ED25519 is Hedera's native key type, while ECDSA (secp256k1) is used for EVM/Ethereum-style tooling and compatibility.  
 For a detailed explanation of both key types and how they are used on Hedera, see [core concept](https://docs.hedera.com/hedera/core-concepts/keys-and-signatures).
 
 ### 4. Where can I find the EVM compatible private key?
@@ -219,7 +235,7 @@ Keys are stored in `~/.solo/cache/keys/`. This directory contains:
     {
      "accountId": "0.0.1007",
      "privateKey": "302e020100300506032b657004220420411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7",
-     "privateKeyRaw": "411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7"
+     "privateKeyRaw": "411a561013bceabb8cb83e3dc5558d052b9bd6a8977b5a7348bf9653034a29d7",
      "publicKey": "302a300506032b65700321001d8978e647aca1195c54a4d3d5dc469b95666de14e9b6edde8ed337917b96013",
      "balance": 100
     }
@@ -275,7 +291,7 @@ Most management commands (stop, start, diagnostics) require the deployment name.
 cat ~/.solo/cache/last-one-shot-deployment.txt
 ```
 
-This outputs a value like `solo-deployment-<hash>`. Use it as `<deployment-name>` in subsequent commands.
+This outputs your deployment name — defaults to `one-shot` for one-shot deployments, or the value you passed to `--deployment`. Use it as `<deployment-name>` in subsequent commands.
 
 ### 10. How do I create test accounts after deployment?
 

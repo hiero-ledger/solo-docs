@@ -24,7 +24,7 @@ This page is the canonical command reference for the Solo CLI.
 
 Solo supports machine-readable output for version output and for command execution flows that honor the output format flag.
 
-```bash
+```text
 solo --version -o json
 solo --version -o yaml
 solo --version -o wide
@@ -744,7 +744,7 @@ Options:
 
 ### consensus network
 
-```
+```text
 consensus network
 
 Ledger/network wide consensus operations such as freeze, upgrade, and deploy. Operates on the entire ledger and all consensus node instances.
@@ -766,84 +766,104 @@ Options:
 
 #### consensus network deploy
 
-```
+```text
 consensus network deploy
 
 Installs and configures all consensus nodes for the deployment.
 
 Options:
 
--d,  --deployment                 The name the user will          [string] [required]                                      
-                                  reference locally to link to a                                                           
-                                  deployment                                                                               
-                                                                                                                           
-     --api-permission-properties  api-permission.properties file  [string] [default: "templates/api-permission.properties"]
-                                  for node                                                                                 
-     --app                        Testing app name                [string] [default: "HederaNode.jar"]                     
-     --application-env            the application.env file for    [string] [default: "templates/application.env"]          
-                                  the node provides environment                                                            
-                                  variables to the                                                                         
-                                  solo-container to be used when                                                           
-                                  the hedera platform is started                                                           
-     --application-properties     application.properties file     [string] [default: "templates/application.properties"]   
-                                  for node                                                                                 
-     --aws-bucket                 name of aws storage bucket      [string]                                                 
-     --aws-bucket-prefix          path prefix of aws storage      [string]                                                 
-                                  bucket                                                                                   
-     --aws-bucket-region          name of aws bucket region       [string]                                                 
-     --aws-endpoint               aws storage endpoint URL        [string]                                                 
-     --aws-write-access-key       aws storage access key for      [string]                                                 
-                                  write access                                                                             
-     --aws-write-secrets          aws storage secret key for      [string]                                                 
-                                  write access                                                                             
-     --backup-bucket              name of bucket for backing up   [string]                                                 
-                                  state files                                                                              
-     --backup-endpoint            backup storage endpoint URL     [string]                                                 
-     --backup-provider            backup storage service          [string] [default: "GCS"]                                
-                                  provider, GCS or AWS                                                                     
-     --backup-region              backup storage region           [string] [default: "us-central1"]                        
-     --backup-write-access-key    backup storage access key for   [string]                                                 
-                                  write access                                                                             
-     --backup-write-secrets       backup storage secret key for   [string]                                                 
-                                  write access                                                                             
-     --bootstrap-properties       bootstrap.properties file for   [string] [default: "templates/bootstrap.properties"]     
-                                  node                                                                                     
-     --cache-dir                  Local cache directory           [string] [default: "~/.solo/cache"]           
--l,  --chain-id                   Chain ID                        [string] [default: "298"]                                
-     --chart-dir                  Local chart directory path      [string]                                                 
-                                  (e.g. ~/solo-charts/charts)                                                              
-     --debug-node-alias           Enable default jvm debug port   [string]                                                 
-                                  (5005) for the given node id                                                             
-     --dev                        Enable developer mode           [boolean] [default: false]                               
-     --domain-names               Custom domain names for         [string]                                                 
-                                  consensus nodes mapping for                                                              
-                                  the(e.g. node0=domain.name                                                               
-                                  where key is node alias and                                                              
-                                  value is domain name)with                                                                
-                                  multiple nodes comma separated                                                           
-     --enable-monitoring-support  Enables CRDs for Prometheus     [boolean] [default: true]                                
-                                  and Grafana.                                                                             
-     --envoy-ips                  IP mapping where key = value    [string]                                                 
-                                  is node alias and static ip                                                              
-                                  for envoy proxy, (e.g.:                                                                  
-                                  --envoy-ips                                                                              
-                                  node1=127.0.0.1,node2=127.0.0.1)                                                           
-     --force-port-forward         Force port forward to access    [boolean] [default: true]                                
-                                  the network services                                                                     
-     --gcs-bucket                 name of gcs storage bucket      [string]                                                 
-     --gcs-bucket-prefix          path prefix of google storage   [string]                                                 
-                                  bucket                                                                                   
-     --gcs-endpoint               gcs storage endpoint URL        [string]                                                 
-     --gcs-write-access-key       gcs storage access key for      [string]                                                 
-                                  write access                                                                             
-     --gcs-write-secrets          gcs storage secret key for      [string]                                                 
-                                  write access                                                                             
-     --genesis-throttles-fil
+-d,  --deployment                 The name the user will reference locally to link   [string] [required]
+                                  to a deployment
+
+     --api-permission-properties  api-permission.properties file for node            [string] [default: "templates/api-permission.properties"]
+     --app                        Testing app name                                   [string] [default: "HederaNode.jar"]
+     --application-env            the application.env file for the node provides     [string] [default: "templates/application.env"]
+                                  environment variables to the solo-container to be
+                                  used when the hedera platform is started
+     --application-properties     application.properties file for node               [string] [default: "templates/application.properties"]
+     --aws-bucket                 name of aws storage bucket                         [string]
+     --aws-bucket-prefix          path prefix of aws storage bucket                  [string]
+     --aws-bucket-region          name of aws bucket region                          [string]
+     --aws-endpoint               aws storage endpoint URL                           [string]
+     --aws-write-access-key       aws storage access key for write access            [string]
+     --aws-write-secrets          aws storage secret key for write access            [string]
+     --backup-bucket              name of bucket for backing up state files          [string]
+     --backup-endpoint            backup storage endpoint URL                        [string]
+     --backup-provider            backup storage service provider, GCS or AWS        [string] [default: "GCS"]
+     --backup-region              backup storage region                              [string] [default: "us-central1"]
+     --backup-write-access-key    backup storage access key for write access         [string]
+     --backup-write-secrets       backup storage secret key for write access         [string]
+     --bootstrap-properties       bootstrap.properties file for node                 [string] [default: "templates/bootstrap.properties"]
+     --cache-dir                  Local cache directory                              [string] [default: "/Users/ivoyankov/.solo/cache"]
+-l,  --chain-id                   Chain ID                                           [string] [default: "298"]
+     --chart-dir                  Local chart directory path (e.g.                   [string]
+                                  ~/solo-charts/charts)
+     --debug-node-alias           Enable default jvm debug port (5005) for the       [string]
+                                  given node id
+     --dev                        Enable developer mode                              [boolean] [default: false]
+     --domain-names               Custom domain names for consensus nodes mapping    [string]
+                                  for the(e.g. node0=domain.name where key is node
+                                  alias and value is domain name)with multiple
+                                  nodes comma separated
+     --enable-monitoring-support  Enables CRDs for Prometheus and Grafana.           [boolean] [default: true]
+     --envoy-ips                  IP mapping where key = value is node alias and     [string]
+                                  static ip for envoy proxy, (e.g.:  --envoy-ips
+                                  node1=127.0.0.1,node2=127.0.0.1)
+     --force-port-forward         Force port forward to access the network services  [boolean] [default: true]
+     --gcs-bucket                 name of gcs storage bucket                         [string]
+     --gcs-bucket-prefix          path prefix of google storage bucket               [string]
+     --gcs-endpoint               gcs storage endpoint URL                           [string]
+     --gcs-write-access-key       gcs storage access key for write access            [string]
+     --gcs-write-secrets          gcs storage secret key for write access            [string]
+     --genesis-throttles-file     throttles.json file used during network genesis    [string]
+     --grpc-tls-cert              TLS Certificate path for the gRPC (e.g.            [string]
+                                  "node1=/Users/username/node1-grpc.cert" with
+                                  multiple nodes comma separated)
+     --grpc-tls-key               TLS Certificate key path for the gRPC (e.g.        [string]
+                                  "node1=/Users/username/node1-grpc.key" with
+                                  multiple nodes comma separated)
+     --grpc-web-tls-cert          TLS Certificate path for gRPC Web (e.g.            [string]
+                                  "node1=/Users/username/node1-grpc-web.cert" with
+                                  multiple nodes comma separated)
+     --grpc-web-tls-key           TLC Certificate key path for gRPC Web (e.g.        [string]
+                                  "node1=/Users/username/node1-grpc-web.key" with
+                                  multiple nodes comma separated)
+     --haproxy-ips                IP mapping where key = value is node alias and     [string]
+                                  static ip for haproxy, (e.g.:  --haproxy-ips
+                                  node1=127.0.0.1,node2=127.0.0.1)
+     --jfr-config                 Java Flight Recorder configuration file path       [string]
+     --load-balancer              Enable load balancer for network node proxies      [boolean] [default: false]
+     --log4j2-xml                 log4j2.xml file for node                           [string] [default: "templates/log4j2.xml"]
+-i,  --node-aliases               Comma separated node aliases (empty means all      [string]
+                                  nodes)
+     --pod-log                    Install PodLog custom resource for monitoring      [boolean] [default: false]
+                                  Network Node pod logs
+     --pvcs                       Enable persistent volume claims to store data      [boolean] [default: false]
+                                  outside the pod, required for consensus node add
+-q,  --quiet-mode                 Quiet mode, do not prompt for confirmation         [boolean] [default: false]
+-t,  --release-tag                Release tag to be used (e.g. v0.71.0)              [string] [default: "v0.71.0"]
+     --service-monitor            Install ServiceMonitor custom resource for         [boolean] [default: false]
+                                  monitoring Network Node metrics
+     --settings-txt               settings.txt file for node                         [string] [default: "templates/settings.txt"]
+     --solo-chart-version         Solo testing chart version                         [string] [default: "0.63.3"]
+     --storage-type               storage type for saving stream files, available    [default: "minio_only"]
+                                  options are minio_only, aws_only, gcs_only,
+                                  aws_and_gcs
+     --tss                        Enable hinTS/TSS (CN >= v0.72).                    [boolean] [default: true]
+-f,  --values-file                Comma separated chart values file paths for each   [string]
+                                  cluster (e.g.
+                                  values.yaml,cluster-1=./a/b/values1.yaml,cluster-2=./a/b/values2.yaml)
+-v,  --version                    Show version number                                [boolean]
+     --wraps                      Enable recursive WRAPs aggregation for hinTS/TSS   [boolean] [default: false]
+                                  (CN >= v0.72).
+     --wraps-key-path             Path to a local directory containing pre-existing  [string]
+                                  WRAPs proving key files (.bin)
 ```
 
 #### consensus network destroy
 
-```
+```text
 consensus network destroy
 
 Removes all consensus network components from the deployment.
@@ -878,7 +898,7 @@ Options:
 
 #### consensus network freeze
 
-```
+```text
 consensus network freeze
 
 Initiates a network freeze for scheduled maintenance or upgrades
@@ -899,7 +919,7 @@ Options:
 
 #### consensus network upgrade
 
-```
+```text
 consensus network upgrade
 
 Upgrades the software version running on all consensus nodes.
@@ -956,7 +976,7 @@ Options:
 
 ### consensus node
 
-```
+```text
 consensus node
 
 List, create, manage, or destroy consensus node instances. Operates on a single consensus node instance at a time.
@@ -983,7 +1003,7 @@ Options:
 
 #### consensus node setup
 
-```
+```text
 consensus node setup
 
 Setup node with a specific version of Hedera platform
@@ -1023,7 +1043,7 @@ Options:
 
 #### consensus node start
 
-```
+```text
 consensus node start
 
 Start a node
@@ -1065,7 +1085,7 @@ Options:
 
 #### consensus node stop
 
-```
+```text
 consensus node stop
 
 Stop a node
@@ -1088,7 +1108,7 @@ Options:
 
 #### consensus node restart
 
-```
+```text
 consensus node restart
 
 Restart all nodes of the network
@@ -1112,7 +1132,7 @@ Options:
 
 #### consensus node refresh
 
-```
+```text
 consensus node refresh
 
 Reset and restart a node
@@ -1146,7 +1166,7 @@ Options:
 
 #### consensus node add
 
-```
+```text
 consensus node add
 
 Adds a node with a specific version of Hedera platform
@@ -1201,7 +1221,7 @@ Options:
 
 #### consensus node update
 
-```
+```text
 consensus node update
 
 Update a node with a specific version of Hedera platform
@@ -1265,7 +1285,7 @@ Options:
 
 #### consensus node destroy
 
-```
+```text
 consensus node destroy
 
 Delete a node with a specific version of Hedera platform
@@ -1307,7 +1327,7 @@ Options:
 
 #### consensus node collect-jfr
 
-```
+```text
 consensus node collect-jfr
 
 Collect Java Flight Recorder (JFR) files from a node for diagnostics and performance analysis. Requires the node to be running with Java Flight Recorder enabled.
@@ -1329,7 +1349,7 @@ Options:
 
 ### consensus state
 
-```
+```text
 consensus state
 
 List, download, and upload consensus node state backups to/from individual consensus node instances.
@@ -1348,7 +1368,7 @@ Options:
 
 #### consensus state download
 
-```
+```text
 consensus state download
 
 Downloads a signed state from consensus node/nodes.
@@ -1379,7 +1399,7 @@ Options:
 
 ### consensus dev-node-add
 
-```
+```text
 consensus dev-node-add
 
 Dev operations for adding consensus nodes.
@@ -1400,7 +1420,7 @@ Options:
 
 #### consensus dev-node-add prepare
 
-```
+```text
 consensus dev-node-add prepare
 
 Prepares the addition of a node with a specific version of Hedera platform
@@ -1454,7 +1474,7 @@ Options:
 
 #### consensus dev-node-add submit-transactions
 
-```
+```text
 consensus dev-node-add submit-transactions
 
 Submits NodeCreateTransaction and Upgrade transactions to the network nodes
@@ -1534,7 +1554,7 @@ Options:
 
 #### consensus dev-node-add execute
 
-```
+```text
 consensus dev-node-add execute
 
 Executes the addition of a previously prepared node
@@ -1589,7 +1609,7 @@ Options:
 
 ### consensus dev-node-update
 
-```
+```text
 consensus dev-node-update
 
 Dev operations for updating consensus nodes
@@ -1610,7 +1630,7 @@ Options:
 
 #### consensus dev-node-update prepare
 
-```
+```text
 consensus dev-node-update prepare
 
 Prepare the deployment to update a node with a specific version of Hedera platform
@@ -1677,7 +1697,7 @@ Options:
 
 #### consensus dev-node-update submit-transactions
 
-```
+```text
 consensus dev-node-update submit-transactions
 
 Submit transactions for updating a node with a specific version of Hedera platform
@@ -1729,7 +1749,7 @@ Options:
 
 #### consensus dev-node-update execute
 
-```
+```text
 consensus dev-node-update execute
 
 Executes the updating of a node with a specific version of Hedera platform
@@ -1786,7 +1806,7 @@ Options:
 
 ### consensus dev-node-upgrade
 
-```
+```text
 consensus dev-node-upgrade
 
 Dev operations for upgrading consensus nodes
@@ -1807,7 +1827,7 @@ Options:
 
 #### consensus dev-node-upgrade prepare
 
-```
+```text
 consensus dev-node-upgrade prepare
 
 Prepare for upgrading network
@@ -1845,7 +1865,7 @@ Options:
 
 #### consensus dev-node-upgrade submit-transactions
 
-```
+```text
 consensus dev-node-upgrade submit-transactions
 
 Submit transactions for upgrading network
@@ -1883,7 +1903,7 @@ Options:
 
 #### consensus dev-node-upgrade execute
 
-```
+```text
 consensus dev-node-upgrade execute
 
 Executes the upgrading the network
@@ -1921,7 +1941,7 @@ Options:
 
 ### consensus dev-node-delete
 
-```
+```text
 consensus dev-node-delete
 
 Dev operations for delete consensus nodes
@@ -1942,7 +1962,7 @@ Options:
 
 #### consensus dev-node-delete prepare
 
-```
+```text
 consensus dev-node-delete prepare
 
 Prepares the deletion of a node with a specific version of Hedera platform
@@ -1987,7 +2007,7 @@ Options:
 
 #### consensus dev-node-delete submit-transactions
 
-```
+```text
 consensus dev-node-delete submit-transactions
 
 Submits transactions to the network nodes for deleting a node
@@ -2032,7 +2052,7 @@ Options:
 
 #### consensus dev-node-delete execute
 
-```
+```text
 consensus dev-node-delete execute
 
 Executes the deletion of a previously prepared node
@@ -2077,7 +2097,7 @@ Options:
 
 ### consensus dev-freeze
 
-```
+```text
 consensus dev-freeze
 
 Dev operations for freezing consensus nodes
@@ -2097,7 +2117,7 @@ Options:
 
 #### consensus dev-freeze prepare-upgrade
 
-```
+```text
 consensus dev-freeze prepare-upgrade
 
 Prepare the network for a Freeze Upgrade operation
@@ -2123,7 +2143,7 @@ Options:
 
 #### consensus dev-freeze freeze-upgrade
 
-```
+```text
 consensus dev-freeze freeze-upgrade
 
 Performs a Freeze Upgrade operation with on the network after it has been prepared with prepare-upgrade
@@ -2149,7 +2169,7 @@ Options:
 
 ## deployment
 
-```
+```text
 deployment
 
 Create, modify, and delete deployment configurations. Deployments are required for most of the other commands.
@@ -2171,7 +2191,7 @@ Options:
 
 ### deployment cluster
 
-```
+```text
 deployment cluster
 
 View and manage Solo cluster references used by a deployment.
@@ -2190,7 +2210,7 @@ Options:
 
 #### deployment cluster attach
 
-```
+```text
 deployment cluster attach
 
 Attaches a cluster reference to a deployment.
@@ -2235,7 +2255,7 @@ Options:
 
 ### deployment config
 
-```
+```text
 deployment config
 
 List, view, create, delete, and import deployments. These commands affect the local configuration only.
@@ -2257,7 +2277,7 @@ Options:
 
 #### deployment config list
 
-```
+```text
 deployment config list
 
 Lists all local deployment configurations or deployments in a specific cluster.
@@ -2283,7 +2303,7 @@ Options:
 
 #### deployment config create
 
-```
+```text
 deployment config create
 
 Creates a new local deployment configuration.
@@ -2311,7 +2331,7 @@ Options:
 
 #### deployment config delete
 
-```
+```text
 deployment config delete
 
 Removes a local deployment configuration.
@@ -2332,7 +2352,7 @@ Options:
 
 #### deployment config info
 
-```
+```text
 deployment config info
 
 Displays the full status of a deployment including components, versions, and port-forward status.
@@ -2359,49 +2379,9 @@ Options:
 -v,  --version             Show version number             [boolean]
 ```
 
-### deployment refresh
-
-```
-deployment refresh
-
-Refresh port-forward processes for all components in the deployment.
-
-Commands:
-  deployment refresh port-forwards   Refresh and restore killed port-forward processes.
-
-Options:
-
-                                                                                     
-     --dev                 Enable developer mode           [boolean] [default: false]
-     --force-port-forward  Force port forward to access    [boolean] [default: true] 
-                           the network services                                      
--v,  --version             Show version number             [boolean]
-```
-
-#### deployment refresh port-forwards
-
-```
-deployment refresh port-forwards
-
-Refresh and restore killed port-forward processes.
-
-Options:
-
--d,  --deployment          The name the user will          [string] [required]       
-                           reference locally to link to a                            
-                           deployment                                                
-                                                                                     
-     --dev                 Enable developer mode           [boolean] [default: false]
-     --force-port-forward  Force port forward to access    [boolean] [default: true] 
-                           the network services                                      
--q,  --quiet-mode          Quiet mode, do not prompt for   [boolean] [default: false]
-                           confirmation                                              
--v,  --version             Show version number             [boolean]
-```
-
 ### deployment diagnostics
 
-```
+```text
 deployment diagnostics
 
 Capture diagnostic information such as logs, signed states, and ledger/network/node configurations.
@@ -2423,7 +2403,7 @@ Options:
 
 #### deployment diagnostics all
 
-```
+```text
 deployment diagnostics all
 
 Captures logs, configs, and diagnostic artifacts from all consensus nodes and test connections.
@@ -2444,7 +2424,7 @@ Options:
 
 #### deployment diagnostics debug
 
-```
+```text
 deployment diagnostics debug
 
 Similar to diagnostics all subcommand, but creates a zip archive for easy sharing.
@@ -2468,7 +2448,7 @@ Options:
 
 #### deployment diagnostics connections
 
-```
+```text
 deployment diagnostics connections
 
 Tests connections to Consensus, Relay, Explorer, Mirror and Block nodes.
@@ -2489,7 +2469,7 @@ Options:
 
 #### deployment diagnostics logs
 
-```
+```text
 deployment diagnostics logs
 
 Get logs and configuration files from consensus node/nodes.
@@ -2513,7 +2493,7 @@ Options:
 
 ## explorer
 
-```
+```text
 explorer
 
 Explorer Node operations for creating, modifying, and destroying resources.These commands require the presence of an existing deployment.
@@ -2532,7 +2512,7 @@ Options:
 
 ### explorer node
 
-```
+```text
 explorer node
 
 List, create, manage, or destroy explorer node instances. Operates on a single explorer node instance at a time.
@@ -2553,7 +2533,7 @@ Options:
 
 #### explorer node add
 
-```
+```text
 explorer node add
 
 Adds and configures a new node instance.
@@ -2624,7 +2604,7 @@ Options:
 
 #### explorer node destroy
 
-```
+```text
 explorer node destroy
 
 Deletes the specified node from the deployment.
@@ -2657,7 +2637,7 @@ Options:
 
 #### explorer node upgrade
 
-```
+```text
 explorer node upgrade
 
 Upgrades the specified node in the deployment.
@@ -2730,7 +2710,7 @@ Options:
 
 ## keys
 
-```
+```text
 keys
 
 Consensus key generation operations
@@ -2749,7 +2729,7 @@ Options:
 
 ### keys consensus
 
-```
+```text
 keys consensus
 
 Generate unique cryptographic keys (gossip or grpc TLS keys) for the Consensus Node instances.
@@ -2768,7 +2748,7 @@ Options:
 
 #### keys consensus generate
 
-```
+```text
 keys consensus generate
 
 Generates TLS keys required for consensus node communication.
@@ -2796,7 +2776,7 @@ Options:
 
 ## ledger
 
-```
+```text
 ledger
 
 System, Account, and Crypto ledger-based management operations. These commands require an operational set of consensus nodes and may require an operational mirror node.
@@ -2817,7 +2797,7 @@ Options:
 
 ### ledger system
 
-```
+```text
 ledger system
 
 Perform a full ledger initialization on a new deployment, rekey privileged/system accounts, or setup network staking parameters.
@@ -2836,7 +2816,7 @@ Options:
 
 #### ledger system init
 
-```
+```text
 ledger system init
 
 Re-keys ledger system accounts and consensus node admin keys with uniquely generated ED25519 private keys and will stake consensus nodes.
@@ -2865,7 +2845,7 @@ Options:
 
 ### ledger account
 
-```
+```text
 ledger account
 
 View, list, create, update, delete, and import ledger accounts.
@@ -2887,7 +2867,7 @@ Options:
 
 #### ledger account update
 
-```
+```text
 ledger account update
 
 Updates an existing ledger account.
@@ -2923,7 +2903,7 @@ Options:
 
 #### ledger account create
 
-```
+```text
 ledger account create
 
 Creates a new ledger account.
@@ -2965,7 +2945,7 @@ Options:
 
 #### ledger account info
 
-```
+```text
 ledger account info
 
 Gets the account info including the current amount of HBAR
@@ -2995,7 +2975,7 @@ Options:
 
 #### ledger account predefined
 
-```
+```text
 ledger account predefined
 
 Creates predefined accounts used by one-shot deployments.
@@ -3025,7 +3005,7 @@ Options:
 
 ### ledger file
 
-```
+```text
 ledger file
 
 Upload or update files on the Hiero network.
@@ -3045,7 +3025,7 @@ Options:
 
 #### ledger file create
 
-```
+```text
 ledger file create
 
 Create a new file on the Hiero network
@@ -3066,7 +3046,7 @@ Options:
 
 #### ledger file update
 
-```
+```text
 ledger file update
 
 Update an existing file on the Hiero network
@@ -3089,7 +3069,7 @@ Options:
 
 ## mirror
 
-```
+```text
 mirror
 
 Mirror Node operations for creating, modifying, and destroying resources. These commands require the presence of an existing deployment.
@@ -3108,7 +3088,7 @@ Options:
 
 ### mirror node
 
-```
+```text
 mirror node
 
 List, create, manage, or destroy mirror node instances. Operates on a single mirror node instance at a time.
@@ -3129,7 +3109,7 @@ Options:
 
 #### mirror node add
 
-```
+```text
 mirror node add
 
 Adds and configures a new node instance.
@@ -3208,7 +3188,7 @@ Options:
 
 #### mirror node destroy
 
-```
+```text
 mirror node destroy
 
 Deletes the specified node from the deployment.
@@ -3243,7 +3223,7 @@ Options:
 
 #### mirror node upgrade
 
-```
+```text
 mirror node upgrade
 
 Upgrades the specified node from the deployment.
@@ -3322,7 +3302,7 @@ Options:
 
 ## relay
 
-```
+```text
 relay
 
 RPC Relay Node operations for creating, modifying, and destroying resources. These commands require the presence of an existing deployment.
@@ -3341,7 +3321,7 @@ Options:
 
 ### relay node
 
-```
+```text
 relay node
 
 List, create, manage, or destroy relay node instances. Operates on a single relay node instance at a time.
@@ -3362,7 +3342,7 @@ Options:
 
 #### relay node add
 
-```
+```text
 relay node add
 
 Adds and configures a new node instance.
@@ -3414,7 +3394,7 @@ Options:
 
 #### relay node destroy
 
-```
+```text
 relay node destroy
 
 Deletes the specified node from the deployment.
@@ -3449,7 +3429,7 @@ Options:
 
 #### relay node upgrade
 
-```
+```text
 relay node upgrade
 
 Upgrades the specified node from the deployment.
@@ -3503,7 +3483,7 @@ Options:
 
 ## one-shot
 
-```
+```text
 one-shot
 
 One Shot commands for new and returning users who need a preset environment type. These commands use reasonable defaults to provide a single command out of box experience.
@@ -3525,7 +3505,7 @@ Options:
 
 ### one-shot single
 
-```
+```text
 one-shot single
 
 Creates a uniquely named deployment with a single consensus node, mirror node, block node, relay node, and explorer node.
@@ -3545,7 +3525,7 @@ Options:
 
 #### one-shot single deploy
 
-```
+```text
 one-shot single deploy
 
 Deploys all required components for the selected one shot configuration.
@@ -3586,7 +3566,7 @@ Options:
 
 #### one-shot single destroy
 
-```
+```text
 one-shot single destroy
 
 Removes the deployed resources for the selected one shot configuration.
@@ -3607,7 +3587,7 @@ Options:
 
 ### one-shot multi
 
-```
+```text
 one-shot multi
 
 Creates a uniquely named deployment with multiple consensus nodes, mirror node, block node, relay node, and explorer node.
@@ -3627,7 +3607,7 @@ Options:
 
 #### one-shot multi deploy
 
-```
+```text
 one-shot multi deploy
 
 Deploys all required components for the selected multiple node one shot configuration.
@@ -3671,7 +3651,7 @@ Options:
 
 #### one-shot multi destroy
 
-```
+```text
 one-shot multi destroy
 
 Removes the deployed resources for the selected multiple node one shot configuration.
@@ -3692,7 +3672,7 @@ Options:
 
 ### one-shot falcon
 
-```
+```text
 one-shot falcon
 
 Creates a uniquely named deployment with optional chart values override using --values-file.
@@ -3712,7 +3692,7 @@ Options:
 
 #### one-shot falcon deploy
 
-```
+```text
 one-shot falcon deploy
 
 Deploys all required components for the selected one shot configuration (with optional values file).
@@ -3728,12 +3708,6 @@ Options:
                             deployment.  For commands that                            
                             take multiple clusters they                               
                             can be separated by commas.                               
-     --deploy-explorer      Deploy explorer as part of      [boolean] [default: true] 
-                            one-shot falcon deployment                                
-     --deploy-mirror-node   Deploy mirror node as part of   [boolean] [default: true] 
-                            one-shot falcon deployment                                
-     --deploy-relay         Deploy relay as part of         [boolean] [default: true] 
-                            one-shot falcon deployment                                
 -d,  --deployment           The name the user will          [string]                  
                             reference locally to link to a                            
                             deployment                                                
@@ -3748,11 +3722,6 @@ Options:
                             pre-genesis deployments                                   
 -q,  --quiet-mode           Quiet mode, do not prompt for   [boolean] [default: false]
                             confirmation                                              
-     --rollback             Automatically clean up          [boolean] [default: false]
-                            resources when deploy fails.                              
-                            Use  --no-rollback  to skip                               
-                            cleanup and keep partial                                  
-                            resources for inspection.                                 
 -f,  --values-file          Comma separated chart values    [string]                  
                             file                                                      
 -v,  --version              Show version number             [boolean]
@@ -3760,7 +3729,7 @@ Options:
 
 #### one-shot falcon destroy
 
-```
+```text
 one-shot falcon destroy
 
 Removes the deployed resources for the selected one shot configuration (with optional values file).
@@ -3781,7 +3750,7 @@ Options:
 
 ### one-shot show
 
-```
+```text
 one-shot show
 
 Display information about one-shot deployments.
@@ -3800,7 +3769,7 @@ Options:
 
 #### one-shot show deployment
 
-```
+```text
 one-shot show deployment
 
 Display information about the last one-shot deployment including name, versions, and deployed components.
@@ -3821,7 +3790,7 @@ Options:
 
 ## rapid-fire
 
-```
+```text
 rapid-fire
 
 Commands for performing load tests a Solo deployment
@@ -3841,7 +3810,7 @@ Options:
 
 ### rapid-fire load
 
-```
+```text
 rapid-fire load
 
 Run load tests using the network load generator with the selected class.
@@ -3861,7 +3830,7 @@ Options:
 
 #### rapid-fire load start
 
-```
+```text
 rapid-fire load start
 
 Start a rapid-fire load test using the selected class.
@@ -3902,7 +3871,7 @@ Options:
 
 #### rapid-fire load stop
 
-```
+```text
 rapid-fire load stop
 
 Stop any running processes using the selected class.
@@ -3930,7 +3899,7 @@ Options:
 
 ### rapid-fire destroy
 
-```
+```text
 rapid-fire destroy
 
 Uninstall the Network Load Generator Helm chart and clean up resources.
@@ -3949,7 +3918,7 @@ Options:
 
 #### rapid-fire destroy all
 
-```
+```text
 rapid-fire destroy all
 
 Uninstall the Network Load Generator Helm chart and remove all related resources.

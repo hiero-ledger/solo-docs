@@ -30,10 +30,10 @@ Most management commands require your deployment name. Run the following command
   cat ~/.solo/cache/last-one-shot-deployment.txt
   ```
 
-Expected output:
+Expected output — the deployment name you passed to `solo one-shot single deploy`, or the default `one-shot` if you did not specify `--deployment`:
 
   ```bash
-  solo-deployment-<hash>
+  one-shot% 
   ```
 
 Use the value returned from this command as `<deployment-name>` in all commands on this page.
@@ -68,15 +68,19 @@ To verify pod status after any of the above commands, see [Verify the network](/
 To confirm your Hedera network is fully operational, create a test account using the Ledger account creation command:
 
 ```bash
-solo account create --deployment <deployment-name>
+solo ledger account create --deployment <deployment-name>
 ```
 
 Example output:
 
-```
-✓ Account created: 0.0.1001
-  Alias: myaccount
-  Balance: 1000 ℏ
+```bash
+ *** new account created ***
+-------------------------------------------------------------------------------
+{
+  "accountId": "0.0.1001",
+  "publicKey": "302a300506032b6570032100439379b330f3b57b5deffda196c7c0c3387f3330a838c021954303e260606f24",
+  "balance": 100
+}
 ```
 
 Once the account is created, verify it in the web-based Explorer UI:
@@ -128,15 +132,22 @@ You can also retrieve logs for a specific pod directly using `kubectl`:
   kubectl logs -n <namespace> <pod-name>
   ```
 
-> **Important:** Solo namespaces are not fixed to `solo`. Each deployment receives a generated namespace of the form `solo-<8-character-uuid>` (for example `solo-a1b2c3d4`).
+> **Important:** Solo deploys each network into a Kubernetes namespace. For one-shot deployments, the namespace defaults to `one-shot` (matching the default deployment name). You can override it by passing `--namespace` to `solo one-shot single deploy`.
 
-To find your deployment namespace, run:
+To find your deployment namespace, use any of:
 
   ```bash
+  # Look up the namespace Solo recorded for this deployment
+  solo deployment config info --deployment <deployment-name>
+
+  # Or list all namespaces and pick the one matching your deployment
+  kubectl get ns
+
+  # Or inspect pods and use the NAMESPACE column
   kubectl get pods -A | grep -v kube-system
   ```
 
-Then locate your deployment's pods and use the `NAMESPACE` column. Alternatively, the namespace suffix matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt`.
+For one-shot deployments the namespace matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt` (default: `one-shot`).
 
 Replace `<namespace>` and `<pod-name>` with the values from your deployment.
 

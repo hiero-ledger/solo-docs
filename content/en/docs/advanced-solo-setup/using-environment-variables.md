@@ -42,7 +42,7 @@ commands.
 | `SOLO_NODE_INTERNAL_GOSSIP_PORT` | Internal gossip port used by the Hiero network | `50111`
 | `SOLO_NODE_EXTERNAL_GOSSIP_PORT` | External gossip port used by the Hiero network | `50111`
 | `SOLO_NODE_DEFAULT_STAKE_AMOUNT` | Default stake amount for a node | `500`
-| `GRPC_PORT` | gRPC port used for local node communication | `50211`
+| `GRPC_PORT` | Local port-forward for consensus node gRPC. Default is `35211` for Solo 0.63+ (changed from `50211` to avoid Windows ephemeral-port conflicts). See [Port availability](/docs/simple-solo-setup/quickstart#port-availability). | `35211`
 | `LOCAL_NODE_START_PORT` | Local node start port for the Solo network | `30212`
 
 ---
@@ -153,6 +153,10 @@ commands.
 | `PROMETHEUS_STACK_VERSION` | Release version of the Prometheus Stack to use
 | `GRAFANA_AGENT_VERSION` | Release version of the Grafana Agent to use
 
+> **Tip:** To pin component versions for a `solo one-shot single deploy`, prefix
+> the command with these variables. See the
+> [One-Shot Deployment](#one-shot-deployment) section below for an example.
+
 ---
 
 ## Helm Chart URLs
@@ -189,3 +193,27 @@ commands.
 | `EXPLORER_EDGE_VERSION` | Edge explorer version used by `--edge` in one-shot deploys. Falls back to `EXPLORER_VERSION`. | `26.0.0`
 | `RELAY_EDGE_VERSION` | Edge relay version used by `--edge` in one-shot deploys. Falls back to `RELAY_VERSION`. | `0.76.2`
 | `BLOCK_NODE_EDGE_VERSION` | Edge block node version used by `--edge` in one-shot deploys. Falls back to `BLOCK_NODE_VERSION`. | `0.31.0`
+
+### Pinning Component Versions
+
+`solo one-shot single deploy` does not yet expose CLI flags for pinning
+individual component versions. To run a one-shot deployment against specific
+releases, prefix the command with the
+[Component Versions](#component-versions) environment variables:
+
+```bash
+CONSENSUS_NODE_VERSION=v0.73.0 MIRROR_NODE_VERSION=v0.153.1 solo one-shot single deploy
+```
+
+Any of the `*_VERSION` variables listed in
+[Component Versions](#component-versions) can be combined in the same command
+to pin multiple components at once.
+
+> **Note:**
+>
+> - This is the current recommended approach for version pinning in one-shot
+>   deployments.
+> - CLI flags for version overrides on `one-shot` are planned for Q2 — tracked
+>   in [hiero-ledger/solo#4242](https://github.com/hiero-ledger/solo/issues/4242).
+> - Environment variables will remain valid for one-off overrides after the
+>   CLI flags land, so the form above will continue to work.

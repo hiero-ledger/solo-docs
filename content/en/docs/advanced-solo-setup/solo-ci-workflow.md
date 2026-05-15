@@ -8,6 +8,7 @@ description: >
 categories: ["Advanced"]
 tags: ["advanced", "developer", "ci-cd", "testing"]
 type: docs
+nav_next: /docs/advanced-solo-setup/performance-tests-local/
 ---
 
 ## Overview
@@ -117,7 +118,7 @@ a fully functional local Hiero network, including:
     - name: Deploy Solo
       env:
         SOLO_CLUSTER_NAME: solo
-        SOLO_NAMESPACE: solo
+        SOLO_NAMESPACE: one-shot
         SOLO_CLUSTER_SETUP_NAMESPACE: solo-cluster
         SOLO_DEPLOYMENT: solo-deployment
       run: |
@@ -209,7 +210,7 @@ jobs:
       - name: Deploy Solo
         env:
           SOLO_CLUSTER_NAME: solo
-          SOLO_NAMESPACE: solo
+          SOLO_NAMESPACE: one-shot
           SOLO_CLUSTER_SETUP_NAMESPACE: solo-cluster
           SOLO_DEPLOYMENT: solo-deployment
         run: |

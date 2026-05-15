@@ -232,9 +232,6 @@ line. They are **not** read from the values file sections.
 | `--namespace` | string | `one-shot` | Kubernetes namespace to deploy into. |
 | `--cluster-ref` | string | `one-shot` | Cluster reference name. |
 | `--num-consensus-nodes` | number | `1` | Number of consensus nodes to deploy. |
-| `--deploy-mirror-node` | boolean | `true` | Deploy or skip the mirror node. |
-| `--deploy-explorer` | boolean | `true` | Deploy or skip the explorer. |
-| `--deploy-relay` | boolean | `true` | Deploy or skip the JSON-RPC relay. |
-| `--no-rollback` | boolean | `false` | Disable automatic cleanup on deployment failure. Preserves partial resources for inspection. |
+| `--parallel-deploy` | boolean | `true` | Run independent deploy stages in parallel (consensus+block, mirror+accounts, explorer+relay). Use `--no-parallel-deploy` for sequential execution. |
 | `--quiet-mode` | boolean | `false` | Suppress all interactive prompts. |
 | `--force` | boolean | `false` | Force actions that would otherwise be skipped. |

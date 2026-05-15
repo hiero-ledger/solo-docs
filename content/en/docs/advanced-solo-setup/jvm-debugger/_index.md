@@ -124,7 +124,7 @@ attachment.
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -133,7 +133,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -173,7 +172,7 @@ adding `node4`.
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -181,7 +180,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -206,7 +204,7 @@ update operation.
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -214,7 +212,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -243,7 +240,7 @@ from the network.
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -251,7 +248,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 
@@ -293,7 +289,7 @@ The state files are saved under `~/.solo/logs/`:
 
 ```bash
 └── logs
-    ├── solo-e2e
+    ├── solo-deployment
     │   ├── network-node1-0-state.zip
     │   └── network-node2-0-state.zip
     └── solo.log
@@ -306,7 +302,7 @@ starting the nodes:
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
-SOLO_NAMESPACE=solo-e2e
+SOLO_NAMESPACE=solo-deployment
 SOLO_CLUSTER_SETUP_NAMESPACE=solo-setup
 SOLO_DEPLOYMENT=solo-deployment
 
@@ -314,7 +310,6 @@ rm -Rf ~/.solo
 kind delete cluster -n "${SOLO_CLUSTER_NAME}"
 kind create cluster -n "${SOLO_CLUSTER_NAME}"
 
-solo init
 solo cluster-ref config setup -s "${SOLO_CLUSTER_SETUP_NAMESPACE}"
 solo cluster-ref config connect --cluster-ref ${SOLO_CLUSTER_NAME} --context kind-${SOLO_CLUSTER_NAME}
 

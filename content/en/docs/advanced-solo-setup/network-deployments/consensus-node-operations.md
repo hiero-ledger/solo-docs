@@ -33,7 +33,7 @@ Before proceeding, ensure you have:
 
   ```bash
   export SOLO_CLUSTER_NAME=solo
-  export SOLO_NAMESPACE=solo
+  export SOLO_NAMESPACE=solo-deployment
   export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster
   export SOLO_DEPLOYMENT=solo-deployment
   ```
