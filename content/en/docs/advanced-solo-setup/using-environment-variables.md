@@ -184,3 +184,8 @@ commands.
 | --- | --- | ---
 | `ONE_SHOT_WITH_BLOCK_NODE` | Deploy Block Node as part of a one-shot deployment | `false`
 | `MIRROR_NODE_PINGER_TPS` | Transactions per second for the Mirror Node monitor pinger. Set to `0` to disable | `5`
+| `CONSENSUS_NODE_EDGE_VERSION` | Edge (newer-than-default) consensus node version used by `--edge` in one-shot deploys. Falls back to `CONSENSUS_NODE_VERSION`. | `v0.74.0-rc.1`
+| `MIRROR_NODE_EDGE_VERSION` | Edge mirror node version used by `--edge` in one-shot deploys. Falls back to `MIRROR_NODE_VERSION`. | `v0.153.1`
+| `EXPLORER_EDGE_VERSION` | Edge explorer version used by `--edge` in one-shot deploys. Falls back to `EXPLORER_VERSION`. | `26.0.0`
+| `RELAY_EDGE_VERSION` | Edge relay version used by `--edge` in one-shot deploys. Falls back to `RELAY_VERSION`. | `0.76.2`
+| `BLOCK_NODE_EDGE_VERSION` | Edge block node version used by `--edge` in one-shot deploys. Falls back to `BLOCK_NODE_VERSION`. | `0.31.0`
