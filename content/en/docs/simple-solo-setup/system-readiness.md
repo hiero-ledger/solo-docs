@@ -19,7 +19,7 @@ Solo's resource requirements depend on your deployment size:
 
 | Configuration | Minimum RAM | Recommended RAM | Minimum CPU | Minimum Storage |
 | --- | --- | --- | --- | --- |
-| Single-node | 12 GB | 16 GB | 6 cores (8 recommended) | 20 GB free |
+| Single-node | 12 GB | 16 GB | 4 cores | 20 GB free |
 | Multi-node (3+ nodes) | 16 GB | 24 GB | 8 cores | 20 GB free |
 
 > **Note:** If you are using Docker Desktop, ensure the resource limits under
