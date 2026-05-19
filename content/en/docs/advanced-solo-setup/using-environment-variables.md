@@ -118,6 +118,13 @@ commands.
 | `RELAY_PODS_READY_MAX_ATTEMPTS` | Maximum number of attempts to check if relay pods are ready | `100`
 | `RELAY_PODS_READY_DELAY` | Interval between relay pod ready checks, in milliseconds | `1000`
 
+## Mirror Node
+
+| Environment Variable | Description | Default Value
+| --- | --- | ---
+| `DISABLE_IMPORTER_SPRING_PROFILES` | Disable automatic configuration of Mirror Node importer Spring profiles for block-node integration. | `false`                                                                                            |
+| `SPRING_PROFILES_ACTIVE` | Spring profiles to use for the Mirror Node importer when automatic importer profile configuration is enabled. | `blocknode`                                                                                        |
+
 ---
 
 ## Load Balancer
