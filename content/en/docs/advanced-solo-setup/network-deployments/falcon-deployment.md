@@ -69,6 +69,38 @@ to the underlying Solo subcommands.
 For the full list of supported CLI flags per section, see the
 [**Falcon Values File Reference**](/docs/advanced-solo-setup/network-deployments/falcon-flags-reference).
 
+## Prepare a Falcon values file
+
+Instead of authoring a values file by hand, you can use the interactive `prepare` wizard to generate one:
+
+```bash
+solo one-shot falcon prepare
+```
+
+The wizard prompts for component toggles (mirror node, explorer, relay), consensus node count, component versions, ingress, storage type, developer options, and port forwarding. All prompts have sensible defaults, so you can press Enter to accept them.
+
+To generate a values file with all defaults (no prompts):
+
+```bash
+solo one-shot falcon prepare --quiet-mode
+```
+
+To specify a custom output path:
+
+```bash
+solo one-shot falcon prepare --output-values-file ./my-values.yaml
+```
+
+### Output file location
+
+By default, the generated file is written to `~/.solo/cache/falcon-values.yaml` — a deterministic absolute path regardless of how or where Solo is invoked. You can override this with `--output-values-file`. The success message always prints the fully resolved path so there is no ambiguity.
+
+- **Default**: `~/.solo/cache/falcon-values.yaml` — always the same location.
+- **Relative path**: `--output-values-file ./configs/my-values.yaml` — resolved against the current working directory (so `/tmp/configs/my-values.yaml` if invoked from `/tmp`).
+- **Absolute path**: `--output-values-file /tmp/falcon-values.yaml` — written to that exact location regardless of the current working directory.
+
+The generated file is ready to use with `solo one-shot falcon deploy --values-file`. For the full list of flags the wizard sets, see the [Falcon Values File Reference](/docs/advanced-solo-setup/network-deployments/falcon-flags-reference).
+
 ## Create a Falcon Values File
 
 Create a YAML file to control every component of your Solo deployment. The file can have any name -`falcon-values.yaml` is used throughout this guide as a convention.

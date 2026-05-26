@@ -235,3 +235,16 @@ line. They are **not** read from the values file sections.
 | `--parallel-deploy` | boolean | `true` | Run independent deploy stages in parallel (consensus+block, mirror+accounts, explorer+relay). Use `--no-parallel-deploy` for sequential execution. |
 | `--quiet-mode` | boolean | `false` | Suppress all interactive prompts. |
 | `--force` | boolean | `false` | Force actions that would otherwise be skipped. |
+
+---
+
+## Falcon Prepare — `prepare`
+
+Flags accepted by `solo one-shot falcon prepare`, the interactive wizard that generates a Falcon values file. The wizard prompts for nearly every values-file field, but the following CLI flags control its output behavior directly.
+
+| Flag | Type | Default | Description |
+| --- | --- | --- | --- |
+| `--output-values-file` | string | `~/.solo/cache/falcon-values.yaml` | Path to the generated values file. Absolute paths are written as-is. Relative paths are resolved against the current working directory. |
+| `--quiet-mode` | boolean | `false` | Generate a values file using all defaults without prompting. |
+
+All other `prepare`-time flags correspond directly to the per-section values shown in the tables above and are documented under their respective `network`, `setup`, `consensusNode`, `mirrorNode`, `explorerNode`, `relayNode`, and `blockNode` sections.
