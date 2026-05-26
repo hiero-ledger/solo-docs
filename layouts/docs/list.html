@@ -11,9 +11,14 @@
 	{{ .Render "_td-content-after-header" -}}
 	{{ .Content }}
 	{{ partial "section-index.html" . -}}
-	{{/* Allow explicit cross-section prev/next overrides via front matter */}}
+	{{/* Default `next` on cover pages: first child page by weight.
+	     Allow explicit cross-section prev/next overrides via front matter.
+	     Issue: https://github.com/hiero-ledger/solo-docs/issues/150 */}}
 	{{ $previous := false -}}
 	{{ $next := false -}}
+	{{ with (where .Pages "Section" .Section).ByWeight -}}
+		{{ $next = index . 0 -}}
+	{{ end -}}
 	{{ with .Params.nav_prev }}{{ $previous = site.GetPage . }}{{ end -}}
 	{{ with .Params.nav_next }}{{ $next = site.GetPage . }}{{ end -}}
 	{{ if or $previous $next -}}
