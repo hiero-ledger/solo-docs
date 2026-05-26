@@ -140,7 +140,7 @@ params:
     taxonomyCloudTitle: [Categories, Tag Cloud]
 
     # set taxonomyPageHeader = [] to hide taxonomies on the page headers
-    taxonomyPageHeader: [categories, tags]
+    taxonomyPageHeader: []
 
   privacy_policy: https://policies.google.com/privacy
 

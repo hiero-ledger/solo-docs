@@ -1847,3 +1847,114 @@ html:not([data-bs-theme='dark']) {
   }
 }
 
+// --- 14. UX ENHANCEMENTS ---
+// Issue #149: click-to-copy on inline <code> elements (including inside tables).
+// Issue #150: collapsible sidebar toggle.
+
+// Click-to-copy affordance on inline code. Fenced code blocks already have
+// Docsy's own copy button; this targets the `<code>` elements outside <pre>.
+code.click-to-copy {
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--transition-duration) var(--transition-timing);
+
+  &:hover {
+    background-color: var(--color-primary-very-light);
+  }
+}
+
+// "Copied!" indicator: brief tooltip that fades in then out.
+code.click-to-copy.code-copied::after {
+  content: 'Copied!';
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  background: var(--color-text-dark);
+  color: var(--color-bg-white);
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-family-primary);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1000;
+  animation: codeCopiedFade 1.2s ease-out forwards;
+}
+
+@keyframes codeCopiedFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 4px);
+  }
+  15%,
+  70% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -4px);
+  }
+}
+
+// Sidebar collapse toggle button in the navbar.
+.sidebar-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 0.5rem;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text-dark);
+  cursor: pointer;
+  transition: background-color var(--transition-duration) var(--transition-timing),
+              border-color var(--transition-duration) var(--transition-timing);
+
+  &:hover {
+    background-color: var(--color-bg-light);
+    border-color: var(--color-border);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Collapsed-sidebar layout: hide sidebar (and right TOC sidebar) and let the
+// main content take the recovered width. Scoped to wide screens; mobile keeps
+// Docsy's existing off-canvas behavior.
+@media (min-width: 768px) {
+  body.sidebar-collapsed {
+    .td-sidebar,
+    .td-sidebar-toc {
+      display: none !important;
+    }
+
+    .td-main > .row.flex-xl-nowrap > main[role='main'] {
+      flex: 1 1 100% !important;
+      max-width: 100% !important;
+    }
+  }
+}
+
+// Dark-mode parity for the toggle button.
+[data-bs-theme='dark'] .sidebar-toggle {
+  color: #edf2ff;
+
+  &:hover {
+    background-color: #1f2737;
+    border-color: var(--color-border);
+  }
+}
+
