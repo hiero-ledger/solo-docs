@@ -3,8 +3,8 @@ title: "Managing Your Network"
 weight: 3
 description: >
   Learn how to start, stop, and restart consensus nodes, capture logs and
-  diagnostics, and upgrade an existing Solo network to a new Hiero version.
-  Master day-to-day network operations and troubleshooting.
+  diagnostics, and troubleshoot a running Solo network. Master day-to-day
+  network operations and troubleshooting.
 categories: ["Operations"]
 tags: ["operations", "cli", "consensus-nodes"]
 type: docs
@@ -13,7 +13,8 @@ type: docs
 ## Overview
 
 This guide covers day-to-day management operations for a running Solo network,
-including starting, stopping, and restarting nodes, capturing logs, and upgrading the network.
+including starting, stopping, and restarting nodes, capturing logs, and
+troubleshooting.
 
 ## Prerequisites
 
@@ -22,7 +23,8 @@ Before proceeding, ensure you have completed the following:
 - **[System Readiness](/docs/simple-solo-setup/system-readiness)** - your local environment meets all hardware and software requirements.
 - **[Quickstart](/docs/simple-solo-setup/quickstart)** - you have a running Solo network deployed using `solo one-shot single deploy`.
 
-> **Note:** The upgrade section below is for existing deployments only. If you just completed Quickstart with the latest Solo release, you can skip the upgrade commands unless you are moving an older deployment to a newer version.
+> **Note:** If you need to upgrade an existing Solo network, see
+> [Upgrade Your Network](/docs/simple-solo-setup/upgrade-your-network).
 
 ## Find Your Deployment Name
 
@@ -152,17 +154,3 @@ To find your deployment namespace, use any of:
 For one-shot deployments the namespace matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt` (default: `one-shot`).
 
 Replace `<namespace>` and `<pod-name>` with the values from your deployment.
-
-## Updating an existing network
-
-Use this command only when you need to upgrade a previously deployed Solo network to a newer Hiero version.
-
-```bash
-solo consensus network upgrade --deployment <deployment-name> --upgrade-version <version>
-```
-
-Replace `<version>` with the target Hiero version, for example `v0.59.0`.
-
-> **Note:** Check the [Version Compatibility Reference](/docs/simple-solo-setup/system-readiness#version-compatibility-reference)
-> in the System Readiness guide to confirm the Hiero version supported by your
-> current Solo release before upgrading.

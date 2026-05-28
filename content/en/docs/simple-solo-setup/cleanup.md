@@ -1,6 +1,6 @@
 ---
 title: "Cleanup"
-weight: 4
+weight: 5
 description: >
   Learn how to properly destroy a Solo network deployment, manage resource
   usage, and perform a full reset when the standard destroy command fails along with
