@@ -36,4 +36,4 @@ async function emptyDir(dir) {
 
 await emptyDir('public');
 await rm('resources', { recursive: true, force: true });
-await rm('.cache/solo-cli-docs', { recursive: true, force: true });
+await rm('.cache', { recursive: true, force: true });

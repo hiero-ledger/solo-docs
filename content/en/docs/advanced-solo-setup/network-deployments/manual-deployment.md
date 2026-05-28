@@ -30,7 +30,7 @@ Before proceeding, ensure you have completed the following:
 
   ```bash
   export SOLO_CLUSTER_NAME=solo
-  export SOLO_NAMESPACE=solo-deployment
+  export SOLO_NAMESPACE=solo
   export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster
   export SOLO_DEPLOYMENT=solo-deployment
   ```
@@ -60,7 +60,7 @@ Before proceeding, ensure you have completed the following:
 
 - **Expected Output**:
 
-  {{< solo-output ref="solo-cluster-ref-connect" lang="bash" >}}
+  {{< solo-output ref="solo-cluster-ref-config-connect" lang="bash" >}}
 
 - {{< solo-output ref="solo-deployment-config-create" lang="bash" >}}
 
