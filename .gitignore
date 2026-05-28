@@ -4,6 +4,7 @@ node_modules/
 .hugo_build.lock
 /build/
 /.dryrun/
+.cache/
 /.idea/codeStyles/codeStyleConfig.xml
 /.idea/codeStyles/Project.xml
 /.idea/.gitignore

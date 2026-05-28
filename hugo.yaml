@@ -22,6 +22,13 @@ module:
   mounts:
     - source: content/en
       target: content
+    # Build-artifact mount: scripts/fetch-solo-cli-doc.mjs downloads the
+    # canonical Solo CLI reference from the latest npm/GitHub release into
+    # this gitignored cache. Mounting it here makes the file render at the
+    # same /docs/advanced-solo-setup/cli/solo-cli/ URL without checking in
+    # the generated content.
+    - source: .cache/solo-cli-docs/content/en
+      target: content
     - source: build/
       target: content/docs
       includeFiles:
