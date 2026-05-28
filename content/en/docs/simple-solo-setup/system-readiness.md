@@ -71,7 +71,7 @@ To allocate the required resources in Docker Desktop:
 3. Go to **Settings > Resources > CPU** and set it to at least **6 cores**.
 4. Click **Apply & Restart**.
 
-   <!-- Add the Docker Desktop screenshot here -->
+   ![Docker Desktop resource allocation settings](docker_resource_image.png)
 
 > **Note:** If Docker Desktop does not have enough memory or CPU allocated, the one-shot deployment will fail or produce unhealthy pods.
 
@@ -105,6 +105,8 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
     - Start Docker Desktop and allocate at least 12 GB of memory:
     - Docker Desktop > Settings > Resources > Memory
+
+    > **macOS prerequisite:** Docker Desktop must be open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
 3. Install Solo (this installs all other dependencies automatically):
 
