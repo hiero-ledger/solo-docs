@@ -3,7 +3,7 @@ title: "Managing Your Network"
 weight: 3
 description: >
   Learn how to start, stop, and restart consensus nodes, capture logs and
-  diagnostics, and upgrade your Solo network to a new Hiero version.
+  diagnostics, and upgrade an existing Solo network to a new Hiero version.
   Master day-to-day network operations and troubleshooting.
 categories: ["Operations"]
 tags: ["operations", "cli", "consensus-nodes"]
@@ -21,6 +21,8 @@ Before proceeding, ensure you have completed the following:
 
 - **[System Readiness](/docs/simple-solo-setup/system-readiness)** - your local environment meets all hardware and software requirements.
 - **[Quickstart](/docs/simple-solo-setup/quickstart)** - you have a running Solo network deployed using `solo one-shot single deploy`.
+
+> **Note:** The upgrade section below is for existing deployments only. If you just completed Quickstart with the latest Solo release, you can skip the upgrade commands unless you are moving an older deployment to a newer version.
 
 ## Find Your Deployment Name
 
@@ -151,15 +153,15 @@ For one-shot deployments the namespace matches the deployment name in `~/.solo/c
 
 Replace `<namespace>` and `<pod-name>` with the values from your deployment.
 
-## Updating the Network
+## Updating an existing network
 
-To update your consensus nodes to a new Hiero version:
+Use this command only when you need to upgrade a previously deployed Solo network to a newer Hiero version.
 
 ```bash
 solo consensus network upgrade --deployment <deployment-name> --upgrade-version <version>
 ```
 
-Replace <version> with the target Hiero version, for example v0.59.0.
+Replace `<version>` with the target Hiero version, for example `v0.59.0`.
 
 > **Note:** Check the [Version Compatibility Reference](/docs/simple-solo-setup/system-readiness#version-compatibility-reference)
 > in the System Readiness guide to confirm the Hiero version supported by your
