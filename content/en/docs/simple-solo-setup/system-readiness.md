@@ -253,6 +253,8 @@ The following tools are not required but are recommended for monitoring and mana
 
 {{< solo-releases-table >}}
 
+> TODO: check legacy-versions is correct after PR in solo has merged.
+
 ## Troubleshooting Installation
 
 If you experience issues installing or upgrading Solo (for example, conflicts with a previous installation), you may need to clean up your environment first.
