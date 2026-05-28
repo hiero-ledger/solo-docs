@@ -1,0 +1,22 @@
+{{/*
+  Fetches the "Current Releases" table from the Solo README at build time and
+  renders it as HTML.
+*/}}
+{{- $url := "https://raw.githubusercontent.com/hiero-ledger/solo/main/README.md" -}}
+{{- $opts := dict "headers" (dict "Accept" "text/plain") -}}
+{{- with resources.GetRemote $url $opts -}}
+  {{- $content := .Content -}}
+  {{- $parts := split $content "### Current Releases\n" -}}
+  {{- if gt (len $parts) 1 -}}
+    {{- $section := index $parts 1 -}}
+    {{/* Remove everything from the next heading onwards */}}
+    {{- $sectionContent := replaceRE `(?s)\n#{1,3} .*` "" $section -}}
+    {{/* Fix the relative legacy-versions.md link to an absolute URL */}}
+    {{- $sectionContent = replaceRE `\(legacy-versions\.md\)` "(https://github.com/hiero-ledger/solo/blob/main/legacy-versions.md)" $sectionContent -}}
+    {{- $sectionContent | markdownify -}}
+  {{- else -}}
+    <p><em>Version table unavailable — "Current Releases" section not found. See the <a href="https://github.com/hiero-ledger/solo/blob/main/README.md#current-releases">Solo README</a>.</em></p>
+  {{- end -}}
+{{- else -}}
+  <p><em>Version table unavailable — could not fetch release data. See the <a href="https://github.com/hiero-ledger/solo/blob/main/README.md#current-releases">Solo README</a>.</em></p>
+{{- end -}}
