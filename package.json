@@ -37,6 +37,9 @@
     "ci:prepare": "npm run _get:docsy && hugo mod graph && hugo mod tidy",
     "ci:test": "npm run ci:prepare && npm run fix:format && npm run test && npm run _diff:check",
     "clean": "node scripts/clean.mjs",
+    "diagnostics": "which hugo && hugo version && node --version && npm --version",
+    "fix": "npm run fix:format",
+    "fix:format": "npm run _check:format -- --write",
     "fix:format:diff": "npm run fix:format",
     "fix:format": "npm run _check:format -- --write",
     "fix": "npm run fix:format",
@@ -63,7 +66,6 @@
   "devDependencies": {
     "autoprefixer": "10.5.0",
     "cross-env": "10.1.0",
-    "hugo-extended": "0.161.1",
     "postcss-cli": "11.0.1",
     "rtlcss": "4.3.0"
   },
