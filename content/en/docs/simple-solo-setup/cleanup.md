@@ -31,6 +31,12 @@ To remove your Solo network:
 solo one-shot single destroy
 ```
 
+For multi-node one-shot deployments, use:
+
+```bash
+solo one-shot multi destroy
+```
+
 This command performs the following actions:
 
 - Uninstalls all component Helm releases (consensus, mirror, relay, explorer).

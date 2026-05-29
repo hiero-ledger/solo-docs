@@ -104,11 +104,7 @@ single-node setup (mirror node, explorer, relay).
 > [System Readiness](/docs/simple-solo-setup/system-readiness#hardware-requirements) for
 > the full multi-node requirements.
 
-When finished, destroy the network as usual:
-
-```bash
-solo one-shot multi destroy
-```
+For multi-node teardown, run `solo one-shot multi destroy`.
 
 {{< /details >}}
 
@@ -167,6 +163,16 @@ To restore port-forwards after a system restart without redeploying:
   ```bash
   solo deployment refresh port-forwards --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
   ```
+
+## Tear down your network
+
+When you are finished, destroy the network to free up resources:
+
+```bash
+solo one-shot single destroy
+```
+
+For a full teardown procedure including failure recovery, see the Cleanup guide [Cleanup](/docs/simple-solo-setup/cleanup). For granular stop/start and management options, see[Managing Your Network](/docs/simple-solo-setup/managing-your-network).
 
 ### Endpoints for Solo 0.62 and earlier
 
