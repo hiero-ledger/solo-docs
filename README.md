@@ -15,7 +15,7 @@ The documentation covers:
 ### Prerequisites
 - Node.js 22+
 - Go (for Hugo extended)
-- Hugo extended 0.145.0+
+- Hugo extended 0.146.0+ (required by the Docsy theme; `npm install` also provides a pinned `hugo-extended`)
 
 ### Build and Preview
 
