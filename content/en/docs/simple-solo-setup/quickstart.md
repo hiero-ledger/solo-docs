@@ -139,6 +139,14 @@ After the one-shot deployment completes and all pods are running, Solo sets up p
 | Mirror node REST API  | `http://localhost:38081` | REST API for queries.                  | `curl http://localhost:38081/api/v1/transactions` |
 | JSON RPC relay        | `http://localhost:37546` | Ethereum-compatible JSON RPC endpoint. | `curl -X POST http://localhost:37546 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'` |
 
+> **macOS note:** Running `nc -zv localhost 35211` may print two lines:
+> ```text
+> nc: connectx to localhost port 35211 (tcp) failed: Connection refused
+> Connection to localhost port 35211 [tcp/*] succeeded!
+> ```
+> The first line is a failed IPv6 attempt - this is expected on macOS.
+> The second line confirms the IPv4 connection succeeded. The port is reachable.
+
 Open `http://localhost:38080` in your browser to explore your network.
 
 ### Port availability
