@@ -18,8 +18,38 @@ behaviour without modifying command-line flags on every run. Variables set
 in your shell environment take effect automatically for all subsequent Solo
 commands.
 
-> **Tip:** Add frequently used variables to your shell profile
-> (e.g. `~/.zshrc` or `~/.bashrc`) to persist them across sessions.
+### Setting environment variables
+
+How you set a variable depends on your shell. Use the tab for your platform:
+
+{{< tabpane text=true >}}
+{{% tab header="Bash / Zsh" lang="bash" %}}
+```bash
+# For a single command only
+CONSENSUS_NODE_VERSION=v0.73.0 solo one-shot single deploy
+
+# For the current session
+export CONSENSUS_NODE_VERSION=v0.73.0
+
+# Persist across sessions (add to ~/.bashrc or ~/.zshrc)
+echo 'export CONSENSUS_NODE_VERSION=v0.73.0' >> ~/.zshrc
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+# For the current session
+$env:CONSENSUS_NODE_VERSION = 'v0.73.0'
+
+# Persist for your user (all future sessions)
+[System.Environment]::SetEnvironmentVariable('CONSENSUS_NODE_VERSION', 'v0.73.0', 'User')
+
+# Or add it to your PowerShell profile
+Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
+```
+{{% /tab %}}
+{{< /tabpane >}}
+
+> **Tip:** Variables set in your shell environment (or persisted as shown above) take effect automatically for all subsequent Solo commands.
 
 ## General
 

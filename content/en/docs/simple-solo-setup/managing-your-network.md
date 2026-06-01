@@ -26,9 +26,18 @@ Before proceeding, ensure you have completed the following:
 
 Most management commands require your deployment name. Run the following command to retrieve it:
 
-  ```bash
-  cat ~/.solo/cache/last-one-shot-deployment.txt
-  ```
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+cat ~/.solo/cache/last-one-shot-deployment.txt
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt
+```
+{{% /tab %}}
+{{< /tabpane >}}
 
 Expected output — the deployment name you passed to `solo one-shot single deploy`, or the default `one-shot` if you did not specify `--deployment`:
 
@@ -103,7 +112,7 @@ To capture logs and diagnostic information for your deployment:
   solo deployment diagnostics all --deployment <deployment-name>
   ```
 
-Logs are saved to `~/.solo/logs/`.
+Logs are saved to `~/.solo/logs/` (on native Windows, `$env:USERPROFILE\.solo\logs\`).
 
 **Expected output**:
 
@@ -147,7 +156,7 @@ To find your deployment namespace, use any of:
   kubectl get pods -A | grep -v kube-system
   ```
 
-For one-shot deployments the namespace matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt` (default: `one-shot`).
+For one-shot deployments the namespace matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt` (on native Windows, `$env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt`; default: `one-shot`).
 
 Replace `<namespace>` and `<pod-name>` with the values from your deployment.
 

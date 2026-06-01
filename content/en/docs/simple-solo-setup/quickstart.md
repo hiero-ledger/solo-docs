@@ -26,8 +26,10 @@ Before you begin, ensure you have completed the following:
 
 > **macOS prerequisite:** Docker Desktop must be installed and open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
+> **Windows (PowerShell):** Complete the [System Readiness](/docs/simple-solo-setup/system-readiness) **Windows** tab first, then run the commands on this page from a PowerShell terminal. The `solo` and `kubectl` commands are identical in PowerShell; only shell-specific commands (pipes, port checks, and `~/.solo` paths) differ, and those show a **PowerShell** tab.
+
 > **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
-> Detailed version requirements, OS-specific notes, and optional tools are documented in **System Readiness**.
+> Detailed version requirements, OS-specific notes, and optional tools are documented in the [System Readiness](/docs/simple-solo-setup/system-readiness).
 
 ## Install Solo CLI
 
@@ -120,9 +122,18 @@ After the one-shot deployment completes, verify that the Kubernetes workloads ar
 
 You can monitor the Kubernetes workloads with standard tools:
 
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
 ```bash
 kubectl get pods -A | grep -v kube-system
 ```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+kubectl get pods -A | Select-String -Pattern 'kube-system' -NotMatch
+```
+{{% /tab %}}
+{{< /tabpane >}}
 
 Confirm that all Solo-related pods are in a `Running` or `Completed` state.
 
@@ -141,6 +152,21 @@ After the one-shot deployment completes and all pods are running, Solo sets up p
 
 Open `http://localhost:38080` in your browser to explore your network.
 
+The `Verification` commands above use bash tools (`nc`, `curl`). On native Windows, run the PowerShell equivalents instead:
+
+```powershell
+# Consensus node (gRPC)
+Test-NetConnection localhost -Port 35211
+
+# Mirror node REST API
+Invoke-RestMethod http://localhost:38081/api/v1/transactions
+
+# JSON RPC relay
+Invoke-RestMethod -Method Post -Uri 'http://localhost:37546' -ContentType 'application/json' -Body '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
+```
+
+> **Note:** In PowerShell, `curl` is an alias for `Invoke-WebRequest`, so the bash `curl` flags above will not work. Use `curl.exe` explicitly if you prefer the bash-style syntax.
+
 ### Port availability
 
 The ports above are Solo's defaults. Solo uses `kubectl port-forward` to tunnel traffic from your machine to services running inside Kubernetes. Before opening each tunnel, Solo tries the configured port:
@@ -154,21 +180,48 @@ The actual ports used are printed at the end of `solo one-shot single deploy` an
 
 To see the active port assignments:
 
-  ```bash
-  cat ~/.solo/one-shot-$(cat ~/.solo/cache/last-one-shot-deployment.txt)/forwards
-  ```
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+cat ~/.solo/one-shot-$(cat ~/.solo/cache/last-one-shot-deployment.txt)/forwards
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+Get-Content "$env:USERPROFILE\.solo\one-shot-$(Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)\forwards"
+```
+{{% /tab %}}
+{{< /tabpane >}}
 
 To check deployment info including port assignments:
 
-  ```bash
-  solo deployment config info --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
-  ```
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+solo deployment config info --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+solo deployment config info --deployment (Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)
+```
+{{% /tab %}}
+{{< /tabpane >}}
 
 To restore port-forwards after a system restart without redeploying:
 
-  ```bash
-  solo deployment refresh port-forwards --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
-  ```
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+solo deployment refresh port-forwards --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+solo deployment refresh port-forwards --deployment (Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)
+```
+{{% /tab %}}
+{{< /tabpane >}}
 
 ### Endpoints for Solo 0.62 and earlier
 

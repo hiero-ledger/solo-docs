@@ -11,7 +11,7 @@ type: docs
 ---
 
 ## Overview
-Before you deploy a local Hiero test network with `solo one-shot single deploy`, your machine must meet specific hardware, operating system, and tooling requirements. This page walks you through the minimum and recommended memory, CPU, and storage, supported platforms (macOS, Linux, and Windows via WSL2), and the required versions of Docker/Podman, Node.js, and Kubernetes tooling. By the end of this page, you will have your container runtime installed, platform-specific settings configured, and all Solo prerequisites in place so you can move on to the Quickstart and create a local network with a single command.
+Before you deploy a local Hiero test network with `solo one-shot single deploy`, your machine must meet specific hardware, operating system, and tooling requirements. This page walks you through the minimum and recommended memory, CPU, and storage, supported platforms (macOS, Linux, and Windows — natively with PowerShell, or via WSL2), and the required versions of Docker/Podman, Node.js, and Kubernetes tooling. By the end of this page, you will have your container runtime installed, platform-specific settings configured, and all Solo prerequisites in place so you can move on to the Quickstart and create a local network with a single command.
 
 ## Hardware Requirements
 
@@ -39,7 +39,7 @@ Before running `solo one-shot single deploy`, you **must** have:
 - A **container runtime**: either [Docker Desktop](https://www.docker.com/products/docker-desktop) (macOS/Windows) or Docker Engine/Podman (Linux). Solo cannot install a container runtime.
 - **kubectl** and **Helm**: Solo requires these pre-installed. The `one-shot` command checks for their presence but does not install them.
   - **Homebrew users**: These are installed automatically as dependencies of the `solo` formula.
-  - **npm install users** (Linux/WSL2): Install kubectl and Helm manually before running Solo.
+  - **npm install users** (Linux, WSL2, or native Windows): Install kubectl and Helm manually before running Solo.
 
 > **Important:** The `one-shot` deployment will fail immediately if kubectl or Helm are missing, even on macOS/Windows where Homebrew typically installs them as dependencies.
 
@@ -89,7 +89,7 @@ If using Podman instead of Docker Engine, ensure your system has at least 12 GB 
 
 ## Platform Setup
 
-Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platform below to install the required container runtime and configure your environment, before proceeding to Quickstart:
+Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, or via WSL2). Select your platform below to install the required container runtime and configure your environment, before proceeding to Quickstart:
 
 {{< tabpane text=true >}}
 
@@ -173,6 +173,51 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 
 {{% /tab %}}
 
+{{% tab header="Windows" lang="windows" %}}
+
+Run Solo natively from **Windows PowerShell**. Run every command below in a PowerShell terminal.
+
+1. Install Docker Desktop for Windows:
+    - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop).
+    - Start Docker Desktop and allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory.
+
+    > **Windows prerequisite:** Docker Desktop must be running before you run `solo one-shot single deploy`.
+
+2. Install Node.js (>= 22.0.0):
+
+    ```powershell
+    winget install OpenJS.NodeJS.LTS
+    ```
+
+    Or download the installer from [nodejs.org](https://nodejs.org/en/download).
+
+3. Install kubectl and Helm (Solo does not auto-install these):
+
+    ```powershell
+    winget install Kubernetes.kubectl
+    winget install Helm.Helm
+    ```
+
+    Or download them from the [kubectl](https://kubernetes.io/docs/tasks/tools/) and [Helm](https://helm.sh/docs/intro/install/) release pages.
+
+4. Install Solo via npm. 
+    
+    npm installs the Solo CLI only - kubectl and Helm were installed in step 3, and `one-shot` auto-installs Kind and Podman:
+
+    ```powershell
+    npm install -g @hiero-ledger/solo@latest
+    ```
+
+1. Verify the installation:
+
+    ```powershell
+    solo --version
+    ```
+
+> **Note:** Open a new PowerShell window after installing tools so updated PATH entries take effect.
+
+{{% /tab %}}
+
 {{% tab header="Windows (WSL2)" lang="wsl2" %}}
 
 1. Run the following command in Windows PowerShell (as Administrator), then reboot and open the Ubuntu terminal. All subsequent commands must be run inside the Ubuntu (WSL2) terminal.
@@ -196,8 +241,8 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
 
 3. Install Docker Desktop for Windows:
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
-    - Enable WSL2 integration: Docker Desktop > Settings > Resources > WSL Integration
-    - Allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory
+    - Enable WSL2 integration: Docker Desktop > Settings > Resources > WSL Integration.
+    - Allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory.
 
 4. Install kubectl:
 
@@ -220,8 +265,6 @@ Solo supports **macOS**, **Linux**, and **Windows via WSL2**. Select your platfo
     ```sh
     solo --version
     ```
-
-> **Important:** Always run Solo commands from the WSL2 terminal, not from Windows PowerShell or Command Prompt.
 
 {{% /tab %}}
 

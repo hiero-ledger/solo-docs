@@ -435,7 +435,7 @@ Deploy a network for development and debugging:
 ```bash
 cd scripts
 
-# Set logging level
+# Set logging level (PowerShell: $env:SOLO_LOG_LEVEL = 'debug')
 export SOLO_LOG_LEVEL=debug
 
 # Deploy with mirror and relay

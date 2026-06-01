@@ -54,7 +54,16 @@ Before proceeding, ensure you have completed the following:
 ### Fresh manual Deployment
 
 If you are building a custom network or adding the mirror node to an existing
-deployment, run the following commands in sequence:
+deployment, run the following commands in sequence.
+
+On native Windows (PowerShell), set the environment variables with `$env:` instead of `export` (and reference them as `$env:SOLO_CLUSTER_NAME`, etc., in the commands that follow):
+
+```powershell
+$env:SOLO_CLUSTER_NAME = 'solo-cluster'
+$env:SOLO_NAMESPACE = 'solo-deployment'
+$env:SOLO_CLUSTER_SETUP_NAMESPACE = 'solo-cluster-setup'
+$env:SOLO_DEPLOYMENT = 'solo-deployment'
+```
 
 ```bash
 # Set environment variables

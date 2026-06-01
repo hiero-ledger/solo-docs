@@ -407,6 +407,41 @@ At a high level:
 
 ---
 
+### Windows (PowerShell) issues
+
+These issues are specific to running Solo natively from Windows PowerShell.
+
+**Paths use backslashes.** Solo stores its files under `$env:USERPROFILE\.solo` on Windows - the equivalent of `~/.solo` on macOS and Linux. When you copy a command that uses `~/.solo/...`, replace it with `$env:USERPROFILE\.solo\...`. For example:
+
+```powershell
+Get-Content $env:USERPROFILE\.solo\logs\solo.log -Wait -Tail 50
+```
+
+**Environment variable syntax differs.** PowerShell does not use `export`. Set a variable for the current session, or persist it for your user:
+
+```powershell
+# Current session only
+$env:SOLO_LOG_LEVEL = 'debug'
+
+# Persist for your user (all future sessions)
+[System.Environment]::SetEnvironmentVariable('SOLO_LOG_LEVEL', 'debug', 'User')
+```
+
+**Removing a variable from the current session.** Use `Remove-Item` on the `Env:` drive. Setting `$env:VAR = ''` only blanks the value; it does not remove the variable:
+
+```powershell
+Remove-Item Env:\SOLO_LOG_LEVEL
+```
+
+**Port-forwarding fails with `listen EACCES`.** On Windows this is usually a WinNAT reserved-port-range conflict. Solo automatically restarts the WinNAT service and retries the port-forward. If the problem persists, restart WinNAT manually from an elevated PowerShell prompt:
+
+```powershell
+net stop winnat
+net start winnat
+```
+
+---
+
 ## Collecting diagnostic information
 
 Before seeking help, collect the following diagnostics so issues can be reproduced and analyzed.
