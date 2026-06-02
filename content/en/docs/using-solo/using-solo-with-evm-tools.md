@@ -232,7 +232,7 @@ Compiled 1 Solidity file successfully (evm target: paris).
 ### Run the Tests
 
 ```bash
-npx hardhat test --network solo
+npx hardhat test --network my_solo_deployment
 ```
 
 For the pre-built example, the test suite covers three scenarios:
@@ -251,7 +251,7 @@ For the pre-built example, the test suite covers three scenarios:
 To deploy `SimpleStorage` to your Solo network using a deploy script:
 
 ```bash
-npx hardhat run scripts/deploy.ts --network solo
+npx hardhat run scripts/deploy.ts --network my_solo_deployment
 ```
 
 A minimal `scripts/deploy.ts` looks like:
@@ -307,7 +307,7 @@ main().catch((err) => {
 Run it with:
 
 ```bash
-npx hardhat run scripts/send-tx.ts --network solo
+npx hardhat run scripts/send-tx.ts --network my_solo_deployment
 ```
 
 ---
