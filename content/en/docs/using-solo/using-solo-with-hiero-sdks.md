@@ -471,7 +471,7 @@ Pick one:
 
 ```bash
 kubectl port-forward svc/haproxy-node1-svc -n <your-deployment-name> 50211:50211 &
-kubectl port-forward svc/mirror-grpc       -n <your-deployment-name> 5600:5600 &
+kubectl port-forward svc/mirror-1-grpc     -n <your-deployment-name> 5600:5600 &
 ```
 
 The kubectl namespace matches `<your-deployment-name>` for default one-shot deploys.
@@ -496,7 +496,7 @@ Pick one:
 
 ```bash
 kubectl port-forward svc/haproxy-node1-svc -n <your-deployment-name> 50211:50211 &
-kubectl port-forward svc/mirror-grpc       -n <your-deployment-name> 5600:5600 &
+kubectl port-forward svc/mirror-1-grpc     -n <your-deployment-name> 5600:5600 &
 ```
 
 **Option B - use `ClientForNetworkV2` directly** (the pattern shown in [Step 4](#step-4-configure-the-sdk-to-connect-to-solo)). No port-forwarding needed.
