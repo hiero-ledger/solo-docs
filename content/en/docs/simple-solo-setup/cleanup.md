@@ -42,7 +42,7 @@ This command performs the following actions:
 
 If `solo one-shot single destroy` fails part-way through (for example, due to an earlier deploy error), some resources may remain:
 
-- The Solo namespace or one or more PVCs may not be deleted, which can leave Docker volumes appearing as “in use”.
+- The Solo namespace or one or more PVCs may not be deleted, which can leave Docker volumes appearing as "in use".
 - The destroy commands are designed to be idempotent, so you can safely rerun `solo one-shot single destroy` to complete cleanup.
 
 If rerunning destroy does not release the resources, use the **Full Reset** procedure below to force a clean state.
