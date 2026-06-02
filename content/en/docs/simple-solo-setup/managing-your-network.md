@@ -40,28 +40,62 @@ Use the value returned from this command as `<deployment-name>` in all commands 
 
 ## Stopping and Starting Nodes
 
-### Stop all nodes
-Use this command to pause all consensus nodes without destroying the deployment:
+> **Important:** The `solo consensus node` stop/start/restart commands act on
+> **consensus nodes only**. They do not stop the mirror node, Hiero Explorer,
+> JSON-RPC relay, block node, or the shared services (PostgreSQL, Redis,
+> MinIO) - those keep running. Solo has no stop/start command for the
+> non-consensus components (their lifecycle is `add`/`destroy`). To pause the
+> whole network, see [Stop the entire network](#stop-the-entire-network).
+
+### Stop consensus nodes
+Pause the consensus node(s) without destroying the deployment:
 
 ```bash
 solo consensus node stop --deployment <deployment-name>
 ```
 
-### Start nodes
-Use this command to bring stopped nodes back online:
+### Start consensus nodes
+Bring stopped consensus node(s) back online:
 
 ```bash
 solo consensus node start --deployment <deployment-name>
 ```
 
-### Restart nodes
-Use this command to stop and start all nodes in a single operation:
+### Restart consensus nodes
+Stop and start all consensus nodes in a single operation:
 
 ```bash
 solo consensus node restart --deployment <deployment-name>
 ```
 
 To verify pod status after any of the above commands, see [Verify the network](/docs/simple-solo-setup/quickstart#verify-the-network) in the Quickstart guide.
+
+### Stop the entire network
+
+Solo does not provide a single command to stop every component. To pause the
+**entire** network - consensus, mirror, Explorer, relay, block node, and
+shared services - while preserving its data, scale every workload in the
+deployment namespace to zero with `kubectl`. For one-shot deployments the
+namespace matches your deployment name.
+
+```bash
+kubectl scale deployment  --all --replicas=0 -n <namespace>
+kubectl scale statefulset --all --replicas=0 -n <namespace>
+```
+
+This stops all pods but keeps the Kind cluster, persistent volumes, and
+configuration intact. To bring the network back online, scale the workloads
+back up (Solo's default deployments run a single replica each):
+
+```bash
+kubectl scale statefulset --all --replicas=1 -n <namespace>
+kubectl scale deployment  --all --replicas=1 -n <namespace>
+```
+
+> **Note:** Scaling to zero pauses the network without deleting it. To remove
+> the network entirely (cluster, volumes, and configuration), use
+> `solo one-shot single destroy` - see the
+> [Cleanup guide](/docs/simple-solo-setup/cleanup).
 
 ### Verify Network is Working
 
