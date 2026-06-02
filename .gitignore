@@ -14,3 +14,4 @@ node_modules/
 /.idea/prettier.xml
 /.idea/solo-docs.iml
 /.idea/vcs.xml
+/.agent-workspace/
