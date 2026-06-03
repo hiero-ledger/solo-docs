@@ -41,8 +41,6 @@
     "fix": "npm run fix:format",
     "fix:format": "npm run _check:format -- --write",
     "fix:format:diff": "npm run fix:format",
-    "fix:format": "npm run _check:format -- --write",
-    "fix": "npm run fix:format",
     "make:public": "git init -b main public",
     "post_hugo": "npm run _fix:permissions",
     "postbuild:preview": "npm run _check:links",
