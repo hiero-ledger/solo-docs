@@ -114,6 +114,18 @@ solo one-shot multi destroy
 
 {{< /details >}}
 
+### Capture your deployment name
+
+`solo one-shot single deploy` (and `multi deploy`) assigns a unique name to
+each deployment. Subsequent Solo commands and SDK guides reference it as
+`<your-deployment-name>` — substitute your actual value when you run them.
+
+Retrieve the most recent deployment's name with:
+
+```bash
+solo one-shot show deployment
+```
+
 ### Verify the network
 
 After the one-shot deployment completes, verify that the Kubernetes workloads are healthy.
