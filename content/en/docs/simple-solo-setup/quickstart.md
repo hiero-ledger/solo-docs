@@ -80,6 +80,11 @@ This command performs the following actions:
 - Sets up and funds default test accounts.
 - Exposes gRPC and JSON-RPC endpoints for client access.
 
+> **Note:** During deployment you may see `Stopping port-forward for port [N]`
+> printed in yellow. This is expected - as it sets up the network, Solo stops
+> and re-establishes port-forwards to finalize the port configuration (clearing
+> stale forwards and migrating ports as needed). It does not indicate a failure.
+
 ### What gets deployed
 
 | Component      | Description                                          |
