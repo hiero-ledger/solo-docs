@@ -15,7 +15,6 @@ The documentation covers:
 ### Prerequisites
 - Node.js 22+
 - Go (for Hugo extended)
-- Hugo extended 0.146.0+ (required by the Docsy theme; `npm install` also provides a pinned `hugo-extended`)
 
 ### Build and Preview
 
@@ -26,23 +25,15 @@ The documentation covers:
 
 2. Build the site:
    ```bash
-   hugo --cleanDestinationDir
+   npm run build
    ```
 
 3. Preview locally:
    ```bash
-   hugo server -D --baseURL http://localhost:1313/ --cleanDestinationDir
-   ```
-   or simply
-   ```bash
-   hugo serve
+   npm run serve
    ```
 
    Open `http://localhost:1313/` in your browser.
-
-> **Note:** For local development, use the `hugo` commands above. The
-> `npm run build` / `npm run serve` scripts (and the `_`-prefixed helpers in
-> `package.json`) are intended for CI and Netlify deploys.
 
 ## How to Contribute
 
