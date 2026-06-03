@@ -40,6 +40,10 @@ The documentation covers:
 
    Open `http://localhost:1313/` in your browser.
 
+> **Note:** For local development, use the `hugo` commands above. The
+> `npm run build` / `npm run serve` scripts (and the `_`-prefixed helpers in
+> `package.json`) are intended for CI and Netlify deploys.
+
 ## How to Contribute
 
 We welcome contributions to improve the Solo documentation! Whether you're fixing typos, adding new guides, or improving existing content, here's how to get started:
