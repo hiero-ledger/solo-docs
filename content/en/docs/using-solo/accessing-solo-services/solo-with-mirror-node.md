@@ -34,11 +34,7 @@ Before proceeding, ensure you have completed the following:
   local environment meets all hardware and software requirements, including Docker and Solo.
 - [**Quickstart**](/docs/simple-solo-setup/quickstart/) - you have a running Solo
   network deployed using `solo one-shot single deploy`.
-- To find your deployment name at any time, run:
-
-  ```bash
-  cat ~/.solo/cache/last-one-shot-deployment.txt
-  ```
+- To find your deployment name at any time, run `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)).
 
 ---
 
@@ -204,15 +200,7 @@ In most cases you should use `localhost:38081` (Solo 0.63+) or `localhost:8081` 
 
 ## Port Reference
 
-The ports listed below are Solo's **default** targets. Solo checks each port before opening a tunnel — if the port is already in use, Solo picks the next available one and logs `Using available port <port>`. If an endpoint is not reachable, check the actual ports used by your deployment:
-
-```bash
-# View the saved port-forward assignments
-cat ~/.solo/one-shot-$(cat ~/.solo/cache/last-one-shot-deployment.txt)/forwards
-
-# Or query deployment info directly
-solo deployment config info --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
-```
+The ports listed below are Solo's **default** targets. Solo checks each port before opening a tunnel - if the port is already in use, Solo picks the next available one and logs `Using available port <port>`. If an endpoint is not reachable, check the actual ports your deployment is using with `solo deployment config ports --deployment <deployment-name>` - see [Port availability](/docs/simple-solo-setup/quickstart#port-availability) for the full set of commands.
 
 The default local ports depend on your Solo version:
 

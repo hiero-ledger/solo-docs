@@ -84,11 +84,7 @@ These accounts and their private keys are saved to a cache directory on completi
 > Note: ED25519 accounts are not compatible with Hardhat, ethers.js, or MetaMask when used via the JSON-RPC interface.
 > Always use the ECDSA keys from accounts.json for EVM tooling.
 
-- To find your deployment name, run:
-
-  ```bash
-  cat ~/.solo/cache/last-one-shot-deployment.txt
-  ```
+- To find your deployment name, run `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)).
 
 - Then open the accounts file at:
 
