@@ -25,19 +25,7 @@ Before upgrading, ensure you have completed the following:
 
 ## Find your deployment name
 
-If you used the default deployment name, it is `one-shot`. Otherwise, find the current deployment name with one of these commands:
-
-```bash
-cat ~/.solo/cache/last-one-shot-deployment.txt
-```
-
-or:
-
-```bash
-solo deployment config info --deployment <deployment-name>
-```
-
-Use the value returned from these commands as `<deployment-name>` in the upgrade command.
+The default for one-shot deployments is `one-shot`. If you used a different name, find it with `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)). Use that value as `<deployment-name>` in the upgrade command.
 
 ## Upgrade the network
 

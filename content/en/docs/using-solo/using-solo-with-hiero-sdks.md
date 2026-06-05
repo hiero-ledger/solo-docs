@@ -141,7 +141,7 @@ examples in this guide.
   cat ~/.solo/one-shot-<your-deployment-name>/accounts.json
   ```
 
-- **Example output:**
+- **Expected output:**
 
   ```json
   {

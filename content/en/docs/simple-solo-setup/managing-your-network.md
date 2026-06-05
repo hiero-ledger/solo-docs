@@ -28,19 +28,7 @@ Before proceeding, ensure you have completed the following:
 
 ## Find Your Deployment Name
 
-Most management commands require your deployment name. Run the following command to retrieve it:
-
-  ```bash
-  cat ~/.solo/cache/last-one-shot-deployment.txt
-  ```
-
-Expected output — the deployment name you passed to `solo one-shot single deploy`, or the default `one-shot` if you did not specify `--deployment`:
-
-  ```bash
-  one-shot% 
-  ```
-
-Use the value returned from this command as `<deployment-name>` in all commands on this page.
+Most management commands require your deployment name. Find it with `solo one-shot show deployment` — see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name). It defaults to `one-shot` unless you passed `--deployment`. Use it as `<deployment-name>` in all commands on this page.
 
 ## Stopping and Starting Nodes
 
@@ -109,7 +97,7 @@ To confirm your Hedera network is fully operational, create a test account using
 solo ledger account create --deployment <deployment-name>
 ```
 
-Example output:
+Expected output:
 
 ```bash
  *** new account created ***

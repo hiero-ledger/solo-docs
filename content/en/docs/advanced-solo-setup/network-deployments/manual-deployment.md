@@ -39,7 +39,7 @@ Before proceeding, ensure you have completed the following:
 
 ## Deployment Steps
 
-> **Note:** The example output blocks below are fetched from the latest published Solo release
+> **Note:** The expected output blocks below are fetched from the latest published Solo release
 > at build time and will always reflect the current version.
 
 ### 1. Connect Cluster and Create Deployment
@@ -107,7 +107,7 @@ Before proceeding, ensure you have completed the following:
 
   PEM key files are written to `~/.solo/cache/keys/`.
 
-- **Example output**:
+- **Expected output**:
 
   {{< solo-output ref="solo-keys-consensus-generate" lang="bash" >}}
 
@@ -122,7 +122,7 @@ into the cluster setup namespace:
   solo cluster-ref config setup --cluster-setup-namespace "${SOLO_CLUSTER_SETUP_NAMESPACE}"
   ```
 
-- **Example output**:
+- **Expected output**:
 
   {{< solo-output ref="solo-cluster-ref-config-setup" lang="bash" >}}
 
@@ -137,7 +137,7 @@ HAProxy, Envoy, and MinIO:
   solo consensus network deploy --deployment "${SOLO_DEPLOYMENT}"
   ```
 
-- **Example output**:
+- **Expected output**:
 
   {{< solo-output ref="solo-consensus-network-deploy" lang="bash" >}}
 
@@ -155,7 +155,7 @@ HAProxy, Envoy, and MinIO:
     --release-tag "${CONSENSUS_NODE_VERSION}"
   ```
 
-- **Example output**:
+- **Expected output**:
 
   {{< solo-output ref="solo-consensus-node-setup" lang="bash" >}}
 
@@ -169,7 +169,7 @@ HAProxy, Envoy, and MinIO:
   solo consensus node start --deployment "${SOLO_DEPLOYMENT}"
   ```
 
-- **Example output**:
+- **Expected output**:
 
   {{< solo-output ref="solo-consensus-node-start" lang="bash" >}}
 
@@ -192,7 +192,7 @@ REST API and gRPC endpoint:
 submitting record files. The `--enable-ingress` flag installs the HAProxy
 ingress controller for the mirror node REST API.
 
-- **Example output**:
+- **Expected output**:
 
   {{< solo-output ref="solo-mirror-node-add" lang="bash" >}}
 
@@ -208,7 +208,7 @@ ingress controller for the mirror node REST API.
     --cluster-ref kind-${SOLO_CLUSTER_NAME}
   ```
 
-- **Example output**:
+- **Expected output**:
 
   {{< solo-output ref="solo-explorer-node-add" lang="bash" >}}
 
@@ -226,7 +226,7 @@ endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.):
   ```
 > TODO: double check these, and update in solo repo if needed to match, also double check the exported variables match
 
-- **Example output**:
+- **Expected output**:
 
   {{< solo-output ref="solo-relay-node-add" lang="bash" >}}
 

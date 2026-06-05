@@ -127,6 +127,8 @@ Retrieve the most recent deployment's name with:
 solo one-shot show deployment
 ```
 
+The output includes a `Deployment Name:` line - use that value as `<deployment-name>` in other commands.
+
 ### Verify the network
 
 After the one-shot deployment completes, verify that the Kubernetes workloads are healthy.
@@ -169,27 +171,50 @@ The ports above are Solo's defaults. Solo uses `kubectl port-forward` to tunnel 
 - If the port is free, Solo logs: `Using requested port <port>`.
 - If the port is already occupied (by another process, or by a previous Solo session that did not clean up its port-forwards), Solo finds the next available port and logs: `Using available port <port>`.
 
-The actual ports used are printed at the end of `solo one-shot single deploy` and saved to a file.
+The actual ports used are printed at the end of `solo one-shot single deploy`. You can also look them up at any time with the Solo CLI, using your deployment name (see [Capture your deployment name](#capture-your-deployment-name)).
 
-> **Note:** The commands below use `$(cat ~/.solo/cache/last-one-shot-deployment.txt)` to look up the deployment name automatically. This cache file is **only created by `solo one-shot` commands**. If you deployed using individual CLI commands, this file does not exist - find your deployment name with `solo deployment config list` instead, then substitute it in place of the `$(cat ...)` subshell.
+To view the active port assignments:
 
-To see the active port assignments:
+```bash
+solo deployment config ports --deployment <deployment-name>
+```
 
-  ```bash
-  cat ~/.solo/one-shot-$(cat ~/.solo/cache/last-one-shot-deployment.txt)/forwards
-  ```
+{{< details summary="Expected output" >}}
 
-To check deployment info including port assignments:
+```text
+=== Port-forwards for deployment: one-shot ===
+Cluster: one-shot
+Namespace: one-shot
 
-  ```bash
-  solo deployment config info --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
-  ```
+ *** Consensus node gRPC ***
+-------------------------------------------------------------------------------
+ - component 1: localhost:35211 -> pod:50211
+
+ *** Mirror node REST ***
+-------------------------------------------------------------------------------
+ - component 1: localhost:38081 -> pod:80
+
+ *** JSON-RPC relay ***
+-------------------------------------------------------------------------------
+ - component 1: localhost:37546 -> pod:7546
+
+ *** Explorer ***
+-------------------------------------------------------------------------------
+ - component 1: localhost:38080 -> pod:8080
+```
+
+{{< /details >}}
+
+This prints each component's local port and the pod port it forwards to. Related commands:
+
+- `solo deployment config info --deployment <deployment-name>` - port assignments **plus** running status and component versions.
+- `solo deployment diagnostics connections --deployment <deployment-name>` - actively tests that each port responds (runs an end-to-end connectivity check, and creates a temporary test account).
 
 To restore port-forwards after a system restart without redeploying:
 
-  ```bash
-  solo deployment refresh port-forwards --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
-  ```
+```bash
+solo deployment refresh port-forwards --deployment <deployment-name>
+```
 
 ### Endpoints for Solo 0.62 and earlier
 
