@@ -1,5 +1,5 @@
 ---
-title: "Upgrading Solo"
+title: "Upgrading an existing Solo installation"
 weight: 5
 description: >
   Upgrade an existing Solo installation to the latest release - whether you
@@ -52,6 +52,40 @@ npm install -g @hiero-ledger/solo@latest
 > `Helm`. After a major-version upgrade, re-check the required tool versions in
 > [System Readiness](/docs/simple-solo-setup/system-readiness).
 
+## Install a specific version
+
+To install a specific (non-latest) Solo release - for example, to reproduce a
+bug, run a regression test, or pin a version across a team - use a versioned
+Homebrew formula or npm tag instead of `latest`.
+
+{{< tabpane text=true >}}
+{{% tab header="Homebrew" lang="homebrew" %}}
+```bash
+brew install hiero-ledger/tools/solo@0.76.0
+```
+The tap publishes a versioned formula (`solo@<version>`) for each release.
+{{% /tab %}}
+{{% tab header="npm" lang="npm" %}}
+```bash
+npm install -g @hiero-ledger/solo@0.76.0
+```
+{{% /tab %}}
+{{< /tabpane >}}
+
+Confirm the installed version:
+
+```bash
+solo --version
+```
+
+> **Tip:** Installing a versioned formula or npm tag **pins** Solo to that
+> release - it will not move when you run `brew upgrade` or `npm update`. To
+> return to the latest release, follow
+> [Upgrade a Homebrew install](#upgrade-a-homebrew-install) or
+> [Upgrade an npm install](#upgrade-an-npm-install) above. If you hit a
+> "two `solo` binaries on PATH" conflict when switching, remove the other
+> install first (see [Switching between Homebrew and npm](#switching-between-homebrew-and-npm)).
+
 ## Switching between Homebrew and npm
 
 If you want to switch package managers (for example, from an older npm install
@@ -100,6 +134,6 @@ Confirm the reinstall:
 solo --version
 ```
 
-For additional cleanup options (removing Solo-managed Kind clusters and other
-artifacts), see
-[Troubleshooting Installation](/docs/simple-solo-setup/system-readiness#troubleshooting-installation).
+For additional cleanup options - removing a legacy npm install, Solo-managed
+Kind clusters, and other artifacts - see the
+[Cleanup guide](/docs/simple-solo-setup/cleanup).

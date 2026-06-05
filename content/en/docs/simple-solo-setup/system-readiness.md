@@ -257,33 +257,12 @@ The following tools are not required but are recommended for monitoring and mana
 
 ## Troubleshooting Installation
 
-If you experience issues installing or upgrading Solo (for example, conflicts with a previous installation), you may need to clean up your environment first.
+If you experience issues installing or upgrading Solo - for example, conflicts
+with a previous installation - clean up your environment and reinstall:
 
-### Clean up legacy npm installations
-
-If you previously installed Solo via npm (for example, from older workshops or documentation), remove the legacy installation to avoid conflicts:
-
-```bash
-# Remove legacy npm-based Solo installation (if present)
-[[ "$(command -v npm >/dev/null 2>&1 && echo 0 || echo 1)" -eq 0 ]] && { npm uninstall -g @hiero-ledger/solo >/dev/null 2>&1 || /bin/true }
-```
-
-### Full environment reset
-
-> **Warning:** The commands below will delete Solo-managed Kind clusters and remove your Solo home directory (`~/.solo`).
-
-```bash
-# Delete only Solo-managed Kind clusters (names starting with "solo")
-kind get clusters | grep '^solo' | while read cluster; do
-  kind delete cluster -n "$cluster"
-done
-
-# Remove Solo configuration and cache
-rm -rf ~/.solo
-```
-
-After cleaning up, retry the installation with:
-
-```bash
-brew install hiero-ledger/tools/solo
-```
+- To **remove a legacy npm install** or perform a **full environment reset**
+  (delete Solo-managed Kind clusters and your `~/.solo` directory), see the
+  [Cleanup guide](/docs/simple-solo-setup/cleanup).
+- To **upgrade an existing install**, install a **specific version**, or switch
+  between Homebrew and npm, see
+  [Upgrading an existing Solo installation](/docs/simple-solo-setup/upgrading-solo).
