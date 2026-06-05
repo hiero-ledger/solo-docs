@@ -59,14 +59,14 @@ on:
         required: false
         default: "main"
       deployment_target:
-        description: "Deployment target for baseURL (used for testing different URLs)"
+        description: "Deployment target for baseURL"
         required: false
-        default: "gh-pages"
+        default: "solo.hiero.org"
         type: choice
         options:
-          - "gh-pages (https://hiero-ledger.github.io/solo-docs/)"
-          - "solo.hiero.org (https://solo.hiero.org/)"
-          - "custom (provide custom baseURL below)"
+          - "solo.hiero.org"
+          - "gh-pages"
+          - "custom"
       custom_baseurl:
         description: "Custom baseURL if deployment_target is 'custom'"
         required: false
@@ -124,9 +124,25 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      # hugo build with resolved baseURL for the selected deployment target
+      # Map the selected deployment target to a Hugo baseURL. For the automated
+      # repository_dispatch (solo-release) path there are no inputs, so this
+      # falls back to the production site (solo.hiero.org).
+      - name: Resolve baseURL
+        id: baseurl
+        run: |
+          TARGET="${{ github.event.inputs.deployment_target || 'solo.hiero.org' }}"
+          case "$TARGET" in
+            solo.hiero.org) URL="https://solo.hiero.org/" ;;
+            gh-pages)       URL="https://hiero-ledger.github.io/solo-docs/" ;;
+            custom)         URL="${{ github.event.inputs.custom_baseurl }}" ;;
+            *)              URL="https://solo.hiero.org/" ;;
+          esac
+          echo "baseurl=$URL" >> "$GITHUB_OUTPUT"
+          echo "::notice::Resolved baseURL: $URL (deployment target: $TARGET)"
+
+      # hugo build with the resolved baseURL for the selected deployment target
       - name: Build Hugo site
-        run: npm run build:production
+        run: npm run _hugo -- --minify --baseURL "${{ steps.baseurl.outputs.baseurl }}"
 
       # upload go gh-pages
       - name: Upload Pages Artifact
