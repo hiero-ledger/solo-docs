@@ -37,11 +37,7 @@ begin a load test against your deployment.
   --test CryptoTransferLoadTest
  ```
 
-Replace `<deployment-name>` with your deployment name. You can find it by running:
-
-```bash
-cat ~/.solo/cache/last-one-shot-deployment.txt
-```
+Replace `<deployment-name>` with your deployment name - find it with `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)).
 
 The `--args` flag passes arguments directly to the NLG. In this example:
 

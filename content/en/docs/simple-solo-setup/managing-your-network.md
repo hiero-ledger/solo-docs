@@ -3,8 +3,8 @@ title: "Managing Your Network"
 weight: 3
 description: >
   Learn how to start, stop, and restart consensus nodes, capture logs and
-  diagnostics, and upgrade your Solo network to a new Hiero version.
-  Master day-to-day network operations and troubleshooting.
+  diagnostics, and troubleshoot a running Solo network. Master day-to-day
+  network operations and troubleshooting.
 categories: ["Operations"]
 tags: ["operations", "cli", "consensus-nodes"]
 type: docs
@@ -13,7 +13,8 @@ type: docs
 ## Overview
 
 This guide covers day-to-day management operations for a running Solo network,
-including starting, stopping, and restarting nodes, capturing logs, and upgrading the network.
+including starting, stopping, and restarting nodes, capturing logs, and
+troubleshooting.
 
 ## Prerequisites
 
@@ -22,9 +23,8 @@ Before proceeding, ensure you have completed the following:
 - **[System Readiness](/docs/simple-solo-setup/system-readiness)** - your local environment meets all hardware and software requirements.
 - **[Quickstart](/docs/simple-solo-setup/quickstart)** - you have a running Solo network deployed using `solo one-shot single deploy`.
 
-## Find Your Deployment Name
-
-Most management commands require your deployment name. Run the following command to retrieve it:
+> **Note:** If you need to upgrade an existing Solo network, see
+> [Upgrade Your Network](/docs/simple-solo-setup/upgrade-your-network).
 
 {{< tabpane text=true >}}
 {{% tab header="Bash" lang="bash" %}}
@@ -45,32 +45,66 @@ Expected output — the deployment name you passed to `solo one-shot single depl
   one-shot% 
   ```
 
-Use the value returned from this command as `<deployment-name>` in all commands on this page.
+Most management commands require your deployment name. Find it with `solo one-shot show deployment` — see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name). It defaults to `one-shot` unless you passed `--deployment`. Use it as `<deployment-name>` in all commands on this page.
 
 ## Stopping and Starting Nodes
 
-### Stop all nodes
-Use this command to pause all consensus nodes without destroying the deployment:
+> **Important:** The `solo consensus node` stop/start/restart commands act on
+> **consensus nodes only**. They do not stop the mirror node, Hiero Explorer,
+> JSON-RPC relay, block node, or the shared services (PostgreSQL, Redis,
+> MinIO) - those keep running. Solo has no stop/start command for the
+> non-consensus components (their lifecycle is `add`/`destroy`). To pause the
+> whole network, see [Stop the entire network](#stop-the-entire-network).
+
+### Stop consensus nodes
+Pause the consensus node(s) without destroying the deployment:
 
 ```bash
 solo consensus node stop --deployment <deployment-name>
 ```
 
-### Start nodes
-Use this command to bring stopped nodes back online:
+### Start consensus nodes
+Bring stopped consensus node(s) back online:
 
 ```bash
 solo consensus node start --deployment <deployment-name>
 ```
 
-### Restart nodes
-Use this command to stop and start all nodes in a single operation:
+### Restart consensus nodes
+Stop and start all consensus nodes in a single operation:
 
 ```bash
 solo consensus node restart --deployment <deployment-name>
 ```
 
 To verify pod status after any of the above commands, see [Verify the network](/docs/simple-solo-setup/quickstart#verify-the-network) in the Quickstart guide.
+
+### Stop the entire network
+
+Solo does not provide a single command to stop every component. To pause the
+**entire** network - consensus, mirror, Explorer, relay, block node, and
+shared services - while preserving its data, scale every workload in the
+deployment namespace to zero with `kubectl`. For one-shot deployments the
+namespace matches your deployment name.
+
+```bash
+kubectl scale deployment  --all --replicas=0 -n <namespace>
+kubectl scale statefulset --all --replicas=0 -n <namespace>
+```
+
+This stops all pods but keeps the Kind cluster, persistent volumes, and
+configuration intact. To bring the network back online, scale the workloads
+back up (Solo's default deployments run a single replica each):
+
+```bash
+kubectl scale statefulset --all --replicas=1 -n <namespace>
+kubectl scale deployment  --all --replicas=1 -n <namespace>
+```
+
+> **Note:** Scaling to zero pauses the network without deleting it. To remove
+> the network entirely (cluster, volumes, and configuration), use
+> `solo one-shot single destroy` - see the
+> [Cleanup guide](/docs/simple-solo-setup/cleanup).
 
 ### Verify Network is Working
 
@@ -80,7 +114,7 @@ To confirm your Hedera network is fully operational, create a test account using
 solo ledger account create --deployment <deployment-name>
 ```
 
-Example output:
+Expected output:
 
 ```bash
  *** new account created ***
@@ -159,17 +193,3 @@ To find your deployment namespace, use any of:
 For one-shot deployments the namespace matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt` (on native Windows, `$env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt`; default: `one-shot`).
 
 Replace `<namespace>` and `<pod-name>` with the values from your deployment.
-
-## Updating the Network
-
-To update your consensus nodes to a new Hiero version:
-
-```bash
-solo consensus network upgrade --deployment <deployment-name> --upgrade-version <version>
-```
-
-Replace <version> with the target Hiero version, for example v0.59.0.
-
-> **Note:** Check the [Version Compatibility Reference](/docs/simple-solo-setup/system-readiness#version-compatibility-reference)
-> in the System Readiness guide to confirm the Hiero version supported by your
-> current Solo release before upgrading.

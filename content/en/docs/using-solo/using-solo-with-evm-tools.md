@@ -84,11 +84,7 @@ These accounts and their private keys are saved to a cache directory on completi
 > Note: ED25519 accounts are not compatible with Hardhat, ethers.js, or MetaMask when used via the JSON-RPC interface.
 > Always use the ECDSA keys from accounts.json for EVM tooling.
 
-- To find your deployment name, run:
-
-  ```bash
-  cat ~/.solo/cache/last-one-shot-deployment.txt
-  ```
+- To find your deployment name, run `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)).
 
 - Then open the accounts file at:
 
@@ -165,28 +161,34 @@ The `chainId` of `298` is required - Hardhat will reject transactions if it
 does not match the network:
 
 ```typescript
-import type { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
+import { defineConfig } from "hardhat/config";
+import hardhatToolboxMochaEthers from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 
-const config: HardhatUserConfig = {
+const config = defineConfig({
+  plugins: [hardhatToolboxMochaEthers],
   solidity: "0.8.28",
   networks: {
-    solo: {
+    my_solo_deployment: {
+      type: "http",
       url: "http://127.0.0.1:37546",
       chainId: 298,
-      // Load from environment — never commit private keys to source control
+      // Load from environment - never commit private keys to source control
       accounts: process.env.SOLO_EVM_PRIVATE_KEY
         ? [process.env.SOLO_EVM_PRIVATE_KEY]
         : [],
     },
   },
-};
+});
 
 export default config;
 ```
 
-> **Important:** `chainId: 298` must be set explicitly. Without it, Hardhat's
-> network validation will fail when connecting to the Solo relay.
+> **Important:** This is the Hardhat v3 config format used by the bundled
+> example (Hardhat 3.x). Each network needs an explicit `type: "http"`, and
+> `chainId: 298` must be set - without `type`/`chainId`, Hardhat v3 fails with
+> `HHE40000: No network with chain id "298" found` when connecting to the relay.
+> The network key (`my_solo_deployment`) must match the `--network` flag you
+> pass to Hardhat commands.
 
 ---
 
@@ -241,7 +243,7 @@ Compiled 1 Solidity file successfully (evm target: paris).
 ### Run the Tests
 
 ```bash
-npx hardhat test --network solo
+npx hardhat test --network my_solo_deployment
 ```
 
 For the pre-built example, the test suite covers three scenarios:
@@ -260,15 +262,21 @@ For the pre-built example, the test suite covers three scenarios:
 To deploy `SimpleStorage` to your Solo network using a deploy script:
 
 ```bash
-npx hardhat run scripts/deploy.ts --network solo
+npx hardhat run scripts/deploy.ts --network my_solo_deployment
 ```
 
 A minimal `scripts/deploy.ts` looks like:
 
+> **Hardhat v3:** The bundled example pins Hardhat 3.x, which removed the
+> `ethers` named export from the `hardhat` module. Obtain `ethers` from the
+> network connection with `const { ethers } = await network.connect()` instead
+> of `import { ethers } from "hardhat"`.
+
 ```typescript
-import { ethers } from "hardhat";
+import { network } from "hardhat";
 
 async function main() {
+  const { ethers } = await network.connect();
   const SimpleStorage = await ethers.getContractFactory("SimpleStorage");
   const contract = await SimpleStorage.deploy(42);
   await contract.waitForDeployment();
@@ -289,9 +297,10 @@ main().catch((err) => {
 To submit a transaction directly from a script using ethers.js via Hardhat:
 
 ```typescript
-import { ethers } from "hardhat";
+import { network } from "hardhat";
 
 async function main() {
+  const { ethers } = await network.connect();
   const [sender] = await ethers.getSigners();
   console.log("Sender:", sender.address);
 
@@ -316,7 +325,7 @@ main().catch((err) => {
 Run it with:
 
 ```bash
-npx hardhat run scripts/send-tx.ts --network solo
+npx hardhat run scripts/send-tx.ts --network my_solo_deployment
 ```
 
 ---

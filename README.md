@@ -15,7 +15,6 @@ The documentation covers:
 ### Prerequisites
 - Node.js 22+
 - Go (for Hugo extended)
-- Hugo extended 0.145.0+
 
 ### Build and Preview
 
@@ -26,16 +25,12 @@ The documentation covers:
 
 2. Build the site:
    ```bash
-   hugo --cleanDestinationDir
+   npm run build
    ```
 
 3. Preview locally:
    ```bash
-   hugo server -D --baseURL http://localhost:1313/ --cleanDestinationDir
-   ```
-   or simply
-   ```bash
-   hugo serve
+   npm run serve
    ```
 
    Open `http://localhost:1313/` in your browser.

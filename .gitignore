@@ -5,6 +5,7 @@ node_modules/
 .agent-workspace/
 /build/
 /.dryrun/
+.cache/
 /.idea/codeStyles/codeStyleConfig.xml
 /.idea/codeStyles/Project.xml
 /.idea/.gitignore
@@ -15,3 +16,4 @@ node_modules/
 /.idea/prettier.xml
 /.idea/solo-docs.iml
 /.idea/vcs.xml
+/.agent-workspace/

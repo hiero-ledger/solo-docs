@@ -51,9 +51,8 @@ $env:SOLO_DEPLOYMENT = 'solo-deployment'
 
 ## Deployment Steps
 
-> **Note:** Version numbers and release tags in the example output blocks below reflect the
-> version used when this guide was written. Your output will show the version you have installed,
-> which may differ.
+> **Note:** The expected output blocks below are fetched from the latest published Solo release
+> at build time and will always reflect the current version.
 
 ### 1. Connect Cluster and Create Deployment
 
@@ -73,22 +72,9 @@ $env:SOLO_DEPLOYMENT = 'solo-deployment'
 
 - **Expected Output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : cluster-ref config connect --cluster-ref kind-solo --context kind-solo
-  **********************************************************************************
-  Initialize
-  ✔ Initialize 
-  Validating cluster ref: 
-  ✔ Validating cluster ref: kind-solo 
-  Test connection to cluster: 
-  ✔ Test connection to cluster: kind-solo 
-  Associate a context with a cluster reference: 
-  ✔ Associate a context with a cluster reference: kind-solo
-  ```
+  {{< solo-output ref="solo-cluster-ref-config-connect" lang="bash" >}}
+
+- {{< solo-output ref="solo-deployment-config-create" lang="bash" >}}
 
 ---
 
@@ -116,9 +102,7 @@ $env:SOLO_DEPLOYMENT = 'solo-deployment'
 
 - **Expected Output**:
 
-  ```bash
-  solo-deployment_ADD_CLUSTER_OUTPUT
-  ```
+  {{< solo-output ref="solo-deployment-cluster-attach" lang="bash" >}}
 
 ---
 
@@ -135,32 +119,9 @@ $env:SOLO_DEPLOYMENT = 'solo-deployment'
 
   PEM key files are written to `~/.solo/cache/keys/`.
 
-- **Example output**:
+- **Expected output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : keys consensus generate --gossip-keys --tls-keys --deployment solo-deployment
-  **********************************************************************************
-  Initialize
-  ✔ Initialize 
-  Generate gossip keys
-  Backup old files
-  ✔ Backup old files 
-  Gossip key for node: node1
-  ✔ Gossip key for node: node1 [0.2s]
-  ✔ Generate gossip keys [0.2s]
-  Generate gRPC TLS Keys
-  Backup old files
-  TLS key for node: node1
-  ✔ Backup old files 
-  ✔ TLS key for node: node1 [0.3s]
-  ✔ Generate gRPC TLS Keys [0.3s]
-  Finalize
-  ✔ Finalize
-  ```
+  {{< solo-output ref="solo-keys-consensus-generate" lang="bash" >}}
 
 ---
 
@@ -173,36 +134,9 @@ into the cluster setup namespace:
   solo cluster-ref config setup --cluster-setup-namespace "${SOLO_CLUSTER_SETUP_NAMESPACE}"
   ```
 
-- **Example output**:
+- **Expected output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : cluster-ref config setup --cluster-setup-namespace solo-cluster
-  **********************************************************************************
-  Check dependencies
-  Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  ✔ Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependencies 
-  Setup chart manager
-  ✔ Setup chart manager [0.6s]
-  Initialize
-  ✔ Initialize 
-  Install cluster charts
-  Install pod-monitor-role ClusterRole
-  -  ClusterRole pod-monitor-role already exists in context kind-solo, skipping
-  ✔ Install pod-monitor-role ClusterRole 
-  Install MinIO Operator chart
-  ✔ MinIO Operator chart installed successfully on context kind-solo
-  ✔ Install MinIO Operator chart [0.8s]
-  ✔ Install cluster charts [0.8s]
-  ```
+  {{< solo-output ref="solo-cluster-ref-config-setup" lang="bash" >}}
 
 ---
 
@@ -215,82 +149,9 @@ HAProxy, Envoy, and MinIO:
   solo consensus network deploy --deployment "${SOLO_DEPLOYMENT}"
   ```
 
-- **Example output**:
+- **Expected output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : consensus network deploy --deployment solo-deployment --release-tag v0.66.0
-  **********************************************************************************
-  Check dependencies
-  Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  ✔ Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependencies 
-  Setup chart manager
-  ✔ Setup chart manager [0.7s]
-  Initialize
-  Acquire lock
-  ✔ Acquire lock - lock acquired successfully, attempt: 1/10 
-  ✔ Initialize [0.2s]
-  Copy gRPC TLS Certificates
-  Copy gRPC TLS Certificates [SKIPPED: Copy gRPC TLS Certificates]
-  Prepare staging directory
-  Copy Gossip keys to staging
-  ✔ Copy Gossip keys to staging 
-  Copy gRPC TLS keys to staging
-  ✔ Copy gRPC TLS keys to staging 
-  ✔ Prepare staging directory 
-  Copy node keys to secrets
-  Copy TLS keys
-  Node: node1, cluster: kind-solo
-  Copy Gossip keys
-  ✔ Copy TLS keys 
-  ✔ Copy Gossip keys 
-  ✔ Node: node1, cluster: kind-solo 
-  ✔ Copy node keys to secrets 
-  Install monitoring CRDs
-  Pod Logs CRDs
-  ✔ Pod Logs CRDs 
-  Prometheus Operator CRDs
-  - Installed prometheus-operator-crds chart, version: 24.0.2
-  ✔ Prometheus Operator CRDs [4s]
-  ✔ Install monitoring CRDs [4s]
-  Install chart 'solo-deployment'
-  - Installed solo-deployment chart, version: 0.62.0
-  ✔ Install chart 'solo-deployment' [2s]
-  Check for load balancer
-  Check for load balancer [SKIPPED: Check for load balancer]
-  Redeploy chart with external IP address config
-  Redeploy chart with external IP address config [SKIPPED: Redeploy chart with external IP address config]
-  Check node pods are running
-  Check Node: node1, Cluster: kind-solo
-  ✔ Check Node: node1, Cluster: kind-solo [24s]
-  ✔ Check node pods are running [24s]
-  Check proxy pods are running
-  Check HAProxy for: node1, cluster: kind-solo
-  Check Envoy Proxy for: node1, cluster: kind-solo
-  ✔ Check HAProxy for: node1, cluster: kind-solo 
-  ✔ Check Envoy Proxy for: node1, cluster: kind-solo 
-  ✔ Check proxy pods are running 
-  Check auxiliary pods are ready
-  Check MinIO
-  ✔ Check MinIO 
-  ✔ Check auxiliary pods are ready 
-  Add node and proxies to remote config
-  ✔ Add node and proxies to remote config 
-  Copy wraps lib into consensus node
-  Copy wraps lib into consensus node [SKIPPED: Copy wraps lib into consensus node]
-  Copy block-nodes.json
-  ✔ Copy block-nodes.json [1s]
-  Copy JFR config file to nodes
-  Copy JFR config file to nodes [SKIPPED: Copy JFR config file to nodes]
-  ```
+  {{< solo-output ref="solo-consensus-network-deploy" lang="bash" >}}
 
 ---
 
@@ -310,42 +171,7 @@ HAProxy, Envoy, and MinIO:
 
 - **Example output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : consensus node setup --deployment solo-deployment --release-tag v0.66.0
-  **********************************************************************************
-  Load configuration
-  ✔ Load configuration [0.2s]
-  Initialize
-  ✔ Initialize [0.2s]
-  Validate nodes states
-  Validating state for node node1
-  ✔ Validating state for node node1 - valid state: requested 
-  ✔ Validate nodes states 
-  Identify network pods
-  Check network pod: node1
-  ✔ Check network pod: node1 
-  ✔ Identify network pods 
-  Fetch platform software into network nodes
-  Update node: node1 [ platformVersion = v0.66.0, context = kind-solo ]
-  ✔ Update node: node1 [ platformVersion = v0.66.0, context = kind-solo ] [3s]
-  ✔ Fetch platform software into network nodes [3s]
-  Setup network nodes
-  Node: node1
-  Copy configuration files
-  ✔ Copy configuration files [0.3s]
-  Set file permissions
-  ✔ Set file permissions [0.4s]
-  ✔ Node: node1 [0.8s]
-  ✔ Setup network nodes [0.9s]
-  setup network node folders
-  ✔ setup network node folders [0.1s]
-  Change node state to configured in remote config
-  ✔ Change node state to configured in remote config
-  ```
+  {{< solo-output ref="solo-consensus-node-setup" lang="bash" >}}
 
 ---
 
@@ -357,67 +183,9 @@ HAProxy, Envoy, and MinIO:
   solo consensus node start --deployment "${SOLO_DEPLOYMENT}"
   ```
 
-- **Example output**:
+- **Expected output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : consensus node start --deployment solo-deployment
-  **********************************************************************************
-  Check dependencies
-  Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  ✔ Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependencies 
-  Setup chart manager
-  ✔ Setup chart manager [0.7s]
-  Load configuration
-  ✔ Load configuration [0.2s]
-  Initialize
-  ✔ Initialize [0.2s]
-  Validate nodes states
-  Validating state for node node1
-  ✔ Validating state for node node1 - valid state: configured 
-  ✔ Validate nodes states 
-  Identify existing network nodes
-  Check network pod: node1
-  ✔ Check network pod: node1 
-  ✔ Identify existing network nodes 
-  Upload state files network nodes
-  Upload state files network nodes [SKIPPED: Upload state files network nodes]
-  Starting nodes
-  Start node: node1
-  ✔ Start node: node1 [0.1s]
-  ✔ Starting nodes [0.1s]
-  Enable port forwarding for debug port and/or GRPC port
-  Using requested port 35211
-  ✔ Enable port forwarding for debug port and/or GRPC port 
-  Check all nodes are ACTIVE
-  Check network pod: node1 
-  ✔ Check network pod: node1  - status ACTIVE, attempt: 16/300 [20s]
-  ✔ Check all nodes are ACTIVE [20s]
-  Check node proxies are ACTIVE
-  Check proxy for node: node1
-  ✔ Check proxy for node: node1 [6s]
-  ✔ Check node proxies are ACTIVE [6s]
-  Wait for TSS
-  Wait for TSS [SKIPPED: Wait for TSS]
-  set gRPC Web endpoint
-  Using requested port 30212
-  ✔ set gRPC Web endpoint [3s]
-  Change node state to started in remote config
-  ✔ Change node state to started in remote config 
-  Add node stakes
-  Adding stake for node: node1
-  ✔ Adding stake for node: node1 [4s]
-  ✔ Add node stakes [4s]
-  Stopping port-forward for port [30212]
-  ```
+  {{< solo-output ref="solo-consensus-node-start" lang="bash" >}}
 
 ---
 
@@ -438,65 +206,9 @@ REST API and gRPC endpoint:
 submitting record files. The `--enable-ingress` flag installs the HAProxy
 ingress controller for the mirror node REST API.
 
-- **Example output**:
+- **Expected output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : mirror node add --deployment solo-deployment --cluster-ref kind-solo --enable-ingress --quiet-mode
-  **********************************************************************************
-  Check dependencies
-  Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  ✔ Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependencies 
-  Setup chart manager
-  ✔ Setup chart manager [0.6s]
-  Initialize
-  Using requested port 30212
-  Acquire lock
-  ✔ Acquire lock - lock acquired successfully, attempt: 1/10 [0.1s]
-  ✔ Initialize [1s]
-  Enable mirror-node
-  Prepare address book
-  ✔ Prepare address book 
-  Install mirror ingress controller
-  - Installed haproxy-ingress-1 chart, version: 0.14.5
-  ✔ Install mirror ingress controller [0.7s]
-  Deploy mirror-node
-  - Installed mirror chart, version: v0.149.0
-  ✔ Deploy mirror-node [3s]
-  ✔ Enable mirror-node [4s]
-  Check pods are ready
-  Check Postgres DB
-  Check REST API
-  Check GRPC
-  Check Monitor
-  Check Web3
-  Check Importer
-  ✔ Check Postgres DB [32s]
-  ✔ Check Web3 [46s]
-  ✔ Check REST API [52s]
-  ✔ Check GRPC [58s]
-  ✔ Check Monitor [1m16s]
-  ✔ Check Importer [1m32s]
-  ✔ Check pods are ready [1m32s]
-  Seed DB data
-  Insert data in public.file_data
-  ✔ Insert data in public.file_data [0.6s]
-  ✔ Seed DB data [0.6s]
-  Add mirror node to remote config
-  ✔ Add mirror node to remote config 
-  Enable port forwarding for mirror ingress controller
-  Using requested port 38081
-  ✔ Enable port forwarding for mirror ingress controller 
-  Stopping port-forward for port [30212]
-  ```
+  {{< solo-output ref="solo-mirror-node-add" lang="bash" >}}
 
 ---
 
@@ -510,49 +222,9 @@ ingress controller for the mirror node REST API.
     --cluster-ref kind-${SOLO_CLUSTER_NAME}
   ```
 
-- **Example output**:
+- **Expected output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : explorer node add --deployment solo-deployment --cluster-ref kind-solo --quiet-mode
-  **********************************************************************************
-  Check dependencies
-  Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  ✔ Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependencies 
-  Setup chart manager
-  ✔ Setup chart manager [0.7s]
-  Initialize
-  Acquire lock
-  ✔ Acquire lock - lock acquired successfully, attempt: 1/10 
-  ✔ Initialize [0.5s]
-  Load remote config
-  ✔ Load remote config [0.2s]
-  Install cert manager
-  Install cert manager [SKIPPED: Install cert manager]
-  Install explorer
-  - Installed hiero-explorer-1 chart, version: 26.0.0
-  ✔ Install explorer [0.8s]
-  Install explorer ingress controller
-  Install explorer ingress controller [SKIPPED: Install explorer ingress controller]
-  Check explorer pod is ready
-  ✔ Check explorer pod is ready [18s]
-  Check haproxy ingress controller pod is ready
-  Check haproxy ingress controller pod is ready [SKIPPED: Check haproxy ingress controller pod is ready]
-  Add explorer to remote config
-  ✔ Add explorer to remote config 
-  Enable port forwarding for explorer
-  No port forward config found for Explorer
-  Using requested port 38080
-  ✔ Enable port forwarding for explorer [0.1s]
-  ```
+  {{< solo-output ref="solo-explorer-node-add" lang="bash" >}}
 
 ---
 
@@ -566,53 +238,11 @@ endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.):
     -i node1 \
     --deployment "${SOLO_DEPLOYMENT}"
   ```
+> TODO: double check these, and update in solo repo if needed to match, also double check the exported variables match
 
-- **Example output**:
+- **Expected output**:
 
-  ```bash
-  ******************************* Solo *********************************************
-  Version   : 0.63.0
-  Kubernetes Context : kind-solo
-  Kubernetes Cluster : kind-solo
-  Current Command  : relay node add --node-aliases node1 --deployment solo-deployment --cluster-ref kind-solo
-  **********************************************************************************
-  Check dependencies
-  Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64]
-  ✔ Check dependency: kind [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: helm [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependency: kubectl [OS: linux, Release: 6.8.0-106-generic, Arch: x64] 
-  ✔ Check dependencies 
-  Setup chart manager
-  ✔ Setup chart manager [0.7s]
-  Initialize
-  Acquire lock
-  ✔ Acquire lock - lock acquired successfully, attempt: 1/10 
-  ✔ Initialize [0.4s]
-  Check chart is installed
-  ✔ Check chart is installed [0.1s]
-  Prepare chart values
-  Using requested port 30212
-  ✔ Prepare chart values [1s]
-  Deploy JSON RPC Relay
-  - Installed relay-1 chart, version: 0.73.0
-  ✔ Deploy JSON RPC Relay [0.7s]
-  Check relay is running
-  ✔ Check relay is running [16s]
-  Check relay is ready
-  ✔ Check relay is ready [21s]
-  Add relay component in remote config
-  ✔ Add relay component in remote config 
-  Enable port forwarding for relay node
-  Using requested port 37546
-  ✔ Enable port forwarding for relay node [0.1s]
-  Stopping port-forward for port [30212]
-  ```
-
----
-
-</details>
+  {{< solo-output ref="solo-relay-node-add" lang="bash" >}}
 
 ---
 

@@ -82,6 +82,11 @@ This command performs the following actions:
 - Sets up and funds default test accounts.
 - Exposes gRPC and JSON-RPC endpoints for client access.
 
+> **Note:** During deployment you may see `Stopping port-forward for port [N]`
+> printed in yellow. This is expected - as it sets up the network, Solo stops
+> and re-establishes port-forwards to finalize the port configuration (clearing
+> stale forwards and migrating ports as needed). It does not indicate a failure.
+
 ### What gets deployed
 
 | Component      | Description                                          |
@@ -108,13 +113,23 @@ single-node setup (mirror node, explorer, relay).
 > [System Readiness](/docs/simple-solo-setup/system-readiness#hardware-requirements) for
 > the full multi-node requirements.
 
-When finished, destroy the network as usual:
-
-```bash
-solo one-shot multi destroy
-```
+For multi-node teardown, run `solo one-shot multi destroy`.
 
 {{< /details >}}
+
+### Capture your deployment name
+
+`solo one-shot single deploy` (and `multi deploy`) assigns a unique name to
+each deployment. Subsequent Solo commands and SDK guides reference it as
+`<your-deployment-name>` — substitute your actual value when you run them.
+
+Retrieve the most recent deployment's name with:
+
+```bash
+solo one-shot show deployment
+```
+
+The output includes a `Deployment Name:` line - use that value as `<deployment-name>` in other commands.
 
 ### Verify the network
 
@@ -150,6 +165,14 @@ After the one-shot deployment completes and all pods are running, Solo sets up p
 | Mirror node REST API  | `http://localhost:38081` | REST API for queries.                  | `curl http://localhost:38081/api/v1/transactions` |
 | JSON RPC relay        | `http://localhost:37546` | Ethereum-compatible JSON RPC endpoint. | `curl -X POST http://localhost:37546 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'` |
 
+> **macOS note:** Running `nc -zv localhost 35211` may print two lines:
+> ```text
+> nc: connectx to localhost port 35211 (tcp) failed: Connection refused
+> Connection to localhost port 35211 [tcp/*] succeeded!
+> ```
+> The first line is a failed IPv6 attempt - this is expected on macOS.
+> The second line confirms the IPv4 connection succeeded. The port is reachable.
+
 Open `http://localhost:38080` in your browser to explore your network.
 
 The `Verification` commands above use bash tools (`nc`, `curl`). On native Windows, run the PowerShell equivalents instead:
@@ -174,11 +197,13 @@ The ports above are Solo's defaults. Solo uses `kubectl port-forward` to tunnel 
 - If the port is free, Solo logs: `Using requested port <port>`.
 - If the port is already occupied (by another process, or by a previous Solo session that did not clean up its port-forwards), Solo finds the next available port and logs: `Using available port <port>`.
 
-The actual ports used are printed at the end of `solo one-shot single deploy` and saved to a file.
+The actual ports used are printed at the end of `solo one-shot single deploy`. You can also look them up at any time with the Solo CLI, using your deployment name (see [Capture your deployment name](#capture-your-deployment-name)).
 
-> **Note:** The commands below use `$(cat ~/.solo/cache/last-one-shot-deployment.txt)` to look up the deployment name automatically. This cache file is **only created by `solo one-shot` commands**. If you deployed using individual CLI commands, this file does not exist - find your deployment name with `solo deployment config list` instead, then substitute it in place of the `$(cat ...)` subshell.
+To view the active port assignments:
 
-To see the active port assignments:
+```bash
+solo deployment config ports --deployment <deployment-name>
+```
 
 {{< tabpane text=true >}}
 {{% tab header="Bash" lang="bash" %}}
@@ -193,7 +218,9 @@ Get-Content "$env:USERPROFILE\.solo\one-shot-$(Get-Content $env:USERPROFILE\.sol
 {{% /tab %}}
 {{< /tabpane >}}
 
-To check deployment info including port assignments:
+ *** Consensus node gRPC ***
+-------------------------------------------------------------------------------
+ - component 1: localhost:35211 -> pod:50211
 
 {{< tabpane text=true >}}
 {{% tab header="Bash" lang="bash" %}}
@@ -237,3 +264,13 @@ If you are using Solo 0.62 or earlier, the default port-forward targets differ:
 Open `http://localhost:8080` in your browser to explore your network.
 
 > **Note:** `localhost:5551` is the direct Mirror Node REST service, accessible only via manual `kubectl port-forward`, and is being phased out. Always use the ingress-based port (`8081` for Solo 0.62 and earlier, `38081` for Solo 0.63+).
+
+## Tear down your network
+
+When you are finished, destroy the network to free up resources:
+
+```bash
+solo one-shot single destroy
+```
+
+For a full teardown procedure including failure recovery, see the [Cleanup](/docs/simple-solo-setup/cleanup) guide. For granular stop/start and management options, see [Managing Your Network](/docs/simple-solo-setup/managing-your-network).

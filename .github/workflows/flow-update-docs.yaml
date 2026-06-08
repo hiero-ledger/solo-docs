@@ -96,69 +96,6 @@ jobs:
         with:
           egress-policy: audit
 
-      # Resolve the release version.
-      # For repository_dispatch: use client_payload.version (set by solo's
-      #   flow-trigger-solo-docs-update.yaml).
-      # For workflow_dispatch:   use the manual `version` input.
-      - name: Resolve release version
-        id: version
-        run: |
-          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
-            VERSION="${{ github.event.client_payload.version }}"
-          else
-            VERSION="${{ inputs.version }}"
-          fi
-          # Fallback to 'main' if neither path provided a value.
-          VERSION="${VERSION:-main}"
-          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
-          echo "Generating docs for Solo version: ${VERSION}"
-
-      # Resolve the baseURL for Hugo build based on deployment target.
-      # For repository_dispatch: use GitHub Pages (automatic production deployment)
-      # For workflow_dispatch: use deployment_target input (gh-pages, solo.hiero.org, or custom)
-      - name: Resolve baseURL
-        id: baseurl
-        run: |
-          DEPLOYMENT_TARGET="${{ inputs.deployment_target }}"
-
-          # For automatic deployments, always use GitHub Pages
-          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
-            DEPLOYMENT_TARGET="gh-pages"
-            echo "Auto-deployment detected: using GitHub Pages baseURL"
-          fi
-
-          # Extract the deployment target key (before the parentheses, if present)
-          DEPLOYMENT_KEY=$(echo "${DEPLOYMENT_TARGET}" | sed 's/ *(.*//g')
-
-          # Set baseURL based on deployment target
-          case "${DEPLOYMENT_KEY}" in
-            gh-pages)
-              BASEURL="https://hiero-ledger.github.io/solo-docs/"
-              echo "✓ Deployment target: GitHub Pages"
-              ;;
-            solo.hiero.org)
-              BASEURL="https://solo.hiero.org/"
-              echo "✓ Deployment target: solo.hiero.org"
-              ;;
-            custom)
-              CUSTOM_URL="${{ inputs.custom_baseurl }}"
-              if [[ -z "${CUSTOM_URL}" ]]; then
-                echo "Error: custom deployment_target selected but custom_baseurl is empty"
-                exit 1
-              fi
-              # Ensure URL ends with /
-              BASEURL="${CUSTOM_URL%/}/"
-              echo "✓ Deployment target: Custom URL"
-              ;;
-            *)
-              echo "Error: Unknown deployment_target '${DEPLOYMENT_KEY}'"
-              exit 1
-              ;;
-          esac
-
-          echo "baseurl=${BASEURL}" >> "${GITHUB_OUTPUT}"
-          echo "Using baseURL: ${BASEURL}"
-
       # Checkout solo-docs (this repo).
       - name: Checkout solo-docs
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -176,13 +113,6 @@ jobs:
         with:
           go-version: "1.23.3"
 
-      # hugo action setup
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@75d2e84710de30f6ff7268e08f310b60ef14033f # v3.0.0
-        with:
-          hugo-version: "0.156.0"
-          extended: true
-
       # setup pages
       - name: Setup Pages
         id: pages
@@ -190,13 +120,13 @@ jobs:
         with:
           enablement: true
 
-      # npm ci
+      # npm ci this also installs hugo and docsy
       - name: Install npm dependencies
         run: npm ci
 
       # hugo build with resolved baseURL for the selected deployment target
       - name: Build Hugo site
-        run: npm run build:production -- --baseURL "${{ steps.baseurl.outputs.baseurl }}"
+        run: npm run build:production
 
       # upload go gh-pages
       - name: Upload Pages Artifact

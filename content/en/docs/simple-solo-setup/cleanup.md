@@ -1,6 +1,6 @@
 ---
 title: "Cleanup"
-weight: 4
+weight: 5
 description: >
   Learn how to properly destroy a Solo network deployment, manage resource
   usage, and perform a full reset when the standard destroy command fails along with
@@ -31,6 +31,12 @@ To remove your Solo network:
 solo one-shot single destroy
 ```
 
+For multi-node one-shot deployments, use:
+
+```bash
+solo one-shot multi destroy
+```
+
 This command performs the following actions:
 
 - Uninstalls all component Helm releases (consensus, mirror, relay, explorer).
@@ -42,7 +48,7 @@ This command performs the following actions:
 
 If `solo one-shot single destroy` fails part-way through (for example, due to an earlier deploy error), some resources may remain:
 
-- The Solo namespace or one or more PVCs may not be deleted, which can leave Docker volumes appearing as “in use”.
+- The Solo namespace or one or more PVCs may not be deleted, which can leave Docker volumes appearing as "in use".
 - The destroy commands are designed to be idempotent, so you can safely rerun `solo one-shot single destroy` to complete cleanup.
 
 If rerunning destroy does not release the resources, use the **Full Reset** procedure below to force a clean state.
