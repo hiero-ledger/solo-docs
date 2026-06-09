@@ -31,12 +31,24 @@ Before proceeding, ensure you have:
 
 - Set the required environment variables as described below:
 
-  ```bash
-  export SOLO_CLUSTER_NAME=solo
-  export SOLO_NAMESPACE=solo-deployment
-  export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster
-  export SOLO_DEPLOYMENT=solo-deployment
-  ```
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+export SOLO_CLUSTER_NAME=solo
+export SOLO_NAMESPACE=solo-deployment
+export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster
+export SOLO_DEPLOYMENT=solo-deployment
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+$env:SOLO_CLUSTER_NAME = 'solo'
+$env:SOLO_NAMESPACE = 'solo-deployment'
+$env:SOLO_CLUSTER_SETUP_NAMESPACE = 'solo-cluster'
+$env:SOLO_DEPLOYMENT = 'solo-deployment'
+```
+{{% /tab %}}
+{{< /tabpane >}}
 
 ## Key and Storage Concepts
 

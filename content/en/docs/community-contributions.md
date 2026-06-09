@@ -62,7 +62,7 @@ This document describes how to set up a local development environment and contri
 
 ### Logs and debugging
 
-- Solo writes two log files under `$HOME/.solo/logs/`:
+- Solo writes two log files under `$HOME/.solo/logs/` (on native Windows, `$env:USERPROFILE\.solo\logs\`):
 
   ```bash
   $HOME/.solo/logs/solo.ndjson   # newline-delimited JSON (authoritative)
@@ -71,15 +71,33 @@ This document describes how to set up a local development environment and contri
 
 - For human-readable tailing, use `solo.log`:
 
+  {{< tabpane text=true >}}
+  {{% tab header="Bash" lang="bash" %}}
   ```bash
   tail -f $HOME/.solo/logs/solo.log
   ```
+  {{% /tab %}}
+  {{% tab header="PowerShell" lang="powershell" %}}
+  ```powershell
+  Get-Content $env:USERPROFILE\.solo\logs\solo.log -Wait -Tail 50
+  ```
+  {{% /tab %}}
+  {{< /tabpane >}}
 
-- For structured filtering with `jq`, use `solo.ndjson`:
+- For structured filtering, use `solo.ndjson` (`jq` on bash, `ConvertFrom-Json` in PowerShell):
 
+  {{< tabpane text=true >}}
+  {{% tab header="Bash" lang="bash" %}}
   ```bash
   tail -f $HOME/.solo/logs/solo.ndjson | jq
   ```
+  {{% /tab %}}
+  {{% tab header="PowerShell" lang="powershell" %}}
+  ```powershell
+  Get-Content $env:USERPROFILE\.solo\logs\solo.ndjson -Wait -Tail 50 | ConvertFrom-Json
+  ```
+  {{% /tab %}}
+  {{< /tabpane >}}
 
 ## How to Run the Tests
 

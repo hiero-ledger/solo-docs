@@ -106,9 +106,18 @@ These accounts and their private keys are saved to a cache directory on completi
 - Export the private key for one account as an environment variable - **never
 hardcode private keys in source files**:
 
-  ```bash
-  export SOLO_EVM_PRIVATE_KEY="0x105d0050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
-  ```
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+export SOLO_EVM_PRIVATE_KEY="0x105d0050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+$env:SOLO_EVM_PRIVATE_KEY = '0x105d0050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524'
+```
+{{% /tab %}}
+{{< /tabpane >}}
 
 ---
 

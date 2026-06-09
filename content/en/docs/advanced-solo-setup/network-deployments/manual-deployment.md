@@ -28,12 +28,24 @@ Before proceeding, ensure you have completed the following:
 - [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Kind cluster.
 - Set your environment variables if you have not already done so:
 
-  ```bash
-  export SOLO_CLUSTER_NAME=solo
-  export SOLO_NAMESPACE=solo
-  export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster
-  export SOLO_DEPLOYMENT=solo-deployment
-  ```
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+export SOLO_CLUSTER_NAME=solo
+export SOLO_NAMESPACE=solo-deployment
+export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster
+export SOLO_DEPLOYMENT=solo-deployment
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+$env:SOLO_CLUSTER_NAME = 'solo'
+$env:SOLO_NAMESPACE = 'solo-deployment'
+$env:SOLO_CLUSTER_SETUP_NAMESPACE = 'solo-cluster'
+$env:SOLO_DEPLOYMENT = 'solo-deployment'
+```
+{{% /tab %}}
+{{< /tabpane >}}
 
 ---
 
@@ -155,7 +167,9 @@ HAProxy, Envoy, and MinIO:
     --release-tag "${CONSENSUS_NODE_VERSION}"
   ```
 
-- **Expected output**:
+  On native Windows (PowerShell), set the version with `$env:CONSENSUS_NODE_VERSION = 'v0.66.0'` and reference variables as `$env:SOLO_DEPLOYMENT` / `$env:CONSENSUS_NODE_VERSION`.
+
+- **Example output**:
 
   {{< solo-output ref="solo-consensus-node-setup" lang="bash" >}}
 
