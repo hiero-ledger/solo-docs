@@ -281,3 +281,21 @@ to pin multiple components at once.
 >   in [hiero-ledger/solo#4242](https://github.com/hiero-ledger/solo/issues/4242).
 > - Environment variables will remain valid for one-off overrides after the
 >   CLI flags land, so the form above will continue to work.
+
+## Image Cache
+
+Solo caches the container images it deploys as local archives to speed up
+repeat deployments. The cache is enabled by default; these variables disable it
+per context. See [Solo Image Cache](/docs/advanced-solo-setup/image-cache) for
+the full feature and the `solo cache image` commands.
+
+| Environment Variable | Description | Default
+| --- | --- | ---
+| `ENABLE_IMAGE_CACHE` | Set to `false` to disable the image cache during `solo one-shot` deploys. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). | enabled
+| `SOLO_NO_CACHE` | Set to `true` to skip the image pull during an npm global install. | enabled
+| `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image pull during a Homebrew install. | enabled
+
+> **Note:** The cached component versions follow the same environment-variable
+> mechanism as [Pinning Component Versions](#pinning-component-versions) above —
+> the `*_VERSION` environment variables affect the images the cache pulls, but
+> the `--*-version` CLI flags do not.
