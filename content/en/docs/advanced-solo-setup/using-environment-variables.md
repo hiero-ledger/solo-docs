@@ -296,6 +296,6 @@ the full feature and the `solo cache image` commands.
 | `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image pull during a Homebrew install. | enabled
 
 > **Note:** The cached component versions follow the same environment-variable
-> mechanism as [Pinning Component Versions](#pinning-component-versions) above —
+> mechanism as [Pinning Component Versions](#pinning-component-versions) above -
 > the `*_VERSION` environment variables affect the images the cache pulls, but
 > the `--*-version` CLI flags do not.
