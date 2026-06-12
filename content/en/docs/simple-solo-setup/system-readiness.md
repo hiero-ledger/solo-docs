@@ -40,6 +40,7 @@ Before running `solo one-shot single deploy`, you **must** have:
 - **kubectl** and **Helm**: Solo requires these pre-installed. The `one-shot` command checks for their presence but does not install them.
   - **Homebrew users**: These are installed automatically as dependencies of the `solo` formula.
   - **npm install users** (Linux, WSL2, or native Windows): Install kubectl and Helm manually before running Solo.
+- **Windows (WSL2) users**: WSL2 requires hardware virtualization and the Virtual Machine Platform Windows feature. Follow Microsoft's [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) guide to install WSL and meet these prerequisites. If you cannot enable virtualization (for example, `wsl --install` reports `HCS_E_HYPERV_NOT_INSTALLED`), use the native **Windows (PowerShell)** path instead, which does not require WSL2.
 
 > **Important:** The `one-shot` deployment will fail immediately if kubectl or Helm are missing, even on macOS/Windows where Homebrew typically installs them as dependencies.
 
@@ -220,6 +221,11 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
 
 {{% tab header="Windows (WSL2)" lang="wsl2" %}}
 
+> **Note:** Make sure your machine meets the WSL2 prerequisites in
+> [Pre-installation Requirements](#pre-installation-requirements) first. If WSL
+> and a Linux distribution are already installed, skip step 1 (and you may use a
+> distribution other than Ubuntu).
+
 1. Run the following command in Windows PowerShell (as Administrator), then reboot and open the Ubuntu terminal. All subsequent commands must be run inside the Ubuntu (WSL2) terminal.
 
    ```sh
@@ -254,13 +260,13 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
     sudo mv kubectl /usr/local/bin/kubectl
     ```
 
-4. Install Solo (this installs all other dependencies automatically):
+5. Install Solo (this installs all other dependencies automatically):
 
     ```sh
     brew install hiero-ledger/tools/solo
     ```
 
-5. Verify the installation:
+6. Verify the installation:
 
     ```sh
     solo --version
@@ -309,3 +315,8 @@ with a previous installation - clean up your environment and reinstall:
 - To **upgrade an existing install**, install a **specific version**, or switch
   between Homebrew and npm, see
   [Upgrading an existing Solo installation](/docs/simple-solo-setup/upgrading-solo).
+- **WSL2 fails to install** (for example, `wsl --install` reports
+  `HCS_E_HYPERV_NOT_INSTALLED`): WSL2 requires hardware virtualization and the
+  Virtual Machine Platform feature. See Microsoft's
+  [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) guide, or
+  use the native **Windows (PowerShell)** path, which does not require WSL2.
