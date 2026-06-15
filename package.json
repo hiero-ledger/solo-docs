@@ -59,6 +59,7 @@
     "update:packages": "npx npm-check-updates -u",
     "update": "npm run update:packages && npm run update:docsy:mod",
     "generate-docs": "node scripts/executeUpdateDocs.mjs",
+    "generate-errors": "node scripts/generateErrors.mjs",
     "generate-help": "node scripts/generateHelp.mjs"
   },
   "devDependencies": {

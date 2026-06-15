@@ -102,6 +102,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Checkout the solo source at the target release tag so the error-page
+      # generator can read TypeScript source files without building the project.
+      - name: Checkout solo source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: hiero-ledger/solo
+          ref: ${{ steps.version.outputs.version }}
+          path: solo-src
+
       # Tool setup.
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
@@ -140,7 +149,13 @@ jobs:
           echo "baseurl=$URL" >> "$GITHUB_OUTPUT"
           echo "::notice::Resolved baseURL: $URL (deployment target: $TARGET)"
 
-      # hugo build with the resolved baseURL for the selected deployment target
+      # Generate SoloError documentation pages by parsing the checked-out solo source.
+      - name: Generate error code pages
+        run: npm run generate-errors
+        env:
+          SOLO_REPO_PATH: ${{ github.workspace }}/solo-src
+
+      # hugo build with resolved baseURL for the selected deployment target
       - name: Build Hugo site
         run: npm run _hugo -- --minify --baseURL "${{ steps.baseurl.outputs.baseurl }}"
 
