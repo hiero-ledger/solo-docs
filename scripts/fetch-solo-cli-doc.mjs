@@ -16,6 +16,10 @@
  *      at the same URL as the previously checked-in copy used to.
  *   5. Skips the download when the cached `version.txt` matches the current
  *      npm `latest` and the output file is already on disk.
+ *   6. Regardless of whether the CLI doc was downloaded or already cached, runs
+ *      `generateErrors.mjs` afterwards to (re)generate the error code reference
+ *      pages, so a single invocation produces all generated content the build
+ *      depends on.
  *
  * The script is invoked from `prebuild` / `preserve` lifecycle hooks in
  * `package.json`, so it runs automatically on `npm run build`, `npm run
@@ -27,6 +31,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 const pkg = '@hiero-ledger/solo';
 const owner = 'hiero-ledger';
@@ -51,26 +56,29 @@ const version = execFileSync('npm', ['view', pkg, 'version'], {
 
 const tag = `v${version}`;
 
+let cached = false;
 if (existsSync(versionFile)) {
   const cachedVersion = (await readFile(versionFile, 'utf8')).trim();
   if (cachedVersion === version && existsSync(outFile)) {
-    console.log(`Solo CLI docs already cached for ${tag}`);
-    process.exit(0);
+    cached = true;
   }
 }
 
-const url = `https://github.com/${owner}/${repo}/releases/download/${tag}/${assetName}`;
+if (cached) {
+  console.log(`Solo CLI docs already cached for ${tag}`);
+} else {
+  const url = `https://github.com/${owner}/${repo}/releases/download/${tag}/${assetName}`;
 
-const res = await fetch(url);
-if (!res.ok) {
-  throw new Error(
-    `Failed to download ${url}: ${res.status} ${res.statusText}`,
-  );
-}
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(
+      `Failed to download ${url}: ${res.status} ${res.statusText}`,
+    );
+  }
 
-const markdown = await res.text();
+  const markdown = await res.text();
 
-const frontmatter = `---
+  const frontmatter = `---
 title: "Solo CLI Reference"
 weight: 1
 aliases:
@@ -86,8 +94,19 @@ type: docs
 
 `;
 
-await mkdir(dirname(outFile), { recursive: true });
-await writeFile(outFile, `${frontmatter}${markdown}`);
-await writeFile(versionFile, `${version}\n`);
+  await mkdir(dirname(outFile), { recursive: true });
+  await writeFile(outFile, `${frontmatter}${markdown}`);
+  await writeFile(versionFile, `${version}\n`);
 
-console.log(`Generated Solo CLI docs from ${tag}`);
+  console.log(`Generated Solo CLI docs from ${tag}`);
+}
+
+// Always (re)generate the error code reference pages after handling the CLI doc,
+// so a single fetch-solo-cli-doc run produces all generated content for the build.
+// SOLO_VERSION pins the generator to the same release as the CLI doc above, so the
+// two stay consistent (a local SOLO_REPO_PATH, if set, still takes precedence).
+const generateErrorsScript = fileURLToPath(new URL('./generateErrors.mjs', import.meta.url));
+execFileSync('node', [generateErrorsScript], {
+  stdio: 'inherit',
+  env: { ...process.env, SOLO_VERSION: version },
+});

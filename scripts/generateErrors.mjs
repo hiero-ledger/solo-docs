@@ -25,23 +25,40 @@
  * the URLs produced by SoloError.getDocumentUrl() continue to resolve even though
  * the canonical content now lives at /docs/troubleshooting/errors/{category}/SOLO-XXXX.
  *
+ * Source of the error classes (precedence):
+ *   1. SOLO_REPO_PATH — a local solo checkout (e.g. ../solo). Use this to generate
+ *      against uncommitted/local changes.
+ *   2. Otherwise the published release source is downloaded from GitHub for the
+ *      version given by SOLO_VERSION, or — when unset — the npm `latest` version of
+ *      @hiero-ledger/solo. fetch-solo-cli-doc.mjs passes SOLO_VERSION so the error
+ *      pages match the fetched CLI reference. Release tarballs are cached under
+ *      .cache/solo-src/<version>.
+ *
  * Usage:
- *   SOLO_REPO_PATH=../solo node scripts/generateErrors.mjs
- *   task generate:errors
+ *   node scripts/generateErrors.mjs                          # released latest
+ *   SOLO_VERSION=0.77.0 node scripts/generateErrors.mjs      # a specific release
+ *   SOLO_REPO_PATH=../solo node scripts/generateErrors.mjs   # a local checkout
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
 import kleur from 'kleur';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '../');
 process.chdir(projectRoot);
 
-const SOLO_REPO = process.env.SOLO_REPO_PATH ?? path.resolve(__dirname, '../../../solo');
-const ERRORS_DIR = path.join(SOLO_REPO, 'src/core/errors/classes');
-const REGISTRY_FILE = path.join(SOLO_REPO, 'src/core/errors/error-code-registry.ts');
+const SOLO_PKG = '@hiero-ledger/solo';
+const SOLO_SRC_CACHE = path.join(projectRoot, '.cache/solo-src');
+
+// Resolved in main() from a local checkout (SOLO_REPO_PATH) or the downloaded
+// release source — the root of the solo tree the error classes are read from.
+let SOLO_REPO;
+let ERRORS_DIR;
+let REGISTRY_FILE;
+
 const OUTPUT_DIR = path.join(projectRoot, 'content/en/docs/troubleshooting/errors');
 const BUG_REPORT_URL = 'https://github.com/hiero-ledger/solo/issues';
 
@@ -339,15 +356,88 @@ function generateErrorPage(error) {
   return doc;
 }
 
+// ── Solo source resolution ──────────────────────────────────────────────────
+
+/**
+ * Resolves the solo version to source error classes from, without a leading 'v'.
+ * Precedence: SOLO_VERSION env (explicit pin; passed by fetch-solo-cli-doc.mjs so
+ * the error pages match the CLI reference version) → npm `latest`.
+ */
+function resolveVersion() {
+  const fromEnvironment = process.env.SOLO_VERSION;
+  if (fromEnvironment) {
+    return fromEnvironment.replace(/^v/, '');
+  }
+  return execFileSync('npm', ['view', SOLO_PKG, 'version'], {
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+  }).trim();
+}
+
+/**
+ * Downloads and extracts the solo source for a version from its GitHub release
+ * tarball, caching it under .cache/solo-src/<version>. Returns the extracted
+ * repository root, reusing the cache on subsequent runs.
+ */
+async function ensureReleaseSource(version) {
+  const tag = `v${version}`;
+  const destination = path.join(SOLO_SRC_CACHE, version);
+  const marker = path.join(destination, '.extracted');
+
+  if (fs.existsSync(marker)) {
+    console.log(kleur.dim(`Using cached solo release source for ${tag}`));
+    return destination;
+  }
+
+  const url = `https://github.com/hiero-ledger/solo/archive/refs/tags/${tag}.tar.gz`;
+  console.log(kleur.dim(`Downloading solo release source for ${tag}...`));
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to download solo source from ${url}: ${response.status} ${response.statusText}`);
+  }
+
+  fs.rmSync(destination, {recursive: true, force: true});
+  fs.mkdirSync(destination, {recursive: true});
+  const tarball = path.join(SOLO_SRC_CACHE, `${version}.tar.gz`);
+  fs.writeFileSync(tarball, Buffer.from(await response.arrayBuffer()));
+
+  // GitHub tarballs nest everything under a single solo-<version>/ directory;
+  // --strip-components=1 lifts the repository root directly into destination.
+  execFileSync('tar', ['-xzf', tarball, '-C', destination, '--strip-components=1'], {stdio: 'inherit'});
+  fs.rmSync(tarball, {force: true});
+  fs.writeFileSync(marker, `${tag}\n`);
+
+  return destination;
+}
+
+/**
+ * Resolves the solo source tree to read error classes from: an explicit local
+ * checkout when SOLO_REPO_PATH is set, otherwise the downloaded release source so
+ * the generated pages match the released solo version.
+ */
+async function resolveSoloSource() {
+  const localPath = process.env.SOLO_REPO_PATH;
+  if (localPath) {
+    const resolved = path.resolve(localPath);
+    console.log(kleur.dim(`Using local solo source: ${resolved}`));
+    return resolved;
+  }
+  return ensureReleaseSource(resolveVersion());
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 void (async function main() {
   console.log(kleur.cyan('Generating Solo error code documentation pages...'));
-  console.log(kleur.dim(`Solo repo: ${SOLO_REPO}`));
+
+  SOLO_REPO = await resolveSoloSource();
+  ERRORS_DIR = path.join(SOLO_REPO, 'src/core/errors/classes');
+  REGISTRY_FILE = path.join(SOLO_REPO, 'src/core/errors/error-code-registry.ts');
+  console.log(kleur.dim(`Solo source: ${SOLO_REPO}`));
 
   if (!fs.existsSync(ERRORS_DIR)) {
     console.error(kleur.red(`Error: Solo errors directory not found at ${ERRORS_DIR}`));
-    console.error(kleur.red('Set SOLO_REPO_PATH to the path of the solo repository.'));
+    console.error(kleur.red('Set SOLO_REPO_PATH to a local solo checkout, or ensure the release source is reachable.'));
     process.exit(1);
   }
 
