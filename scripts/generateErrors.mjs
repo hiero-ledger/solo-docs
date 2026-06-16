@@ -16,14 +16,14 @@
  *   - Troubleshooting steps
  *   - Optional @description TSDoc tag
  *
- * Output:
- *   content/en/docs/errors/_index.md               — listing page with tables per category
- *   content/en/docs/errors/{category}/_index.md    — category section page
- *   content/en/docs/errors/{category}/SOLO-XXXX.md — individual page per error
+ * Output (the error reference is nested under the Troubleshooting section):
+ *   content/en/docs/troubleshooting/errors/_index.md               — listing page with tables per category
+ *   content/en/docs/troubleshooting/errors/{category}/_index.md    — category section page
+ *   content/en/docs/troubleshooting/errors/{category}/SOLO-XXXX.md — individual page per error
  *
  * Individual SOLO-XXXX.md pages include an alias at /docs/errors/SOLO-XXXX so
  * the URLs produced by SoloError.getDocumentUrl() continue to resolve even though
- * the canonical content lives at /docs/errors/{category}/SOLO-XXXX.
+ * the canonical content now lives at /docs/troubleshooting/errors/{category}/SOLO-XXXX.
  *
  * Usage:
  *   SOLO_REPO_PATH=../solo node scripts/generateErrors.mjs
@@ -42,7 +42,7 @@ process.chdir(projectRoot);
 const SOLO_REPO = process.env.SOLO_REPO_PATH ?? path.resolve(__dirname, '../../../solo');
 const ERRORS_DIR = path.join(SOLO_REPO, 'src/core/errors/classes');
 const REGISTRY_FILE = path.join(SOLO_REPO, 'src/core/errors/error-code-registry.ts');
-const OUTPUT_DIR = path.join(projectRoot, 'content/en/docs/errors');
+const OUTPUT_DIR = path.join(projectRoot, 'content/en/docs/troubleshooting/errors');
 const BUG_REPORT_URL = 'https://github.com/hiero-ledger/solo/issues';
 
 const CATEGORY_LABELS = {
@@ -250,17 +250,17 @@ function generateIndexPage(errors) {
     doc += `\n`;
   }
 
-  // When a visitor arrives via a category redirect (e.g. /docs/errors/config/ →
-  // /docs/errors/#configuration), the sidebar category section should auto-expand.
+  // When a visitor arrives via a category redirect (e.g. /docs/troubleshooting/errors/config/ →
+  // /docs/troubleshooting/errors/#configuration), the sidebar category section should auto-expand.
   // Docsy's foldable nav uses hidden checkboxes: checking one expands its child ul.
   // Sidebar links for category sections have class td-sidebar-link__section and
-  // href under /docs/errors/.  We match on link text vs the hash target.
+  // href under /docs/troubleshooting/errors/.  We match on link text vs the hash target.
   doc += `<script>\n`;
   doc += `(function () {\n`;
   doc += `  function expandCategory(hash) {\n`;
   doc += `    if (!hash || hash.length < 2) return;\n`;
   doc += `    var target = hash.slice(1).toLowerCase();\n`;
-  doc += `    var links = document.querySelectorAll('a.td-sidebar-link__section[href^="/docs/errors/"]');\n`;
+  doc += `    var links = document.querySelectorAll('a.td-sidebar-link__section[href^="/docs/troubleshooting/errors/"]');\n`;
   doc += `    for (var i = 0; i < links.length; i++) {\n`;
   doc += `      if (links[i].textContent.trim().toLowerCase() === target) {\n`;
   doc += `        var li = links[i].closest('li');\n`;
@@ -282,7 +282,7 @@ function generateCategoryIndexPage(category) {
   const weight = CATEGORY_WEIGHTS[category] ?? 99;
   // Hugo generates heading IDs as the lowercase label: ## Configuration → #configuration.
   const anchor = label.toLowerCase();
-  const target = `/docs/errors/#${anchor}`;
+  const target = `/docs/troubleshooting/errors/#${anchor}`;
 
   let doc = '';
   doc += `---\n`;
@@ -311,7 +311,7 @@ function generateErrorPage(error) {
   doc += `description: "${error.className} — ${categoryLabel}"\n`;
   // Alias preserves the URL that SoloError.getDocumentUrl() generates
   // (https://solo.hiero.org/docs/errors/SOLO-XXXX) even though the canonical
-  // content lives one level deeper at errors/{category}/SOLO-XXXX.
+  // content now lives at troubleshooting/errors/{category}/SOLO-XXXX.
   doc += `aliases: ['/docs/errors/${error.code}']\n`;
   doc += `---\n\n`;
   doc += `## \`${error.className}\`\n\n`;
@@ -417,7 +417,7 @@ void (async function main() {
 
     console.log(
       kleur.green(
-        `✓ ${CATEGORY_LABELS[category]}: ${categoryErrors.length} pages → content/en/docs/errors/${category}/`,
+        `✓ ${CATEGORY_LABELS[category]}: ${categoryErrors.length} pages → content/en/docs/troubleshooting/errors/${category}/`,
       ),
     );
   }
