@@ -102,15 +102,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Checkout the solo source at the requested tag (or main when no version is
-      # given) so the error-page generator can read its TypeScript source files.
-      - name: Checkout solo source
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          repository: hiero-ledger/solo
-          ref: ${{ github.event.inputs.version || 'main' }}
-          path: solo-src
-
       # Tool setup.
       - name: Setup Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
@@ -149,15 +140,38 @@ jobs:
           echo "baseurl=$URL" >> "$GITHUB_OUTPUT"
           echo "::notice::Resolved baseURL: $URL (deployment target: $TARGET)"
 
+      # hugo build with the resolved baseURL for the selected deployment target
+      - name: Build Hugo site
+        run: npm run _hugo -- --minify --baseURL "${{ steps.baseurl.outputs.baseurl }}"
+
+      # Derive the solo release tag from the version the pre_hugo fetch resolved
+      # (.cache/solo-cli-docs/version.txt, written during "Build Hugo site"), so the
+      # error-page source matches the released CLI reference. e.g. 0.78.0 -> v0.78.0
+      - name: Resolve solo source tag
+        id: solo-tag
+        run: |
+          version="$(tr -d '[:space:]' < .cache/solo-cli-docs/version.txt)"
+          if [[ -z "$version" ]]; then
+            echo "::error::.cache/solo-cli-docs/version.txt is empty or missing; the Hugo build's pre_hugo fetch must run first."
+            exit 1
+          fi
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+          echo "::notice::Checking out solo source at tag v${version}"
+
+      # Checkout the solo source at the released tag so the error-page generator can
+      # read its TypeScript source files.
+      - name: Checkout solo source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: hiero-ledger/solo
+          ref: ${{ steps.solo-tag.outputs.tag }}
+          path: solo-src
+
       # Generate the SoloError documentation pages from the checked-out solo source.
       - name: Generate error code pages
         run: npm run generate-errors
         env:
           SOLO_REPO_PATH: ${{ github.workspace }}/solo-src
-
-      # hugo build with the resolved baseURL for the selected deployment target
-      - name: Build Hugo site
-        run: npm run _hugo -- --minify --baseURL "${{ steps.baseurl.outputs.baseurl }}"
 
       # upload go gh-pages
       - name: Upload Pages Artifact
