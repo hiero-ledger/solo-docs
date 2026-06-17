@@ -72,7 +72,7 @@ To allocate the required resources in Docker Desktop:
 3. Go to **Settings > Resources > CPU** and set it to at least **6 cores**.
 4. Click **Apply & Restart**.
 
-   ![Docker Desktop resource allocation settings](docker_resource_image.png)
+   ![Docker Desktop resource allocation settings](../docker_resource_image.png)
 
 > **Note:** If Docker Desktop does not have enough memory or CPU allocated, the one-shot deployment will fail or produce unhealthy pods.
 
