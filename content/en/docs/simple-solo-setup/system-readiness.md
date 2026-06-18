@@ -28,31 +28,34 @@ Solo's resource requirements depend on your deployment size:
 
 ## Software Requirements
 
-Solo manages most of its own dependencies depending on how you install it:
+Solo sets up most of the tools it needs for you. The table below shows what each
+install method provides, what Solo provisions automatically, and what you must
+install yourself.
 
-- **Homebrew install** (`brew install hiero-ledger/tools/solo`) - automatically installs Node.js and Solo, plus kubectl and Helm as dependencies.
-- **`one-shot` commands** — automatically install **Kind** and **Podman** (if Docker is not found). **kubectl and Helm are not auto-installed** and must be pre-installed.
+| Tool | Required version | How it is installed |
+| --- | --- | --- |
+| [Solo](https://github.com/hiero-ledger/solo) | latest | `brew install hiero-ledger/tools/solo`, or `npm install -g @hiero-ledger/solo` |
+| [Node.js](https://nodejs.org/en/download) | >= 22.0.0 (lts/jod) | **Homebrew installs it for you**; with **npm you install it yourself** |
+| Container runtime ([Docker](https://www.docker.com/products/docker-desktop) / [Podman](https://podman.io)) | See [Docker](#docker) below | **You install it** - Docker Desktop (macOS/Windows) or Docker Engine/Podman (Linux). Solo cannot install one. |
+| [kubectl](https://kubernetes.io/docs/reference/kubectl/) | >= v1.32.2 | **Solo provisions it** at deploy time - reuses a compatible copy already on your system, or downloads one into `~/.solo/bin` |
+| [Helm](https://helm.sh) | v3.14.2 | **Solo provisions it** at deploy time |
+| [Kind](https://kind.sigs.k8s.io) | >= v0.29.0 | **Solo provisions it** at deploy time |
+| [Kubernetes](https://kubernetes.io) | >= v1.32.2 | Installed automatically by Kind |
+| [k9s](https://k9scli.io/topics/install/) (optional) | >= v0.27.4 | You install it |
 
-### Pre-installation Requirements
+> **Note:** Solo's provisioned copies of kubectl and Helm live in `~/.solo/bin`,
+> which is not necessarily on your `PATH`. If you want to run `kubectl` or `helm`
+> commands yourself (some guides do), install [kubectl](https://kubernetes.io/docs/tasks/tools/)
+> and [Helm](https://helm.sh/docs/intro/install/) on your `PATH` separately.
 
-Before running `solo one-shot single deploy`, you **must** have:
-- A **container runtime**: either [Docker Desktop](https://www.docker.com/products/docker-desktop) (macOS/Windows) or Docker Engine/Podman (Linux). Solo cannot install a container runtime.
-- **kubectl** and **Helm**: Solo requires these pre-installed. The `one-shot` command checks for their presence but does not install them.
-  - **Homebrew users**: These are installed automatically as dependencies of the `solo` formula.
-  - **npm install users** (Linux, WSL2, or native Windows): Install kubectl and Helm manually before running Solo.
-- **Windows (WSL2) users**: WSL2 requires hardware virtualization and the Virtual Machine Platform Windows feature. Follow Microsoft's [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) guide to install WSL and meet these prerequisites. If you cannot enable virtualization (for example, `wsl --install` reports `HCS_E_HYPERV_NOT_INSTALLED`), use the native **Windows (PowerShell)** path instead, which does not require WSL2.
+### Windows (WSL2) prerequisite
 
-> **Important:** The `one-shot` deployment will fail immediately if kubectl or Helm are missing, even on macOS/Windows where Homebrew typically installs them as dependencies.
-
-| Tool           | Required Version         | Where to get it                                                                   |
-|----------------|--------------------------|-----------------------------------------------------------------------------------|
-| Node.js        | >= 22.0.0 (lts/jod)      | [nodejs.org](https://nodejs.org/en/download)                                      |
-| Kind           | >= v0.29.0               | [kind.sigs.k8s.io](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)  |
-| Kubernetes     | >= v1.32.2               | Installed automatically by Kind                                                   |
-| Kubectl        | >= v1.32.2               | [kubernetes.io](https://kubernetes.io/docs/tasks/tools/)                          |
-| Helm           | v3.14.2                  | [helm.sh](https://helm.sh/docs/intro/install/)                                    |
-| Docker         | See Docker section below | [docker.com](https://www.docker.com/products/docker-desktop)                      |
-| k9s (optional) | >= v0.27.4               | [k9scli.io](https://k9scli.io/topics/install/)                                    |
+If you install Solo on Windows via WSL2, WSL2 requires hardware virtualization
+and the Virtual Machine Platform Windows feature. Follow Microsoft's
+[Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) guide to
+install WSL and meet these prerequisites. If you cannot enable virtualization
+(for example, `wsl --install` reports `HCS_E_HYPERV_NOT_INSTALLED`), use the
+native **Windows (PowerShell)** path instead, which does not require WSL2.
 
 ## Docker
 
@@ -109,7 +112,7 @@ Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, o
 
     > **macOS prerequisite:** Docker Desktop must be open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
-3. Install Solo (this installs all other dependencies automatically):
+3. Install Solo:
 
     ```sh
     brew install hiero-ledger/tools/solo
@@ -150,23 +153,13 @@ Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, o
 
     Log out and back in for the group changes to take effect.
 
-3. Install kubectl:
-
-    ```sh
-    sudo apt update && sudo apt install -y ca-certificates curl
-    ARCH="$(dpkg --print-architecture)"
-    curl -fsSLo kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl"
-    chmod +x kubectl
-    sudo mv kubectl /usr/local/bin/kubectl
-    ```
-
-4. Install Solo (this installs all other dependencies automatically):
+3. Install Solo:
 
     ```sh
     brew install hiero-ledger/tools/solo
     ```
 
-5. Verify the installation:
+4. Verify the installation:
 
     ```sh
     solo --version
@@ -192,24 +185,15 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
 
     Or download the installer from [nodejs.org](https://nodejs.org/en/download).
 
-3. Install kubectl and Helm (Solo does not auto-install these):
-
-    ```powershell
-    winget install Kubernetes.kubectl
-    winget install Helm.Helm
-    ```
-
-    Or download them from the [kubectl](https://kubernetes.io/docs/tasks/tools/) and [Helm](https://helm.sh/docs/intro/install/) release pages.
-
-4. Install Solo via npm. 
+3. Install Solo via npm. 
     
-    npm installs the Solo CLI only - kubectl and Helm were installed in step 3, and `one-shot` auto-installs Kind and Podman:
+    npm installs the Solo CLI only; Solo provisions kubectl, Helm, and Kind automatically at deploy time:
 
     ```powershell
     npm install -g @hiero-ledger/solo@latest
     ```
 
-1. Verify the installation:
+4. Verify the installation:
 
     ```powershell
     solo --version
@@ -221,8 +205,8 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
 
 {{% tab header="Windows (WSL2)" lang="wsl2" %}}
 
-> **Note:** Make sure your machine meets the WSL2 prerequisites in
-> [Pre-installation Requirements](#pre-installation-requirements) first. If WSL
+> **Note:** Make sure your machine meets the
+> [Windows (WSL2) prerequisite](#windows-wsl2-prerequisite) first. If WSL
 > and a Linux distribution are already installed, skip step 1 (and you may use a
 > distribution other than Ubuntu).
 
@@ -250,23 +234,13 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
     - Enable WSL2 integration: Docker Desktop > Settings > Resources > WSL Integration.
     - Allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory.
 
-4. Install kubectl:
-
-    ```sh
-    sudo apt update && sudo apt install -y ca-certificates curl
-    ARCH="$(dpkg --print-architecture)"
-    curl -fsSLo kubectl "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl"
-    chmod +x kubectl
-    sudo mv kubectl /usr/local/bin/kubectl
-    ```
-
-5. Install Solo (this installs all other dependencies automatically):
+4. Install Solo:
 
     ```sh
     brew install hiero-ledger/tools/solo
     ```
 
-6. Verify the installation:
+5. Verify the installation:
 
     ```sh
     solo --version

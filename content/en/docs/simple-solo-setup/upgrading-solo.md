@@ -32,7 +32,7 @@ brew upgrade hiero-ledger/tools/solo
 ```
 
 `brew update` refreshes Homebrew's formulae; `brew upgrade` then installs the
-latest Solo and refreshes its `kubectl` and `Helm` dependencies. Verify the new
+latest Solo (and Node.js, its only Homebrew dependency). Verify the new
 version:
 
 ```bash
@@ -48,8 +48,10 @@ tag to move to the newest release:
 npm install -g @hiero-ledger/solo@latest
 ```
 
-> **Note:** Unlike the Homebrew formula, npm does not install `kubectl` and
-> `Helm`. After a major-version upgrade, re-check the required tool versions in
+> **Note:** Unlike the Homebrew formula, npm does not install Node.js - make
+> sure Node.js is present before upgrading. (Solo provisions kubectl, Helm, and
+> Kind automatically at deploy time regardless of install method.) After a
+> major-version upgrade, re-check the required tool versions in
 > [System Readiness](/docs/simple-solo-setup/system-readiness).
 
 ## Install a specific version

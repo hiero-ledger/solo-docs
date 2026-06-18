@@ -47,7 +47,7 @@ Install the latest Solo CLI globally using one of the following methods:
   npm install -g @hiero-ledger/solo@latest
   ```
 
-  > **Note:** npm installation is an alternative to Homebrew. The Homebrew tap is the recommended installation method as it includes kubectl and Helm as dependencies and may have more up-to-date releases.
+  > **Note:** npm installation is an alternative to Homebrew. The Homebrew tap is the recommended installation method because it installs Node.js for you (npm installs require Node.js already present) and may have more up-to-date releases. Either way, Solo provisions kubectl, Helm, and Kind automatically at deploy time.
 
 ### Verify the installation
 
