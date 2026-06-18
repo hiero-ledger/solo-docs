@@ -127,6 +127,25 @@ a fully functional local Hiero network, including:
         solo one-shot single deploy | tee solo-deploy.log
   ```
 
+## Resetting Between Tests
+
+If several tests each need a clean genesis ledger, you do not have to redeploy
+for each one. After deploying once, reset the ledger to genesis between tests to
+return to a known starting state without recreating the cluster:
+
+  ```yaml
+    - name: Reset ledger to genesis
+      env:
+        SOLO_DEPLOYMENT: solo-deployment
+      run: |
+        set -euo pipefail
+        solo ledger system reset --deployment "${SOLO_DEPLOYMENT}"
+  ```
+
+This is faster than a destroy-and-redeploy cycle. See
+[Reset the ledger to genesis](/docs/simple-solo-setup/managing-your-network#reset-the-ledger-to-genesis)
+for details and available flags.
+
 ## Cleanup
 
 After the workflow completes, destroy the Solo deployment and delete the Kind

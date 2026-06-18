@@ -138,6 +138,33 @@ This confirms that:
 * The mirror node is indexing transactions
 * The explorer is displaying data properly
 
+## Reset the ledger to genesis
+
+To return a running deployment to a clean genesis state without tearing it down
+and redeploying, reset the ledger system. This clears the saved consensus state
+and ledger-related secrets, returning the ledger to genesis - with no accounts,
+files, or balances beyond the genesis defaults:
+
+```bash
+solo ledger system reset --deployment <deployment-name>
+```
+
+`solo ledger system reset` is the counterpart to `solo ledger system init`
+(which initializes a new deployment). Use it when you want a fresh ledger - for
+example, to rerun a scenario from a known starting point - while keeping the
+same Kind cluster and deployment.
+
+| Flag | Description |
+| --- | --- |
+| `--deployment` | The deployment to reset. |
+| `--node-aliases` | Comma-separated consensus node aliases to reset. Defaults to all nodes in the deployment. |
+| `--cluster-ref` | The cluster reference, for a deployment that spans multiple clusters. |
+
+> **Note:** This discards on-ledger state created since genesis and cannot be
+> undone. It does not delete the cluster or deployment - to remove those
+> entirely, use `solo one-shot single destroy` (see the
+> [Cleanup guide](/docs/simple-solo-setup/cleanup)).
+
 ## Viewing Logs
 
 To capture logs and diagnostic information for your deployment:
