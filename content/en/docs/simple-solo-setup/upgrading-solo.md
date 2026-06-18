@@ -58,6 +58,16 @@ To install a specific (non-latest) Solo release - for example, to reproduce a
 bug, run a regression test, or pin a version across a team - use a versioned
 Homebrew formula or npm tag instead of `latest`.
 
+> **Note:** A versioned brew formula or npm tag **pins** Solo to that release - it
+> will not move when you run `brew upgrade` or `npm update`. To change versions
+> later (including returning to the latest release, or **downgrading**),
+> switching in place is **not supported**: uninstall Solo first
+> (`brew uninstall hiero-ledger/tools/solo`, or `npm uninstall -g @hiero-ledger/solo`),
+> then run the versioned install command below for the version you want. This
+> keeps your `~/.solo` data - only a [Clean reinstall](#clean-reinstall) removes
+> it. If you are switching package managers, see also
+> [Switching between Homebrew and npm](#switching-between-homebrew-and-npm).
+
 {{< tabpane text=true >}}
 {{% tab header="Homebrew" lang="homebrew" %}}
 ```bash
@@ -83,14 +93,6 @@ Confirm the installed version:
 ```bash
 solo --version
 ```
-
-> **Tip:** Installing a versioned formula or npm tag **pins** Solo to that
-> release - it will not move when you run `brew upgrade` or `npm update`. To
-> return to the latest release, follow
-> [Upgrade a Homebrew install](#upgrade-a-homebrew-install) or
-> [Upgrade an npm install](#upgrade-an-npm-install) above. If you hit a
-> "two `solo` binaries on PATH" conflict when switching, remove the other
-> install first (see [Switching between Homebrew and npm](#switching-between-homebrew-and-npm)).
 
 ## Switching between Homebrew and npm
 
