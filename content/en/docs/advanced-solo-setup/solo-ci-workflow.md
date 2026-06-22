@@ -17,6 +17,9 @@ covering runner requirements, tool installation, and automated network deploymen
 Each step installs dependencies directly in the workflow, since CI runners are
 fresh environments with no pre-installed tools.
 
+> **Note:** For a simpler path where dependency installation is handled automatically,
+> see [Using hiero-solo-action](/docs/advanced-solo-setup/using-hiero-solo-action).
+
 ## Prerequisites
 
 Before proceeding, ensure you have completed the following:

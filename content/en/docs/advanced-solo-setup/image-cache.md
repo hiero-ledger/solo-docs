@@ -1,6 +1,6 @@
 ---
 title: "Solo Image Cache"
-weight: 7
+weight: 8
 description: >
   Speed up deployments by pre-pulling and reusing the container images Solo
   needs. Manage the local image cache with the solo cache image commands, and

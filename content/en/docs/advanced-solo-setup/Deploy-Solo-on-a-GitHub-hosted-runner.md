@@ -15,6 +15,9 @@ GitHub-hosted runner and the Solo CLI installed via Homebrew.
 For the hardware specs that runner provides, see
 [GitHub's documentation on standard hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories).
 
+> **Note:** For a simpler path where dependency installation is handled automatically,
+> see [Using hiero-solo-action](/docs/advanced-solo-setup/using-hiero-solo-action).
+
 ---
 
 ## How It Works
