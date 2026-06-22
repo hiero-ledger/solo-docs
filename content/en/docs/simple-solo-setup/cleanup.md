@@ -1,12 +1,12 @@
 ---
-title: "Cleanup"
+title: 'Cleanup'
 weight: 6
 description: >
   Learn how to properly destroy a Solo network deployment, manage resource
-  usage, and perform a full reset when the standard destroy command fails along with
-  how to clean up resources safely and completely.
-categories: ["Operations"]
-tags: ["operations", "cli", "kubernetes"]
+  usage, and perform a full reset when the standard destroy command fails along
+  with how to clean up resources safely and completely.
+categories: ['Operations']
+tags: ['operations', 'cli', 'kubernetes']
 type: docs
 ---
 
@@ -19,11 +19,13 @@ resource usage, and perform a full reset when needed.
 
 Before proceeding, ensure you have completed the following:
 
-- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Solo network deployed using `solo one-shot single deploy`.
+- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Solo
+  network deployed using `solo one-shot single deploy`.
 
 ## Destroying Your Network
 
-> **Important:** Always destroy your network before deploying a new one to avoid conflicts and errors.
+> **Important:** Always destroy your network before deploying a new one to avoid
+> conflicts and errors.
 
 To remove your Solo network:
 
@@ -46,12 +48,16 @@ This command performs the following actions:
 
 ### Failure modes and rerunning destroy
 
-If `solo one-shot single destroy` fails part-way through (for example, due to an earlier deploy error), some resources may remain:
+If `solo one-shot single destroy` fails part-way through (for example, due to an
+earlier deploy error), some resources may remain:
 
-- The Solo namespace or one or more PVCs may not be deleted, which can leave Docker volumes appearing as "in use".
-- The destroy commands are designed to be idempotent, so you can safely rerun `solo one-shot single destroy` to complete cleanup.
+- The Solo namespace or one or more PVCs may not be deleted, which can leave
+  Docker volumes appearing as "in use".
+- The destroy commands are designed to be idempotent, so you can safely rerun
+  `solo one-shot single destroy` to complete cleanup.
 
-If rerunning destroy does not release the resources, use the **Full Reset** procedure below to force a clean state.
+If rerunning destroy does not release the resources, use the **Full Reset**
+procedure below to force a clean state.
 
 ## Resource Usage
 
@@ -67,43 +73,56 @@ clean state.
 > `solo one-shot single destroy` fails or your Solo state is corrupted. For
 > normal teardown, always use `solo one-shot single destroy` instead.
 
-  ```bash
-  # Delete only Solo-managed Kind clusters (names starting with "solo")
-  kind get clusters | grep '^solo' | while read cluster; do
-    kind delete cluster -n "$cluster"
-  done
-  
-  # Remove Solo configuration and cache
-  rm -rf ~/.solo
-  ```
+```bash
+# Delete only Solo-managed Kind clusters (names starting with "solo")
+kind get clusters | grep '^solo' | while read cluster; do
+  kind delete cluster -n "$cluster"
+done
+
+# Remove Solo configuration and cache
+rm -rf ~/.solo
+```
 
 > **Warning:** The commands above will delete all Solo-managed Kind clusters and
-> remove your Solo home directory (`~/.solo`).
-> Always use the `grep '^solo'` filter when listing clusters - omitting it will delete every Kind cluster on
+> remove your Solo home directory (`~/.solo`). Always use the `grep '^solo'`
+> filter when listing clusters - omitting it will delete every Kind cluster on
 > your machine, including any unrelated to Solo.
 
-After deleting the Kind cluster, Kubernetes resources (including namespaces and PVCs) and their associated volumes should be released. If Docker still reports unused volumes that you want to remove, you can optionally run:
+After deleting the Kind cluster, Kubernetes resources (including namespaces and
+PVCs) and their associated volumes should be released. If Docker still reports
+unused volumes that you want to remove, you can optionally run:
 
 ```bash
 # Optional: remove all unused Docker volumes
 docker volume prune
 ```
 
-> **Warning:** `docker volume prune` removes all unused Docker volumes on your machine, not just those created by Solo. Only run this command if you understand its impact.
+> **Warning:** `docker volume prune` removes all unused Docker volumes on your
+> machine, not just those created by Solo. Only run this command if you
+> understand its impact.
 
-- To redeploy after a full reset, follow the [Quickstart](/docs/simple-solo-setup/quickstart) guide.
+- To redeploy after a full reset, follow the
+  [Quickstart](/docs/simple-solo-setup/quickstart) guide.
 
 ## Clean up legacy npm installations
 
 If you previously installed Solo via npm (for example, from older workshops or
-documentation), remove the legacy global package to avoid conflicts with a
-newer Homebrew or npm install:
+documentation), remove the global package to avoid conflicts with a newer
+Homebrew or npm install. Solo has been published under two npm names -
+`@hiero-ledger/solo` and `@hashgraph/solo` - so remove both to be sure no copy
+is left behind:
 
 ```bash
-# Remove a legacy npm-based Solo install (safe to run even if not present)
+# Remove any npm-based Solo install (safe to run even if not present)
 npm uninstall -g @hiero-ledger/solo
+npm uninstall -g @hashgraph/solo
 ```
 
 Then reinstall using the [Quickstart](/docs/simple-solo-setup/quickstart), or
-follow [Upgrading an existing Solo installation](/docs/simple-solo-setup/upgrading-solo)
+follow
+[Upgrading an existing Solo installation](/docs/simple-solo-setup/upgrading-solo)
 to move to a specific or latest version.
+
+> **Tip:** If an install failed with `EEXIST: file already exists` because both
+> package names were present, see
+> [Resolving an `EEXIST` package-name conflict](/docs/simple-solo-setup/upgrading-solo#resolving-an-eexist-package-name-conflict).

@@ -1,12 +1,12 @@
 ---
-title: "Upgrading an existing Solo installation"
+title: 'Upgrading an existing Solo installation'
 weight: 5
 description: >
   Upgrade an existing Solo installation to the latest release - whether you
   installed via Homebrew or npm - and perform a clean reinstall when an upgrade
   leaves a broken or conflicting state.
-categories: ["Getting Started", "Installation"]
-tags: ["installation", "upgrade", "homebrew", "npm", "maintenance"]
+categories: ['Getting Started', 'Installation']
+tags: ['installation', 'upgrade', 'homebrew', 'npm', 'maintenance']
 type: docs
 ---
 
@@ -41,8 +41,8 @@ solo --version
 
 ## Upgrade an npm install
 
-If you installed Solo with npm, re-run the global install with the `@latest`
-tag to move to the newest release:
+If you installed Solo with npm, re-run the global install with the `@latest` tag
+to move to the newest release:
 
 ```bash
 npm install -g @hiero-ledger/solo@latest
@@ -52,31 +52,75 @@ npm install -g @hiero-ledger/solo@latest
 > `Helm`. After a major-version upgrade, re-check the required tool versions in
 > [System Readiness](/docs/simple-solo-setup/system-readiness).
 
+## Resolving an `EEXIST` package-name conflict
+
+Solo is published to npm under two package names - `@hiero-ledger/solo` and
+`@hashgraph/solo` - that are mirrors of the same tool. Both install the same
+`solo` command-line binary, so only one can be globally installed at a time. If
+you already installed Solo under one name and then install it under the other,
+npm refuses to overwrite the existing binary and the install fails with
+`EEXIST`:
+
+```text
+npm error code EEXIST
+npm error path /Users/user/.nvm/versions/node/v22.14.0/bin/solo
+npm error EEXIST: file already exists
+npm error File exists: /Users/user/.nvm/versions/node/v22.14.0/bin/solo
+npm error Remove the existing file and try again, or run npm with --force to overwrite files recklessly.
+```
+
+This is expected npm behavior - npm will not overwrite a binary owned by a
+different package name. To resolve it, uninstall the other package first, then
+install the one you want:
+
+```bash
+# Switching to the @hiero-ledger namespace
+npm uninstall -g @hashgraph/solo
+npm install -g @hiero-ledger/solo@latest
+```
+
+> **Note:** If you installed under `@hiero-ledger/solo` and want to move to
+> `@hashgraph/solo`, swap the names in the commands above.
+
+If the install still reports `EEXIST` after uninstalling - for example because
+an orphaned `solo` binary was left behind - remove the leftover binary and
+reinstall:
+
+```bash
+rm "$(which solo)"
+npm install -g @hiero-ledger/solo@latest
+```
+
+> **Tip:** To remove every npm copy of Solo regardless of namespace, see
+> [Clean up legacy npm installations](/docs/simple-solo-setup/cleanup#clean-up-legacy-npm-installations).
+
 ## Install a specific version
 
 To install a specific (non-latest) Solo release - for example, to reproduce a
 bug, run a regression test, or pin a version across a team - use a versioned
 Homebrew formula or npm tag instead of `latest`.
 
-{{< tabpane text=true >}}
-{{% tab header="Homebrew" lang="homebrew" %}}
+{{< tabpane text=true >}} {{% tab header="Homebrew" lang="homebrew" %}}
+
 ```bash
 brew install hiero-ledger/tools/solo@0.76.0
 ```
+
 The tap publishes a versioned formula (`solo@<version>`) for each release.
-{{% /tab %}}
-{{% tab header="npm" lang="npm" %}}
+{{% /tab %}} {{% tab header="npm" lang="npm" %}}
+
 ```bash
 npm install -g @hiero-ledger/solo@0.76.0
 ```
-{{% /tab %}}
-{{< /tabpane >}}
+
+{{% /tab %}} {{< /tabpane >}}
 
 > **Note:** On Solo v0.74.0 and later, a global install - including a pinned
 > version - automatically pre-pulls that version's container images into the
-> [image cache](/docs/advanced-solo-setup/image-cache) (`~/.solo/cache/images/`),
-> which can take a few minutes and several GB on first run. Set
-> `SOLO_NO_CACHE=true` (npm) or `HOMEBREW_NO_SOLO_CACHE` (Homebrew) to skip it.
+> [image cache](/docs/advanced-solo-setup/image-cache)
+> (`~/.solo/cache/images/`), which can take a few minutes and several GB on
+> first run. Set `SOLO_NO_CACHE=true` (npm) or `HOMEBREW_NO_SOLO_CACHE`
+> (Homebrew) to skip it.
 
 Confirm the installed version:
 
@@ -88,9 +132,10 @@ solo --version
 > release - it will not move when you run `brew upgrade` or `npm update`. To
 > return to the latest release, follow
 > [Upgrade a Homebrew install](#upgrade-a-homebrew-install) or
-> [Upgrade an npm install](#upgrade-an-npm-install) above. If you hit a
-> "two `solo` binaries on PATH" conflict when switching, remove the other
-> install first (see [Switching between Homebrew and npm](#switching-between-homebrew-and-npm)).
+> [Upgrade an npm install](#upgrade-an-npm-install) above. If you hit a "two
+> `solo` binaries on PATH" conflict when switching, remove the other install
+> first (see
+> [Switching between Homebrew and npm](#switching-between-homebrew-and-npm)).
 
 ## Switching between Homebrew and npm
 
@@ -119,22 +164,23 @@ configuration, then reinstall.
 > with `solo one-shot single destroy` - see the
 > [Cleanup guide](/docs/simple-solo-setup/cleanup).
 
-{{< tabpane text=true >}}
-{{% tab header="Homebrew" lang="homebrew" %}}
+{{< tabpane text=true >}} {{% tab header="Homebrew" lang="homebrew" %}}
+
 ```bash
 brew uninstall hiero-ledger/tools/solo
 rm -rf ~/.solo
 brew install hiero-ledger/tools/solo
 ```
-{{% /tab %}}
-{{% tab header="npm" lang="npm" %}}
+
+{{% /tab %}} {{% tab header="npm" lang="npm" %}}
+
 ```bash
 npm uninstall -g @hiero-ledger/solo
 rm -rf ~/.solo
 npm install -g @hiero-ledger/solo@latest
 ```
-{{% /tab %}}
-{{< /tabpane >}}
+
+{{% /tab %}} {{< /tabpane >}}
 
 Confirm the reinstall:
 
