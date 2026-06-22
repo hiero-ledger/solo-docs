@@ -34,7 +34,7 @@
 ## 6. Update Documentation (Skip if PATCH)
 - Create PR updating:
   - `README.md`
-  - `docs/legacy-versions.md`
+  - [`legacy-versions.md`](https://github.com/hiero-ledger/solo/blob/main/legacy-versions.md)
 - Include:
   - New Solo version
   - Helm chart version
