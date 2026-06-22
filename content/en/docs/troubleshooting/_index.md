@@ -43,6 +43,30 @@ Codes are grouped by category — Configuration, Deployment, Component, Validati
 Internal. Solo's CLI also prints a documentation link for each error (for example
 <https://solo.hiero.org/docs/errors/SOLO-1001>) that opens its page directly.
 
+### Anatomy of a Solo error
+
+When a command fails with a coded error, Solo prints the code and message,
+suggested next steps, and a documentation link:
+
+```text
+[SOLO-2002] A deployment named 'my-deployment' already exists. Please select a different name
+  → Check existing deployments: solo deployment config list
+  → Choose a different name for your deployment
+
+Learn more: https://solo.hiero.org/docs/errors/SOLO-2002
+```
+
+- **[SOLO-NNNN]** is the error code; its leading digit identifies the category.
+- **→ lines** are suggested remediation steps, shown when the error provides them.
+- **Learn more** links to that error's online reference page.
+
+In the terminal, this appears inside a bordered `ERROR` box, followed by a tip
+suggesting `solo deployment diagnostics logs` or
+`solo deployment diagnostics report` to gather more detail.
+
+> **Note:** Add `--dev` to a command to see the full error cause chain and stack
+> traces instead of the summarized form — useful when filing a bug report.
+
 ## Common Issues and Solutions
 
 ### Troubleshooting Installation and Upgrades
@@ -452,8 +476,6 @@ net stop winnat
 net start winnat
 ```
 
----
-
 ## Collecting diagnostic information
 
 Before seeking help, collect the following diagnostics so issues can be reproduced and analyzed.
@@ -474,7 +496,8 @@ These files are often requested when reporting issues:
 
 | File                              | Description                           |
 | --------------------------------- | ------------------------------------- |
-| `~/.solo/logs/solo.log`           | Solo CLI command logs                 |
+| `~/.solo/logs/solo.log`           | Solo CLI command logs (human-readable, pino-pretty) |
+| `~/.solo/logs/solo.ndjson`        | Solo CLI command logs (machine-readable JSON, for `jq`) |
 
 ### Kubernetes diagnostics
 
