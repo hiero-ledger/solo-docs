@@ -21,7 +21,6 @@ Use this page when something is failing and you need to diagnose or recover quic
 - [Pods not reaching Ready state](#pods-not-reaching-ready-state)
 - [CrashLoopBackOff causes and remediation](#crashloopbackoff-causes-and-remediation)
 - [Resource constraint errors (CPU / RAM / Disk)](#resource-constraint-errors-cpu--ram--disk)
-- [Understanding Solo error messages](#understanding-solo-error-messages)
 - [Getting help](#getting-help)
 
 ## Related Operational Topics
@@ -43,6 +42,30 @@ for a plain-language description of why it is thrown, along with its troubleshoo
 Codes are grouped by category — Configuration, Deployment, Component, Validation, System, and
 Internal. Solo's CLI also prints a documentation link for each error (for example
 <https://solo.hiero.org/docs/errors/SOLO-1001>) that opens its page directly.
+
+### Anatomy of a Solo error
+
+When a command fails with a coded error, Solo prints the code and message,
+suggested next steps, and a documentation link:
+
+```text
+[SOLO-2002] A deployment named 'my-deployment' already exists. Please select a different name
+  → Check existing deployments: solo deployment config list
+  → Choose a different name for your deployment
+
+Learn more: https://solo.hiero.org/docs/errors/SOLO-2002
+```
+
+- **[SOLO-NNNN]** is the error code; its leading digit identifies the category.
+- **→ lines** are suggested remediation steps, shown when the error provides them.
+- **Learn more** links to that error's online reference page.
+
+In the terminal, this appears inside a bordered `ERROR` box, followed by a tip
+suggesting `solo deployment diagnostics logs` or
+`solo deployment diagnostics report` to gather more detail.
+
+> **Note:** Add `--dev` to a command to see the full error cause chain and stack
+> traces instead of the summarized form — useful when filing a bug report.
 
 ## Common Issues and Solutions
 
@@ -452,95 +475,6 @@ Remove-Item Env:\SOLO_LOG_LEVEL
 net stop winnat
 net start winnat
 ```
-
----
-
-## Understanding Solo error messages
-
-Solo reports many failures with a structured **error code** (for example,
-`SOLO-2002`) along with built-in remediation hints, so you can identify and act
-on a problem without first digging through the logs.
-
-### Anatomy of a Solo error
-
-When a command fails with a coded error, Solo prints the code and message,
-suggested next steps, and a documentation link:
-
-```text
-[SOLO-2002] A deployment named 'my-deployment' already exists. Please select a different name
-  → Check existing deployments: solo deployment config list
-  → Choose a different name for your deployment
-
-Learn more: https://solo.hiero.org/docs/errors/SOLO-2002
-```
-
-- **[SOLO-NNNN]** is the error code; its leading digit identifies the category
-  (see below).
-- **→ lines** are suggested remediation steps, shown when the error provides
-  them.
-- **Learn more** links to that error's online reference.
-
-In the terminal, this appears inside a bordered `ERROR` box, followed by a tip
-suggesting `solo deployment diagnostics logs` or
-`solo deployment diagnostics report` to gather more detail.
-
-> **Note:** Add `--dev` to a command to see the full error cause chain and stack
-> traces instead of the summarized form - useful when filing a bug report.
-
-### Error code categories
-
-Solo groups error codes by their leading digit:
-
-| Range | Category | Example |
-| --- | --- | --- |
-| `SOLO-1xxx` | Configuration - local/remote config, schema, existence checks | `SOLO-1001` |
-| `SOLO-2xxx` | Deployment / infrastructure - clusters, namespaces, pod lifecycle | `SOLO-2002` |
-| `SOLO-3xxx` | Component - relay, mirror node, explorer, consensus node | `SOLO-3009` |
-| `SOLO-4xxx` | Validation - user input, flags, IDs, formatting | `SOLO-4005` |
-| `SOLO-5xxx` | System / environment - kubectl, DNS, permissions, timeouts | `SOLO-5002` |
-| `SOLO-9xxx` | Internal - unexpected bugs or unimplemented paths | - |
-
-### Who resolves the error
-
-Each error points to where the fix usually lies:
-
-- **User** - something in your command or configuration that you can fix directly
-  (for example, a missing flag or an invalid value).
-- **Infrastructure** - your cluster or environment (for example, an unreachable
-  cluster or a missing pod). These are often **retryable** once the underlying
-  condition clears.
-- **Solo** - an internal Solo problem. If you hit one repeatedly, gather logs and
-  [open an issue](https://github.com/hiero-ledger/solo/issues).
-
-### Where errors appear
-
-The summarized coded error prints to your terminal. The same details are also
-written to the Solo logs - see [Key log files](#key-log-files) for the file
-locations and formats.
-
-### Common errors and remediation
-
-The errors below are among the most common. Values shown as `<...>` are filled
-in at runtime.
-
-| Code | What it means | How to resolve |
-| --- | --- | --- |
-| `SOLO-1001` | Local configuration file not found. | Create one: `solo deployment config create --deployment <name> --namespace <namespace>`. |
-| `SOLO-2002` | A deployment with that name already exists. | List deployments with `solo deployment config list` and pick a different name. |
-| `SOLO-2003` | The requested deployment was not found. | List deployments with `solo deployment config list`, or create one with `solo deployment config create`. |
-| `SOLO-2008` | The cluster reference is not in your local config. | List references with `solo cluster-ref config list`; connect one with `solo cluster-ref config connect --cluster-ref <ref> --context <context>`. |
-| `SOLO-2010` | No namespace is set for the command. | Pass `--namespace <name>`, or check your deployment with `solo deployment config info --deployment <name>`. |
-| `SOLO-3009` | A Helm chart failed to install (retryable). | Check `helm list -n <namespace>` and `helm status <chart> -n <namespace>`, and confirm the cluster is reachable with `kubectl cluster-info`. |
-| `SOLO-4001` | A required argument is missing. | Supply the argument; run `solo --help` for usage. |
-| `SOLO-4005` | An invalid port number was supplied. | Use an integer between 1 and 65535. |
-| `SOLO-5002` | Connection to the cluster failed (retryable). | Verify the context and reachability: `kubectl cluster-info --context <context>`. |
-| `SOLO-5006` | No pod was found for the node (retryable). | Check pods with `kubectl get pods -n <namespace>`, then describe the pod for events. |
-| `SOLO-5009` | Solo could not determine the Kubernetes context for a node. | Check active deployments with `solo deployment config info`, and review `~/.solo/logs/solo.log`. |
-
-> **Note:** This is a curated subset of the most common errors; Solo defines many
-> more across the categories above. For a code that is not listed here, use its
-> category to find the relevant section on this page, and include
-> `~/.solo/logs/solo.log` when [getting help](#getting-help).
 
 ## Collecting diagnostic information
 
