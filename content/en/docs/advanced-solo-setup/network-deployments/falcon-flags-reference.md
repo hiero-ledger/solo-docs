@@ -71,7 +71,7 @@ Flags passed to `solo consensus network deploy`.
 | `--aws-bucket-region` | string | — | AWS bucket region. |
 | `--aws-bucket-prefix` | string | — | AWS bucket path prefix. |
 | `--settings-txt` | string | template | Path to a custom `settings.txt` file for consensus nodes. |
-| `--application-properties` | string | template | Path to a custom `application.properties` file. |
+| `--application-properties` | string | template | Path to a custom `application.properties` file. Defaults to key-level merge mode; add `# SOLO_ENABLE_OVERWRITE=true` to the file for overwrite mode. See [Custom Application Properties](/docs/advanced-solo-setup/network-deployments/custom-application-properties). |
 | `--application-env` | string | template | Path to a custom `application.env` file. |
 | `--api-permission-properties` | string | template | Path to a custom `api-permission.properties` file. |
 | `--bootstrap-properties` | string | template | Path to a custom `bootstrap.properties` file. |
