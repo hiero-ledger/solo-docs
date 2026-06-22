@@ -37,3 +37,4 @@ async function emptyDir(dir) {
 await emptyDir('public');
 await rm('resources', { recursive: true, force: true });
 await rm('.cache', { recursive: true, force: true });
+await rm('content/en/docs/troubleshooting/errors', { recursive: true, force: true });

@@ -1,6 +1,6 @@
 ---
 title: "Cleanup"
-weight: 5
+weight: 6
 description: >
   Learn how to properly destroy a Solo network deployment, manage resource
   usage, and perform a full reset when the standard destroy command fails along with
@@ -92,3 +92,18 @@ docker volume prune
 > **Warning:** `docker volume prune` removes all unused Docker volumes on your machine, not just those created by Solo. Only run this command if you understand its impact.
 
 - To redeploy after a full reset, follow the [Quickstart](/docs/simple-solo-setup/quickstart) guide.
+
+## Clean up legacy npm installations
+
+If you previously installed Solo via npm (for example, from older workshops or
+documentation), remove the legacy global package to avoid conflicts with a
+newer Homebrew or npm install:
+
+```bash
+# Remove a legacy npm-based Solo install (safe to run even if not present)
+npm uninstall -g @hiero-ledger/solo
+```
+
+Then reinstall using the [Quickstart](/docs/simple-solo-setup/quickstart), or
+follow [Upgrading an existing Solo installation](/docs/simple-solo-setup/upgrading-solo)
+to move to a specific or latest version.

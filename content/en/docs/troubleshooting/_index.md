@@ -16,6 +16,7 @@ This guide covers common issues you may encounter when using Solo and how to res
 
 Use this page when something is failing and you need to diagnose or recover quickly.
 
+- [Error code reference](#error-code-reference)
 - [Troubleshooting installation and upgrades](#troubleshooting-installation-and-upgrades)
 - [Pods not reaching Ready state](#pods-not-reaching-ready-state)
 - [CrashLoopBackOff causes and remediation](#crashloopbackoff-causes-and-remediation)
@@ -31,6 +32,17 @@ If you are looking for setup or day-to-day usage guidance rather than failure di
 - [How to fully destroy a network and clean up resources](/docs/simple-solo-setup/cleanup)
 - [How to access exposed services (mirror node, relay, explorer)](/docs/faqs#accessing-exposed-services)
 - [Common usage patterns and gotchas](/docs/faqs#common-usage-patterns-and-gotchas)
+
+## Error Code Reference
+
+Every error Solo raises carries a structured code of the form `SOLO-XXXX`, an ownership
+classification (User, Infrastructure, or Solo), and a retryable flag. When a command fails with
+one of these codes, look it up in the **[Error Codes reference](/docs/troubleshooting/errors/)**
+for a plain-language description of why it is thrown, along with its troubleshooting steps.
+
+Codes are grouped by category — Configuration, Deployment, Component, Validation, System, and
+Internal. Solo's CLI also prints a documentation link for each error (for example
+<https://solo.hiero.org/docs/errors/SOLO-1001>) that opens its page directly.
 
 ## Common Issues and Solutions
 
@@ -594,6 +606,7 @@ kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>
 - [Advanced Solo Setup](/docs/advanced-solo-setup) - Complex deployment scenarios.
 - [FAQs](/docs/faqs) - Common questions and answers.
 - [Solo CLI Reference](/docs/advanced-solo-setup/cli/solo-cli) - Canonical command and flag reference.
+- [Error Codes reference](/docs/troubleshooting/errors/) - Look up any `SOLO-XXXX` error code.
 
 ### 3. GitHub Issues
 

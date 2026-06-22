@@ -61,7 +61,7 @@ Expected output (version may be different):
 
 ```text
 ** Solo **
-Version : 0.59.1
+Version : 0.77.0
 **
 ```
 
@@ -81,6 +81,10 @@ This command performs the following actions:
 - Deploys the Solo network components.
 - Sets up and funds default test accounts.
 - Exposes gRPC and JSON-RPC endpoints for client access.
+
+> **Tip:** Solo caches the container images it pulls, so your first deployment
+> may take longer while images download; later deployments reuse the local cache
+> and start faster. See [Solo Image Cache](/docs/advanced-solo-setup/image-cache).
 
 > **Note:** During deployment you may see `Stopping port-forward for port [N]`
 > printed in yellow. This is expected - as it sets up the network, Solo stops

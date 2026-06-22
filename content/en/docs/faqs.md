@@ -323,3 +323,10 @@ The mirror node accumulates transaction history while the network is running. If
     ```
 
 - Then run `k9s` to launch. It is especially helpful for watching pod startup progress during deployment.
+
+### 14. How do I reset the ledger to a clean genesis state without redeploying?
+
+Run `solo ledger system reset --deployment <deployment-name>` to reset the
+ledger to genesis - clearing saved state and ledger-related secrets - while
+keeping the same cluster and deployment. See
+[Reset the ledger to genesis](/docs/simple-solo-setup/managing-your-network#reset-the-ledger-to-genesis).

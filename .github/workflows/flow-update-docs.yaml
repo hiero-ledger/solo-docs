@@ -144,6 +144,35 @@ jobs:
       - name: Build Hugo site
         run: npm run _hugo -- --minify --baseURL "${{ steps.baseurl.outputs.baseurl }}"
 
+      # Derive the solo release tag from the version the pre_hugo fetch resolved
+      # (.cache/solo-cli-docs/version.txt, written during "Build Hugo site"), so the
+      # error-page source matches the released CLI reference. e.g. 0.78.0 -> v0.78.0
+      - name: Resolve solo source tag
+        id: solo-tag
+        run: |
+          version="$(tr -d '[:space:]' < .cache/solo-cli-docs/version.txt)"
+          if [[ -z "$version" ]]; then
+            echo "::error::.cache/solo-cli-docs/version.txt is empty or missing; the Hugo build's pre_hugo fetch must run first."
+            exit 1
+          fi
+          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
+          echo "::notice::Checking out solo source at tag v${version}"
+
+      # Checkout the solo source at the released tag so the error-page generator can
+      # read its TypeScript source files.
+      - name: Checkout solo source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          repository: hiero-ledger/solo
+          ref: ${{ steps.solo-tag.outputs.tag }}
+          path: solo-src
+
+      # Generate the SoloError documentation pages from the checked-out solo source.
+      - name: Generate error code pages
+        run: npm run generate-errors
+        env:
+          SOLO_REPO_PATH: ${{ github.workspace }}/solo-src
+
       # upload go gh-pages
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
