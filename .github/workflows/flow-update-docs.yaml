@@ -27,22 +27,17 @@
 #
 # What this workflow does (in order):
 #   1.  Check out this (solo-docs) repo onto the runner.
-#   2.  Check out the hiero-ledger/solo repo at the requested release tag into
-#       the sub-directory ./solo-src/.
-#   3.  Set up Node.js, task (go-task), kubectl, Helm, and Kind.
-#   4.  Build solo from the checked-out source and install it globally so the
-#       `solo` binary is on PATH for the generation scripts to call.
-#   5.  Run scripts/executeUpdateDocs.mjs - spins up a Kind cluster, runs
-#       the full Solo CLI lifecycle, captures output, renders Markdown templates
-#       into content/en/docs/.
-#   6.  Run scripts/generateHelp.mjs - runs `solo --help` at every command
-#       depth and writes content/en/docs/solo-commands.md.
-#   7.  Commit any changed files back to this repo on the main branch so that
-#       the next Hugo build picks up the freshly generated content.
-#   8.  Build the Hugo site with GitHub Pages baseURL and deploy to GitHub Pages.
+#   2.  Set up Node.js and Go, and install npm dependencies (which also install
+#       Hugo and Docsy).
+#   3.  Build the Hugo site. The `pre_hugo` hook runs
+#       scripts/fetch-solo-docs-content.mjs, which downloads the combined
+#       solo-docs-content.tar.gz release artifact from hiero-ledger/solo and
+#       prepends Hugo frontmatter to the Solo CLI reference and every SoloError
+#       page. No solo source checkout or parsing happens here anymore.
+#   4.  Deploy the built site to GitHub Pages.
 #
 # Required secrets:
-#   - GITHUB_TOKEN: built-in token with `contents: write` for pushing generated docs
+#   - GITHUB_TOKEN: built-in token with `contents: write` and `pages: write`.
 
 name: "Update Generated Docs"
 
@@ -143,35 +138,6 @@ jobs:
       # hugo build with the resolved baseURL for the selected deployment target
       - name: Build Hugo site
         run: npm run _hugo -- --minify --baseURL "${{ steps.baseurl.outputs.baseurl }}"
-
-      # Derive the solo release tag from the version the pre_hugo fetch resolved
-      # (.cache/solo-cli-docs/version.txt, written during "Build Hugo site"), so the
-      # error-page source matches the released CLI reference. e.g. 0.78.0 -> v0.78.0
-      - name: Resolve solo source tag
-        id: solo-tag
-        run: |
-          version="$(tr -d '[:space:]' < .cache/solo-cli-docs/version.txt)"
-          if [[ -z "$version" ]]; then
-            echo "::error::.cache/solo-cli-docs/version.txt is empty or missing; the Hugo build's pre_hugo fetch must run first."
-            exit 1
-          fi
-          echo "tag=v${version}" >> "$GITHUB_OUTPUT"
-          echo "::notice::Checking out solo source at tag v${version}"
-
-      # Checkout the solo source at the released tag so the error-page generator can
-      # read its TypeScript source files.
-      - name: Checkout solo source
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          repository: hiero-ledger/solo
-          ref: ${{ steps.solo-tag.outputs.tag }}
-          path: solo-src
-
-      # Generate the SoloError documentation pages from the checked-out solo source.
-      - name: Generate error code pages
-        run: npm run generate-errors
-        env:
-          SOLO_REPO_PATH: ${{ github.workspace }}/solo-src
 
       # upload go gh-pages
       - name: Upload Pages Artifact

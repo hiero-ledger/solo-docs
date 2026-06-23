@@ -6,14 +6,15 @@
  *
  * Cross-platform replacement for the previous `rm -Rf public/* resources`
  * clean script. Also clears the build-artifact cache populated by
- * fetch-solo-cli-doc.mjs so the next build re-downloads from the GitHub
+ * fetch-solo-docs-content.mjs so the next build re-downloads from the GitHub
  * release.
  *
  * Behavior:
  *   - Empties `public/` (preserves the directory itself so the existing
  *     `make:public` git-init flow still works).
  *   - Removes `resources/`.
- *   - Removes `.cache/solo-cli-docs/`.
+ *   - Removes `.cache/` (holds the downloaded solo-docs-content archive and the
+ *     frontmatter-wrapped CLI reference and error pages mounted from it).
  */
 
 import { readdir, rm } from 'node:fs/promises';
@@ -37,4 +38,3 @@ async function emptyDir(dir) {
 await emptyDir('public');
 await rm('resources', { recursive: true, force: true });
 await rm('.cache', { recursive: true, force: true });
-await rm('content/en/docs/troubleshooting/errors', { recursive: true, force: true });
