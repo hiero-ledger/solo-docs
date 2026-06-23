@@ -36,26 +36,33 @@ install yourself.
 | --- | --- | --- |
 | [Solo](https://github.com/hiero-ledger/solo) | latest | `brew install hiero-ledger/tools/solo`, or `npm install -g @hiero-ledger/solo` |
 | [Node.js](https://nodejs.org/en/download) | >= 22.0.0 (lts/jod) | **Homebrew installs it for you**; with **npm you install it yourself** |
-| Container runtime ([Docker](https://www.docker.com/products/docker-desktop) / [Podman](https://podman.io)) | See [Docker](#docker) below | **You install it** - Docker Desktop (macOS/Windows) or Docker Engine/Podman (Linux). Solo cannot install one. |
+| Container runtime ([Docker](https://www.docker.com/products/docker-desktop) / [Podman](https://podman.io)) | See [Docker](#docker) below | **You install it** — Docker Desktop (macOS/Windows) or Docker Engine (Linux). Solo auto-installs Podman on Linux/macOS/WSL2 if Docker Engine is not found. Not supported on native Windows. |
 | [kubectl](https://kubernetes.io/docs/reference/kubectl/) | >= v1.32.2 | **Solo provisions it** at deploy time - reuses a compatible copy already on your system, or downloads one into `~/.solo/bin` |
 | [Helm](https://helm.sh) | v3.14.2 | **Solo provisions it** at deploy time |
 | [Kind](https://kind.sigs.k8s.io) | >= v0.29.0 | **Solo provisions it** at deploy time |
 | [Kubernetes](https://kubernetes.io) | >= v1.32.2 | Installed automatically by Kind |
 | [k9s](https://k9scli.io/topics/install/) (optional) | >= v0.27.4 | You install it |
 
-> **Note:** Solo's provisioned copies of kubectl and Helm live in `~/.solo/bin`,
-> which is not necessarily on your `PATH`. If you want to run `kubectl` or `helm`
-> commands yourself (some guides do), install [kubectl](https://kubernetes.io/docs/tasks/tools/)
-> and [Helm](https://helm.sh/docs/intro/install/) on your `PATH` separately.
+> **Note:** Solo's provisioned copies of kubectl, Kind, and Helm live in `~/.solo/bin`,
+> which is not necessarily on your `PATH`. If you want to run `kubectl`, `kind`, or `helm`
+> commands yourself (some guides do), install [kubectl](https://kubernetes.io/docs/tasks/tools/),
+> [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation), and
+> [Helm](https://helm.sh/docs/intro/install/) on your `PATH` separately.
 
 ### Windows (WSL2) prerequisite
 
-If you install Solo on Windows via WSL2, WSL2 requires hardware virtualization
-and the Virtual Machine Platform Windows feature. Follow Microsoft's
-[Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) guide to
-install WSL and meet these prerequisites. If you cannot enable virtualization
-(for example, `wsl --install` reports `HCS_E_HYPERV_NOT_INSTALLED`), use the
-native **Windows (PowerShell)** path instead, which does not require WSL2.
+Kind (which Solo provisions automatically) requires WSL2 to be enabled on
+Windows, but you do not need a WSL2 Linux distro installed — only the WSL2
+feature itself. Enable it with:
+
+```powershell
+wsl --install --no-distribution
+```
+
+WSL2 requires hardware virtualization and the Virtual Machine Platform Windows
+feature. If virtualization is unavailable (for example, `wsl --install` reports
+`HCS_E_HYPERV_NOT_INSTALLED`), use the native **Windows (PowerShell)** path
+instead, which does not require WSL2.
 
 ## Docker
 
