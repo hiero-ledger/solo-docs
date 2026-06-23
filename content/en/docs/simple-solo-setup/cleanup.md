@@ -53,6 +53,20 @@ If `solo one-shot single destroy` fails part-way through (for example, due to an
 
 If rerunning destroy does not release the resources, use the **Full Reset** procedure below to force a clean state.
 
+### Remove the Kind cluster
+
+`solo one-shot single destroy` intentionally leaves the Kind cluster in Docker
+so you can redeploy quickly. If you want a completely clean slate, delete the
+cluster after destroying the deployment:
+
+```bash
+kind delete cluster --name solo-cluster
+```
+
+`solo-cluster` is Solo's default Kind cluster name; run `kind get clusters` to
+confirm yours if you used a custom name. To also remove Solo's local
+configuration and cache, use the [Full Reset](#full-reset) procedure.
+
 ## Resource Usage
 
 Solo deploys a fully functioning mirror node that stores the transaction history

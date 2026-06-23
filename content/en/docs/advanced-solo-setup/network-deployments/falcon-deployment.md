@@ -68,6 +68,9 @@ to the underlying Solo subcommands.
 
 For the full list of supported CLI flags per section, see the
 [**Falcon Values File Reference**](/docs/advanced-solo-setup/network-deployments/falcon-flags-reference).
+If you set `network.--application-properties`, see
+[Custom Application Properties](/docs/advanced-solo-setup/network-deployments/custom-application-properties)
+for the difference between Solo's default merge mode and full overwrite mode.
 
 ## Prepare a Falcon values file
 

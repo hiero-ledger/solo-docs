@@ -381,9 +381,8 @@ To connect MetaMask to your local Solo network:
    | New RPC URL | `http://localhost:37546` |
    | Chain ID | `298` |
    | Currency symbol | `HBAR` |
-   | Block explorer URL | `http://localhost:38080/localnet/dashboard` (optional) |
 
-   > **Note:** If you are using Solo 0.62 or earlier, use `http://localhost:7546` for the RPC URL and `http://localhost:8080/localnet/dashboard` for the block explorer URL.
+   > **Note:** If you are using Solo 0.62 or earlier, use `http://localhost:7546` for the RPC URL.
 
 3. Click **Save** and switch to the **Solo Local** network.
 4. Import an account using an ECDSA private key from `accounts.json`:

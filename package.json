@@ -24,7 +24,7 @@
     "_get:docsy": "hugo mod get -u github.com/google/docsy",
     "_hugo-dev": "npm run _hugo -- -e dev --logLevel info -DFE",
     "_hugo": "hugo --cleanDestinationDir",
-    "pre_hugo": "node scripts/fetch-solo-cli-doc.mjs",
+    "pre_hugo": "node scripts/fetch-solo-docs-content.mjs",
     "_serve": "npm run _hugo-dev -- --minify serve --renderToMemory",
     "build:preview": "npm run _hugo-dev -- --minify --baseURL \"${DEPLOY_PRIME_URL:-/}\"",
     "build:production": "npm run _hugo -- --minify",
@@ -56,7 +56,6 @@
     "update:packages": "npx npm-check-updates -u",
     "update": "npm run update:packages && npm run update:docsy:mod",
     "generate-docs": "node scripts/executeUpdateDocs.mjs",
-    "generate-errors": "node scripts/generateErrors.mjs",
     "generate-help": "node scripts/generateHelp.mjs"
   },
   "devDependencies": {
@@ -70,8 +69,8 @@
     "kleur": "4.1.5"
   },
   "optionalDependencies": {
-    "npm-check-updates": "22.2.3",
-    "prettier": "3.8.3"
+    "npm-check-updates": "22.2.7",
+    "prettier": "3.8.4"
   },
   "engines": {
     "node": ">=22"
