@@ -265,7 +265,8 @@ explorerNode:
 ```
 
 This pattern is useful for local integration testing against unpublished
-component builds.
+component builds. For a step-by-step walkthrough of the local build workflow,
+see [Deploying a Local Consensus Node Build](/docs/using-solo/local-builds).
 
 ## Falcon with Block Node
 

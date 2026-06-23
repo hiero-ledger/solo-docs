@@ -33,6 +33,13 @@ For the canonical list of `*_EDGE_VERSION` variables, see
 [Edge Component Versions](/docs/advanced-solo-setup/using-environment-variables#edge-component-versions)
 in the environment variables reference.
 
+> **Local binary builds vs published version overrides:** `--edge` and
+> `*_EDGE_VERSION` variables pin components to **published container image
+> tags** — they require the image to exist in the registry. If you need to
+> deploy a binary you compiled locally (before any tag or release exists), use
+> `--local-build-path` instead. See
+> [Deploying a Local Consensus Node Build](/docs/using-solo/local-builds).
+
 ---
 
 ## How It Works
