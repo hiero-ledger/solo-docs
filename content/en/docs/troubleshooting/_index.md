@@ -67,6 +67,31 @@ suggesting `solo deployment diagnostics logs` or
 > **Note:** Add `--dev` to a command to see the full error cause chain and stack
 > traces instead of the summarized form — useful when filing a bug report.
 
+### Error code categories
+
+Solo groups error codes by their leading digit:
+
+| Range | Category | Example |
+| --- | --- | --- |
+| `SOLO-1xxx` | Configuration — local/remote config, schema, existence checks | `SOLO-1001` |
+| `SOLO-2xxx` | Deployment / infrastructure — clusters, namespaces, pod lifecycle | `SOLO-2002` |
+| `SOLO-3xxx` | Component — relay, mirror node, explorer, consensus node | `SOLO-3009` |
+| `SOLO-4xxx` | Validation — user input, flags, IDs, formatting | `SOLO-4005` |
+| `SOLO-5xxx` | System / environment — kubectl, DNS, permissions, timeouts | `SOLO-5002` |
+| `SOLO-9xxx` | Internal — unexpected bugs or unimplemented paths | — |
+
+### Who resolves the error
+
+Each error points to where the fix usually lies:
+
+- **User** — something in your command or configuration that you can fix directly
+  (for example, a missing flag or an invalid value).
+- **Infrastructure** — your cluster or environment (for example, an unreachable
+  cluster or a missing pod). These are often **retryable** once the underlying
+  condition clears.
+- **Solo** — an internal Solo problem. If you hit one repeatedly, gather logs and
+  [open an issue](https://github.com/hiero-ledger/solo/issues).
+
 ## Common Issues and Solutions
 
 ### Troubleshooting Installation and Upgrades
