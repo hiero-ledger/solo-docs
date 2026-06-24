@@ -119,13 +119,23 @@ Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, o
 
     > **macOS prerequisite:** Docker Desktop must be open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
-3. Install Solo:
+3. **(Apple Silicon only) Add `/opt/homebrew` to Docker Desktop File Sharing:**
+
+    On Apple Silicon Macs (M1/M2/M3/M4), Homebrew installs to `/opt/homebrew`, which Docker Desktop does not share by default. Without this step, `solo one-shot single deploy` fails immediately with a **"mounts denied"** error.
+
+    - Go to **Docker Desktop → Settings → Resources → File Sharing**.
+    - Click **+** and add `/opt/homebrew`.
+    - Click **Apply & Restart**.
+
+    This is a one-time setting and covers all future Solo version upgrades. Intel Mac users (Homebrew path `/usr/local`) can skip this step.
+
+4. Install Solo:
 
     ```sh
     brew install hiero-ledger/tools/solo
     ```
 
-4. Verify the installation:
+5. Verify the installation:
 
     ```sh
     solo --version
