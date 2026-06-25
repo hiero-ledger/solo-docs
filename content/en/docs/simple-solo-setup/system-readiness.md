@@ -119,23 +119,13 @@ Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, o
 
     > **macOS prerequisite:** Docker Desktop must be open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
-3. **(Apple Silicon only) Add `/opt/homebrew` to Docker Desktop File Sharing:**
-
-    On Apple Silicon Macs (M1/M2/M3/M4), Homebrew installs to `/opt/homebrew`, which Docker Desktop does not share by default. Without this step, `solo one-shot single deploy` fails immediately with a **"mounts denied"** error.
-
-    - Go to **Docker Desktop → Settings → Resources → File Sharing**.
-    - Click **+** and add `/opt/homebrew`.
-    - Click **Apply & Restart**.
-
-    This is a one-time setting and covers all future Solo version upgrades. Intel Mac users (Homebrew path `/usr/local`) can skip this step.
-
-4. Install Solo:
+3. Install Solo:
 
     ```sh
     brew install hiero-ledger/tools/solo
     ```
 
-5. Verify the installation:
+4. Verify the installation:
 
     ```sh
     solo --version
@@ -304,6 +294,13 @@ with a previous installation - clean up your environment and reinstall:
 - To **upgrade an existing install**, install a **specific version**, or switch
   between Homebrew and npm, see
   [Upgrading an existing Solo installation](/docs/simple-solo-setup/upgrading-solo).
+- **macOS "mounts denied" error on Apple Silicon**: If `solo one-shot single deploy`
+  fails immediately with a **"mounts denied"** or **"path is not shared from the host"**
+  error, add `/opt/homebrew` to Docker Desktop's File Sharing list:
+  **Settings → Resources → File Sharing → +** → add `/opt/homebrew` → **Apply & Restart**.
+  This can occur on Apple Silicon Macs (M1/M2/M3/M4) when Homebrew's install path
+  (`/opt/homebrew`) is not included in Docker Desktop's shared directories.
+  Intel Mac users (Homebrew path `/usr/local`) are not affected.
 - **WSL2 fails to install** (for example, `wsl --install` reports
   `HCS_E_HYPERV_NOT_INSTALLED`): WSL2 requires hardware virtualization and the
   Virtual Machine Platform feature. See Microsoft's

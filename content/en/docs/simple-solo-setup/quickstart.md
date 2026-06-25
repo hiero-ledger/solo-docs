@@ -24,7 +24,9 @@ Before you begin, ensure you have completed the following:
 - System Readiness:
   - Prepare your local environment (Docker, Kind, Kubernetes, and related tooling) by following the **[System Readiness](/docs/simple-solo-setup/system-readiness)** guide.
 
-> **macOS prerequisite:** Docker Desktop must be installed and open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin. On **Apple Silicon Macs** (M1/M2/M3/M4), also add `/opt/homebrew` to Docker Desktop's File Sharing list (**Settings → Resources → File Sharing**) — without it, the deploy fails with a "mounts denied" error. See [System Readiness](/docs/simple-solo-setup/system-readiness#platform-setup) for the full setup step.
+> **macOS prerequisite:** Docker Desktop must be installed and open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
+
+> **Apple Silicon:** If `solo one-shot single deploy` fails with a **"mounts denied"** error, see [Troubleshooting Installation](/docs/simple-solo-setup/system-readiness#troubleshooting-installation).
 
 > **Windows (PowerShell):** Complete the [System Readiness](/docs/simple-solo-setup/system-readiness) **Windows** tab first, then run the commands on this page from a PowerShell terminal. The `solo` and `kubectl` commands are identical in PowerShell; only shell-specific commands (pipes, port checks, and `~/.solo` paths) differ, and those show a **PowerShell** tab.
 
