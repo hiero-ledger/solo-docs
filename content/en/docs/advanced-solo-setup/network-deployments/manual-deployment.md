@@ -149,6 +149,12 @@ HAProxy, Envoy, and MinIO:
   solo consensus network deploy --deployment "${SOLO_DEPLOYMENT}"
   ```
 
+  To provide a custom consensus node `application.properties` file, pass
+  `--application-properties <path>`. Solo merges custom files with its generated
+  defaults unless the file includes the overwrite marker. See
+  [Custom Application Properties](/docs/advanced-solo-setup/network-deployments/custom-application-properties)
+  for merge and overwrite examples.
+
 - **Expected output**:
 
   {{< solo-output ref="solo-consensus-network-deploy" lang="bash" >}}

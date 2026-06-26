@@ -68,6 +68,9 @@ to the underlying Solo subcommands.
 
 For the full list of supported CLI flags per section, see the
 [**Falcon Values File Reference**](/docs/advanced-solo-setup/network-deployments/falcon-flags-reference).
+If you set `network.--application-properties`, see
+[Custom Application Properties](/docs/advanced-solo-setup/network-deployments/custom-application-properties)
+for the difference between Solo's default merge mode and full overwrite mode.
 
 ## Prepare a Falcon values file
 
@@ -262,7 +265,8 @@ explorerNode:
 ```
 
 This pattern is useful for local integration testing against unpublished
-component builds.
+component builds. For a step-by-step walkthrough of the local build workflow,
+see [Deploying a Local Consensus Node Build](/docs/using-solo/local-builds).
 
 ## Falcon with Block Node
 

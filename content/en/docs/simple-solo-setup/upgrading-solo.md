@@ -32,7 +32,7 @@ brew upgrade hiero-ledger/tools/solo
 ```
 
 `brew update` refreshes Homebrew's formulae; `brew upgrade` then installs the
-latest Solo and refreshes its `kubectl` and `Helm` dependencies. Verify the new
+latest Solo (and Node.js, its only Homebrew dependency). Verify the new
 version:
 
 ```bash
@@ -48,8 +48,10 @@ to move to the newest release:
 npm install -g @hiero-ledger/solo@latest
 ```
 
-> **Note:** Unlike the Homebrew formula, npm does not install `kubectl` and
-> `Helm`. After a major-version upgrade, re-check the required tool versions in
+> **Note:** Unlike the Homebrew formula, npm does not install Node.js - make
+> sure Node.js is present before upgrading. (Solo provisions kubectl, Helm, and
+> Kind automatically at deploy time regardless of install method.) After a
+> major-version upgrade, re-check the required tool versions in
 > [System Readiness](/docs/simple-solo-setup/system-readiness).
 
 ## Resolving an `EEXIST` package-name conflict
@@ -100,8 +102,18 @@ To install a specific (non-latest) Solo release - for example, to reproduce a
 bug, run a regression test, or pin a version across a team - use a versioned
 Homebrew formula or npm tag instead of `latest`.
 
-{{< tabpane text=true >}} {{% tab header="Homebrew" lang="homebrew" %}}
+> **Note:** A versioned brew formula or npm tag **pins** Solo to that release - it
+> will not move when you run `brew upgrade` or `npm update`. To change versions
+> later (including returning to the latest release, or **downgrading**),
+> switching in place is **not supported**: uninstall Solo first
+> (`brew uninstall hiero-ledger/tools/solo`, or `npm uninstall -g @hiero-ledger/solo`),
+> then run the versioned install command below for the version you want. This
+> keeps your `~/.solo` data - only a [Clean reinstall](#clean-reinstall) removes
+> it. If you are switching package managers, see also
+> [Switching between Homebrew and npm](#switching-between-homebrew-and-npm).
 
+{{< tabpane text=true >}}
+{{% tab header="Homebrew" lang="homebrew" %}}
 ```bash
 brew install hiero-ledger/tools/solo@0.76.0
 ```
