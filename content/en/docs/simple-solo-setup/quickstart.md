@@ -26,6 +26,8 @@ Before you begin, ensure you have completed the following:
 
 > **macOS prerequisite:** Docker Desktop must be installed and open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
+> **Apple Silicon:** If `solo one-shot single deploy` fails with a **"mounts denied"** error, see [Troubleshooting Installation](/docs/simple-solo-setup/system-readiness#troubleshooting-installation).
+
 > **Windows (PowerShell):** Complete the [System Readiness](/docs/simple-solo-setup/system-readiness) **Windows** tab first, then run the commands on this page from a PowerShell terminal. The `solo` and `kubectl` commands are identical in PowerShell; only shell-specific commands (pipes, port checks, and `~/.solo` paths) differ, and those show a **PowerShell** tab.
 
 > **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
@@ -47,7 +49,7 @@ Install the latest Solo CLI globally using one of the following methods:
   npm install -g @hiero-ledger/solo@latest
   ```
 
-  > **Note:** On macOS, Linux, and WSL2, Homebrew is recommended — it installs Node.js for you, whereas npm requires Node.js to already be present. On native Windows (PowerShell), npm is the only available option. Regardless of installation method, Solo provisions kubectl, Helm, and Kind automatically at deploy time.
+  > **Note:** On macOS, Linux, and WSL2, Homebrew is recommended — it installs Node.js for you, whereas npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed — Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). On native Windows (PowerShell), npm is the only available option. Regardless of installation method, Solo provisions kubectl, Helm, and Kind automatically at deploy time.
 
 ### Verify the installation
 

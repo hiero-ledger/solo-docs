@@ -294,6 +294,13 @@ with a previous installation - clean up your environment and reinstall:
 - To **upgrade an existing install**, install a **specific version**, or switch
   between Homebrew and npm, see
   [Upgrading an existing Solo installation](/docs/simple-solo-setup/upgrading-solo).
+- **macOS "mounts denied" error on Apple Silicon**: If `solo one-shot single deploy`
+  fails immediately with a **"mounts denied"** or **"path is not shared from the host"**
+  error, add `/opt/homebrew` to Docker Desktop's File Sharing list:
+  **Settings → Resources → File Sharing → +** → add `/opt/homebrew` → **Apply & Restart**.
+  This can occur on Apple Silicon Macs (M1/M2/M3/M4) when Homebrew's install path
+  (`/opt/homebrew`) is not included in Docker Desktop's shared directories.
+  Intel Mac users (Homebrew path `/usr/local`) are not affected.
 - **WSL2 fails to install** (for example, `wsl --install` reports
   `HCS_E_HYPERV_NOT_INSTALLED`): WSL2 requires hardware virtualization and the
   Virtual Machine Platform feature. See Microsoft's
