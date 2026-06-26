@@ -54,6 +54,10 @@ npm install -g @hiero-ledger/solo@latest
 > major-version upgrade, re-check the required tool versions in
 > [System Readiness](/docs/simple-solo-setup/system-readiness).
 
+> **nvm users:** If the upgrade fails with `EEXIST: file already exists`, the
+> old binary is still in place. Remove it first, then reinstall - or follow the
+> [Clean reinstall](#clean-reinstall) steps below.
+
 ## Install a specific version
 
 To install a specific (non-latest) Solo release - for example, to reproduce a
