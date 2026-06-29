@@ -70,7 +70,7 @@
   },
   "optionalDependencies": {
     "npm-check-updates": "22.2.7",
-    "prettier": "3.8.4"
+    "prettier": "3.9.3"
   },
   "engines": {
     "node": ">=22"
