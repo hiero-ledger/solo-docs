@@ -223,7 +223,15 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
    wsl --install Ubuntu
    ```
 
-2. Install Homebrew for Linux:
+2. Install build tools required by Homebrew:
+
+    ```sh
+    sudo apt-get install build-essential procps curl file git
+    ```
+
+    > **Note:** These are the [Linux prerequisites for Homebrew](https://docs.brew.sh/Homebrew-on-Linux). Without `build-essential`, `brew install hiero-ledger/tools/solo` fails with `Error: ... must be built from source. Install Clang or run brew install gcc`. Only run this command on a trusted system.
+
+3. Install Homebrew for Linux:
 
     ```sh
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -236,18 +244,18 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     ```
 
-3. Install Docker Desktop for Windows:
+4. Install Docker Desktop for Windows:
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
     - Enable WSL2 integration: Docker Desktop > Settings > Resources > WSL Integration.
     - Allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory.
 
-4. Install Solo:
+5. Install Solo:
 
     ```sh
     brew install hiero-ledger/tools/solo
     ```
 
-5. Verify the installation:
+6. Verify the installation:
 
     ```sh
     solo --version
