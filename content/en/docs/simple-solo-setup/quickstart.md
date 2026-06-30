@@ -43,13 +43,13 @@ Install the latest Solo CLI globally using one of the following methods:
   brew install hiero-ledger/tools/solo
   ```
 
-- **npm** (required for native Windows PowerShell; alternative on macOS/Linux/WSL2):
+- **npm** (required for native Windows PowerShell; recommended for Fedora/RHEL/non-Debian Linux; alternative on macOS/WSL2):
 
   ```bash
   npm install -g @hiero-ledger/solo@latest
   ```
 
-  > **Note:** On macOS, Linux, and WSL2, Homebrew is recommended — it installs Node.js for you, whereas npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed — Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). On native Windows (PowerShell), npm is the only available option. Regardless of installation method, Solo provisions kubectl, Helm, and Kind automatically at deploy time.
+  > **Note:** On macOS, Linux, and WSL2, Homebrew is recommended - it installs Node.js for you, whereas npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed - Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). On **Fedora, RHEL, openSUSE, Alpine, Arch**, and other non-Debian Linux distributions, npm is recommended because the Homebrew bottle for Solo is not available on those distros. On native Windows (PowerShell), npm is the only available option. Regardless of installation method, Solo provisions kubectl, Helm, and Kind automatically at deploy time.
 
 ### Verify the installation
 
@@ -92,6 +92,15 @@ This command performs the following actions:
 > printed in yellow. This is expected - as it sets up the network, Solo stops
 > and re-establishes port-forwards to finalize the port configuration (clearing
 > stale forwards and migrating ports as needed). It does not indicate a failure.
+
+> **PostgreSQL startup timeout:** If the first deployment fails during mirror
+> node setup with a PostgreSQL startup timeout, destroy the deployment and
+> retry — this is a known intermittent issue on first deploy:
+>
+> ```bash
+> solo one-shot single destroy
+> solo one-shot single deploy
+> ```
 
 ### What gets deployed
 

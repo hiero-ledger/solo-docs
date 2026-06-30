@@ -11,7 +11,12 @@ type: docs
 ---
 
 ## Overview
-Before you deploy a local Hiero test network with `solo one-shot single deploy`, your machine must meet specific hardware, operating system, and tooling requirements. This page walks you through the minimum and recommended memory, CPU, and storage, supported platforms (macOS, Linux, and Windows — natively with PowerShell, or via WSL2), and the required versions of Docker/Podman, Node.js, and Kubernetes tooling. By the end of this page, you will have your container runtime installed, platform-specific settings configured, and all Solo prerequisites in place so you can move on to the Quickstart and create a local network with a single command.
+
+Before you deploy a local Hiero test network with `solo one-shot single deploy`, your machine must meet specific hardware, operating system, and tooling requirements.
+
+This page covers the minimum and recommended memory, CPU, and storage; supported platforms (macOS, Linux, and Windows — natively with PowerShell, or via WSL2); and the required versions of Docker/Podman, Node.js, and Kubernetes tooling.
+
+By the end of this page, your container runtime will be installed and your platform environment configured. Then proceed to [Quickstart](/docs/simple-solo-setup/quickstart) to install Solo and deploy.
 
 ## Hardware Requirements
 
@@ -114,26 +119,27 @@ Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, o
 
 2. Install Docker Desktop:
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
-    - Start Docker Desktop and allocate at least 12 GB of memory:
-    - Docker Desktop > Settings > Resources > Memory
+    - Start Docker Desktop and configure resources:
+      - **Settings → Resources → Memory**: set to at least **12 GB**
+      - **Settings → Resources → CPU**: set to at least **6 cores**
+      - Click **Apply & Restart**
 
     > **macOS prerequisite:** Docker Desktop must be open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
-3. Install Solo:
-
-    ```sh
-    brew install hiero-ledger/tools/solo
-    ```
-
-4. Verify the installation:
-
-    ```sh
-    solo --version
-    ```
+Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quickstart) to install Solo and deploy.
 
 {{% /tab %}}
 
 {{% tab header="Linux" lang="linux" %}}
+
+> **Non-Debian distributions (Fedora, RHEL, openSUSE, Alpine, Arch):** The
+> steps below are tested on **Ubuntu/Debian**. On other distributions, skip
+> step 1 (Homebrew is not needed) and replace the `apt-get` commands in step 2
+> with your distro's native package manager (e.g. `sudo dnf install -y docker-ce
+> docker-ce-cli containerd.io` on Fedora/RHEL; see
+> [Docker's install guide](https://docs.docker.com/engine/install/) for your
+> distro). The Solo CLI install method for your distro is covered in
+> [Quickstart](/docs/simple-solo-setup/quickstart#install-solo-cli).
 
 1. Install Homebrew for Linux:
 
@@ -148,7 +154,7 @@ Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, o
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     ```
 
-2. Install Docker Engine (for Ubuntu/Debian):
+2. Install Docker Engine (Ubuntu/Debian):
 
     ```sh
     sudo apt-get update
@@ -160,17 +166,14 @@ Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, o
 
     Log out and back in for the group changes to take effect.
 
-3. Install Solo:
+    > **Fedora/RHEL:** Replace the `apt-get` commands above with your distro's
+    > package manager. For example, on Fedora: `sudo dnf install -y docker-ce
+    > docker-ce-cli containerd.io` (after adding Docker's dnf repo — see
+    > [Docker's Fedora guide](https://docs.docker.com/engine/install/fedora/)).
+    > Then run `sudo systemctl enable --now docker` and
+    > `sudo usermod -aG docker ${USER}`.
 
-    ```sh
-    brew install hiero-ledger/tools/solo
-    ```
-
-4. Verify the installation:
-
-    ```sh
-    solo --version
-    ```
+Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quickstart) to install Solo and deploy.
 
 {{% /tab %}}
 
@@ -180,7 +183,10 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
 
 1. Install Docker Desktop for Windows:
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop).
-    - Start Docker Desktop and allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory.
+    - Start Docker Desktop and configure resources:
+      - **Settings → Resources → Memory**: set to at least **12 GB**
+      - **Settings → Resources → CPU**: set to at least **6 cores**
+      - Click **Apply & Restart**
 
     > **Windows prerequisite:** Docker Desktop must be running before you run `solo one-shot single deploy`.
 
@@ -192,21 +198,9 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
 
     Or download the installer from [nodejs.org](https://nodejs.org/en/download).
 
-3. Install Solo via npm. 
-    
-    npm installs the Solo CLI only; Solo provisions kubectl, Helm, and Kind automatically at deploy time:
-
-    ```powershell
-    npm install -g @hiero-ledger/solo@latest
-    ```
-
-4. Verify the installation:
-
-    ```powershell
-    solo --version
-    ```
-
 > **Note:** Open a new PowerShell window after installing tools so updated PATH entries take effect.
+
+Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quickstart) to install Solo and deploy.
 
 {{% /tab %}}
 
@@ -229,7 +223,7 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
     sudo apt-get install build-essential procps curl file git
     ```
 
-    > **Note:** These are the [Linux prerequisites for Homebrew](https://docs.brew.sh/Homebrew-on-Linux). Without `build-essential`, `brew install hiero-ledger/tools/solo` fails with `Error: ... must be built from source. Install Clang or run brew install gcc`. Only run this command on a trusted system.
+    > **Note:** These are the [Linux prerequisites for Homebrew](https://docs.brew.sh/Homebrew-on-Linux). Without `build-essential`, `brew install` commands fail with `Error: ... must be built from source. Install Clang or run brew install gcc`. Only run this command on a trusted system.
 
 3. Install Homebrew for Linux:
 
@@ -246,34 +240,17 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
 
 4. Install Docker Desktop for Windows:
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
-    - Enable WSL2 integration: Docker Desktop > Settings > Resources > WSL Integration.
-    - Allocate at least 12 GB of memory: Docker Desktop > Settings > Resources > Memory.
+    - Enable WSL2 integration: **Settings → Resources → WSL Integration**
+    - Configure resources:
+      - **Settings → Resources → Memory**: set to at least **12 GB**
+      - **Settings → Resources → CPU**: set to at least **6 cores**
+      - Click **Apply & Restart**
 
-5. Install Solo:
-
-    ```sh
-    brew install hiero-ledger/tools/solo
-    ```
-
-6. Verify the installation:
-
-    ```sh
-    solo --version
-    ```
+Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quickstart) to install Solo and deploy.
 
 {{% /tab %}}
 
 {{< /tabpane >}}
-
-## Alternative Installation: npm (for contributors and advanced users)
-
-If you need more control over dependencies or are contributing to Solo development, you can install Solo via npm instead of Homebrew.
-
-> **Note:** Node.js >= 22.0.0 and Kind must be installed separately before using this method.
-
-```bash
-npm install -g @hiero-ledger/solo
-```
 
 ## Optional Tools
 
@@ -314,3 +291,12 @@ with a previous installation - clean up your environment and reinstall:
   Virtual Machine Platform feature. See Microsoft's
   [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) guide, or
   use the native **Windows (PowerShell)** path, which does not require WSL2.
+- **First deploy fails with a PostgreSQL startup timeout**: If
+  `solo one-shot single deploy` fails during mirror node setup with a
+  PostgreSQL startup timeout, this is a known intermittent issue on first
+  deploy. Destroy the deployment and retry:
+
+  ```sh
+  solo one-shot single destroy
+  solo one-shot single deploy
+  ```
