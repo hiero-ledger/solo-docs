@@ -186,6 +186,8 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `RELAY_VERSION` | [Release version](https://github.com/hiero-ledger/hiero-json-rpc-relay/releases) of the JSON-RPC Relay to use
 | `INGRESS_CONTROLLER_VERSION` | [Release version](https://haproxy-ingress.github.io/) of the HAProxy Ingress Controller to use
 | `SOLO_CHART_VERSION` | Release version of the Solo Helm charts to use
+| `SOLO_CHEETAH_VERSION` | Image version for the solo-deployment chart's Cheetah component
+| `SOLO_CONTAINERS_VERSION` | Image version for the solo-deployment chart's Solo containers component
 | `MINIO_OPERATOR_VERSION` | Release version of the MinIO Operator to use
 | `PROMETHEUS_STACK_VERSION` | Release version of the Prometheus Stack to use
 | `GRAFANA_AGENT_VERSION` | Release version of the Grafana Agent to use
