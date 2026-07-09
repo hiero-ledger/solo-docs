@@ -296,6 +296,7 @@ the full feature and the `solo cache image` commands.
 | `ENABLE_IMAGE_CACHE` | Set to `false` to disable the image cache during `solo one-shot` deploys. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). | enabled
 | `SOLO_NO_CACHE` | Set to `true` to skip the image pull during an npm global install. | enabled
 | `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image pull during a Homebrew install. | enabled
+| `CACHE_IMAGE_MAX_CONCURRENCY` | Max concurrent image cache pull/load operations | 12
 
 > **Note:** The cached component versions follow the same environment-variable
 > mechanism as [Pinning Component Versions](#pinning-component-versions) above -
