@@ -58,7 +58,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_HOME` | Path to the Solo cache and log files | `~/.solo`
 | `SOLO_CACHE_DIR` | Path to the Solo cache directory | `~/.solo/cache`
 | `SOLO_LOG_LEVEL` | Logging level for Solo operations. Accepted values: `trace`, `debug`, `info`, `warn`, `error` | `info`
-| `SOLO_DEV_OUTPUT` | Treat all commands as if the `--dev` flag were specified | `false`
+| `SOLO_DEV_OUTPUT` | Treat all commands as if the `--debug` flag were specified (`--debug` was formerly `--dev`) | `false`
 | `SOLO_CHAIN_ID` | Chain ID of the Solo network | `298`
 | `FORCE_PODMAN` | Force the use of Podman as the container engine when creating a new local cluster. Accepted values: `true`, `false` | `false`
 

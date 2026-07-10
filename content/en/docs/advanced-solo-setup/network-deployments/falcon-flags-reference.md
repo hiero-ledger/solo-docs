@@ -96,9 +96,14 @@ Flags passed to `solo consensus node setup`.
 | `--app-config` | string | — | Path to a JSON configuration file for the testing app. |
 | `--admin-public-keys` | string | — | Comma-separated DER-encoded ED25519 public keys in node alias order. |
 | `--domain-names` | string | — | Custom domain name mapping per node alias. |
-| `--dev` | boolean | `false` | Enable developer mode. |
+| `--debug` | boolean | `false` | Enable debug mode. (Formerly `--dev`, which is deprecated — see note below.) |
 | `--quiet-mode` | boolean | `false` | Suppress confirmation prompts. |
 | `--cache-dir` | string | `~/.solo/cache` | Local cache directory for downloaded artifacts. |
+
+> **Deprecated:** The `--dev` flag has been renamed to `--debug`. `--dev` still
+> works as an alias but is deprecated and prints a warning. The `--dev` alias
+> will no longer be supported once Solo `0.82.0` reaches its end of support
+> date.
 
 ---
 
@@ -213,10 +218,15 @@ Flags passed to `solo block node add`.
 | `--image-tag` | string | — | Docker image tag to override the Helm chart default. |
 | `--enable-ingress` | boolean | `false` | Deploy an ingress controller for the block node. |
 | `--domain-name` | string | — | Custom domain name for the block node. |
-| `--dev` | boolean | `false` | Enable developer mode for the block node. |
+| `--debug` | boolean | `false` | Enable debug mode for the block node. (Formerly `--dev`, which is deprecated — see note below.) |
 | `--block-node-chart-dir` | string | — | Path to a local Hiero block node Helm chart directory. |
 | `--quiet-mode` | boolean | `false` | Suppress confirmation prompts. |
 | `--values-file` | string | — | Comma-separated Helm chart values file paths for the block node chart. |
+
+> **Deprecated:** The `--dev` flag has been renamed to `--debug`. `--dev` still
+> works as an alias but is deprecated and prints a warning. The `--dev` alias
+> will no longer be supported once Solo `0.82.0` reaches its end of support
+> date.
 
 ---
 
