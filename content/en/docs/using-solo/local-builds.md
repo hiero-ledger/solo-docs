@@ -124,10 +124,11 @@ solo consensus node setup \
   --local-build-path /absolute/path/to/hiero-consensus-node/hedera-node/data
 ```
 
-Replace `<deployment-name>` with your deployment name — retrieve it with:
+Replace `<deployment-name>` with your deployment name. One-shot deployments use
+`one-shot` by default; You can see it with:
 
 ```bash
-cat ~/.solo/cache/last-one-shot-deployment.txt
+solo one-shot show deployment
 ```
 
 ---

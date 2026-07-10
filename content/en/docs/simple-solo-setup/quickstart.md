@@ -211,15 +211,17 @@ To view the active port assignments:
 solo deployment config ports --deployment <deployment-name>
 ```
 
+The output directory is `one-shot-<deployment-name>`, and the default deployment name is `one-shot`. So the default output directory is `~/.solo/one-shot-one-shot/`.
+
 {{< tabpane text=true >}}
 {{% tab header="Bash" lang="bash" %}}
 ```bash
-cat ~/.solo/one-shot-$(cat ~/.solo/cache/last-one-shot-deployment.txt)/forwards
+cat ~/.solo/one-shot-one-shot/forwards
 ```
 {{% /tab %}}
 {{% tab header="PowerShell" lang="powershell" %}}
 ```powershell
-Get-Content "$env:USERPROFILE\.solo\one-shot-$(Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)\forwards"
+Get-Content "$env:USERPROFILE\.solo\one-shot-one-shot\forwards"
 ```
 {{% /tab %}}
 {{< /tabpane >}}
@@ -228,33 +230,15 @@ Get-Content "$env:USERPROFILE\.solo\one-shot-$(Get-Content $env:USERPROFILE\.sol
 -------------------------------------------------------------------------------
  - component 1: localhost:35211 -> pod:50211
 
-{{< tabpane text=true >}}
-{{% tab header="Bash" lang="bash" %}}
 ```bash
-solo deployment config info --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
+solo deployment config info --deployment one-shot
 ```
-{{% /tab %}}
-{{% tab header="PowerShell" lang="powershell" %}}
-```powershell
-solo deployment config info --deployment (Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)
-```
-{{% /tab %}}
-{{< /tabpane >}}
 
 To restore port-forwards after a system restart without redeploying:
 
-{{< tabpane text=true >}}
-{{% tab header="Bash" lang="bash" %}}
 ```bash
-solo deployment refresh port-forwards --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
+solo deployment refresh port-forwards --deployment one-shot
 ```
-{{% /tab %}}
-{{% tab header="PowerShell" lang="powershell" %}}
-```powershell
-solo deployment refresh port-forwards --deployment (Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)
-```
-{{% /tab %}}
-{{< /tabpane >}}
 
 ### Endpoints for Solo 0.62 and earlier
 

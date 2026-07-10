@@ -92,23 +92,8 @@ What this does:
 - Mirror Node, Relay, Explorer, Block Node, and the Solo chart keep their
   compiled-in edge defaults because no `*_EDGE_VERSION` was set for them.
 
-> **Note:** If you already have a running `one-shot` deployment and want to
-> keep it, the command above fails with
-> *"A deployment named one-shot already exists"* because `one-shot` is the
-> default deployment name. Pass `--deployment <name> --namespace <name>` to
-> deploy the edge build alongside the existing one:
->
-> ```bash
-> CONSENSUS_NODE_EDGE_VERSION=v0.74.0-rc.1 \
-> solo one-shot single deploy --edge --dev \
->   --deployment one-shot-edge --namespace one-shot-edge
-> ```
->
-> Every `solo one-shot` deploy overwrites `~/.solo/cache/last-one-shot-deployment.txt`
-> with its own deployment name. After this command, the cache file points at
-> `one-shot-edge`, not the original `one-shot`. Pass `--deployment` explicitly
-> when running follow-up commands against a specific deployment.
-
+> **Note:** Every successive `solo one-shot single deploy` command will remove the
+> existing components and will create a new deployment.
 ---
 
 ## Where to Find Version Tags
