@@ -58,7 +58,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_HOME` | Path to the Solo cache and log files | `~/.solo`
 | `SOLO_CACHE_DIR` | Path to the Solo cache directory | `~/.solo/cache`
 | `SOLO_LOG_LEVEL` | Logging level for Solo operations. Accepted values: `trace`, `debug`, `info`, `warn`, `error` | `info`
-| `SOLO_DEV_OUTPUT` | Treat all commands as if the `--dev` flag were specified | `false`
+| `SOLO_DEV_OUTPUT` | Treat all commands as if the `--debug` flag were specified (`--debug` was formerly `--dev`) | `false`
 | `SOLO_CHAIN_ID` | Chain ID of the Solo network | `298`
 | `FORCE_PODMAN` | Force the use of Podman as the container engine when creating a new local cluster. Accepted values: `true`, `false` | `false`
 
@@ -154,6 +154,10 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | --- | --- | ---
 | `DISABLE_IMPORTER_SPRING_PROFILES` | Disable automatic configuration of Mirror Node importer Spring profiles for block-node integration. | `false`                                                                                            |
 | `SPRING_PROFILES_ACTIVE` | Spring profiles to use for the Mirror Node importer when automatic importer profile configuration is enabled. | `blocknode`                                                                                        |
+| `MIRROR_NODE_SCHEMA_READY_MAX_ATTEMPTS` | Maximum number of attempts to check if the Mirror Node database schema has been built (signalled by importer pod readiness) | `900`
+| `MIRROR_NODE_SCHEMA_READY_DELAY` | Interval between Mirror Node database schema checks, in milliseconds | `2000`
+| `MIRROR_NODE_IMPORTER_DETECT_MAX_ATTEMPTS` | Maximum number of attempts to detect a running Mirror Node importer pod. If no importer pod is found, the database schema wait is skipped | `15`
+| `MIRROR_NODE_IMPORTER_DETECT_DELAY` | Interval between Mirror Node importer pod detection attempts, in milliseconds | `2000`
 
 ---
 
