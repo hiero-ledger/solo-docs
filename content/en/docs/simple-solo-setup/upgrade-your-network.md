@@ -47,4 +47,4 @@ After upgrading, confirm the network is healthy by checking pod status:
 kubectl get pods -n <namespace>
 ```
 
-For one-shot deployments, the namespace typically matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt`.
+For one-shot deployments, the namespace matches the deployment name, which defaults to `one-shot` unless you passed `--deployment` (retrieve it with `solo one-shot show deployment`).

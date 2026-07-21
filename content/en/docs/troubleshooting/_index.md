@@ -69,8 +69,11 @@ In the terminal, this appears inside a bordered `ERROR` box, followed by a tip
 suggesting `solo deployment diagnostics logs` or
 `solo deployment diagnostics report` to gather more detail.
 
-> **Note:** Add `--dev` to a command to see the full error cause chain and stack
-> traces instead of the summarized form — useful when filing a bug report.
+> **Note:** Add `--debug` to a command to see the full error cause chain and stack
+> traces instead of the summarized form — useful when filing a bug report. (This
+> flag was previously named `--dev`. The `--dev` alias still works but is
+> deprecated and will no longer be supported once Solo `0.82.0` reaches its end
+> of support date.)
 
 ## Common Issues and Solutions
 
