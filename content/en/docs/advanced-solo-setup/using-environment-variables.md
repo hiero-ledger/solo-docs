@@ -122,6 +122,8 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `NETWORK_PROXY_MAX_ATTEMPTS` | Maximum number of attempts to check if the network proxy is running | `300`
 | `NETWORK_PROXY_DELAY` | Interval between network proxy checks, in milliseconds | `2000`
 | `NETWORK_DESTROY_WAIT_TIMEOUT` | Maximum wait time for network teardown to complete, in milliseconds | `120`
+| `NETWORK_CHART_INSTALL_MAX_ATTEMPTS` | Maximum number of attempts to install the solo-deployment Helm chart during network deploy | `3`
+| `NETWORK_CHART_INSTALL_RETRY_DELAY_SECS` | Delay before retrying a failed solo-deployment Helm chart install, in seconds | `15`
 
 ---
 
