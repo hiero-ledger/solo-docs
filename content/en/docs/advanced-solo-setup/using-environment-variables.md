@@ -194,7 +194,9 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_CONTAINERS_VERSION` | Image version for the solo-deployment chart's Solo containers component
 | `MINIO_OPERATOR_VERSION` | Release version of the MinIO Operator to use
 | `PROMETHEUS_STACK_VERSION` | Release version of the Prometheus Stack to use
-| `GRAFANA_AGENT_VERSION` | Release version of the Grafana Agent to use
+| `GRAFANA_ALLOY_VERSION` | [Helm chart version](https://github.com/grafana/helm-charts/releases?q=alloy) of Grafana Alloy installed by `solo cluster-ref config setup --grafana-alloy`
+| `LOKI_VERSION` | [Helm chart version](https://github.com/grafana/loki/releases?q=helm-loki) of the Loki log store installed by `solo cluster-ref config setup --grafana-alloy`
+| `GRAFANA_PODLOGS_CRD_VERSION` | [Grafana Alloy release tag](https://github.com/grafana/alloy/releases) the PodLogs custom resource definition is fetched from during `solo network deploy --enable-monitoring-support`
 
 > **Tip:** To pin component versions for a `solo one-shot single deploy`, prefix
 > the command with these variables. See the
@@ -238,6 +240,8 @@ For full usage, examples, version-format rules, and troubleshooting, see
 | `EXPLORER_CHART_URL` | Helm chart repository URL for the Explorer | `oci://ghcr.io/hiero-ledger/hiero-mirror-node-explorer/hiero-explorer-chart`
 | `INGRESS_CONTROLLER_CHART_URL` | Helm chart repository URL for the ingress controller | `https://haproxy-ingress.github.io/charts`
 | `PROMETHEUS_OPERATOR_CRDS_CHART_URL` | Helm chart repository URL for the Prometheus Operator CRDs | `https://prometheus-community.github.io/helm-charts`
+| `GRAFANA_ALLOY_CHART_URL` | Helm chart repository URL for Grafana Alloy | `https://grafana.github.io/helm-charts`
+| `LOKI_CHART_URL` | Helm chart repository URL for Loki | `https://grafana.github.io/helm-charts`
 | `NETWORK_LOAD_GENERATOR_CHART_URL` | Helm chart repository URL for the Network Load Generator | `oci://swirldslabs.jfrog.io/load-generator-helm-release-local`
 
 ---
