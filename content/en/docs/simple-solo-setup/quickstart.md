@@ -37,19 +37,21 @@ Before you begin, ensure you have completed the following:
 
 Install the latest Solo CLI globally using one of the following methods:
 
-- **Homebrew** (**recommended** for macOS/Linux/WSL2):
-
-  ```bash
-  brew install hiero-ledger/tools/solo
-  ```
-
-- **npm** (required for native Windows PowerShell; alternative on macOS/Linux/WSL2):
+- **npm** (**recommended** for all platforms):
 
   ```bash
   npm install -g @hiero-ledger/solo@latest
   ```
 
-  > **Note:** On macOS, Linux, and WSL2, Homebrew is recommended — it installs Node.js for you, whereas npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed — Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). On native Windows (PowerShell), npm is the only available option. Regardless of installation method, Solo provisions kubectl, Helm, and Kind automatically at deploy time.
+  > **Note:** npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed — Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). Solo provisions kubectl, Helm, and Kind automatically at deploy time.
+
+- **Homebrew** (deprecated — macOS/Linux/WSL2 only):
+
+  ```bash
+  brew install hiero-ledger/tools/solo
+  ```
+
+  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31.
 
 ### Verify the installation
 
@@ -62,12 +64,12 @@ solo --version
 Expected output (version may be different):
 
 ```text
-** Solo **
-Version : 0.77.0
-**
+******************************* Solo *********************************************
+Version			: 0.84.0
+**********************************************************************************
 ```
 
-If you see a similar banner with a valid Solo version (for example, 0.59.1), your installation is successful.
+If you see a similar banner with a valid Solo version, your installation is successful.
 
 ## Deploy a local network (one-shot)
 
