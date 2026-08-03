@@ -44,7 +44,7 @@ Before proceeding, ensure you have completed the following:
 
   | Requirement | Version | Purpose |
   | --- | --- | --- |
-  | [Node.js](https://nodejs.org/) | v20 or higher | Runs your application against the SDK |
+  | [Node.js](https://nodejs.org/) | v22 or higher | Runs your application against the SDK |
 
   {{% /tab %}}
 
@@ -86,15 +86,25 @@ Install the Hiero SDK for your language.
 
 {{% tab header="JavaScript" lang="javascript" %}}
 
-Initialize a Node.js project and install the SDK from npm:
+Clone the Hiero JavaScript SDK repository to get the bundled example scripts:
 
 ```bash
-mkdir solo-js-demo && cd solo-js-demo
-npm init -y
-npm install @hiero-ledger/sdk
+git clone https://github.com/hiero-ledger/hiero-sdk-js.git
+cd hiero-sdk-js
 ```
 
-For the full SDK source tree (with the bundled `examples/` directory), follow the [Hiero JavaScript SDK README](https://github.com/hiero-ledger/hiero-sdk-js#installation). The repository uses pnpm workspaces + go-task to build.
+> **Tip:** If you only want to verify connectivity without running the bundled
+> examples, you can skip the clone and set up a minimal project instead:
+>
+> ```bash
+> mkdir solo-js-demo && cd solo-js-demo
+> npm init -y
+> npm install @hiero-ledger/sdk
+> ```
+>
+> The rest of this guide uses `hiero-sdk-js` as the working directory. If you
+> created your own project, substitute your directory name wherever
+> `hiero-sdk-js` appears.
 
 {{% /tab %}}
 
@@ -160,7 +170,7 @@ examples in this guide.
   }
   ```
 
-  The `systemAccounts[0]` block is the operator (`0.0.2`) with an Ed25519 key in DER format. The `createdAccounts` array contains additional pre-funded ECDSA-alias accounts useful for EVM workflows.
+  The `systemAccounts[0]` block is the operator account (`0.0.2`) with an Ed25519 key in DER format. The `createdAccounts` array contains additional pre-funded accounts useful for EVM workflows.
 
 - Save the `accountId` and `privateKey` values from `systemAccounts[0]` - you will configure the SDK with them in the next step.
 
@@ -181,11 +191,14 @@ Pick your language tab below.
 
 {{% tab header="JavaScript" lang="javascript" %}}
 
-The Hiero JavaScript SDK uses environment variables to authenticate the operator account. Create a `.env` file at the root of the `hiero-sdk-js` directory:
+The SDK reads your operator credentials from environment variables. The commands
+below create a file named `.env` in your project directory that holds those
+values, then load them into your current terminal session.
+
+{{< tabpane text=true >}}
+{{% tab header="macOS / Linux" lang="bash" %}}
 
 ```bash
-cd hiero-sdk-js
-
 cat > .env <<EOF
 # Operator account ID (systemAccounts[0].accountId from Step 3)
 OPERATOR_ID="0.0.2"
@@ -193,17 +206,30 @@ OPERATOR_ID="0.0.2"
 # Operator private key (systemAccounts[0].privateKey from Step 3)
 OPERATOR_KEY="302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137"
 
-# Required by LocalProvider in the SDK example scripts (Step 5).
-# Not used by the Client.fromConfig() snippet below, but harmless to include.
+# Required by the SDK example scripts.
 HEDERA_NETWORK="local-node"
 EOF
 
+# Load the values into your current terminal session
 source .env
 ```
 
-> **Important:** `OPERATOR_KEY` must be set to the `privateKey` value, not the `publicKey`. The private key is the longer DER-encoded string beginning with `302e...`. The example scripts also require `HEDERA_NETWORK` - they throw "LocalProvider requires the `HEDERA_NETWORK` environment variable to be set" if it is missing.
+{{% /tab %}}
+{{% tab header="Windows (PowerShell)" lang="powershell" %}}
 
-> **Security:** Never commit `.env` to source control - the file holds the operator's private key. Add `.env` to your repository's `.gitignore`.
+```powershell
+# Set credentials in your current PowerShell session
+$env:OPERATOR_ID    = "0.0.2"
+$env:OPERATOR_KEY   = "302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137"
+$env:HEDERA_NETWORK = "local-node"
+```
+
+{{% /tab %}}
+{{< /tabpane >}}
+
+> **Important:** `OPERATOR_KEY` must be set to the `privateKey` value from Step 3 — the longer string beginning with `302e...`. Do not use the `publicKey` value. The example scripts will throw an error if `HEDERA_NETWORK` is missing.
+
+> **Security:** Never commit `.env` to source control. Add it to your `.gitignore` — it holds your operator's private key.
 
 Configure the client with the **Solo 0.63+** port-forwards using `Client.fromConfig()`. The SDK's built-in `Client.forLocalNode()` preset is hardcoded to `localhost:50211`, which does not match Solo 0.63+ defaults (`localhost:35211` for consensus gRPC, `localhost:38081` for the mirror node ingress). Use the explicit network map shown below instead:
 
@@ -375,15 +401,38 @@ Add an `AccountInfoQuery` for the operator and run it to confirm the client reac
 
 {{% tab header="JavaScript" lang="javascript" %}}
 
-In your TypeScript/JavaScript code, after building `client`:
+Create a file named `verify.mjs` in your project directory:
 
-```typescript
+```javascript
+import { Client, AccountId, AccountInfoQuery } from "@hiero-ledger/sdk";
+
+const network = { "127.0.0.1:35211": AccountId.fromString("0.0.3") };
+const mirrorNetwork = "127.0.0.1:38081";
+
+const client = Client.fromConfig({ network, mirrorNetwork, scheduleNetworkUpdate: false });
+client.setOperator(process.env.OPERATOR_ID, process.env.OPERATOR_KEY);
+
 const info = await new AccountInfoQuery()
-  .setAccountId(AccountId.fromString(process.env.OPERATOR_ID!))
+  .setAccountId(AccountId.fromString(process.env.OPERATOR_ID))
   .execute(client);
 
 console.log("Account ID :", info.accountId.toString());
 console.log("Balance    :", info.balance.toString());
+
+client.close();
+```
+
+Then run it:
+
+```bash
+node verify.mjs
+```
+
+**Expected output:**
+
+```
+Account ID : 0.0.2
+Balance    : 49989999499.9946 ℏ
 ```
 
 {{% /tab %}}
@@ -448,16 +497,11 @@ The exact balance differs slightly between deployments; what matters is that an 
 
 ## Step 5: Run Transactions Against Solo
 
-> **Heads up (JavaScript and Go only):** The SDK example programs use the
-> SDK's local-node preset (`LocalProvider` in JS, `ClientForName("localhost")`
-> in Go), which is hardcoded to `127.0.0.1:50211` (consensus gRPC) and
-> `127.0.0.1:5600` (mirror gRPC). Solo doesn't expose those ports by default,
-> so the upstream example programs cannot reach the network out of the box.
-> Either follow [Make the examples reachable](#make-the-examples-reachable)
-> below, or rewrite the example to use the `Client.fromConfig` (JS) /
-> `ClientForNetworkV2` (Go) pattern from
-> [Step 4](#step-4-configure-the-sdk-to-connect-to-solo). The Java SDK has no
-> local-node preset, so this caveat does not apply there.
+> **Heads up (JavaScript and Go only):** The SDK's bundled example scripts
+> expect the network to be reachable on fixed port numbers that Solo does not
+> use by default. Before running any example script, pick one of the two
+> options below to bridge that gap. Java users can skip straight to running
+> their examples - no extra setup needed.
 
 ### Make the examples reachable
 
