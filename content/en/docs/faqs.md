@@ -22,7 +22,7 @@ You can run one of the following commands depending on your needs:
     solo one-shot single deploy
     ```
 
-    > **Prerequisite:** Install Solo first with `brew install hiero-ledger/tools/solo`.
+    > **Prerequisite:** Install Solo first with `npm install -g @hiero-ledger/solo@latest`. See [System Readiness](/docs/simple-solo-setup/system-readiness) for full install instructions. Homebrew (`brew install hiero-ledger/tools/solo`) is deprecated and will stop receiving updates after August 31, 2026.
 
     For more information on Single Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
 

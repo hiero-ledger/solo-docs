@@ -1,0 +1,23 @@
+{{/* Homebrew deprecation notice — remove after August 31, 2026 */}}
+<div class="pageinfo pageinfo-warning">
+  ⚠️ <strong>Homebrew support is being deprecated.</strong>
+  Solo will stop publishing updates to Homebrew after August 31, 2026.
+  Install via <code>npm install -g @hiero-ledger/solo@latest</code> instead.
+  See <a href="/docs/simple-solo-setup/system-readiness/#platform-setup">System Readiness</a> for full install instructions.
+</div>
+
+{{/* Archived version notice (keep for future use) */}}
+{{ if .Site.Params.archived_version }}
+{{ $color := "primary" }}
+{{ $latest_version := .Site.Params.url_latest_version }}
+{{ $current_version := .Site.Params.version }}
+<div class="pageinfo pageinfo-{{ $color }}">
+  {{ with $current_version }}<p>Version {{ . | markdownify }} of the
+    documentation is no longer actively maintained. The site that you are
+    currently viewing is an archived snapshot.
+    {{ with $latest_version }}For up-to-date documentation, see the
+      <a href="{{ $latest_version | safeURL }}" target="_blank">latest version</a>.</p>
+    {{ end }}
+  {{ end }}
+</div>
+{{ end }}

@@ -17,6 +17,8 @@ package manager you originally installed with. This page covers the Homebrew and
 npm upgrade paths, switching between them, and a clean-reinstall recipe for when
 an upgrade leaves Solo in a broken state.
 
+> ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. Existing Homebrew users should migrate to npm before August 31. See [Switching between Homebrew and npm](#switching-between-homebrew-and-npm).
+
 > **Tip:** Check your current version first with `solo --version`, and compare
 > it against the latest release on the
 > [Solo releases page](https://github.com/hiero-ledger/solo/releases).
@@ -113,7 +115,7 @@ Homebrew formula or npm tag instead of `latest`.
 > [Switching between Homebrew and npm](#switching-between-homebrew-and-npm).
 
 {{< tabpane text=true >}}
-{{% tab header="Homebrew" lang="homebrew" %}}
+{{% tab header="Homebrew (deprecated)" lang="homebrew" %}}
 ```bash
 brew install hiero-ledger/tools/solo@0.76.0
 ```
@@ -151,16 +153,15 @@ solo --version
 
 ## Switching between Homebrew and npm
 
-If you want to switch package managers (for example, from an older npm install
-to Homebrew), remove the existing copy first so you do not end up with two
-`solo` binaries on your `PATH`:
+To migrate from Homebrew to npm, remove the Homebrew copy first so you do not
+end up with two `solo` binaries on your `PATH`:
 
 ```bash
-# Remove the npm copy before installing via Homebrew (or vice versa)
-npm uninstall -g @hiero-ledger/solo
+# Remove the Homebrew copy before installing via npm
+brew uninstall hiero-ledger/tools/solo
 ```
 
-Then follow the install steps in
+Then install via npm following the steps in
 [System Readiness](/docs/simple-solo-setup/system-readiness#platform-setup).
 
 ## Clean reinstall
@@ -176,7 +177,7 @@ configuration, then reinstall.
 > with `solo one-shot single destroy` - see the
 > [Cleanup guide](/docs/simple-solo-setup/cleanup).
 
-{{< tabpane text=true >}} {{% tab header="Homebrew" lang="homebrew" %}}
+{{< tabpane text=true >}} {{% tab header="Homebrew (deprecated)" lang="homebrew" %}}
 
 ```bash
 brew uninstall hiero-ledger/tools/solo

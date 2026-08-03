@@ -101,21 +101,29 @@ You are likely hitting an installation or upgrade problem if:
 
 1. **Confirm installation method**
 
-   If you previously installed Solo via npm and are now using Homebrew, remove
-   the npm install to avoid conflicts. Solo is published under two npm names
-   (`@hiero-ledger/solo` and `@hashgraph/solo`), so remove both:
+   If you previously installed Solo via Homebrew and are now migrating to npm,
+   remove the Homebrew install to avoid conflicts:
 
    ```bash
-   # Remove any npm-based Solo (if present)
-   if command -v npm >/dev/null 2>&1; then
-     npm uninstall -g @hiero-ledger/solo || true
-     npm uninstall -g @hashgraph/solo || true
-   fi
+   brew uninstall hiero-ledger/tools/solo
    ```
 
-   Then reinstall Solo using the steps in the
-   [Quickstart](/docs/simple-solo-setup/quickstart). If a global npm install
-   fails with `EEXIST` because both package names are present, see
+   Then install via npm:
+
+   ```bash
+   npm install -g @hiero-ledger/solo@latest
+   ```
+
+   If you have Solo installed under both npm package names (`@hiero-ledger/solo`
+   and `@hashgraph/solo`), remove both before reinstalling:
+
+   ```bash
+   npm uninstall -g @hiero-ledger/solo || true
+   npm uninstall -g @hashgraph/solo || true
+   ```
+
+   If a global npm install fails with `EEXIST` because both package names are
+   present, see
    [Resolving an `EEXIST` package-name conflict](/docs/simple-solo-setup/upgrading-solo#resolving-an-eexist-package-name-conflict).
 
 2. **Verify system resources**
