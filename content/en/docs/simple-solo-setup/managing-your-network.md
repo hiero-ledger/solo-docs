@@ -45,7 +45,7 @@ Most management commands require your deployment name. Find it with `solo one-sh
 > JSON-RPC relay, block node, or the shared services (PostgreSQL, Redis,
 > MinIO) - those keep running. Solo has no stop/start command for the
 > non-consensus components (their lifecycle is `add`/`destroy`). To pause the
-> whole network, see [Stop the entire network](#stop-the-entire-network).
+> whole network without deleting any pods, see [Stop the entire network](#stop-the-entire-network).
 
 ### Stop consensus nodes
 Pause the consensus node(s) without destroying the deployment:
@@ -72,29 +72,37 @@ To verify pod status after any of the above commands, see [Verify the network](/
 
 ### Stop the entire network
 
-Solo does not provide a single command to stop every component. To pause the
-**entire** network - consensus, mirror, Explorer, relay, block node, and
-shared services - while preserving its data, scale every workload in the
-deployment namespace to zero with `kubectl`. For one-shot deployments the
-namespace matches your deployment name.
+To pause the **entire** network while preserving all state — for example, to
+free up memory while working on other tasks — stop the Kind cluster's Docker
+container. This suspends every pod without deleting them, so all in-memory
+and on-disk state (including consensus node state) is preserved.
+
+Find the Kind cluster container name and stop it:
 
 ```bash
-kubectl scale deployment  --all --replicas=0 -n <namespace>
-kubectl scale statefulset --all --replicas=0 -n <namespace>
+docker ps --filter name=solo-cluster --format '{{.Names}}'
+docker stop <container-name>
 ```
 
-This stops all pods but keeps the Kind cluster, persistent volumes, and
-configuration intact. To bring the network back online, scale the workloads
-back up (Solo's default deployments run a single replica each):
+The container name is typically `solo-cluster-control-plane`. On macOS and
+Windows you can also do this from the Docker Desktop dashboard: find the
+container and click **Stop**.
+
+To bring the network back online, start the container and restore
+port-forwards:
 
 ```bash
-kubectl scale statefulset --all --replicas=1 -n <namespace>
-kubectl scale deployment  --all --replicas=1 -n <namespace>
+docker start <container-name>
+solo deployment refresh port-forwards --deployment <deployment-name>
 ```
 
-> **Note:** Scaling to zero pauses the network without deleting it. To remove
-> the network entirely (cluster, volumes, and configuration), use
-> `solo one-shot single destroy` - see the
+> **Warning:** Do not use `kubectl scale --replicas=0` to stop the entire
+> network. Scaling pods to zero deletes them, which wipes consensus node
+> in-pod state (`emptyDir` volumes). The consensus node will fail to restart
+> correctly after scaling back up. Use `docker stop`/`docker start` instead.
+
+> **Note:** To remove the network entirely (cluster, volumes, and
+> configuration), use `solo one-shot single destroy` — see the
 > [Cleanup guide](/docs/simple-solo-setup/cleanup).
 
 ### Verify Network is Working
