@@ -164,98 +164,12 @@ Confirm that all Solo-related pods are in a `Running` or `Completed` state.
 
 ## Access your local network
 
-After the one-shot deployment completes and all pods are running, Solo sets up port-forwards so you can reach your local services. The endpoints below are the **default** ports for Solo 0.63 and later:
-
-| Service               | Endpoint                 | Description                            | Verification |
-|-----------------------|--------------------------|----------------------------------------|--------------|
-| Explorer UI           | `http://localhost:38080` | Web UI for inspecting the network.     | Open URL in your browser |
-| Consensus node (gRPC) | `localhost:35211`        | gRPC endpoint for transactions.        | `nc -zv localhost 35211` |
-| Mirror node REST API  | `http://localhost:38081` | REST API for queries.                  | `curl http://localhost:38081/api/v1/transactions` |
-| JSON RPC relay        | `http://localhost:37546` | Ethereum-compatible JSON RPC endpoint. | `curl -X POST http://localhost:37546 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'` |
-
-> **macOS note:** Running `nc -zv localhost 35211` may print two lines:
-> ```text
-> nc: connectx to localhost port 35211 (tcp) failed: Connection refused
-> Connection to localhost port 35211 [tcp/*] succeeded!
-> ```
-> The first line is a failed IPv6 attempt - this is expected on macOS.
-> The second line confirms the IPv4 connection succeeded. The port is reachable.
+After the one-shot deployment completes and all pods are running, Solo sets up
+port-forwards so you can reach your local services. For the full endpoint
+reference — default ports for Solo 0.63+ and Solo 0.62 and earlier, verification
+commands, and port lookup — see [**Service Endpoints**](/docs/using-solo/endpoints).
 
 Open `http://localhost:38080` in your browser to explore your network.
-
-The `Verification` commands above use bash tools (`nc`, `curl`). On native Windows, run the PowerShell equivalents instead:
-
-```powershell
-# Consensus node (gRPC)
-Test-NetConnection localhost -Port 35211
-
-# Mirror node REST API
-Invoke-RestMethod http://localhost:38081/api/v1/transactions
-
-# JSON RPC relay
-Invoke-RestMethod -Method Post -Uri 'http://localhost:37546' -ContentType 'application/json' -Body '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
-```
-
-> **Note:** In PowerShell, `curl` is an alias for `Invoke-WebRequest`, so the bash `curl` flags above will not work. Use `curl.exe` explicitly if you prefer the bash-style syntax.
-
-### Port availability
-
-The ports above are Solo's defaults. Solo uses `kubectl port-forward` to tunnel traffic from your machine to services running inside Kubernetes. Before opening each tunnel, Solo tries the configured port:
-
-- If the port is free, Solo logs: `Using requested port <port>`.
-- If the port is already occupied (by another process, or by a previous Solo session that did not clean up its port-forwards), Solo finds the next available port and logs: `Using available port <port>`.
-
-The actual ports used are printed at the end of `solo one-shot single deploy`. You can also look them up at any time with the Solo CLI, using your deployment name (see [Capture your deployment name](#capture-your-deployment-name)).
-
-To view the active port assignments:
-
-```bash
-solo deployment config ports --deployment <deployment-name>
-```
-
-The output directory is `one-shot-<deployment-name>`, and the default deployment name is `one-shot`. So the default output directory is `~/.solo/one-shot-one-shot/`.
-
-{{< tabpane text=true >}}
-{{% tab header="Bash" lang="bash" %}}
-```bash
-cat ~/.solo/one-shot-one-shot/forwards
-```
-{{% /tab %}}
-{{% tab header="PowerShell" lang="powershell" %}}
-```powershell
-Get-Content "$env:USERPROFILE\.solo\one-shot-one-shot\forwards"
-```
-{{% /tab %}}
-{{< /tabpane >}}
-
- *** Consensus node gRPC ***
--------------------------------------------------------------------------------
- - component 1: localhost:35211 -> pod:50211
-
-```bash
-solo deployment config info --deployment one-shot
-```
-
-To restore port-forwards after a system restart without redeploying:
-
-```bash
-solo deployment refresh port-forwards --deployment one-shot
-```
-
-### Endpoints for Solo 0.62 and earlier
-
-If you are using Solo 0.62 or earlier, the default port-forward targets differ:
-
-| Service               | Endpoint                | Description                            |
-|-----------------------|-------------------------|----------------------------------------|
-| Explorer UI           | `http://localhost:8080` | Web UI for inspecting the network.     |
-| Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for transactions.        |
-| Mirror node REST API  | `http://localhost:8081` | REST API for queries (via mirror-ingress). |
-| JSON RPC relay        | `http://localhost:7546` | Ethereum-compatible JSON RPC endpoint. |
-
-Open `http://localhost:8080` in your browser to explore your network.
-
-> **Note:** `localhost:5551` is the direct Mirror Node REST service, accessible only via manual `kubectl port-forward`, and is being phased out. Always use the ingress-based port (`8081` for Solo 0.62 and earlier, `38081` for Solo 0.63+).
 
 ## Tear down your network
 
