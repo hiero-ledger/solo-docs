@@ -86,9 +86,11 @@ This command performs the following actions:
 - Sets up and funds default test accounts.
 - Exposes gRPC and JSON-RPC endpoints for client access.
 
-> **Tip:** Solo caches the container images it pulls, so your first deployment
-> may take longer while images download; later deployments reuse the local cache
-> and start faster. See [Solo Image Cache](/docs/advanced-solo-setup/image-cache).
+> **⏱ First-run time:** `solo one-shot single deploy` typically takes
+> **10–20 minutes** on first run while Solo pulls the required container images.
+> Long pauses with no visible output change are normal — the deploy is still
+> running. Later deployments reuse the local image cache and complete faster.
+> See [Solo Image Cache](/docs/advanced-solo-setup/image-cache).
 
 > **Note:** During deployment you may see `Stopping port-forward for port [N]`
 > printed in yellow. This is expected - as it sets up the network, Solo stops
