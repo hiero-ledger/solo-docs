@@ -23,11 +23,11 @@ Before upgrading, ensure you have completed the following:
 - **[System Readiness](/docs/simple-solo-setup/system-readiness)** - your local environment meets Solo requirements.
 - A currently running Solo deployment to upgrade.
 
-## Find your deployment name
+## Step 1: Find your deployment name
 
 The default for one-shot deployments is `one-shot`. If you used a different name, find it with `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)). Use that value as `<deployment-name>` in the upgrade command.
 
-## Upgrade the network
+## Step 2: Upgrade the network
 
 Run the following command to upgrade an existing Solo network deployment to a newer Hiero version:
 
@@ -39,7 +39,7 @@ Replace `<version>` with the target Hiero version, for example `v0.59.0`.
 
 > **Important:** This command is only for networks already deployed with Solo. Do not run it immediately after Quickstart unless you are moving an older deployment to a newer version.
 
-## Verify the upgrade
+## Step 3: Verify the upgrade
 
 After upgrading, confirm the network is healthy by checking pod status:
 
