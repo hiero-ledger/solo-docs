@@ -130,7 +130,7 @@ This configuration includes:
 | **Mirror Node**    | Stores and serves historical transaction data |
 | **Explorer UI**    | Web interface for viewing accounts            |
 
-Access the Explorer at: `http://localhost:38080/localnet/dashboard` (Solo 0.63+) or `http://localhost:8080/localnet/dashboard` (Solo 0.62 and earlier). See [Port availability](/docs/simple-solo-setup/quickstart#port-availability) if the port is in use.
+Access the Explorer at: `http://localhost:38080/localnet/dashboard` (Solo 0.63+) or `http://localhost:8080/localnet/dashboard` (Solo 0.62 and earlier). See [Port availability](/docs/using-solo/endpoints#port-availability) if the port is in use.
 
 ### Deploy Network with Relay and Explorer
 
@@ -156,7 +156,7 @@ Access the services at (Solo 0.63+ defaults; for Solo 0.62 and earlier use the l
 - Explorer: `http://localhost:38080/localnet/dashboard` (legacy: `http://localhost:8080/localnet/dashboard`)
 - JSON-RPC Relay: `http://localhost:37546` (legacy: `http://localhost:7546`)
 
-> See [Port availability](/docs/simple-solo-setup/quickstart#port-availability) if a port is already in use on your machine.
+> See [Port availability](/docs/using-solo/endpoints#port-availability) if a port is already in use on your machine.
 
 ## Available Taskfile Targets
 
