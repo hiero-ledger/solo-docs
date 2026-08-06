@@ -97,12 +97,12 @@ This command performs the following actions:
 
 ### What gets deployed
 
-| Component      | Description                                          |
-|----------------|------------------------------------------------------|
-| Consensus Node | Hiero consensus node for processing transactions.    |
-| Mirror Node    | Stores and serves historical transaction data.       |
-| Explorer UI    | Web interface for viewing accounts and transactions. |
-| JSON RPC Relay | Ethereum-compatible JSON RPC interface.              |
+| Component      | What it does                                                              | Use it for                                                  |
+|----------------|---------------------------------------------------------------------------|-------------------------------------------------------------|
+| Consensus Node | Processes transactions and maintains the shared ledger.                   | Sending transactions and queries via a Hiero SDK.           |
+| Mirror Node    | Indexes all transaction history and exposes a REST API and gRPC stream.   | Querying balances, history, and subscribing to event feeds. |
+| Explorer UI    | Browser-based dashboard for inspecting accounts and transactions.          | Browsing the network state without writing code.            |
+| JSON-RPC Relay | Ethereum-compatible JSON-RPC interface layered on top of the consensus node. | Connecting MetaMask, Hardhat, Foundry, and ethers.js.    |
 
 {{< details summary="Multiple Node Deployment - for testing consensus scenarios" >}}
 
@@ -266,3 +266,12 @@ solo one-shot single destroy
 ```
 
 For a full teardown procedure including failure recovery, see the [Cleanup](/docs/simple-solo-setup/cleanup) guide. For granular stop/start and management options, see [Managing Your Network](/docs/simple-solo-setup/managing-your-network).
+
+## Next Steps
+
+With your network running, connect your application or explore Solo further:
+
+- [**Using Solo with Hiero SDKs**](/docs/using-solo/using-solo-with-hiero-sdks) — Submit transactions using the JavaScript, Java, or Go SDK.
+- [**Using Solo with EVM Tools**](/docs/using-solo/using-solo-with-evm-tools) — Connect MetaMask, Hardhat, Foundry, or ethers.js to your local network.
+- [**Managing Your Network**](/docs/simple-solo-setup/managing-your-network) — Stop, start, and reset nodes without redeploying.
+- [**Service Endpoints**](/docs/using-solo/endpoints) — Quick reference for all default ports and connection details.
