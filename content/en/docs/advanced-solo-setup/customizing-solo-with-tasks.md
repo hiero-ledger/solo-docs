@@ -389,11 +389,10 @@ task clean
 
 - **[Address Book](https://github.com/hiero-ledger/solo/tree/main/examples/address-book)**: Use Yahcli to pull ledger and mirror node address books for querying network state
 - **[Network with Domain Names](https://github.com/hiero-ledger/solo/tree/main/examples/network-with-domain-names)**: Setup a network with custom domain names for nodes instead of IP addresses
-- **[Network with Block Node](https://github.com/hiero-ledger/solo/tree/main/examples/network-with-block-node)**: Deploy a network with block node for streaming block data
+- **Network with Block Node**: Deploy a network with block node for streaming block data *(example coming soon)*
 
 #### Configuration Examples
 
-- **[Custom Network Config](https://github.com/hiero-ledger/solo/tree/main/examples/custom-network-config)**: Customize consensus network configuration for your specific needs
 - **[Local Build with Custom Config](https://github.com/hiero-ledger/solo/tree/main/examples/local-build-with-custom-config)**: Deploy using a locally-built consensus node with custom configuration
 - **[Consensus Node JVM Parameters](https://github.com/hiero-ledger/solo/tree/main/examples/consensus-node-jvm-parameters)**: Customize JVM parameters (memory, GC settings, etc.) for consensus nodes
 
@@ -453,10 +452,10 @@ task clean
 
 ### Workflow 2: Test Configuration Changes
 
-Iterate on network configuration:
+Iterate on network configuration using any example with a `Taskfile.yml`:
 
 ```bash
-cd examples/custom-network-config
+cd examples/local-build-with-custom-config
 
 # Edit the Taskfile or init-containers-values.yaml
 
@@ -549,7 +548,7 @@ kind delete cluster --name solo-e2e
 
 After deploying a network with Task, explore:
 
-- **[Using the JavaScript SDK](/docs/using-solo/using-solo-with-javascript-sdk)**: Interact with your network programmatically
+- **[Using the JavaScript SDK](/docs/using-solo/using-solo-with-hiero-sdks)**: Interact with your network programmatically
 - **[Using Network Load Generator](/docs/using-solo/using-network-load-generator-with-solo)**: Stress test your network
 - **[Environment Variables Reference](/docs/advanced-solo-setup/using-environment-variables)**: Fine-tune deployment behavior
 - **[Solo CI Workflow](/docs/advanced-solo-setup/solo-ci-workflow)**: Integrate Solo deployments into CI/CD pipelines

@@ -170,7 +170,7 @@ HAProxy, Envoy, and MinIO:
 
   solo consensus node setup \
     --deployment "${SOLO_DEPLOYMENT}" \
-    --release-tag "${CONSENSUS_NODE_VERSION}"
+    --consensus-node-version "${CONSENSUS_NODE_VERSION}"
   ```
 
   On native Windows (PowerShell), set the version with `$env:CONSENSUS_NODE_VERSION = 'v0.66.0'` and reference variables as `$env:SOLO_DEPLOYMENT` / `$env:CONSENSUS_NODE_VERSION`.
@@ -205,7 +205,8 @@ REST API and gRPC endpoint:
     --deployment "${SOLO_DEPLOYMENT}" \
     --cluster-ref kind-${SOLO_CLUSTER_NAME} \
     --enable-ingress \
-    --pinger
+    --pinger \
+    --force-port-forward
   ```
 
   The `--pinger` flag keeps the mirror node's importer active by regularly
@@ -225,7 +226,8 @@ ingress controller for the mirror node REST API.
   ```bash
   solo explorer node add \
     --deployment "${SOLO_DEPLOYMENT}" \
-    --cluster-ref kind-${SOLO_CLUSTER_NAME}
+    --cluster-ref kind-${SOLO_CLUSTER_NAME} \
+    --force-port-forward
   ```
 
 - **Expected output**:
@@ -244,7 +246,6 @@ endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.):
     -i node1 \
     --deployment "${SOLO_DEPLOYMENT}"
   ```
-> TODO: double check these, and update in solo repo if needed to match, also double check the exported variables match
 
 - **Expected output**:
 

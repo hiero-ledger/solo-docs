@@ -21,35 +21,26 @@ This document describes how to set up a local development environment and contri
 - **Kubernetes** (local cluster such as kind, k3d, or equivalent)
 - **task** (Taskfile runner)
 - **Git**
-- **Git LFS** (install and run `git lfs install` before cloning `hiero-ledger/solo`, or files tracked with LFS may be missing from your working tree)
 - **K9s** (optional)
 
 ## Initial setup
 
 <!-- markdownlint-disable MD029 -->
 
-1. Install and enable Git LFS before cloning the repository:
-
-   ```bash
-   git lfs install
-   ```
-
-   > **Note:** If Git LFS is not installed before you clone `hiero-ledger/solo`, some project files may be missing from your checkout. Install Git LFS from [git-lfs.com](https://git-lfs.com/) if `git lfs` is not available on your machine.
-
-2. Clone the repository:
+1. Clone the repository:
 
    ```bash
    git clone https://github.com/hiero-ledger/solo.git
    cd solo
    ```
 
-3. Install dependencies:
+2. Install dependencies:
 
    ```bash
    npm install
    ```
 
-4. Install solo as a local CLI:
+3. Install solo as a local CLI:
 
    ```bash
    npm link
@@ -61,7 +52,7 @@ This document describes how to set up a local development environment and contri
    > - If `solo` already exists in your `PATH`, remove it first.
    > - Alternatively, run commands via `npm run solo-test -- <COMMAND> <ARGS>`.
 
-5. Run the CLI:
+4. Run the CLI:
 
    ```bash
    solo

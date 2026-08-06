@@ -6,7 +6,7 @@
 
 ## 2. Validate Documentation Site
 - Review deployed docs:
-  - https://solo.hiero.org/main/docs/advanced-deployments/
+  - https://solo.hiero.org/docs/advanced-solo-setup/
 - Check other key pages for correctness
 - Note: Site updates automatically on PR merge to `main`
 
