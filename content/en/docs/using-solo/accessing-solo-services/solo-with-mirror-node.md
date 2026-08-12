@@ -144,7 +144,7 @@ solo ledger account create --deployment solo-deployment --hbar-amount 100
 
 Open the Explorer at `http://localhost:38080/localnet/dashboard` (Solo 0.63+) or `http://localhost:8080/localnet/dashboard` (Solo 0.62 and earlier) to see the new accounts and their transactions recorded by the Mirror Node. If the port does not work, check your actual port assignments — see [Port Reference](#port-reference).
 
-You can also use the [Hiero JavaScript SDK](/docs/using-solo/using-solo-with-javascript-sdk)
+You can also use the [Hiero JavaScript SDK](/docs/using-solo/using-solo-with-hiero-sdks)
 to create a topic, submit a message, and subscribe to it.
 
 ---

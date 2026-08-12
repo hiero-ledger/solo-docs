@@ -37,8 +37,7 @@ in the environment variables reference.
 > `*_EDGE_VERSION` variables pin components to **published container image
 > tags** — they require the image to exist in the registry. If you need to
 > deploy a binary you compiled locally (before any tag or release exists), use
-> `--local-build-path` instead. See
-> [Deploying a Local Consensus Node Build](/docs/using-solo/local-builds).
+> `--local-build-path` instead.
 
 ---
 

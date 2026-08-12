@@ -625,7 +625,7 @@ kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>
 - [Advanced Solo Setup](/docs/advanced-solo-setup) - Complex deployment
   scenarios.
 - [FAQs](/docs/faqs) - Common questions and answers.
-- [Solo CLI Reference](/docs/advanced-solo-setup/cli/solo-cli) - Canonical
+- [Solo CLI Reference](/docs/advanced-solo-setup/cli/) - Canonical
   command and flag reference.
 - [Error Codes reference](/docs/troubleshooting/errors/) - Look up any
   `SOLO-XXXX` error code.

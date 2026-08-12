@@ -1,0 +1,25 @@
+# htmltest configuration — https://github.com/wjdp/htmltest
+# Checks internal links in the Hugo-built site (./public).
+# External links are skipped here for speed; run `npm run check:links:all` to include them.
+
+DirectoryPath: public
+
+# Verify that anchor fragments (#section-name) point to real headings.
+CheckInternalHash: true
+
+# href="#" is used by Docsy navigation/pagination elements and is not a broken link.
+IgnoreInternalEmptyHash: true
+
+IgnoreDirs:
+  # Hugo's _print/ directory is an aggregate print view; relative image paths break
+  # in that context and the empty anchors are Docsy pagination artifacts.
+  - _print
+  # troubleshooting/errors/ pages are auto-generated from the solo repo release
+  # artifact (fetch-solo-docs-content.mjs). Hash issues there are upstream bugs;
+  # links TO these pages from our hand-written docs are still checked.
+  - troubleshooting/errors
+
+IgnoreURLs:
+  # localhost endpoints are example CLI commands in the docs, not real links.
+  - "^http://localhost"
+  - "^http://127\\.0\\.0\\.1"
