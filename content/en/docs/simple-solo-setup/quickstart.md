@@ -33,7 +33,7 @@ Before you begin, ensure you have completed the following:
 > **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
 > Detailed version requirements, OS-specific notes, and optional tools are documented in the [System Readiness](/docs/simple-solo-setup/system-readiness).
 
-## Install Solo CLI
+## Step 1: Install Solo CLI
 
 Install the latest Solo CLI globally using one of the following methods:
 
@@ -71,7 +71,7 @@ Version			: 0.84.0
 
 If you see a similar banner with a valid Solo version, your installation is successful.
 
-## Deploy a local network (one-shot)
+## Step 2: Deploy a local network (one-shot)
 
 Use the one-shot command to create and configure a fully functional local Hiero network:
 
@@ -166,7 +166,7 @@ Confirm that all Solo-related pods are in a `Running` or `Completed` state.
 
 > **Tip:** The Solo testing team recommends [k9s](https://k9scli.io/) for managing Kubernetes clusters. It provides a terminal-based UI that makes it easy to view pods, logs, and cluster status. Install it with `brew install k9s` and run `k9s` to launch.
 
-## Access your local network
+## Step 3: Access your local network
 
 After the one-shot deployment completes and all pods are running, Solo sets up
 port-forwards so you can reach your local services. For the full endpoint
@@ -175,7 +175,7 @@ commands, and port lookup — see [**Service Endpoints**](/docs/using-solo/endpo
 
 Open `http://localhost:38080` in your browser to explore your network.
 
-## Tear down your network
+## Step 4: Tear down your network
 
 When you are finished, destroy the network to free up resources:
 
