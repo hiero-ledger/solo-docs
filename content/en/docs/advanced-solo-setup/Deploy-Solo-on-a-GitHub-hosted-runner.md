@@ -10,7 +10,7 @@ type: docs
 
 This guide is for developers who want to deploy a Solo network in CI to run integration
 tests against a live Hedera network from their own project. It uses the standard `ubuntu-latest`
-GitHub-hosted runner and the Solo CLI installed via Homebrew.
+GitHub-hosted runner and the Solo CLI installed via npm.
 
 For the hardware specs that runner provides, see
 [GitHub's documentation on standard hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories).
@@ -65,9 +65,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Install Solo CLI
         run: |
-          brew install hiero-ledger/tools/solo
+          npm install -g @hiero-ledger/solo@latest
           solo --version
 
       - name: One-Shot Single Deploy

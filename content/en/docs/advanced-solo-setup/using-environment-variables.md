@@ -58,7 +58,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_HOME` | Path to the Solo cache and log files | `~/.solo`
 | `SOLO_CACHE_DIR` | Path to the Solo cache directory | `~/.solo/cache`
 | `SOLO_LOG_LEVEL` | Logging level for Solo operations. Accepted values: `trace`, `debug`, `info`, `warn`, `error` | `info`
-| `SOLO_DEV_OUTPUT` | Treat all commands as if the `--dev` flag were specified | `false`
+| `SOLO_DEV_OUTPUT` | Treat all commands as if the `--debug` flag were specified (`--debug` was formerly `--dev`) | `false`
 | `SOLO_CHAIN_ID` | Chain ID of the Solo network | `298`
 | `FORCE_PODMAN` | Force the use of Podman as the container engine when creating a new local cluster. Accepted values: `true`, `false` | `false`
 
@@ -72,7 +72,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_NODE_INTERNAL_GOSSIP_PORT` | Internal gossip port used by the Hiero network | `50111`
 | `SOLO_NODE_EXTERNAL_GOSSIP_PORT` | External gossip port used by the Hiero network | `50111`
 | `SOLO_NODE_DEFAULT_STAKE_AMOUNT` | Default stake amount for a node | `500`
-| `GRPC_PORT` | Local port-forward for consensus node gRPC. Default is `35211` for Solo 0.63+ (changed from `50211` to avoid Windows ephemeral-port conflicts). See [Port availability](/docs/simple-solo-setup/quickstart#port-availability). | `35211`
+| `GRPC_PORT` | Local port-forward for consensus node gRPC. Default is `35211` for Solo 0.63+ (changed from `50211` to avoid Windows ephemeral-port conflicts). See [Port availability](/docs/using-solo/endpoints#port-availability). | `35211`
 | `LOCAL_NODE_START_PORT` | Local node start port for the Solo network | `30212`
 
 ---
@@ -154,6 +154,10 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | --- | --- | ---
 | `DISABLE_IMPORTER_SPRING_PROFILES` | Disable automatic configuration of Mirror Node importer Spring profiles for block-node integration. | `false`                                                                                            |
 | `SPRING_PROFILES_ACTIVE` | Spring profiles to use for the Mirror Node importer when automatic importer profile configuration is enabled. | `blocknode`                                                                                        |
+| `MIRROR_NODE_SCHEMA_READY_MAX_ATTEMPTS` | Maximum number of attempts to check if the Mirror Node database schema has been built (signalled by importer pod readiness) | `900`
+| `MIRROR_NODE_SCHEMA_READY_DELAY` | Interval between Mirror Node database schema checks, in milliseconds | `2000`
+| `MIRROR_NODE_IMPORTER_DETECT_MAX_ATTEMPTS` | Maximum number of attempts to detect a running Mirror Node importer pod. If no importer pod is found, the database schema wait is skipped | `15`
+| `MIRROR_NODE_IMPORTER_DETECT_DELAY` | Interval between Mirror Node importer pod detection attempts, in milliseconds | `2000`
 
 ---
 
@@ -186,9 +190,13 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `RELAY_VERSION` | [Release version](https://github.com/hiero-ledger/hiero-json-rpc-relay/releases) of the JSON-RPC Relay to use
 | `INGRESS_CONTROLLER_VERSION` | [Release version](https://haproxy-ingress.github.io/) of the HAProxy Ingress Controller to use
 | `SOLO_CHART_VERSION` | Release version of the Solo Helm charts to use
+| `SOLO_CHEETAH_VERSION` | Image version for the solo-deployment chart's Cheetah component
+| `SOLO_CONTAINERS_VERSION` | Image version for the solo-deployment chart's Solo containers component
 | `MINIO_OPERATOR_VERSION` | Release version of the MinIO Operator to use
 | `PROMETHEUS_STACK_VERSION` | Release version of the Prometheus Stack to use
-| `GRAFANA_AGENT_VERSION` | Release version of the Grafana Agent to use
+| `GRAFANA_ALLOY_VERSION` | [Helm chart version](https://github.com/grafana/helm-charts/releases?q=alloy) of Grafana Alloy installed by `solo cluster-ref config setup --grafana-alloy`
+| `LOKI_VERSION` | [Helm chart version](https://github.com/grafana/loki/releases?q=helm-loki) of the Loki log store installed by `solo cluster-ref config setup --grafana-alloy`
+| `GRAFANA_PODLOGS_CRD_VERSION` | [Grafana Alloy release tag](https://github.com/grafana/alloy/releases) the PodLogs custom resource definition is fetched from during `solo network deploy --enable-monitoring-support`
 
 > **Tip:** To pin component versions for a `solo one-shot single deploy`, prefix
 > the command with these variables. See the
@@ -232,6 +240,8 @@ For full usage, examples, version-format rules, and troubleshooting, see
 | `EXPLORER_CHART_URL` | Helm chart repository URL for the Explorer | `oci://ghcr.io/hiero-ledger/hiero-mirror-node-explorer/hiero-explorer-chart`
 | `INGRESS_CONTROLLER_CHART_URL` | Helm chart repository URL for the ingress controller | `https://haproxy-ingress.github.io/charts`
 | `PROMETHEUS_OPERATOR_CRDS_CHART_URL` | Helm chart repository URL for the Prometheus Operator CRDs | `https://prometheus-community.github.io/helm-charts`
+| `GRAFANA_ALLOY_CHART_URL` | Helm chart repository URL for Grafana Alloy | `https://grafana.github.io/helm-charts`
+| `LOKI_CHART_URL` | Helm chart repository URL for Loki | `https://grafana.github.io/helm-charts`
 | `NETWORK_LOAD_GENERATOR_CHART_URL` | Helm chart repository URL for the Network Load Generator | `oci://swirldslabs.jfrog.io/load-generator-helm-release-local`
 
 ---
@@ -294,6 +304,7 @@ the full feature and the `solo cache image` commands.
 | `ENABLE_IMAGE_CACHE` | Set to `false` to disable the image cache during `solo one-shot` deploys. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). | enabled
 | `SOLO_NO_CACHE` | Set to `true` to skip the image pull during an npm global install. | enabled
 | `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image pull during a Homebrew install. | enabled
+| `CACHE_IMAGE_MAX_CONCURRENCY` | Max concurrent image cache pull/load operations | 12
 
 > **Note:** The cached component versions follow the same environment-variable
 > mechanism as [Pinning Component Versions](#pinning-component-versions) above -

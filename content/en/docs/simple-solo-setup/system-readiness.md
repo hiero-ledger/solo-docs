@@ -39,8 +39,8 @@ install yourself.
 
 | Tool | Required version | How it is installed |
 | --- | --- | --- |
-| [Solo](https://github.com/hiero-ledger/solo) | latest | `brew install hiero-ledger/tools/solo`, or `npm install -g @hiero-ledger/solo` |
-| [Node.js](https://nodejs.org/en/download) | >= 22.0.0 (lts/jod) | **Homebrew installs it for you**; with **npm you install it yourself** |
+| [Solo](https://github.com/hiero-ledger/solo) | latest | `npm install -g @hiero-ledger/solo@latest` (recommended); `brew install hiero-ledger/tools/solo` (deprecated - Homebrew support ends August 31, 2026) |
+| [Node.js](https://nodejs.org/en/download) | >= 22.0.0 (lts/jod) | **You install it** (required for npm); Homebrew installs it automatically (deprecated) |
 | Container runtime ([Docker](https://www.docker.com/products/docker-desktop) / [Podman](https://podman.io)) | See [Docker](#docker) below | **You install it** — Docker Desktop (macOS/Windows) or Docker Engine (Linux). Solo auto-installs Podman on Linux/macOS/WSL2 if Docker Engine is not found. Not supported on native Windows. |
 | [kubectl](https://kubernetes.io/docs/reference/kubectl/) | >= v1.32.2 | **Solo provisions it** at deploy time - reuses a compatible copy already on your system, or downloads one into `~/.solo/bin` |
 | [Helm](https://helm.sh) | v3.14.2 | **Solo provisions it** at deploy time |
@@ -107,14 +107,20 @@ If using Podman instead of Docker Engine, ensure your system has at least 12 GB 
 
 Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, or via WSL2). Select your platform below to install the required container runtime and configure your environment, before proceeding to Quickstart:
 
+> ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31.
+
 {{< tabpane text=true >}}
 
 {{% tab header="macOS" lang="macos" %}}
 
-1. Install Homebrew (if not already installed):
+1. Install Node.js (>= 22.0.0):
+
+    Download from [nodejs.org](https://nodejs.org/en/download), or install via [nvm](https://github.com/nvm-sh/nvm#installing-and-updating):
 
     ```sh
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+    source ~/.nvm/nvm.sh
+    nvm install --lts
     ```
 
 2. Install Docker Desktop:
@@ -126,33 +132,33 @@ Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, o
 
     > **macOS prerequisite:** Docker Desktop must be open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
-Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quickstart) to install Solo and deploy.
+3. Install Solo:
+
+    ```sh
+    npm install -g @hiero-ledger/solo@latest
+    ```
+
+4. Verify the installation:
+
+    ```sh
+    solo --version
+    ```
 
 {{% /tab %}}
 
 {{% tab header="Linux" lang="linux" %}}
 
-> **Non-Debian distributions (Fedora, RHEL, openSUSE, Alpine, Arch):** The
-> steps below are tested on **Ubuntu/Debian**. On other distributions, skip
-> step 1 (Homebrew is not needed) and replace the `apt-get` commands in step 2
-> with your distro's native package manager (e.g. `sudo dnf install -y docker-ce
-> docker-ce-cli containerd.io` on Fedora/RHEL; see
-> [Docker's install guide](https://docs.docker.com/engine/install/) for your
-> distro). The Solo CLI install method for your distro is covered in
-> [Quickstart](/docs/simple-solo-setup/quickstart#install-solo-cli).
+1. Install Node.js (>= 22.0.0):
 
-1. Install Homebrew for Linux:
+    Using [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) (recommended):
 
     ```sh
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+    source ~/.nvm/nvm.sh
+    nvm install --lts
     ```
 
-    Add Homebrew to your PATH:
-
-    ```sh
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    ```
+    Or download from [nodejs.org](https://nodejs.org/en/download).
 
 2. Install Docker Engine (Ubuntu/Debian):
 
@@ -173,7 +179,17 @@ Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quick
     > Then run `sudo systemctl enable --now docker` and
     > `sudo usermod -aG docker ${USER}`.
 
-Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quickstart) to install Solo and deploy.
+3. Install Solo:
+
+    ```sh
+    npm install -g @hiero-ledger/solo@latest
+    ```
+
+4. Verify the installation:
+
+    ```sh
+    solo --version
+    ```
 
 {{% /tab %}}
 
@@ -217,28 +233,17 @@ Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quick
    wsl --install Ubuntu
    ```
 
-2. Install build tools required by Homebrew:
+2. Install Node.js (>= 22.0.0) inside the Ubuntu terminal:
+
+    Using [nvm](https://github.com/nvm-sh/nvm#installing-and-updating):
 
     ```sh
-    sudo apt-get install build-essential procps curl file git
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+    source ~/.nvm/nvm.sh
+    nvm install --lts
     ```
 
-    > **Note:** These are the [Linux prerequisites for Homebrew](https://docs.brew.sh/Homebrew-on-Linux). Without `build-essential`, `brew install` commands fail with `Error: ... must be built from source. Install Clang or run brew install gcc`. Only run this command on a trusted system.
-
-3. Install Homebrew for Linux:
-
-    ```sh
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    ```
-
-    Add Homebrew to your PATH:
-
-    ```sh
-    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-    ```
-
-4. Install Docker Desktop for Windows:
+3. Install Docker Desktop for Windows:
     - Download from: [https://www.docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop)
     - Enable WSL2 integration: **Settings → Resources → WSL Integration**
     - Configure resources:
@@ -246,7 +251,17 @@ Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quick
       - **Settings → Resources → CPU**: set to at least **6 cores**
       - Click **Apply & Restart**
 
-Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quickstart) to install Solo and deploy.
+4. Install Solo:
+
+    ```sh
+    npm install -g @hiero-ledger/solo@latest
+    ```
+
+5. Verify the installation:
+
+    ```sh
+    solo --version
+    ```
 
 {{% /tab %}}
 

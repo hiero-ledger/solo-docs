@@ -22,7 +22,7 @@ You can run one of the following commands depending on your needs:
     solo one-shot single deploy
     ```
 
-    > **Prerequisite:** Install Solo first with `brew install hiero-ledger/tools/solo`.
+    > **Prerequisite:** Install Solo first with `npm install -g @hiero-ledger/solo@latest`. See [System Readiness](/docs/simple-solo-setup/system-readiness) for full install instructions. Homebrew (`brew install hiero-ledger/tools/solo`) is deprecated and will stop receiving updates after August 31, 2026.
 
     For more information on Single Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
 
@@ -93,28 +93,10 @@ solo one-shot single deploy
 
 ### How do I access services after deployment?
 
-After running `solo one-shot single deploy`, the following services are available on localhost. The ports below are the **defaults for Solo 0.63 and later**:
-
-| Service               | Endpoint                 | Description                                      |
-| --------------------- | ------------------------ | ------------------------------------------------ |
-| Explorer UI           | `http://localhost:38080` | Web UI for inspecting accounts and transactions. |
-| Consensus node (gRPC) | `localhost:35211`        | gRPC endpoint for submitting transactions.       |
-| Mirror node REST API  | `http://localhost:38081` | REST API for querying historical data.           |
-| JSON RPC relay        | `http://localhost:37546` | Ethereum-compatible JSON RPC endpoint.           |
-
-- Open `http://localhost:38080` in your browser to start exploring your local network.
-
-- To verify these services are reachable, you can run a quick health check:
-
-    ```bash
-    # Mirror node REST API
-    curl -s "http://localhost:38081/api/v1/transactions?limit=1"
-    
-    # JSON RPC relay
-    curl -s -X POST http://localhost:37546 \
-      -H "Content-Type: application/json" \
-      --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
-    ```
+After running `solo one-shot single deploy`, your local services are available on
+localhost. For the complete endpoint reference — default ports for Solo 0.63+
+and Solo 0.62 and earlier, verification commands, and port lookup — see
+[**Service Endpoints**](/docs/using-solo/endpoints).
 
 - If any service is unreachable, confirm that all pods are healthy first:
 
@@ -124,26 +106,15 @@ After running `solo one-shot single deploy`, the following services are availabl
 
     All Solo-related pods should be in a `Running` or `Completed` state before the endpoints become available.
 
-> **Note:** These are Solo's default port targets. If a port is already in use on your machine, Solo automatically selects the next available port. The actual ports used are printed at the end of deployment and saved to `~/.solo/<deployment-name>/forwards`. See [Port availability](/docs/simple-solo-setup/quickstart#port-availability) for details.
-
-**Solo 0.62 and earlier** used different default ports:
-
-| Service               | Endpoint                | Description                                      |
-| --------------------- | ----------------------- | ------------------------------------------------ |
-| Explorer UI           | `http://localhost:8080` | Web UI for inspecting accounts and transactions. |
-| Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for submitting transactions.       |
-| Mirror node REST API  | `http://localhost:8081` | REST API for querying historical data (via mirror-ingress). |
-| JSON RPC relay        | `http://localhost:7546` | Ethereum-compatible JSON RPC endpoint.           |
-
-> **Note:** `localhost:5551` is the direct Mirror Node REST service, accessible only via manual `kubectl port-forward`, and is being phased out. The ingress-based port (`8081` for older Solo, `38081` for Solo 0.63+) is the recommended entry point.
-
 ### How do I connect my application to the local network?
 
-Use these endpoints (Solo 0.63 and later):
+Use these endpoints with your SDK or tooling (Solo 0.63 and later):
 
-- **gRPC (Hedera SDK)**: `localhost:35211`, Node ID: `0.0.3`
-- **JSON RPC (Ethereum tools)**: `http://localhost:37546`
+- **Hiero SDK (gRPC)**: `localhost:35211`, node account ID `0.0.3`
+- **EVM tools (JSON-RPC)**: `http://localhost:37546`
 - **Mirror Node REST**: `http://localhost:38081/api/v1/`
+
+For verification commands, legacy ports, and port lookup, see [Service Endpoints](/docs/using-solo/endpoints).
 
 ### What should I do if `solo one-shot single destroy` fails or my Solo state is corrupted?
 

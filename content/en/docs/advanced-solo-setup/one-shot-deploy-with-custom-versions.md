@@ -37,8 +37,7 @@ in the environment variables reference.
 > `*_EDGE_VERSION` variables pin components to **published container image
 > tags** — they require the image to exist in the registry. If you need to
 > deploy a binary you compiled locally (before any tag or release exists), use
-> `--local-build-path` instead. See
-> [Deploying a Local Consensus Node Build](/docs/using-solo/local-builds).
+> `--local-build-path` instead.
 
 ---
 
@@ -78,7 +77,7 @@ Deploy a single-node network with a custom Consensus Node release candidate:
 
 ```bash
 CONSENSUS_NODE_EDGE_VERSION=v0.74.0-rc.1 \
-solo one-shot single deploy --edge --dev
+solo one-shot single deploy --edge --debug
 ```
 
 What this does:
@@ -87,28 +86,18 @@ What this does:
   version for this command invocation.
 - `--edge` tells Solo to read `*_EDGE_VERSION` variables instead of stable
   defaults.
-- `--dev` enables Solo's developer mode — appropriate for local development,
+- `--debug` enables Solo's debug mode — appropriate for local development,
   not for production-shaped deployments.
 - Mirror Node, Relay, Explorer, Block Node, and the Solo chart keep their
   compiled-in edge defaults because no `*_EDGE_VERSION` was set for them.
 
-> **Note:** If you already have a running `one-shot` deployment and want to
-> keep it, the command above fails with
-> *"A deployment named one-shot already exists"* because `one-shot` is the
-> default deployment name. Pass `--deployment <name> --namespace <name>` to
-> deploy the edge build alongside the existing one:
->
-> ```bash
-> CONSENSUS_NODE_EDGE_VERSION=v0.74.0-rc.1 \
-> solo one-shot single deploy --edge --dev \
->   --deployment one-shot-edge --namespace one-shot-edge
-> ```
->
-> Every `solo one-shot` deploy overwrites `~/.solo/cache/last-one-shot-deployment.txt`
-> with its own deployment name. After this command, the cache file points at
-> `one-shot-edge`, not the original `one-shot`. Pass `--deployment` explicitly
-> when running follow-up commands against a specific deployment.
+> **Note:** Every successive `solo one-shot single deploy` command will remove the
+> existing components and will create a new deployment.
 
+> **Deprecated:** The `--dev` flag has been renamed to `--debug`. `--dev` still
+> works as an alias but is deprecated and prints a warning; update your scripts
+> to use `--debug`. The `--dev` alias will no longer be supported once Solo
+> `0.82.0` reaches its end of support date.
 ---
 
 ## Where to Find Version Tags
@@ -146,7 +135,7 @@ versions.
 ```bash
 CONSENSUS_NODE_EDGE_VERSION=<version> \
 MIRROR_NODE_EDGE_VERSION=<version> \
-solo one-shot single deploy --edge [--dev] [other flags]
+solo one-shot single deploy --edge [--debug] [other flags]
 ```
 
 ### Multi-node deploy
@@ -154,7 +143,7 @@ solo one-shot single deploy --edge [--dev] [other flags]
 ```bash
 CONSENSUS_NODE_EDGE_VERSION=<version> \
 MIRROR_NODE_EDGE_VERSION=<version> \
-solo one-shot multi deploy --edge --num-consensus-nodes 3 [--dev] [other flags]
+solo one-shot multi deploy --edge --num-consensus-nodes 3 [--debug] [other flags]
 ```
 
 ---
@@ -166,7 +155,7 @@ solo one-shot multi deploy --edge --num-consensus-nodes 3 [--dev] [other flags]
 ```bash
 CONSENSUS_NODE_EDGE_VERSION=v0.73.0 \
 MIRROR_NODE_EDGE_VERSION=v0.153.1 \
-solo one-shot single deploy --edge --dev
+solo one-shot single deploy --edge --debug
 ```
 
 ### Override every component
@@ -178,7 +167,7 @@ RELAY_EDGE_VERSION=0.77.0 \
 EXPLORER_EDGE_VERSION=27.0.0 \
 BLOCK_NODE_EDGE_VERSION=v0.32.0 \
 SOLO_CHART_EDGE_VERSION=0.64.0 \
-solo one-shot single deploy --edge --dev
+solo one-shot single deploy --edge --debug
 ```
 
 ### Export once, reuse across a development session
@@ -190,11 +179,11 @@ variables so every `one-shot` command in the shell session picks them up:
 export CONSENSUS_NODE_EDGE_VERSION=v0.74.0-rc.1
 export MIRROR_NODE_EDGE_VERSION=v0.153.1
 
-solo one-shot single deploy --edge --dev
+solo one-shot single deploy --edge --debug
 
 # Destroy and redeploy without re-typing the variables
 solo one-shot single destroy
-solo one-shot single deploy --edge --dev
+solo one-shot single deploy --edge --debug
 ```
 
 ---
@@ -238,7 +227,7 @@ invocation.
 
 ```bash
 # Stable defaults — *_EDGE_VERSION variables are ignored.
-solo one-shot single deploy --dev
+solo one-shot single deploy --debug
 ```
 
 If you want to pin versions without using `--edge` (for example, to test a
