@@ -239,13 +239,25 @@ ingress controller for the mirror node REST API.
 ### 10. Deploy JSON-RPC Relay
 
 - Deploy the Hiero JSON-RPC Relay to expose an Ethereum-compatible JSON-RPC
-endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.):
+endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.).
 
-  ```bash
-  solo relay node add \
-    -i node1 \
-    --deployment "${SOLO_DEPLOYMENT}"
-  ```
+  The `-i` flag (short for `--node-aliases`) specifies which consensus nodes the relay serves. Pass a comma-separated list for multi-node deployments. Omitting the flag covers all nodes.
+
+  #### 1. Single node:
+
+    ```bash
+    solo relay node add \
+      -i node1 \
+      --deployment "${SOLO_DEPLOYMENT}"
+    ```
+
+  #### 2. Multiple nodes (e.g., 3 nodes):
+
+    ```bash
+    solo relay node add \
+      --node-aliases node1,node2,node3 \
+      --deployment "${SOLO_DEPLOYMENT}"
+    ```
 
 - **Expected output**:
 
@@ -261,6 +273,8 @@ When you are done, destroy components in the reverse order of deployment.
 > this order can leave orphaned Helm releases and PVCs in your cluster.
 
 ### 1. Destroy JSON-RPC Relay
+
+Pass the same node aliases you used when deploying the relay. For a multi-node deployment, use `--node-aliases node1,node2,node3` (or omit the flag to destroy all).
 
 ```bash
 solo relay node destroy \
