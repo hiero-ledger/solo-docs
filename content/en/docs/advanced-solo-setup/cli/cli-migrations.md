@@ -21,7 +21,6 @@ For full current syntax and flags, see [Solo CLI Reference](/docs/advanced-solo-
 
 | Legacy command | Current command |
 | --- | --- |
-| `init` | `init` |
 | `block node add` | `block node add` |
 | `block node destroy` | `block node destroy` |
 | `block node upgrade` | `block node upgrade` |
