@@ -2,9 +2,9 @@
 title: "Managing Your Network"
 weight: 3
 description: >
-  Learn how to start, stop, and restart consensus nodes, capture logs and
-  diagnostics, and troubleshoot a running Solo network. Master day-to-day
-  network operations and troubleshooting.
+  Learn how to start, stop, and restart consensus nodes, reset the ledger to
+  genesis, capture logs and diagnostics, and troubleshoot a running Solo
+  network. Master day-to-day network operations and troubleshooting.
 categories: ["Operations"]
 tags: ["operations", "cli", "consensus-nodes"]
 type: docs
@@ -13,8 +13,8 @@ type: docs
 ## Overview
 
 This guide covers day-to-day management operations for a running Solo network,
-including starting, stopping, and restarting nodes, capturing logs, and
-troubleshooting.
+including starting, stopping, and restarting nodes, resetting the ledger to
+genesis, capturing logs, and troubleshooting.
 
 ## Prerequisites
 
@@ -69,6 +69,12 @@ solo consensus node restart --deployment <deployment-name>
 ```
 
 To verify pod status after any of the above commands, see [Verify the network](/docs/simple-solo-setup/quickstart#verify-the-network) in the Quickstart guide.
+
+> **Stop/start vs. ledger reset:** `stop`/`start`/`restart` pause and resume
+> consensus nodes without touching ledger state — accounts, balances, and
+> transaction history are preserved. To return the ledger to genesis and
+> discard all on-ledger state, see
+> [Reset the ledger to genesis](#reset-the-ledger-to-genesis).
 
 ### Stop the entire network
 
