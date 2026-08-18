@@ -44,7 +44,7 @@ Before proceeding, ensure you have completed the following:
 
   | Requirement | Version | Purpose |
   | --- | --- | --- |
-  | [Node.js](https://nodejs.org/) | v20 or higher | Runs your application against the SDK |
+  | [Node.js](https://nodejs.org/) | v22 or higher | Runs your application against the SDK |
 
   {{% /tab %}}
 
@@ -130,16 +130,23 @@ Go 1.25 or higher is required (per `go.mod` in the SDK). See the [Hiero Go SDK R
 
 ## Step 3: Locate Your Operator Credentials
 
-`solo one-shot single deploy` provisions a bootstrap operator account (`0.0.2`)
-at genesis and writes its credentials to disk. Use this account as your
-operator - you do **not** need to call `solo ledger account create` for the
-examples in this guide.
+`solo one-shot single deploy` provisions pre-funded accounts and writes their
+credentials to `accounts.json`. Any account from this file can
+serve as your SDK operator — `0.0.2` is used as the example throughout this
+guide, but it is not required. You do **not** need to call
+`solo ledger account create` for the examples in this guide.
+
+> **Tip:** Account credentials are also printed to the terminal at the end of
+> `solo one-shot single deploy`. If you missed the output, use the steps below
+> to retrieve them from disk.
 
 - Print the operator credentials:
 
   ```bash
   cat ~/.solo/one-shot-<your-deployment-name>/accounts.json
   ```
+
+  > **Tip:** If you are unsure of your deployment name, run `solo one-shot show deployment` — it prints the deployment name and the full path to `accounts.json`.
 
 - **Expected output:**
 
@@ -160,9 +167,12 @@ examples in this guide.
   }
   ```
 
-  The `systemAccounts[0]` block is the operator (`0.0.2`) with an Ed25519 key in DER format. The `createdAccounts` array contains additional pre-funded ECDSA-alias accounts useful for EVM workflows.
+  The `systemAccounts[0]` entry (`0.0.2`) holds an Ed25519 key in DER format
+  and is used as the operator example in this guide. The `createdAccounts` array
+  contains additional pre-funded ECDSA accounts (`0.0.1002`–`0.0.1011`) useful
+  for EVM workflows — any of these can also be used as an operator.
 
-- Save the `accountId` and `privateKey` values from `systemAccounts[0]` - you will configure the SDK with them in the next step.
+- Save the `accountId` and `privateKey` values from `systemAccounts[0]` — you will configure the SDK with them in the next step.
 
 > **EVM tooling note:** For ethers.js, Hardhat, or Foundry, use one of the
 > `createdAccounts` entries; their `privateKey` values are already in

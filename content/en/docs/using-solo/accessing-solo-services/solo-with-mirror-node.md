@@ -144,7 +144,7 @@ solo ledger account create --deployment solo-deployment --hbar-amount 100
 
 Open the Explorer at `http://localhost:38080/localnet/dashboard` (Solo 0.63+) or `http://localhost:8080/localnet/dashboard` (Solo 0.62 and earlier) to see the new accounts and their transactions recorded by the Mirror Node. If the port does not work, check your actual port assignments — see [Port Reference](#port-reference).
 
-You can also use the [Hiero JavaScript SDK](/docs/using-solo/using-solo-with-javascript-sdk)
+You can also use the [Hiero JavaScript SDK](/docs/using-solo/using-solo-with-hiero-sdks)
 to create a topic, submit a message, and subscribe to it.
 
 ---
@@ -209,7 +209,12 @@ In most cases you should use `localhost:38081` (Solo 0.63+) or `localhost:8081` 
 
 ## Port Reference
 
-The ports listed below are Solo's **default** targets. Solo checks each port before opening a tunnel - if the port is already in use, Solo picks the next available one and logs `Using available port <port>`. If an endpoint is not reachable, check the actual ports your deployment is using with `solo deployment config ports --deployment <deployment-name>` - see [Port availability](/docs/simple-solo-setup/quickstart#port-availability) for the full set of commands.
+> For the full network endpoint reference (consensus gRPC, Mirror Node REST,
+> JSON-RPC Relay, and Explorer), see [Service Endpoints](/docs/using-solo/endpoints).
+> The table below covers mirror-node-specific ports, including those accessible
+> only via manual `kubectl port-forward`.
+
+The ports listed below are Solo's **default** targets. Solo checks each port before opening a tunnel - if the port is already in use, Solo picks the next available one and logs `Using available port <port>`. If an endpoint is not reachable, check the actual ports your deployment is using with `solo deployment config ports --deployment <deployment-name>` - see [Port availability](/docs/using-solo/endpoints#port-availability) for the full set of commands.
 
 The default local ports depend on your Solo version:
 

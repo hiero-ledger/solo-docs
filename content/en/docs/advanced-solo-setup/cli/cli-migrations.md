@@ -15,7 +15,7 @@ type: docs
 
 Use this page when migrating scripts or runbooks from legacy Solo CLI command paths (`< v0.44.0`) to the current command structure.
 
-For full current syntax and flags, see [Solo CLI Reference](/docs/advanced-solo-setup/cli/solo-cli).
+For full current syntax and flags, see [Solo CLI Reference](/docs/advanced-solo-setup/cli/).
 
 ## Legacy to Current Mapping
 

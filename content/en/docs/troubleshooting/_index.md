@@ -69,8 +69,11 @@ In the terminal, this appears inside a bordered `ERROR` box, followed by a tip
 suggesting `solo deployment diagnostics logs` or
 `solo deployment diagnostics report` to gather more detail.
 
-> **Note:** Add `--dev` to a command to see the full error cause chain and stack
-> traces instead of the summarized form — useful when filing a bug report.
+> **Note:** Add `--debug` to a command to see the full error cause chain and stack
+> traces instead of the summarized form — useful when filing a bug report. (This
+> flag was previously named `--dev`. The `--dev` alias still works but is
+> deprecated and will no longer be supported once Solo `0.82.0` reaches its end
+> of support date.)
 
 ## Common Issues and Solutions
 
@@ -98,21 +101,29 @@ You are likely hitting an installation or upgrade problem if:
 
 1. **Confirm installation method**
 
-   If you previously installed Solo via npm and are now using Homebrew, remove
-   the npm install to avoid conflicts. Solo is published under two npm names
-   (`@hiero-ledger/solo` and `@hashgraph/solo`), so remove both:
+   If you previously installed Solo via Homebrew and are now migrating to npm,
+   remove the Homebrew install to avoid conflicts:
 
    ```bash
-   # Remove any npm-based Solo (if present)
-   if command -v npm >/dev/null 2>&1; then
-     npm uninstall -g @hiero-ledger/solo || true
-     npm uninstall -g @hashgraph/solo || true
-   fi
+   brew uninstall hiero-ledger/tools/solo
    ```
 
-   Then reinstall Solo using the steps in the
-   [Quickstart](/docs/simple-solo-setup/quickstart). If a global npm install
-   fails with `EEXIST` because both package names are present, see
+   Then install via npm:
+
+   ```bash
+   npm install -g @hiero-ledger/solo@latest
+   ```
+
+   If you have Solo installed under both npm package names (`@hiero-ledger/solo`
+   and `@hashgraph/solo`), remove both before reinstalling:
+
+   ```bash
+   npm uninstall -g @hiero-ledger/solo || true
+   npm uninstall -g @hashgraph/solo || true
+   ```
+
+   If a global npm install fails with `EEXIST` because both package names are
+   present, see
    [Resolving an `EEXIST` package-name conflict](/docs/simple-solo-setup/upgrading-solo#resolving-an-eexist-package-name-conflict).
 
 2. **Verify system resources**
@@ -614,7 +625,7 @@ kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>
 - [Advanced Solo Setup](/docs/advanced-solo-setup) - Complex deployment
   scenarios.
 - [FAQs](/docs/faqs) - Common questions and answers.
-- [Solo CLI Reference](/docs/advanced-solo-setup/cli/solo-cli) - Canonical
+- [Solo CLI Reference](/docs/advanced-solo-setup/cli/) - Canonical
   command and flag reference.
 - [Error Codes reference](/docs/troubleshooting/errors/) - Look up any
   `SOLO-XXXX` error code.

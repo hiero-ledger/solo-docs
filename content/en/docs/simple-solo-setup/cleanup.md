@@ -121,10 +121,9 @@ docker volume prune
 ## Clean up legacy npm installations
 
 If you previously installed Solo via npm (for example, from older workshops or
-documentation), remove the global package to avoid conflicts with a newer
-Homebrew or npm install. Solo has been published under two npm names -
-`@hiero-ledger/solo` and `@hashgraph/solo` - so remove both to be sure no copy
-is left behind:
+documentation), remove the global package to avoid conflicts with a newer npm
+install. Solo has been published under two npm names — `@hiero-ledger/solo` and
+`@hashgraph/solo` — so remove both to be sure no copy is left behind:
 
 ```bash
 # Remove any npm-based Solo install (safe to run even if not present)

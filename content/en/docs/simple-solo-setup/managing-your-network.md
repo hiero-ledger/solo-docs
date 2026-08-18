@@ -26,23 +26,14 @@ Before proceeding, ensure you have completed the following:
 > **Note:** If you need to upgrade an existing Solo network, see
 > [Upgrade Your Network](/docs/simple-solo-setup/upgrade-your-network).
 
-{{< tabpane text=true >}}
-{{% tab header="Bash" lang="bash" %}}
 ```bash
-cat ~/.solo/cache/last-one-shot-deployment.txt
+solo one-shot show deployment
 ```
-{{% /tab %}}
-{{% tab header="PowerShell" lang="powershell" %}}
-```powershell
-Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt
-```
-{{% /tab %}}
-{{< /tabpane >}}
 
 Expected output — the deployment name you passed to `solo one-shot single deploy`, or the default `one-shot` if you did not specify `--deployment`:
 
   ```bash
-  one-shot% 
+  Deployment Name: one-shot (default)
   ```
 
 Most management commands require your deployment name. Find it with `solo one-shot show deployment` — see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name). It defaults to `one-shot` unless you passed `--deployment`. Use it as `<deployment-name>` in all commands on this page.
@@ -217,6 +208,6 @@ To find your deployment namespace, use any of:
   kubectl get pods -A | grep -v kube-system
   ```
 
-For one-shot deployments the namespace matches the deployment name in `~/.solo/cache/last-one-shot-deployment.txt` (on native Windows, `$env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt`; default: `one-shot`).
+For one-shot deployments the namespace matches the deployment name, which defaults to `one-shot` unless you passed `--deployment` (retrieve it with `solo one-shot show deployment`).
 
 Replace `<namespace>` and `<pod-name>` with the values from your deployment.

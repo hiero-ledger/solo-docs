@@ -170,7 +170,7 @@ HAProxy, Envoy, and MinIO:
 
   solo consensus node setup \
     --deployment "${SOLO_DEPLOYMENT}" \
-    --release-tag "${CONSENSUS_NODE_VERSION}"
+    --consensus-node-version "${CONSENSUS_NODE_VERSION}"
   ```
 
   On native Windows (PowerShell), set the version with `$env:CONSENSUS_NODE_VERSION = 'v0.66.0'` and reference variables as `$env:SOLO_DEPLOYMENT` / `$env:CONSENSUS_NODE_VERSION`.
@@ -205,7 +205,8 @@ REST API and gRPC endpoint:
     --deployment "${SOLO_DEPLOYMENT}" \
     --cluster-ref kind-${SOLO_CLUSTER_NAME} \
     --enable-ingress \
-    --pinger
+    --pinger \
+    --force-port-forward
   ```
 
   The `--pinger` flag keeps the mirror node's importer active by regularly
@@ -225,7 +226,8 @@ ingress controller for the mirror node REST API.
   ```bash
   solo explorer node add \
     --deployment "${SOLO_DEPLOYMENT}" \
-    --cluster-ref kind-${SOLO_CLUSTER_NAME}
+    --cluster-ref kind-${SOLO_CLUSTER_NAME} \
+    --force-port-forward
   ```
 
 - **Expected output**:
@@ -237,14 +239,25 @@ ingress controller for the mirror node REST API.
 ### 10. Deploy JSON-RPC Relay
 
 - Deploy the Hiero JSON-RPC Relay to expose an Ethereum-compatible JSON-RPC
-endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.):
+endpoint for EVM tooling (MetaMask, Hardhat, Foundry, etc.).
 
-  ```bash
-  solo relay node add \
-    -i node1 \
-    --deployment "${SOLO_DEPLOYMENT}"
-  ```
-> TODO: double check these, and update in solo repo if needed to match, also double check the exported variables match
+  The `-i` flag (short for `--node-aliases`) specifies which consensus nodes the relay serves. Pass a comma-separated list for multi-node deployments. Omitting the flag covers all nodes.
+
+  #### 1. Single node:
+
+    ```bash
+    solo relay node add \
+      -i node1 \
+      --deployment "${SOLO_DEPLOYMENT}"
+    ```
+
+  #### 2. Multiple nodes (e.g., 3 nodes):
+
+    ```bash
+    solo relay node add \
+      --node-aliases node1,node2,node3 \
+      --deployment "${SOLO_DEPLOYMENT}"
+    ```
 
 - **Expected output**:
 
@@ -260,6 +273,8 @@ When you are done, destroy components in the reverse order of deployment.
 > this order can leave orphaned Helm releases and PVCs in your cluster.
 
 ### 1. Destroy JSON-RPC Relay
+
+Pass the same node aliases you used when deploying the relay. For a multi-node deployment, use `--node-aliases node1,node2,node3` (or omit the flag to destroy all).
 
 ```bash
 solo relay node destroy \

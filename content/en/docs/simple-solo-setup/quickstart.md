@@ -33,23 +33,25 @@ Before you begin, ensure you have completed the following:
 > **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
 > Detailed version requirements, OS-specific notes, and optional tools are documented in the [System Readiness](/docs/simple-solo-setup/system-readiness).
 
-## Install Solo CLI
+## Step 1: Install Solo CLI
 
 Install the latest Solo CLI globally using one of the following methods:
 
-- **Homebrew** (**recommended** for macOS/Linux/WSL2):
-
-  ```bash
-  brew install hiero-ledger/tools/solo
-  ```
-
-- **npm** (required for native Windows PowerShell; alternative on macOS/Linux/WSL2):
+- **npm** (**recommended** for all platforms):
 
   ```bash
   npm install -g @hiero-ledger/solo@latest
   ```
 
-  > **Note:** On macOS, Linux, and WSL2, Homebrew is recommended — it installs Node.js for you, whereas npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed — Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). On native Windows (PowerShell), npm is the only available option. Regardless of installation method, Solo provisions kubectl, Helm, and Kind automatically at deploy time.
+  > **Note:** npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed — Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). Solo provisions kubectl, Helm, and Kind automatically at deploy time.
+
+- **Homebrew** (deprecated — macOS/Linux/WSL2 only):
+
+  ```bash
+  brew install hiero-ledger/tools/solo
+  ```
+
+  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31.
 
 ### Verify the installation
 
@@ -62,14 +64,14 @@ solo --version
 Expected output (version may be different):
 
 ```text
-** Solo **
-Version : 0.77.0
-**
+******************************* Solo *********************************************
+Version			: 0.84.0
+**********************************************************************************
 ```
 
-If you see a similar banner with a valid Solo version (for example, 0.59.1), your installation is successful.
+If you see a similar banner with a valid Solo version, your installation is successful.
 
-## Deploy a local network (one-shot)
+## Step 2: Deploy a local network (one-shot)
 
 Use the one-shot command to create and configure a fully functional local Hiero network:
 
@@ -84,9 +86,13 @@ This command performs the following actions:
 - Sets up and funds default test accounts.
 - Exposes gRPC and JSON-RPC endpoints for client access.
 
-> **Tip:** Solo caches the container images it pulls, so your first deployment
-> may take longer while images download; later deployments reuse the local cache
-> and start faster. See [Solo Image Cache](/docs/advanced-solo-setup/image-cache).
+> **⏱ First-run time:** `solo one-shot single deploy` typically takes
+> **3–5 minutes** when container images are already cached locally, or
+> **10–20 minutes** on the very first run while Solo pulls images over the
+> network (longer on slower connections). Long pauses with no visible output
+> change are normal — the deploy is still running. Later deployments reuse the
+> local image cache and complete faster. See
+> [Solo Image Cache](/docs/advanced-solo-setup/image-cache).
 
 > **Note:** During deployment you may see `Stopping port-forward for port [N]`
 > printed in yellow. This is expected - as it sets up the network, Solo stops
@@ -95,12 +101,12 @@ This command performs the following actions:
 
 ### What gets deployed
 
-| Component      | Description                                          |
-|----------------|------------------------------------------------------|
-| Consensus Node | Hiero consensus node for processing transactions.    |
-| Mirror Node    | Stores and serves historical transaction data.       |
-| Explorer UI    | Web interface for viewing accounts and transactions. |
-| JSON RPC Relay | Ethereum-compatible JSON RPC interface.              |
+| Component      | What it does                                                              | Use it for                                                  |
+|----------------|---------------------------------------------------------------------------|-------------------------------------------------------------|
+| Consensus Node | Processes transactions and maintains the shared ledger.                   | Sending transactions and queries via a Hiero SDK.           |
+| Mirror Node    | Indexes all transaction history and exposes a REST API and gRPC stream.   | Querying balances, history, and subscribing to event feeds. |
+| Explorer UI    | Browser-based dashboard for inspecting accounts and transactions.          | Browsing the network state without writing code.            |
+| JSON-RPC Relay | Ethereum-compatible JSON-RPC interface layered on top of the consensus node. | Connecting MetaMask, Hardhat, Foundry, and ethers.js.    |
 
 {{< details summary="Multiple Node Deployment - for testing consensus scenarios" >}}
 
@@ -160,118 +166,16 @@ Confirm that all Solo-related pods are in a `Running` or `Completed` state.
 
 > **Tip:** The Solo testing team recommends [k9s](https://k9scli.io/) for managing Kubernetes clusters. It provides a terminal-based UI that makes it easy to view pods, logs, and cluster status. Install it with `brew install k9s` and run `k9s` to launch.
 
-## Access your local network
+## Step 3: Access your local network
 
-After the one-shot deployment completes and all pods are running, Solo sets up port-forwards so you can reach your local services. The endpoints below are the **default** ports for Solo 0.63 and later:
-
-| Service               | Endpoint                 | Description                            | Verification |
-|-----------------------|--------------------------|----------------------------------------|--------------|
-| Explorer UI           | `http://localhost:38080` | Web UI for inspecting the network.     | Open URL in your browser |
-| Consensus node (gRPC) | `localhost:35211`        | gRPC endpoint for transactions.        | `nc -zv localhost 35211` |
-| Mirror node REST API  | `http://localhost:38081` | REST API for queries.                  | `curl http://localhost:38081/api/v1/transactions` |
-| JSON RPC relay        | `http://localhost:37546` | Ethereum-compatible JSON RPC endpoint. | `curl -X POST http://localhost:37546 -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'` |
-
-> **macOS note:** Running `nc -zv localhost 35211` may print two lines:
-> ```text
-> nc: connectx to localhost port 35211 (tcp) failed: Connection refused
-> Connection to localhost port 35211 [tcp/*] succeeded!
-> ```
-> The first line is a failed IPv6 attempt - this is expected on macOS.
-> The second line confirms the IPv4 connection succeeded. The port is reachable.
+After the one-shot deployment completes and all pods are running, Solo sets up
+port-forwards so you can reach your local services. For the full endpoint
+reference — default ports for Solo 0.63+ and Solo 0.62 and earlier, verification
+commands, and port lookup — see [**Service Endpoints**](/docs/using-solo/endpoints).
 
 Open `http://localhost:38080` in your browser to explore your network.
 
-The `Verification` commands above use bash tools (`nc`, `curl`). On native Windows, run the PowerShell equivalents instead:
-
-```powershell
-# Consensus node (gRPC)
-Test-NetConnection localhost -Port 35211
-
-# Mirror node REST API
-Invoke-RestMethod http://localhost:38081/api/v1/transactions
-
-# JSON RPC relay
-Invoke-RestMethod -Method Post -Uri 'http://localhost:37546' -ContentType 'application/json' -Body '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
-```
-
-> **Note:** In PowerShell, `curl` is an alias for `Invoke-WebRequest`, so the bash `curl` flags above will not work. Use `curl.exe` explicitly if you prefer the bash-style syntax.
-
-### Port availability
-
-The ports above are Solo's defaults. Solo uses `kubectl port-forward` to tunnel traffic from your machine to services running inside Kubernetes. Before opening each tunnel, Solo tries the configured port:
-
-- If the port is free, Solo logs: `Using requested port <port>`.
-- If the port is already occupied (by another process, or by a previous Solo session that did not clean up its port-forwards), Solo finds the next available port and logs: `Using available port <port>`.
-
-The actual ports used are printed at the end of `solo one-shot single deploy`. You can also look them up at any time with the Solo CLI, using your deployment name (see [Capture your deployment name](#capture-your-deployment-name)).
-
-To view the active port assignments:
-
-```bash
-solo deployment config ports --deployment <deployment-name>
-```
-
-{{< tabpane text=true >}}
-{{% tab header="Bash" lang="bash" %}}
-```bash
-cat ~/.solo/one-shot-$(cat ~/.solo/cache/last-one-shot-deployment.txt)/forwards
-```
-{{% /tab %}}
-{{% tab header="PowerShell" lang="powershell" %}}
-```powershell
-Get-Content "$env:USERPROFILE\.solo\one-shot-$(Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)\forwards"
-```
-{{% /tab %}}
-{{< /tabpane >}}
-
- *** Consensus node gRPC ***
--------------------------------------------------------------------------------
- - component 1: localhost:35211 -> pod:50211
-
-{{< tabpane text=true >}}
-{{% tab header="Bash" lang="bash" %}}
-```bash
-solo deployment config info --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
-```
-{{% /tab %}}
-{{% tab header="PowerShell" lang="powershell" %}}
-```powershell
-solo deployment config info --deployment (Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)
-```
-{{% /tab %}}
-{{< /tabpane >}}
-
-To restore port-forwards after a system restart without redeploying:
-
-{{< tabpane text=true >}}
-{{% tab header="Bash" lang="bash" %}}
-```bash
-solo deployment refresh port-forwards --deployment $(cat ~/.solo/cache/last-one-shot-deployment.txt)
-```
-{{% /tab %}}
-{{% tab header="PowerShell" lang="powershell" %}}
-```powershell
-solo deployment refresh port-forwards --deployment (Get-Content $env:USERPROFILE\.solo\cache\last-one-shot-deployment.txt)
-```
-{{% /tab %}}
-{{< /tabpane >}}
-
-### Endpoints for Solo 0.62 and earlier
-
-If you are using Solo 0.62 or earlier, the default port-forward targets differ:
-
-| Service               | Endpoint                | Description                            |
-|-----------------------|-------------------------|----------------------------------------|
-| Explorer UI           | `http://localhost:8080` | Web UI for inspecting the network.     |
-| Consensus node (gRPC) | `localhost:50211`       | gRPC endpoint for transactions.        |
-| Mirror node REST API  | `http://localhost:8081` | REST API for queries (via mirror-ingress). |
-| JSON RPC relay        | `http://localhost:7546` | Ethereum-compatible JSON RPC endpoint. |
-
-Open `http://localhost:8080` in your browser to explore your network.
-
-> **Note:** `localhost:5551` is the direct Mirror Node REST service, accessible only via manual `kubectl port-forward`, and is being phased out. Always use the ingress-based port (`8081` for Solo 0.62 and earlier, `38081` for Solo 0.63+).
-
-## Tear down your network
+## Step 4: Tear down your network
 
 When you are finished, destroy the network to free up resources:
 
@@ -280,3 +184,12 @@ solo one-shot single destroy
 ```
 
 For a full teardown procedure including failure recovery, see the [Cleanup](/docs/simple-solo-setup/cleanup) guide. For granular stop/start and management options, see [Managing Your Network](/docs/simple-solo-setup/managing-your-network).
+
+## Next Steps
+
+With your network running, connect your application or explore Solo further:
+
+- [**Using Solo with Hiero SDKs**](/docs/using-solo/using-solo-with-hiero-sdks) — Submit transactions using the JavaScript, Java, or Go SDK.
+- [**Using Solo with EVM Tools**](/docs/using-solo/using-solo-with-evm-tools) — Connect MetaMask, Hardhat, Foundry, or ethers.js to your local network.
+- [**Managing Your Network**](/docs/simple-solo-setup/managing-your-network) — Stop, start, and reset nodes without redeploying.
+- [**Service Endpoints**](/docs/using-solo/endpoints) — Quick reference for all default ports and connection details.
