@@ -101,6 +101,11 @@ outputFormats:
     baseName: _redirects
     isPlainText: true
     mediaType: text/redirects
+  llmsfull:
+    baseName: llms-full
+    isPlainText: true
+    mediaType: text/plain
+    root: true
 
 # Configure how URLs look like per section.
 permalinks:
@@ -139,7 +144,7 @@ markup:
 
 # Comment out if you don't want the "print entire section" link enabled.
 outputs:
-  home: [HTML, print, RSS, redirects]
+  home: [HTML, print, RSS, redirects, llmsfull]
   section: [HTML, print, RSS]
 
 params:
