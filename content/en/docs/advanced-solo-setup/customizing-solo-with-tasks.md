@@ -295,7 +295,6 @@ Low-level tasks for managing clusters and network infrastructure:
 | `cluster:create`            | Create a Kind (Kubernetes in Docker) cluster               |
 | `cluster:destroy`           | Delete the Kind cluster                                    |
 | `solo:cluster:setup`        | Setup cluster infrastructure and prerequisites             |
-| `solo:init`                 | Initialize Solo (download tools and templates)             |
 | `solo:deployment:create`    | Create a new deployment configuration                      |
 | `solo:deployment:attach`    | Attach an existing cluster to a deployment                 |
 | `solo:network:deploy`       | Deploy the consensus network to the cluster                |
