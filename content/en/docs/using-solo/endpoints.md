@@ -155,5 +155,21 @@ solo deployment config info --deployment one-shot
 To restore port-forwards after a system restart without redeploying:
 
 ```bash
-solo deployment refresh port-forwards --deployment one-shot
+solo deployment port-forwards refresh --deployment one-shot
 ```
+
+> **Note:** `solo deployment refresh port-forwards` still works but is
+> deprecated in favor of `solo deployment port-forwards refresh` and will be
+> removed in a future release.
+
+To stop all port-forwards for a deployment (for example, before shutting down
+your machine):
+
+```bash
+solo deployment port-forwards stop --deployment one-shot
+```
+
+This closes the underlying `kubectl port-forward` processes and removes them
+from the deployment's remote config, so they are not restored automatically.
+Run `solo deployment port-forwards refresh --deployment one-shot` afterward to
+re-establish them.
