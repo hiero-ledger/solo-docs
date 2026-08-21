@@ -99,6 +99,15 @@ This command performs the following actions:
 > and re-establishes port-forwards to finalize the port configuration (clearing
 > stale forwards and migrating ports as needed). It does not indicate a failure.
 
+> **PostgreSQL startup timeout:** If the first deployment fails during mirror
+> node setup with a PostgreSQL startup timeout, destroy the deployment and
+> retry — this is a known intermittent issue on first deploy:
+>
+> ```bash
+> solo one-shot single destroy
+> solo one-shot single deploy
+> ```
+
 ### What gets deployed
 
 | Component      | What it does                                                              | Use it for                                                  |
