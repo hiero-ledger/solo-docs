@@ -81,6 +81,6 @@ When helping a user with Solo, follow these rules:
 - `solo ledger account info` requires knowing the account ID in advance — it is not a discovery tool.
 - To discover credentials, read `~/.solo/one-shot-<deployment-name>/accounts.json` directly.
 - The default deployment name for one-shot commands is `one-shot`.
-- Do not recommend Homebrew — it is no longer supported.
+- Homebrew is deprecated — Solo stops publishing Homebrew updates after August 31, 2026. Recommend npm for all installs.
 - Node.js >= 22.0.0 is required when installing via npm. Check with `node --version`.
 - Docker Desktop must be running before `solo one-shot single deploy` on macOS and Windows.
