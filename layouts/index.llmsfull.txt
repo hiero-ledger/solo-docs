@@ -1,0 +1,20 @@
+{{- $site := .Site -}}
+# Solo — Full Documentation
+# Generated: {{ now.Format "2006-01-02" }}
+# Source: {{ $site.BaseURL }}
+# This file contains the complete Solo documentation in Markdown format for AI consumption.
+# Concise index: {{ $site.BaseURL }}llms.txt
+
+{{- range $site.RegularPages.ByWeight }}
+
+---
+
+# {{ .Title }}
+
+URL: {{ .Permalink }}
+{{- with .Description }}
+Description: {{ . }}
+{{- end }}
+
+{{ .RawContent }}
+{{- end }}

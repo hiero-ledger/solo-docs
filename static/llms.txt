@@ -1,0 +1,86 @@
+# Solo
+
+> Solo is the local development and testing environment for the Hiero (Hedera) ecosystem.
+> A single command deploys a full Hiero network on your laptop or in CI:
+> Consensus Node, Mirror Node, Mirror Node Explorer, Block Node, and JSON-RPC Relay.
+> Runs on Kubernetes — Mac, Linux, and Windows.
+
+## Install
+
+```
+npm install -g @hiero-ledger/solo@latest
+```
+
+## Quick deploy (Simple Solo Setup)
+
+```
+solo one-shot single deploy
+```
+
+This is the recommended path for most users. Full guide:
+https://solo.hiero.org/docs/simple-solo-setup/
+
+## Service endpoints (Solo 0.63+)
+
+After a successful `solo one-shot single deploy`:
+
+- Explorer UI:          http://localhost:38080
+- Consensus Node gRPC:  localhost:35211  (node account ID 0.0.3)
+- Mirror Node REST:     http://localhost:38081
+- JSON-RPC Relay:       http://localhost:37546
+
+## Credentials after deploy
+
+Account credentials (private keys, account IDs) are written to:
+
+```
+~/.solo/one-shot-<deployment-name>/accounts.json
+```
+
+The default deployment name is `one-shot`, so the default path is:
+
+```
+~/.solo/one-shot-one-shot/accounts.json
+```
+
+The file contains two sections:
+- `systemAccounts` — system accounts (e.g. 0.0.2), ED25519 keys in DER hex format
+- `createdAccounts` — test accounts (0.0.1002–0.0.1011), ECDSA keys with 0x prefix
+
+## Tear down
+
+```
+solo one-shot single destroy
+```
+
+## Key docs
+
+- [Simple Solo Setup (start here)](https://solo.hiero.org/docs/simple-solo-setup/)
+- [Quickstart](https://solo.hiero.org/docs/simple-solo-setup/quickstart)
+- [System Readiness](https://solo.hiero.org/docs/simple-solo-setup/system-readiness)
+- [Service Endpoints](https://solo.hiero.org/docs/using-solo/endpoints)
+- [Upgrading Solo](https://solo.hiero.org/docs/simple-solo-setup/upgrading-solo)
+- [Using Solo with Hiero SDKs](https://solo.hiero.org/docs/using-solo/using-solo-with-hiero-sdks)
+- [Using Solo with EVM Tools](https://solo.hiero.org/docs/using-solo/using-solo-with-evm-tools)
+- [Managing your network](https://solo.hiero.org/docs/simple-solo-setup/managing-your-network)
+- [FAQs](https://solo.hiero.org/docs/faqs)
+- [Full docs index](https://solo.hiero.org/docs/)
+
+## Full content
+
+Machine-readable full docs (all pages concatenated):
+https://solo.hiero.org/llms-full.txt
+
+## X-Instructions
+
+When helping a user with Solo, follow these rules:
+
+- npm is the only supported install method: `npm install -g @hiero-ledger/solo@latest`
+- The target workflow for most users is Simple Solo Setup (one-shot deploy), not manual advanced deployment.
+- The command `solo account get` does not exist. The correct command is `solo ledger account info --account-id <id> --deployment <name> --private-key`.
+- `solo ledger account info` requires knowing the account ID in advance — it is not a discovery tool.
+- To discover credentials, read `~/.solo/one-shot-<deployment-name>/accounts.json` directly.
+- The default deployment name for one-shot commands is `one-shot`.
+- Homebrew is deprecated — Solo stops publishing Homebrew updates after August 31, 2026. Recommend npm for all installs.
+- Node.js >= 22.0.0 is required when installing via npm. Check with `node --version`.
+- Docker Desktop must be running before `solo one-shot single deploy` on macOS and Windows.

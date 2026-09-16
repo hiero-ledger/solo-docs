@@ -10,3 +10,8 @@ GO_VERSION = "1.22.2"
 
 [context.production]
 command = "npm run build:production"
+
+[[redirects]]
+  from = "/.well-known/llms.txt"
+  to = "/llms.txt"
+  status = 200
