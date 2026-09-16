@@ -2,13 +2,7 @@ baseURL: /
 title: Solo
 
 menu:
-  main:
-    - name: Examples Hub
-      weight: 3
-      url: https://github.com/hiero-ledger/solo/tree/main/examples
-    - name: Release Notes
-      weight: 4
-      url: https://github.com/hiero-ledger/solo/releases
+  main: []
 
 module:
   # Uncomment the next line to build and serve using local docsy clone declared in the named Hugo workspace:

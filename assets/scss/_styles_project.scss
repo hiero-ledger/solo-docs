@@ -188,6 +188,37 @@ small,
   font-weight: 700 !important;
 }
 
+// Sidebar external-links group: Examples Hub, Release Notes, Solo on GitHub.
+// DOM structure at depth >= 1: li > input + label > a > i + span (foldable nav).
+// Mirror the foldable-nav caret (label::before, position: absolute, left: 0.1em)
+// so the icon sits at the same horizontal position as the section expand arrows.
+nav.foldable-nav .ul-1 .without-child label a i[class*="fa-"] {
+  position: absolute;
+  left: 0.1em;
+  padding-left: 0.4em;
+  padding-right: 0.4em;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1em;
+}
+
+// Push link text clear of the absolutely-positioned icon.
+// FA icons (fa-code, fa-tag, fa-github) are wider than the narrow caret glyph,
+// so the <a> needs left padding to prevent the text from overlapping the icon.
+// !important is required to override Bootstrap's ps-0 (padding-start: 0 !important).
+nav.foldable-nav .ul-1 .without-child:has(label a i[class*="fa-"]) label a {
+  padding-left: 1.2em !important;
+}
+
+// Visual separator above the first of the three external link items.
+// :not(li:has(...) + li) targets the first in a consecutive group of icon-bearing lis.
+// --color-text-light (#888 light / #aab7cf dark) is visible on both backgrounds.
+.td-sidebar-nav li:has(label > a > i[class*="fa-"]):not(li:has(label > a > i[class*="fa-"]) + li) {
+  border-top: 1px solid var(--color-text-light);
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+}
+
 // --- 5. LINKS & INLINE ELEMENTS ---
 
 a,
