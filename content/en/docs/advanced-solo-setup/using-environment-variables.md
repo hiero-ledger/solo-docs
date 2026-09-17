@@ -18,6 +18,12 @@ behaviour without modifying command-line flags on every run. Variables set
 in your shell environment take effect automatically for all subsequent Solo
 commands.
 
+The variables on this page configure **Solo itself**. They are not the same as the
+variables Solo passes on to the external tools it runs (`helm`, `kubectl`, `kind`).
+Those are filtered by an allowlist — see
+[Subprocess Environment Filtering]({{< relref "subprocess-environment-filtering.md" >}})
+if a variable you set is not reaching one of those tools.
+
 ### Setting environment variables
 
 How you set a variable depends on your shell. Use the tab for your platform:
