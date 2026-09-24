@@ -22,6 +22,7 @@ quickly.
 - [Troubleshooting installation and upgrades](#troubleshooting-installation-and-upgrades)
 - [Pods not reaching Ready state](#pods-not-reaching-ready-state)
 - [CrashLoopBackOff causes and remediation](#crashloopbackoff-causes-and-remediation)
+- [MinIO image pull failures (`ImagePullBackOff` on the MinIO tenant pod)](#minio-image-pull-failures-imagepullbackoff-on-the-minio-tenant-pod)
 - [Resource constraint errors (CPU / RAM / Disk)](#resource-constraint-errors-cpu--ram--disk)
 - [Getting help](#getting-help)
 
@@ -174,7 +175,7 @@ follow this sequence to identify the blocker.
    | `Pending`          | Insufficient resources      | Increase Docker memory/CPU allocation, then retry                |
    | `Pending`          | Storage issues              | Check disk space, free space if needed, restart Docker           |
    | `CrashLoopBackOff` | Container failing to start  | Check pod logs: `kubectl logs -n "${SOLO_NAMESPACE}" <pod-name>` |
-   | `ImagePullBackOff` | Can't pull container images | Check internet connectivity and Docker Hub rate limits           |
+   | `ImagePullBackOff` | Can't pull container images | Check internet connectivity and Docker Hub rate limits. If the image is `quay.io/minio/minio`, see [MinIO image pull failures](#minio-image-pull-failures-imagepullbackoff-on-the-minio-tenant-pod) |
 
 ### CrashLoopBackOff causes and remediation
 
@@ -213,6 +214,87 @@ insufficient memory.
     requirements described in
     [System readiness](/docs/simple-solo-setup/system-readiness#hardware-requirements).
   - On Docker Desktop, check: **Settings > Resources**.
+
+### MinIO image pull failures (`ImagePullBackOff` on the MinIO tenant pod)
+
+MinIO stopped publishing new community-edition images as of **2025-10-23**.
+`quay.io/minio/minio` and `docker.io/minio/minio` now return `401
+UNAUTHORIZED` for every tag, including `latest`. Solo uses this image for the
+MinIO tenant (the object storage backend for record streams and backups
+deployed via the MinIO Operator), so any Solo deployment that enables MinIO
+will fail with `ImagePullBackOff` on the tenant pod until the fix below is
+applied.
+
+> **Note:** This affects the current release and all older releases. A future
+> Solo release replaces the default tenant image so this workaround is no
+> longer required. Until then, use the values-file override described here.
+
+#### Symptoms
+
+- `kubectl get pods -n "${SOLO_NAMESPACE}" -l v1.min.io/tenant=minio` shows
+  `ImagePullBackOff` or `ErrImagePull`.
+- `kubectl describe pod <minio-pool-pod> -n "${SOLO_NAMESPACE}"` shows an event
+  like:
+
+  ```text
+  Failed to pull image "quay.io/minio/minio:RELEASE.2024-08-03T04-33-23Z":
+  ... unexpected status from HEAD request ... 401 UNAUTHORIZED
+  ```
+
+- A `one-shot` or `network deploy` run hangs or fails on the "Deploy network
+  node" step with `[SOLO-3035] Pod readiness check failed ... for labels
+  [v1.min.io/tenant=minio]`.
+
+#### Workaround: override the tenant image with a values file
+
+Point the MinIO tenant at a currently-available image using Solo's
+`--values-file` support. [Silo](https://github.com/pgsty/silo) is a MinIO fork
+maintained by PGSTY that keeps publishing dated, S3-API-compatible images
+after upstream stopped; its entrypoint transparently translates the MinIO
+Operator's `server`/`minio` invocation, so it's a drop-in replacement here.
+Create a plain Helm values file:
+
+```yaml
+# minio-image-override.yaml
+minio-server:
+  tenant:
+    image:
+      repository: docker.io/pgsty/silo@sha256
+      digest: 635197cb9f36d01bee221d34d1c7d7960f6a95c48b0b6c01d99cd13bdae51a46
+```
+
+Then deploy with it:
+
+```bash
+solo network deploy -f ./minio-image-override.yaml
+```
+
+`network deploy`'s `--values-file`/`-f` passes this file straight to Helm, so
+the plain values shape above is correct there.
+
+#### If you are using `one-shot` instead
+
+`one-shot`'s `--values-file` is a **different shape** — it is not a raw Helm
+values file. Its top-level keys are per-command sections (`network`,
+`mirrorNode`, `relayNode`, etc.), each holding `--flag: value` pairs that get
+forwarded to the underlying command. To apply the same override through
+`one-shot`, nest the Helm values file above inside a `network` section:
+
+```yaml
+# falcon-values.yaml
+network:
+  --values-file: ./minio-image-override.yaml
+```
+
+```bash
+solo one-shot falcon deploy --values-file ./falcon-values.yaml
+```
+
+**`one-shot single deploy` does not accept `--values-file` at all** — the flag
+is only registered on `one-shot falcon deploy`. If your existing workflow uses
+`solo one-shot single deploy`, switch it to `solo one-shot falcon deploy`
+(same underlying deploy pipeline, `single` is just a preset without the
+values-file escape hatch) to apply this workaround.
 
 ### Resource constraint errors (CPU / RAM / Disk)
 
