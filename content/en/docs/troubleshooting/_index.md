@@ -225,9 +225,12 @@ deployed via the MinIO Operator), so any Solo deployment that enables MinIO
 will fail with `ImagePullBackOff` on the tenant pod until the fix below is
 applied.
 
-> **Note:** This affects the current release and all older releases. A future
-> Solo release replaces the default tenant image so this workaround is no
-> longer required. Until then, use the values-file override described here.
+> **Note:** This affects Solo versions **below v0.91.0**. Starting with
+> v0.91.0, Solo replaces the default tenant image so this workaround is no
+> longer required. If you're on an older version, use one of the two options
+> below: skip MinIO entirely with environment variables (simplest), or
+> override the tenant image with a values file if you need MinIO's
+> record-stream/backup storage.
 
 #### Symptoms
 
@@ -244,6 +247,25 @@ applied.
 - A `one-shot` or `network deploy` run hangs or fails on the "Deploy network
   node" step with `[SOLO-3035] Pod readiness check failed ... for labels
   [v1.min.io/tenant=minio]`.
+
+#### Easier option: skip MinIO entirely with environment variables
+
+If you don't need record-stream/backup storage and don't want to deal with
+Helm values files, the simplest fix is to not deploy MinIO at all by running
+the network in native block-streaming mode instead:
+
+```bash
+export ONE_SHOT_WITH_BLOCK_NODE=true
+export BLOCK_STREAM_STREAM_MODE=BLOCKS
+
+solo one-shot single deploy
+```
+
+This works with **`one-shot single deploy`** (no need to switch to `falcon`)
+because it's a plain environment variable, not a CLI flag — Solo detects it and
+skips the MinIO/record-uploader setup automatically. Use this unless you
+specifically need the MinIO-backed record-stream/backup path; if you do, use
+the values-file override below instead.
 
 #### Workaround: override the tenant image with a values file
 
