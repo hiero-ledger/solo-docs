@@ -30,7 +30,7 @@ You can also manage the cache directly with the `solo cache image` commands.
 
 - **Solo CLI v0.73.0 or later installed** - the image cache was introduced in
   Solo v0.73.0; earlier versions have no `solo cache image` command. See
-  [Quickstart](/docs/simple-solo-setup/quickstart#install-solo-cli).
+  [Quickstart](/docs/simple-solo-setup/quickstart#step-1-install-solo-cli).
 
 ## Where the cache lives
 
