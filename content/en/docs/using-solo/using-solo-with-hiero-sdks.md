@@ -586,7 +586,7 @@ This command:
 
 ## Inspect Transactions in Hiero Explorer
 
-Open the Hiero Explorer to visually inspect submitted transactions, accounts, topics, and files. The Solo Quickstart's [Access your local network](/docs/simple-solo-setup/quickstart#access-your-local-network) section lists the Explorer URL and port-availability behavior. Once it's open, search by account ID, transaction ID, or topic ID to confirm that your transactions reached consensus.
+Open the Hiero Explorer to visually inspect submitted transactions, accounts, topics, and files. The Solo Quickstart's [Access your local network](/docs/simple-solo-setup/quickstart#step-3-access-your-local-network) section lists the Explorer URL and port-availability behavior. Once it's open, search by account ID, transaction ID, or topic ID to confirm that your transactions reached consensus.
 
 ---
 

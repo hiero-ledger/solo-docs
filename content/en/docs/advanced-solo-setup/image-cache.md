@@ -30,7 +30,7 @@ You can also manage the cache directly with the `solo cache image` commands.
 
 - **Solo CLI v0.73.0 or later installed** - the image cache was introduced in
   Solo v0.73.0; earlier versions have no `solo cache image` command. See
-  [Quickstart](/docs/simple-solo-setup/quickstart#install-solo-cli).
+  [Quickstart](/docs/simple-solo-setup/quickstart#step-1-install-solo-cli).
 
 ## Where the cache lives
 
@@ -111,7 +111,8 @@ opt-out:
 
 | Context | Opt-out | Notes |
 | --- | --- | --- |
-| `solo one-shot` deploy | `ENABLE_IMAGE_CACHE=false` | **Requires Solo v0.78.0 or later.** |
+| `solo one-shot` deploy | `SOLO_FF_ENABLE_IMAGE_CACHE=false` | **Requires Solo v0.92.0 or later.** Also accepts `0`. See [Feature Flags](/docs/advanced-solo-setup/using-environment-variables#feature-flags). |
+| `solo one-shot` deploy (older name) | `ENABLE_IMAGE_CACHE=false` | **Requires Solo v0.78.0 or later.** Still honoured; from v0.92.0 it also accepts `FALSE` and `0`. |
 | npm global install | `SOLO_NO_CACHE=true` | Skips the post-install image pull. |
 | Homebrew install | `HOMEBREW_NO_SOLO_CACHE` | Set to any value (presence-based). Skips both the brew-level pull and the npm post-install pull. |
 
