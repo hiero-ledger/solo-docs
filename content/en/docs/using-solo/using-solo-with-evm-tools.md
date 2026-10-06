@@ -6,6 +6,7 @@ description: >
 categories: ["Integration", "Developer"]
 tags: ["developer", "evm", "hardhat", "solidity", "json-rpc", "smart-contracts"]
 type: docs
+icon: "fab fa-ethereum"
 ---
 
 ## Overview

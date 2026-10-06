@@ -1,0 +1,170 @@
+{{/*
+  Renders the hero background "gossip field": a deterministic scatter of
+  dots connected by proximity-based links, with an animated dashed overlay
+  simulating signals traveling along each link. Ported from
+  hiero-website's HeroTraces component / lib/gossip-field.ts algorithm
+  (seeded LCG + rejection-sampled scatter + nearest-neighbor links), with
+  Solo's own seed so the pattern is distinct from Hiero's. Same role as
+  hiero.org's reused "gossip-field-web" pattern on their homepage sections
+  (not just the hero) — see .hero-traces--light in _styles_project.scss.
+
+  Usage: {{< hero-traces >}} (dark, hero default)
+        {{< hero-traces variant="light" >}} (light sections elsewhere on the page)
+
+  preserveAspectRatio is "xMidYMid slice" (cover-fit, crop to fill) for
+  both variants, matching hiero-website's own .gossip-field-web — the
+  light variant previously used "none" (stretch, no cropping) to avoid
+  cropping out most of the pattern in a full-bleed-wide/short section, but
+  non-uniform stretching distorts circles into ellipses and skews every
+  line's angle, which reads as visibly "broken" rather than just sparse.
+  "slice" scales uniformly instead (no distortion) and relies on the host
+  being tall enough, and the radial mask being generous enough, that the
+  cropped/visible portion still reads as a real pattern — see
+  .hero-traces--light in _styles_project.scss.
+*/}}
+<svg class="hero-traces{{ with .Get "variant" }} hero-traces--{{ . }}{{ end }}" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+    <g class="hero-traces-links">
+      <line x1="1172" y1="212" x2="1090" y2="315"/>
+      <line x1="240" y1="316" x2="223" y2="444"/>
+      <line x1="240" y1="316" x2="94" y2="247"/>
+      <line x1="210" y1="567" x2="223" y2="444"/>
+      <line x1="210" y1="567" x2="285" y2="669"/>
+      <line x1="505" y1="426" x2="410" y2="371"/>
+      <line x1="505" y1="426" x2="404" y2="508"/>
+      <line x1="553" y1="605" x2="582" y2="704"/>
+      <line x1="553" y1="605" x2="418" y2="666"/>
+      <line x1="36" y1="723" x2="52" y2="549"/>
+      <line x1="404" y1="508" x2="410" y2="371"/>
+      <line x1="404" y1="508" x2="418" y2="666"/>
+      <line x1="308" y1="84" x2="405" y2="217"/>
+      <line x1="308" y1="84" x2="474" y2="145"/>
+      <line x1="1090" y1="315" x2="1177" y2="447"/>
+      <line x1="1090" y1="315" x2="934" y2="207"/>
+      <line x1="285" y1="669" x2="418" y2="666"/>
+      <line x1="842" y1="496" x2="844" y2="397"/>
+      <line x1="842" y1="496" x2="727" y2="516"/>
+      <line x1="517" y1="3" x2="474" y2="145"/>
+      <line x1="517" y1="3" x2="610" y2="163"/>
+      <line x1="727" y1="516" x2="702" y2="614"/>
+      <line x1="727" y1="516" x2="708" y2="413"/>
+      <line x1="934" y1="207" x2="857" y2="59"/>
+      <line x1="129" y1="94" x2="94" y2="247"/>
+      <line x1="1177" y1="447" x2="1066" y2="581"/>
+      <line x1="844" y1="397" x2="708" y2="413"/>
+      <line x1="844" y1="397" x2="722" y2="263"/>
+      <line x1="1066" y1="581" x2="1075" y2="688"/>
+      <line x1="1066" y1="581" x2="927" y2="596"/>
+      <line x1="52" y1="549" x2="49" y2="350"/>
+      <line x1="52" y1="549" x2="223" y2="444"/>
+      <line x1="610" y1="163" x2="474" y2="145"/>
+      <line x1="610" y1="163" x2="722" y2="263"/>
+      <line x1="49" y1="350" x2="94" y2="247"/>
+      <line x1="49" y1="350" x2="223" y2="444"/>
+      <line x1="708" y1="413" x2="626" y2="348"/>
+      <line x1="708" y1="413" x2="722" y2="263"/>
+      <line x1="857" y1="59" x2="985" y2="3"/>
+      <line x1="1075" y1="688" x2="927" y2="596"/>
+      <line x1="405" y1="217" x2="474" y2="145"/>
+      <line x1="405" y1="217" x2="410" y2="371"/>
+      <line x1="410" y1="371" x2="223" y2="444"/>
+      <line x1="626" y1="348" x2="722" y2="263"/>
+      <line x1="824" y1="755" x2="816" y2="652"/>
+      <line x1="824" y1="755" x2="702" y2="614"/>
+      <line x1="816" y1="652" x2="702" y2="614"/>
+      <line x1="816" y1="652" x2="927" y2="596"/>
+      <line x1="418" y1="666" x2="582" y2="704"/>
+      <line x1="702" y1="614" x2="582" y2="704"/>
+    </g>
+    <g class="hero-traces-signals">
+      <line x1="1172" y1="212" x2="1090" y2="315"/>
+      <line x1="240" y1="316" x2="223" y2="444"/>
+      <line x1="240" y1="316" x2="94" y2="247"/>
+      <line x1="210" y1="567" x2="223" y2="444"/>
+      <line x1="210" y1="567" x2="285" y2="669"/>
+      <line x1="505" y1="426" x2="410" y2="371"/>
+      <line x1="505" y1="426" x2="404" y2="508"/>
+      <line x1="553" y1="605" x2="582" y2="704"/>
+      <line x1="553" y1="605" x2="418" y2="666"/>
+      <line x1="36" y1="723" x2="52" y2="549"/>
+      <line x1="404" y1="508" x2="410" y2="371"/>
+      <line x1="404" y1="508" x2="418" y2="666"/>
+      <line x1="308" y1="84" x2="405" y2="217"/>
+      <line x1="308" y1="84" x2="474" y2="145"/>
+      <line x1="1090" y1="315" x2="1177" y2="447"/>
+      <line x1="1090" y1="315" x2="934" y2="207"/>
+      <line x1="285" y1="669" x2="418" y2="666"/>
+      <line x1="842" y1="496" x2="844" y2="397"/>
+      <line x1="842" y1="496" x2="727" y2="516"/>
+      <line x1="517" y1="3" x2="474" y2="145"/>
+      <line x1="517" y1="3" x2="610" y2="163"/>
+      <line x1="727" y1="516" x2="702" y2="614"/>
+      <line x1="727" y1="516" x2="708" y2="413"/>
+      <line x1="934" y1="207" x2="857" y2="59"/>
+      <line x1="129" y1="94" x2="94" y2="247"/>
+      <line x1="1177" y1="447" x2="1066" y2="581"/>
+      <line x1="844" y1="397" x2="708" y2="413"/>
+      <line x1="844" y1="397" x2="722" y2="263"/>
+      <line x1="1066" y1="581" x2="1075" y2="688"/>
+      <line x1="1066" y1="581" x2="927" y2="596"/>
+      <line x1="52" y1="549" x2="49" y2="350"/>
+      <line x1="52" y1="549" x2="223" y2="444"/>
+      <line x1="610" y1="163" x2="474" y2="145"/>
+      <line x1="610" y1="163" x2="722" y2="263"/>
+      <line x1="49" y1="350" x2="94" y2="247"/>
+      <line x1="49" y1="350" x2="223" y2="444"/>
+      <line x1="708" y1="413" x2="626" y2="348"/>
+      <line x1="708" y1="413" x2="722" y2="263"/>
+      <line x1="857" y1="59" x2="985" y2="3"/>
+      <line x1="1075" y1="688" x2="927" y2="596"/>
+      <line x1="405" y1="217" x2="474" y2="145"/>
+      <line x1="405" y1="217" x2="410" y2="371"/>
+      <line x1="410" y1="371" x2="223" y2="444"/>
+      <line x1="626" y1="348" x2="722" y2="263"/>
+      <line x1="824" y1="755" x2="816" y2="652"/>
+      <line x1="824" y1="755" x2="702" y2="614"/>
+      <line x1="816" y1="652" x2="702" y2="614"/>
+      <line x1="816" y1="652" x2="927" y2="596"/>
+      <line x1="418" y1="666" x2="582" y2="704"/>
+      <line x1="702" y1="614" x2="582" y2="704"/>
+    </g>
+    <g class="hero-traces-events">
+      <circle cx="1172" cy="212" r="3.1"/>
+      <circle cx="240" cy="316" r="1.8"/>
+      <circle cx="210" cy="567" r="1.7"/>
+      <circle cx="505" cy="426" r="2.1"/>
+      <circle cx="553" cy="605" r="3.6"/>
+      <circle cx="36" cy="723" r="3.7"/>
+      <circle cx="404" cy="508" r="2.3"/>
+      <circle cx="308" cy="84" r="3.3"/>
+      <circle cx="1090" cy="315" r="3.1"/>
+      <circle cx="285" cy="669" r="3.3"/>
+      <circle cx="842" cy="496" r="2.4"/>
+      <circle cx="517" cy="3" r="2.7"/>
+      <circle cx="727" cy="516" r="1.6"/>
+      <circle cx="934" cy="207" r="2.1"/>
+      <circle cx="129" cy="94" r="2.0"/>
+      <circle cx="1177" cy="447" r="2.0"/>
+      <circle cx="844" cy="397" r="1.8"/>
+      <circle cx="1066" cy="581" r="2.5"/>
+      <circle cx="52" cy="549" r="1.7"/>
+      <circle cx="610" cy="163" r="3.3"/>
+      <circle cx="49" cy="350" r="3.5"/>
+      <circle cx="708" cy="413" r="3.4"/>
+      <circle cx="857" cy="59" r="3.4"/>
+      <circle cx="1075" cy="688" r="2.4"/>
+      <circle cx="405" cy="217" r="3.7"/>
+      <circle cx="94" cy="247" r="2.6"/>
+      <circle cx="410" cy="371" r="2.8"/>
+      <circle cx="223" cy="444" r="3.3"/>
+      <circle cx="626" cy="348" r="3.1"/>
+      <circle cx="722" cy="263" r="2.5"/>
+      <circle cx="824" cy="755" r="2.1"/>
+      <circle cx="816" cy="652" r="2.2"/>
+      <circle cx="927" cy="596" r="2.7"/>
+      <circle cx="418" cy="666" r="3.4"/>
+      <circle cx="985" cy="3" r="2.7"/>
+      <circle cx="702" cy="614" r="2.8"/>
+      <circle cx="582" cy="704" r="2.6"/>
+      <circle cx="474" cy="145" r="3.6"/>
+    </g>
+  </svg>

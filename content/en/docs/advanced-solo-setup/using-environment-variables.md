@@ -9,6 +9,7 @@ categories: ["Reference", "Advanced"]
 tags: ["advanced", "operator", "configuration", "cli"]
 type: docs
 nav_next: /docs/advanced-solo-setup/network-deployments/
+icon: "fas fa-cog"
 ---
 
 ## Overview

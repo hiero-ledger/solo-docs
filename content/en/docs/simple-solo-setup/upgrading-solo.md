@@ -8,6 +8,7 @@ description: >
 categories: ['Getting Started', 'Installation']
 tags: ['installation', 'upgrade', 'homebrew', 'npm', 'maintenance']
 type: docs
+icon: "fas fa-download"
 ---
 
 ## Overview

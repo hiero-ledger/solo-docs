@@ -7,6 +7,9 @@ description: >
 categories: ["Contributing"]
 tags: ["developer", "cli", "testing"]
 type: docs
+icon: "fas fa-users"
+build:
+  list: never
 ---
 
 ## How to Contribute to Solo

@@ -7,6 +7,7 @@ weight: 2
 categories: ["solo", "mirror-node"]
 tags: ["solo", "mirror-node", "explorer", "api", "deployment", "operations"]
 type: docs
+icon: "fas fa-satellite-dish"
 ---
 
 ## Overview

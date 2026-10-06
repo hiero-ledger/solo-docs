@@ -1,0 +1,29 @@
+{{/*
+  Renders the hero logo mark scene: a glass-card emblem, a blurred echo
+  behind it, three glowing "rail" lines, and four small signal nodes.
+  Ported from hiero-website's HieroMarkScene component (static CSS
+  animations only; the pointer/scroll parallax there is JS-driven and is
+  intentionally not replicated here).
+
+  Usage: {{< hero-mark-scene >}}
+*/}}
+{{- $logo := "" -}}
+{{- with resources.Get "icons/logo.svg" -}}
+  {{- $logo = (. | minify).Content | safeHTML -}}
+{{- end -}}
+
+<div class="hero-mark-scene" aria-hidden="true">
+  <div class="hero-mark-reactive">
+    <span class="hero-mark-rail hero-mark-rail--top"></span>
+    <span class="hero-mark-rail hero-mark-rail--middle"></span>
+    <span class="hero-mark-rail hero-mark-rail--bottom"></span>
+
+    <div class="hero-mark-echo"><span class="hero-mark-image">{{ $logo }}</span></div>
+    <div class="hero-mark-emblem"><span class="hero-mark-image">{{ $logo }}</span></div>
+
+    <span class="hero-mark-node hero-mark-node--one"></span>
+    <span class="hero-mark-node hero-mark-node--two"></span>
+    <span class="hero-mark-node hero-mark-node--three"></span>
+    <span class="hero-mark-node hero-mark-node--four"></span>
+  </div>
+</div>

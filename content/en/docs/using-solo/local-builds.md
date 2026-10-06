@@ -7,6 +7,7 @@ description: >
 categories: ["Developer", "Integration"]
 tags: ["developer", "local-build", "consensus-node"]
 type: docs
+icon: "fas fa-hammer"
 ---
 
 ## Overview

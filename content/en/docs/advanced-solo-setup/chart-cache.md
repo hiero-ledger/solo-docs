@@ -8,6 +8,7 @@ description: >
 categories: ['Advanced', 'Operations']
 tags: ['advanced', 'operator', 'chart-cache', 'performance', 'helm']
 type: docs
+icon: "fas fa-archive"
 ---
 
 ## Overview

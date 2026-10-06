@@ -18,6 +18,12 @@
   --color-gradient-start: #992350;
   --color-gradient-end: #b81a56;
 
+  // hiero.org's footer tokens. Not theme-scoped — like the hero section,
+  // the footer is a fixed dark panel regardless of the site's light/dark
+  // toggle, matching hiero.org's own (toggle-less) footer treatment.
+  --color-charcoal: #1e1e1e;
+  --color-sand: #e5e4d7;
+
   // UI Neutrals
   --color-bg-white: #ffffff;
   --color-bg-light: #f5f5f5;
@@ -59,20 +65,57 @@
 
 :root {
   --bs-body-color: var(--color-text-dark);
-  --bs-body-bg: var(--color-bg-white);
+  // Was --color-bg-white (a leftover from before the sitewide sand
+  // migration) — every Bootstrap component that derives its own
+  // background from this token (tables, dropdowns, cards, modals,
+  // accordions, list-groups, popovers — see --bs-table-bg/-dropdown-bg/
+  // -card-bg/etc.) was still anchoring to white regardless, even though
+  // body's own background-color had already moved to sand.
+  --bs-body-bg: var(--color-sand);
   --bs-border-color: var(--color-border);
   --bs-link-color: var(--color-primary);
+  // Docsy's own token for code block backgrounds (--td-pre-bg) defaults
+  // to --bs-tertiary-bg (#f8f9fa, a cool white-calibrated gray from the
+  // "github" Chroma style) — a warm, slightly-lighter-than-sand off-
+  // white instead, so code blocks read as a distinct surface without
+  // the harsh white-on-cream contrast.
+  --td-pre-bg: #f2f0e6;
 }
 
 // --- 3. BASE TYPOGRAPHY ---
 
 body {
   font-family: var(--font-family-primary);
-  font-size: 0.9375rem; // 15px
-  color: var(--color-text-body);
+  // 1rem (16px): standard browser/Bootstrap default, and also hiero.org's
+  // own --text-base — this had drifted up to 1.125rem (18px) over several
+  // rounds of "make it bigger/easier to read," which solved the original
+  // contrast problem but left the whole site reading oversized relative
+  // to a normal baseline. Headings are unaffected (Bootstrap compiles
+  // their rem sizes against the root font-size at build time, not via
+  // runtime inheritance from this value), so this only rebalances body
+  // copy back down to a standard scale.
+  font-size: 1rem;
+  // 400 (regular), not 500: hiero.org doesn't set a body-wide font-weight
+  // at all (its CSS reset leaves body copy at the browser default, 400 —
+  // font-medium/500 shows up only on specific UI elements like buttons
+  // and nav links, never as the base reading weight). 500 across all
+  // prose sitewide was reading heavier than that baseline, not just on
+  // a few elements.
+  font-weight: 400;
+  // --color-text-dark, not --color-text-body: the latter (#666666) is a
+  // secondary/muted gray meant for de-emphasized UI chrome (nav links,
+  // captions), not primary reading text — using it here as the default
+  // body color was making ALL prose read as washed-out, plain-text code
+  // included (nothing else set an explicit darker color for code blocks,
+  // so they inherited this same gray).
+  color: var(--color-text-dark);
   line-height: 1.6;
   letter-spacing: 0px;
-  background-color: var(--color-bg-white);
+  // hiero.org uses its warm cream --color-sand, not white, as the actual
+  // page background almost everywhere outside the hero — dark mode is
+  // untouched (it already has its own separate, higher-specificity
+  // [data-bs-theme='dark'] body override further down).
+  background-color: var(--color-sand);
   padding-top: 1rem; // Offset for fixed navbar height
 }
 
@@ -115,20 +158,35 @@ small,
 // --- 4. NAVIGATION & SIDEBAR ---
 
 .td-sidebar {
-  background: var(--color-bg-white);
+  background: var(--color-sand);
   border-right: 1px solid var(--color-border);
 
+  // Sticky here, but NOT also max-height/overflow-y on this same element
+  // — that combination (position: sticky + overflow-y: auto on one
+  // element) is a known Safari bug that can miscalculate the sticky
+  // offset and produce a phantom gap above the element. Split the two
+  // responsibilities: this element only sticks; .td-sidebar__inner below
+  // is the one that scrolls internally.
+  position: sticky;
+  top: 90px; // matches .td-navbar min-height below
+
   .nav-link {
-    font-size: 0.875rem;
-    font-weight: 300 !important;
+    font-size: 0.9375rem;
+    font-weight: 500 !important;
     color: var(--color-text-body);
     padding: 12px 16px;
     transition: all var(--transition-duration) var(--transition-timing);
 
+    // hiero.org's .menu-link hover is a plain text-color shift to red —
+    // no background. The previous --color-bg-light gray box here was
+    // already a cool gray against a white sidebar; now that the sidebar
+    // itself is warm --color-sand, that gray reads as an even more
+    // obvious mismatched patch, so this drops it for the same text-only
+    // treatment hiero.org uses.
     &:hover {
-      background: var(--color-bg-light);
-      color: var(--color-text-dark);
-      box-shadow: var(--shadow-sm);
+      background: transparent;
+      color: var(--color-primary);
+      box-shadow: none;
       border-radius: 6px;
     }
 
@@ -143,6 +201,53 @@ small,
 
 .td-sidebar__inner {
   padding-top: 0.75rem;
+  // min-height, not just max-height: .site-utility-corner below uses
+  // margin-top: auto to push itself to the bottom of this flex column —
+  // that only has room to work when this container actually fills the
+  // available height, not just caps at it (a short nav tree would
+  // otherwise leave this shorter than the viewport, with nothing for the
+  // auto margin to push against).
+  min-height: calc(100vh - 90px);
+  max-height: calc(100vh - 90px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  // Without this, the CSS overflow spec forces overflow-x to compute as
+  // `auto` too (one axis can't be scrollable while the other stays
+  // `visible`) — and Docsy's own .td-sidebar-nav uses negative left/right
+  // margins to bleed its scrollbar gutter outside its box, which is just
+  // wide enough to trip that forced-auto into an actual, visible
+  // horizontal scrollbar on narrow sidebars.
+  overflow-x: hidden;
+  // Scrolling still works (wheel/touch/keyboard) — this only hides the
+  // visible track/thumb chrome, which read as a stray UI element against
+  // the sidebar's own sand background rather than a deliberate part of
+  // the design.
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// Docsy's own .td-sidebar-nav (see @supports(position:sticky) in its
+// compiled CSS) gives the nav TREE its own independent
+// max-height: calc(100vh - 8.5rem) + overflow-y: auto — a second,
+// separately-scrolling region nested inside .td-sidebar__inner's own
+// scroll area above. With a long expanded nav tree, that inner region
+// hit ITS OWN height cap first and started its own (much less obvious)
+// nested scrollbar, visually reading as the last item just being cut
+// off rather than scrollable — especially since .site-utility-corner
+// sits right where the cropped item should have continued, with no
+// visual gap to suggest "keep scrolling." Disabling Docsy's own cap/
+// scroll here makes the nav grow to its full natural height instead, so
+// .td-sidebar__inner's own scroll area (sized correctly against the
+// navbar's actual height, not Docsy's generic 8.5rem guess) is the only
+// scroll region, the way the rest of this sidebar already assumes.
+.td-sidebar-nav {
+  max-height: none !important;
+  overflow-y: visible !important;
 }
 
 .td-breadcrumbs {
@@ -150,7 +255,7 @@ small,
 }
 
 .td-sidebar-toc {
-  background-color: var(--color-bg-white);
+  background-color: var(--color-sand);
 }
 
 // Balance left nav and right ToC on wide screens and let main content absorb
@@ -380,19 +485,61 @@ a[target='_blank']:has(> img:only-child)::after {
 
 // --- 7. UI COMPONENTS (CARDS, FORMS, BADGES) ---
 
-// Cards
+// Cards — matches hiero.org's .repository-item/.repository-link treatment:
+// transparent at rest (page background shows through), a thin translucent
+// border, and on hover a white-tinted overlay + red border + shadow + lift,
+// rather than a permanently solid card.
 .card,
 .td-card {
-  background: var(--color-bg-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  padding: 20px;
-  transition: all 0.3s var(--transition-timing);
+  background: transparent;
+  // Matches hiero.org's border-charcoal/18 exactly. The generic
+  // --color-border token (#e0e0e0) is too close in luminance to the sand
+  // body background to read as a border at all — this needs the same
+  // darker, translucent line hiero.org itself uses against that same sand.
+  border: 1px solid rgba(30, 30, 30, 0.18);
+  border-radius: 1.25rem;
+  box-shadow: none;
+  padding: 1.5rem;
+  transition: background-color 0.3s var(--transition-timing), border-color 0.3s var(--transition-timing),
+    box-shadow 0.3s var(--transition-timing), transform 0.3s var(--transition-timing);
+
+  @media (min-width: 768px) {
+    padding: 1.75rem;
+  }
+
+  @media (min-width: 1280px) {
+    padding: 2.25rem;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(184, 26, 86, 0.55);
+    box-shadow: 0 18px 45px rgba(30, 30, 30, 0.08);
+  }
 
   &:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    transform: translateY(-0.25rem);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+  }
+}
+
+// hiero.org has no dark mode, so neither its charcoal/18 border nor its
+// white/60 hover tint has a prior-art dark equivalent here — a dark
+// charcoal border would vanish against the dark body, and a 60%-opacity
+// white wash would overexpose a dark card, so dark mode gets its own
+// already-visible border token and a much lighter "brighten on hover".
+[data-bs-theme='dark'] .card,
+[data-bs-theme='dark'] .td-card {
+  border-color: var(--color-border);
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(255, 255, 255, 0.06);
   }
 }
 
@@ -462,8 +609,218 @@ pre {
   word-break: break-word;
 }
 
+// Code block card treatment (light mode). Dark mode gets its own card
+// background/border further down (search .td-content .highlight pre);
+// this is the light-mode counterpart, rounded + lifted instead of flat.
+.td-content .highlight {
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.td-content pre {
+  border-radius: 0.75rem;
+  border-color: var(--color-border);
+}
+
+// Explicit dark color for plain/un-tokenized code text (punctuation, file
+// paths, anything Chroma's bash/yaml/etc. lexers don't classify into one
+// of the token groups below) — without this it fell back to inheriting
+// body's color, so it's worth pinning directly rather than relying on
+// inheritance surviving future changes to body's color. Darker than
+// --color-text-dark (prose) on purpose — code benefits from the extra
+// contrast more than prose does.
+.td-content pre,
+.td-content .chroma,
+.td-content .chroma code {
+  color: #1f2328;
+}
+
+.td-content .highlight pre button.td-click-to-copy {
+  border-radius: 0.375rem;
+
+  &:hover,
+  &:active {
+    color: var(--color-primary) !important;
+    background-color: var(--color-primary-very-light) !important;
+  }
+}
+
+// Base (light-mode) syntax-highlight palette for Chroma's token classes.
+// noClasses is off specifically so dark mode (further down) can override
+// these per token group — but light mode never had its own colors at all.
+// Saturated/vivid rather than the muted GitHub-style tones first tried
+// here — those read as too close to each other and to the near-black
+// base text. Keywords in full-saturation brand pink, names/operators in
+// a vivid violet, strings in a vivid blue, numbers/commands in a vivid
+// orange, comments muted gray (comments are the one group meant to
+// recede, so left alone).
+.td-content .chroma .c,
+.td-content .chroma .c1,
+.td-content .chroma .cm,
+.td-content .chroma .ch,
+.td-content .chroma .cp,
+.td-content .chroma .cpf {
+  color: #57606a;
+}
+
+.td-content .chroma .k,
+.td-content .chroma .kc,
+.td-content .chroma .kd,
+.td-content .chroma .kn,
+.td-content .chroma .kp,
+.td-content .chroma .kr,
+.td-content .chroma .kt {
+  color: var(--color-primary-dark);
+}
+
+.td-content .chroma .s,
+.td-content .chroma .sa,
+.td-content .chroma .sb,
+.td-content .chroma .sc,
+.td-content .chroma .dl,
+.td-content .chroma .sd,
+.td-content .chroma .s1,
+.td-content .chroma .s2,
+.td-content .chroma .se,
+.td-content .chroma .sh,
+.td-content .chroma .si,
+.td-content .chroma .sx,
+.td-content .chroma .sr,
+.td-content .chroma .ss {
+  color: #0b4fb3;
+}
+
+.td-content .chroma .m,
+.td-content .chroma .mb,
+.td-content .chroma .mf,
+.td-content .chroma .mh,
+.td-content .chroma .mi,
+.td-content .chroma .mo {
+  color: #b34f00;
+}
+
+// Leading command name on each shell line (kubectl, npm, solo, mkdir, ...)
+// — added by the highlightCommandNames() script in body-end.html, since
+// Chroma's bash lexer has no semantic notion of "this word is a command,"
+// only of recognized keywords/strings/variables/comments. Reuses the same
+// vivid orange as numbers above; both read as "concrete literal" tokens.
+.td-content .chroma .chroma-cmd {
+  color: #b34f00;
+}
+
+.td-content .chroma .na,
+.td-content .chroma .nc,
+.td-content .chroma .nd,
+.td-content .chroma .ne,
+.td-content .chroma .nf,
+.td-content .chroma .nl,
+.td-content .chroma .nn,
+.td-content .chroma .nt,
+.td-content .chroma .nv,
+.td-content .chroma .nx,
+.td-content .chroma .o {
+  color: #6a3fc0;
+}
+
 .td-content blockquote {
   border-left-color: var(--color-primary) !important;
+
+  // Platform icons on OS-specific callouts (e.g. Quickstart's Prerequisites)
+  // so a wall of near-identical blockquotes is scannable at a glance,
+  // rather than reading as one undifferentiated block.
+  > p:first-child > i:first-child {
+    color: var(--color-primary);
+    margin-right: 0.375rem;
+  }
+}
+
+// Docsy's own .pageinfo rule (the colored callout boxes, e.g. the
+// Homebrew-deprecation and known-issue banners) pairs padding: 1.5rem
+// with a padding-bottom override of just 0.5rem — three times less than
+// the other three sides, so the box reads lopsided, especially when it
+// ends in a list (the list's own bottom margin stacks on top of that
+// already-thin padding, leaving content fighting with the box's edge).
+.pageinfo {
+  padding-bottom: 1.5rem;
+  border-radius: 0.75rem;
+}
+
+// Docsy's own .pageinfo-*/.alert-* variants use Bootstrap's standard
+// --bs-*-bg-subtle tokens — a different, cool-toned pastel background
+// PER semantic type. Even after a first pass at warming those up
+// individually, having several different competing hues side by side
+// (e.g. a blue-tinted info box next to an amber warning box) still read
+// as a patchwork against the sand page, not like part of the same site.
+// hiero.org's own equivalent pattern (.repository-features/.issue-jump-
+// filter pills, etc.) differentiates *meaning* with a colored accent —
+// border/text — on ONE shared neutral surface, not a different fill per
+// type, so every variant here now shares the same warm, barely-there
+// tint (a hair lighter than --color-sand, just enough to read as a
+// distinct surface) and only the left border/accent color changes.
+.alert-primary,
+.pageinfo-primary,
+.alert-note,
+.alert-nb,
+.alert-secondary,
+.pageinfo-secondary,
+.alert-success,
+.pageinfo-success,
+.alert-tip,
+.alert-info,
+.pageinfo-info,
+.alert-important,
+.alert-warning,
+.pageinfo-warning,
+.alert-caution,
+.alert-danger,
+.pageinfo-danger,
+.alert-light,
+.pageinfo-light,
+.alert-dark,
+.pageinfo-dark {
+  background-color: #efeee3 !important;
+}
+
+.alert-primary,
+.pageinfo-primary,
+.alert-note,
+.alert-nb {
+  border-left-color: var(--color-primary) !important;
+}
+
+.alert-secondary,
+.pageinfo-secondary {
+  border-left-color: #8a8572 !important;
+}
+
+.alert-success,
+.pageinfo-success,
+.alert-tip {
+  border-left-color: #4f8a52 !important;
+}
+
+.alert-info,
+.pageinfo-info,
+.alert-important {
+  border-left-color: #3f7ea8 !important;
+}
+
+.alert-warning,
+.pageinfo-warning,
+.alert-caution {
+  border-left-color: #b8841a !important;
+}
+
+.alert-danger,
+.pageinfo-danger {
+  border-left-color: #b83434 !important;
+}
+
+.alert-light,
+.pageinfo-light,
+.alert-dark,
+.pageinfo-dark {
+  border-left-color: #8a8572 !important;
 }
 
 // Only apply to inline code, not code blocks with syntax highlighting
@@ -479,9 +836,15 @@ td > code {
 // --- 9. NAVBAR OVERRIDES ---
 
 .td-navbar {
-  background-color: #ffffff !important;
+  // hiero.org's .site-header: bg-sand/85 + backdrop-blur-xl, not a solid
+  // white bar — the top nav reads as the same warm surface as the rest
+  // of the page (now sand, see body/.td-box overrides), just frosted so
+  // content can scroll softly underneath it.
+  background-color: rgba(229, 228, 215, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
   box-shadow: none !important;
-  border-bottom: 1px solid #e5e5e5 !important;
+  border-bottom: 1px solid rgba(30, 30, 30, 0.1) !important;
   min-height: 90px !important;
   padding: 1rem 0 !important;
   align-items: center;
@@ -492,9 +855,54 @@ td > code {
 
   // Newer Docsy wraps navbar content in .td-navbar-container.
   .td-navbar-container {
+    position: relative;
     align-items: center;
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  // Center the search box in the header instead of letting it sit wherever
+  // it lands at the end of the flex row. Taken out of flow on purpose —
+  // its width shouldn't push the brand/nav links around, and its centered
+  // position shouldn't depend on how wide they happen to be.
+  .td-navbar__search {
+    // Fixed rem width, not clamp()/vw: this project's libsass build can't
+    // pass mixed-unit CSS math functions through (see the hero CSS notes
+    // above) — it tries real Sass arithmetic and errors on "Incompatible
+    // units" rather than treating this as plain CSS.
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 30rem;
+  }
+
+  // More prominent search box: taller, pill-shaped, visible border/bg at
+  // rest instead of blending into the navbar, with a brand-colored focus
+  // ring so it reads as a primary action, not an afterthought. Darker
+  // bg/border than a plain light-gray fill so it actually stands out
+  // against the white navbar instead of nearly disappearing into it.
+  .td-search__input {
+    height: 2.75rem;
+    font-size: 0.9375rem;
+    border-radius: 999px !important;
+    border: 1px solid #c7cbd1 !important;
+    background: #e9ebee !important;
+    // Default text-indent (1.25em) crowds the icon glyph right up against
+    // the placeholder text with no visible gap — give it real breathing
+    // room instead.
+    text-indent: 2.25em !important;
+
+    &:focus {
+      border-color: var(--color-primary) !important;
+      background: var(--color-bg-white) !important;
+      box-shadow: 0 0 0 3px rgba(184, 26, 86, 0.18) !important;
+    }
+  }
+
+  .td-search__icon {
+    color: var(--color-text-light);
+    left: 1rem !important;
   }
 
   // Keep text links aligned with icon controls (theme/search) on desktop.
@@ -507,16 +915,35 @@ td > code {
     align-items: center;
   }
 
+  // Matches hiero.org's .site-header-brand: a plain opacity fade on hover
+  // instead of the default link underline, applied to the logo + text
+  // together (they're both inside this one <a>, not styled separately).
   .navbar-brand {
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
     padding: 0 !important;
     margin: 0 !important;
+    text-decoration: none !important;
+    border-radius: var(--border-radius-lg);
+    transition-property: opacity;
+    transition-timing-function: ease;
+    transition-duration: 0.2s;
+
+    &:hover,
+    &:focus {
+      opacity: 0.7;
+      text-decoration: none !important;
+    }
   }
 
-  svg {
-    height: 40px !important;
+  // Scoped to the brand logo specifically, not a bare `svg` — that
+  // matched every svg in the navbar, including the theme-switcher icon,
+  // forcing it to this same 48px height regardless of its own sizing.
+  .navbar-brand__logo svg {
+    // Bumped from 40px for more presence in the 90px-tall navbar,
+    // matching the brand-name bump below.
+    height: 3rem !important;
     display: block;
   }
 
@@ -527,7 +954,9 @@ td > code {
   .navbar-brand__name {
     color: #000000 !important;
     font-weight: 400 !important;
-    font-size: 2rem !important;
+    // Bumped from 1.5rem for more presence/weight in the lockup, paired
+    // with the 48px logo mark above.
+    font-size: 1.875rem !important;
     line-height: 1.1;
     display: inline-flex;
     align-items: center;
@@ -573,6 +1002,7 @@ td > code {
       box-shadow: none !important;
     }
   }
+
 }
 
 @media (min-width: 992px) {
@@ -590,6 +1020,97 @@ td > code {
 .td-navbar .td-navbar__main {
   display: flex;
   align-items: center;
+}
+
+// Theme switcher (Docsy's #bd-theme dropdown trigger) — restyled from a
+// bare icon + caret (Bootstrap's plain .btn-link) into the same circular
+// "icon button" language used sitewide for this kind of control (footer
+// social icons, back-to-top): a bordered circle at rest that fills with
+// the brand color on hover/open, rather than floating with no visible
+// boundary in the navbar.
+#bd-theme {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  // !important on width/height/padding: this button also carries
+  // Docsy's .nav-link class, and .td-navbar .nav-link sets its own
+  // padding (0.5rem 1rem) !important — without matching !important
+  // here, that padding eats most of this button's 40px box, and with
+  // flex-shrink left on the svg below, the icon itself was getting
+  // squeezed down to a few px wide instead of actually rendering at
+  // its specified 1.5rem.
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
+  border-radius: 999px;
+  border: 1px solid rgba(30, 30, 30, 0.18);
+  // !important: .td-navbar .nav-link sets border-bottom: 2px solid
+  // transparent !important (reserved for its own active-page underline
+  // indicator) — this button shares that class too, so without matching
+  // !important the bottom of this circle was rendering as a thicker,
+  // fully transparent arc instead of matching the other three sides,
+  // breaking the ring.
+  border-bottom: 1px solid rgba(30, 30, 30, 0.18) !important;
+  background: transparent;
+  // Muted gray at rest, not --color-text-dark (near-black) — this is a
+  // small chrome control, not reading text, and the full-strength dark
+  // color read as too heavy/prominent against the circle's light border.
+  // !important: same .td-navbar .nav-link rule that needed it on hover
+  // (see below) also sets color: #000 !important at rest, via the
+  // .nav-link class this button shares.
+  color: var(--color-text-body) !important;
+  transition: all var(--transition-duration) var(--transition-timing);
+
+  // Bootstrap's default dropdown-toggle caret clutters this tight
+  // circular footprint — the circle + icon alone already read as
+  // interactive without it.
+  &::after {
+    display: none;
+  }
+
+  // Docsy's own base rule sizes this at 1em (so ~15-16px, scaled off
+  // ambient text size) — too small to read the circle-half glyph clearly
+  // at this button's 40px footprint. fill is explicit (not left to
+  // Docsy's .bi fill: currentcolor alone) so the hover color below is
+  // guaranteed to repaint it, not just the invisible button background.
+  // flex-shrink: 0 keeps it from being squeezed by the button's own
+  // padding/width battles above.
+  svg {
+    flex-shrink: 0;
+    width: 1.125rem !important;
+    height: 1.125rem !important;
+    fill: currentColor;
+  }
+
+  // !important on color: Docsy's own .td-navbar .nav-link:hover rule
+  // (this button also carries the .nav-link class from Docsy's markup)
+  // sets color: var(--color-primary) !important on hover — without
+  // matching !important here, that rule wins and repaints the icon the
+  // same pink as the fill background it now sits on, making it vanish.
+  &:hover,
+  &:focus-visible,
+  &[aria-expanded='true'] {
+    border-color: var(--color-primary);
+    border-bottom-color: var(--color-primary) !important;
+    background: var(--color-primary);
+    color: #ffffff !important;
+  }
+}
+
+[data-bs-theme='dark'] #bd-theme {
+  border-color: var(--color-border);
+  border-bottom: 1px solid var(--color-border) !important;
+  color: var(--color-text-body) !important;
+
+  &:hover,
+  &:focus-visible,
+  &[aria-expanded='true'] {
+    border-color: var(--color-primary-light);
+    border-bottom-color: var(--color-primary-light) !important;
+    background: var(--color-primary-light);
+    color: #ffffff !important;
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -644,8 +1165,188 @@ td > code {
 
 // --- 10. UTILITIES ---
 
+// Docsy's own page-meta block ("View page source", "Edit this page",
+// "Create child page", "Create documentation issue", "Create project
+// issue", "Print entire section", "Last modified") is hidden outright —
+// layouts/partials/hooks/body-end.html reads the hrefs straight out of
+// this (still-rendered, just invisible) markup and rebuilds the reader-
+// relevant subset ("View page source" / "Edit this page" / "Copy page"
+// / "Report an issue") as the .td-page-actions capsule below. "Create
+// child page" and "Create project issue" are left out entirely — they're
+// about adding new content, not something a reader needs.
 .td-page-meta {
-  display: none;
+  display: none !important;
+}
+
+// Wraps the page <h1>, built by the same body-end.html script that
+// relocates the .td-page-actions capsule out of .td-content. The
+// capsule used to sit in-flow beside the title (flex row, wrapping
+// below it on long titles) — on a long/multi-line title that left it
+// floating awkwardly between the title and the lead paragraph instead
+// of reading as a fixed, predictable control. Pinning it to the
+// top-right corner via absolute positioning instead means its position
+// never depends on the title's own length or line count.
+.td-page-title-row {
+  position: relative;
+
+  h1 {
+    // Reserve room on the right for the absolutely-positioned capsule
+    // (see .td-page-actions below) so a long title's text wraps around
+    // it instead of running underneath.
+    padding-right: 11rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.td-page-actions {
+  position: absolute;
+  top: 0.25rem;
+  right: 0;
+}
+
+// Below the breakpoint where an 11rem text reservation would crowd out
+// a long title entirely, drop back to static flow (capsule under the
+// title, full-width) rather than an absolutely-positioned corner.
+@media (max-width: 575.98px) {
+  .td-page-title-row h1 {
+    padding-right: 0;
+  }
+
+  .td-page-actions {
+    position: static;
+    display: block;
+    margin-top: 0.75rem;
+  }
+}
+
+// Branded (not neutral-gray) so the capsule actually stands out next to
+// the page title, matching the site's existing "pink on white" button
+// language (.btn-primary / .btn-light) rather than blending into the
+// surrounding chrome. Dark-mode swaps to a lighter pink for contrast,
+// same convention as the sidebar's active-link colors.
+.td-page-actions__group {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--color-bg-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.td-page-actions__copy,
+.td-page-actions__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  border: none;
+  background: transparent;
+  color: var(--color-primary) !important;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4375rem 0.875rem;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-primary-very-light);
+  }
+}
+
+.td-page-actions__copy {
+  flex: 1 1 auto;
+  border-right: 1px solid var(--color-border);
+}
+
+.td-page-actions__toggle {
+  flex: 0 0 auto;
+  padding-left: 0.625rem;
+  padding-right: 0.625rem;
+
+  i {
+    transition: transform var(--transition-duration) var(--transition-timing);
+  }
+
+  &[aria-expanded='true'] i {
+    transform: rotate(180deg);
+  }
+}
+
+.td-page-actions__menu {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  width: max-content;
+  min-width: 14rem;
+  max-width: calc(100vw - 2rem);
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-lg);
+  padding: 0.375rem;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.td-page-actions__item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem 0.625rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+
+  &,
+  &:visited {
+    color: var(--color-text-dark) !important;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-bg-light);
+    text-decoration: none;
+  }
+}
+
+.td-page-actions__item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  color: var(--color-text-light);
+}
+
+.td-page-actions__item-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.td-page-actions__item-title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.td-page-actions__item-subtitle {
+  font-size: 0.6875rem;
+  color: var(--color-text-light);
+}
+
+.td-page-actions__divider {
+  height: 1px;
+  margin: 0.25rem 0.625rem;
+  background: var(--color-border);
 }
 
 // Newer Docsy uses a mobile min-height calc for .td-outer.
@@ -668,57 +1369,339 @@ td > code {
 }
 
 // --- 11. FOOTER STYLES ---
+// Matches hiero.org's footer: dark charcoal panel, pink top accent bar,
+// brand column + 3-column link nav, copyright line at the bottom.
 
 .td-footer {
-  background-color: #000000 !important;
-  padding: 2rem 0 !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  width: 100vw !important;
-  position: relative !important;
-  left: 50% !important;
-  right: 50% !important;
-  margin-left: -50vw !important;
-  margin-right: -50vw !important;
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  background: var(--color-charcoal);
+  // Docsy's own base .td-footer rule sets padding-top: 3rem and a
+  // border-top — both unwanted here, since the pink accent bar below is
+  // meant to sit flush at the very top of this section.
+  padding-top: 0 !important;
+  border-top: none !important;
+  // Explicit, not inherited from body: this footer's text sits at
+  // reduced opacity (sand/60-85%) against a dark background, which needs
+  // more stroke weight to stay legible than body copy's regular 400 does
+  // against a plain light background.
+  font-weight: 500;
+}
 
-  * {
-    color: #ffffff !important;
+.td-footer__accent-bar {
+  // Matches hiero.org's h-1 (0.25rem) exactly.
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    var(--color-primary-dark),
+    var(--color-primary-light),
+    var(--color-primary-dark)
+  );
+}
+
+// Two subtle overlays straight from hiero-website's own footer (Footer/
+// index.tsx): a diagonal brand-color wash across the whole dark panel,
+// and a hairline highlight along its bottom edge. Both pointer-events:
+// none and absolutely positioned — decorative only.
+.td-footer__wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom right,
+    rgba(184, 26, 86, 0.18),
+    transparent,
+    rgba(153, 35, 80, 0.2)
+  );
+}
+
+.td-footer__bottom-hairline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(229, 228, 215, 0.15),
+    transparent
+  );
+}
+
+.td-footer__main {
+  position: relative;
+  overflow: hidden;
+  // Matches hiero.org's py-12 sm:py-16 lg:py-18 exactly (640px/1024px
+  // breakpoints, not Bootstrap's 768px/1200px).
+  padding: 3rem 0;
+
+  @media (min-width: 640px) {
+    padding: 4rem 0;
   }
 
-  .container {
-    text-align: center !important;
-    max-width: 100% !important;
-    padding-left: 15px !important;
-    padding-right: 15px !important;
-  }
-
-  // Hide default footer links
-  .td-footer__links,
-  .td-footer__links-list,
-  nav {
-    display: none !important;
-  }
-
-  // Center footer content
-  .td-footer__content {
-    text-align: center !important;
-    max-width: 100% !important;
+  @media (min-width: 1024px) {
+    padding: 4.5rem 0;
   }
 }
 
-// Footer copyright text
-.td-footer__copyright {
-  text-align: center !important;
-  font-size: 0.875rem;
-  color: #ffffff !important;
-  margin: 0 !important;
+.td-footer__grid {
+  display: grid;
+  gap: 3rem 2rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: minmax(16rem, 1.45fr) minmax(0, 3fr);
+  }
+}
+
+.td-footer__brand {
+  max-width: 24rem;
+}
+
+.td-footer__brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  &,
+  &:visited {
+    color: var(--color-sand);
+  }
+
+  &:hover {
+    color: var(--color-sand);
+    text-decoration: none;
+  }
+}
+
+.td-footer__brand-logo svg {
+  display: block;
+  // hiero-website: h-10 (2.5rem), sm:h-11 (2.75rem) on their <img>.
+  height: 2.5rem;
+  width: auto;
+
+  @media (min-width: 640px) {
+    height: 2.75rem;
+  }
+}
+
+.td-footer__brand-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.td-footer__tagline {
+  margin: 1.5rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  color: rgba(229, 228, 215, 0.78); // --color-sand at 78% (was 70%, too faint against charcoal)
+}
+
+.td-footer__social {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
 
   a {
-    color: #ffffff !important;
-    text-decoration: underline;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    border: 1px solid rgba(229, 228, 215, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-sand);
+    transition: all var(--transition-duration) var(--transition-timing);
 
     &:hover {
-      color: #cccccc !important;
+      color: #ffffff;
+      border-color: var(--color-primary-light);
+      background: var(--color-primary-light);
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+
+    i {
+      font-size: 1.0625rem;
+    }
+  }
+}
+
+.td-footer__nav {
+  display: grid;
+  gap: 2.5rem 2rem;
+
+  @media (min-width: 576px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.td-footer__nav-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0 0 1.5rem;
+  font-size: 0.75rem;
+  // hiero.org's sectionLabelClasses use font-medium (500), not 600.
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(229, 228, 215, 0.68); // --color-sand at 68% (was 60%, too faint against charcoal)
+
+  span {
+    height: 1px;
+    width: 1rem;
+    flex-shrink: 0;
+    background: var(--color-primary-light);
+  }
+}
+
+.td-footer__nav-group ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.td-footer__nav-group a {
+  font-size: 0.9375rem;
+  // hiero.org's linkClasses use leading-6 (a fixed 1.5rem), not a 1.5
+  // unitless multiplier.
+  line-height: 1.5rem;
+  text-decoration: none;
+
+  &,
+  &:visited {
+    color: rgba(229, 228, 215, 0.85); // --color-sand at 85%
+  }
+
+  &:hover {
+    color: #ffffff;
+    text-decoration: none;
+  }
+}
+
+// Matches hiero.org's own footer: the bottom bar switches to a solid sand
+// panel (bg-sand text-charcoal) rather than continuing the dark charcoal
+// of the rest of the footer — the hairline above (now scoped to
+// .td-footer__main, see that rule) is what marks the dark/sand boundary,
+// so this no longer needs its own border-top.
+.td-footer__bottom {
+  background: var(--color-sand);
+  color: #1e1e1e;
+  padding: 1.5rem 0;
+}
+
+// Sand (light-mode only) matches hiero.org's own bottom bar, which isn't
+// theme-aware — but the rest of THIS site's chrome (body/navbar/sidebar)
+// is, and in dark mode a sand bar stood out as the one mismatched patch
+// against the otherwise-unified dark navy. This keeps the light-mode
+// sand bar as-is and only swaps it (plus the charcoal-tuned text/border
+// colors below, which would otherwise be unreadable on a dark surface)
+// in dark mode specifically.
+[data-bs-theme='dark'] .td-footer__bottom {
+  background: var(--color-bg-white);
+  color: var(--color-text-body);
+}
+
+.td-footer__bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+// Ported from hiero-website's BackToTop component: border-only at rest,
+// fills with the brand color on hover — same "icon button" hover
+// language as the social icons above, not the plain text-color shift
+// used for text links. Charcoal border/text at rest (not sand-based),
+// since this now sits on .td-footer__bottom's sand panel, not the dark
+// charcoal of the rest of the footer.
+.back-to-top {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(30, 30, 30, 0.5);
+  background: transparent;
+  color: #1e1e1e;
+  cursor: pointer;
+  transition: all var(--transition-duration) var(--transition-timing);
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #ffffff;
+  }
+}
+
+[data-bs-theme='dark'] .back-to-top {
+  border-color: var(--color-border);
+  color: var(--color-text-body);
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--color-primary-light);
+    background: var(--color-primary-light);
+    color: #ffffff;
+  }
+}
+
+// Charcoal-based (not sand-based) to match .td-footer__bottom's new sand
+// background — hiero's own bottom bar uses text-sm leading-6 text-
+// charcoal/70 here, as two stacked <p> tags (copyright line, then the
+// terms/trademark line) rather than one line joined with a "|".
+.td-footer__copyright {
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  color: rgba(30, 30, 30, 0.7);
+
+  p {
+    margin: 0;
+  }
+
+  // !important: Docsy's own base .td-footer p > a rule (a pale link-blue
+  // meant for dark boxes) outranks a plain .td-footer__copyright a on
+  // specificity alone (it matches via the <p> this link sits inside), so
+  // without it that Docsy default wins over this regardless of source
+  // order.
+  a {
+    &,
+    &:visited {
+      color: var(--color-primary) !important;
+    }
+
+    &:hover {
+      color: var(--color-primary-dark) !important;
+    }
+  }
+}
+
+[data-bs-theme='dark'] .td-footer__copyright {
+  color: var(--color-text-body);
+
+  a {
+    &,
+    &:visited {
+      color: var(--color-primary-light) !important;
+    }
+
+    &:hover {
+      color: #ffffff !important;
     }
   }
 }
@@ -730,7 +1713,339 @@ td > code {
   color: var(--color-primary) !important;
 }
 
+// Matches hiero-website's .repository-name/-description text treatment
+// and its hover animation (.repository-link:hover .repository-name turns
+// red) — these cards already share .repository-item's border/background/
+// lift via the sitewide .card rule; this ports the text sizing and the
+// title's hover color-shift. Shared classes (.card-title/-description/
+// -icon-badge below), not selectors scoped to .core-capabilities, so
+// every card sitewide (the homepage grid, doc-section-cards on docs
+// landing pages, etc.) gets the same treatment instead of just the one
+// section it was first built for.
+.card .card-title {
+  font-size: 1.375rem;
+  line-height: 1.25;
+  // hiero.org's own .repository-name uses this -0.04em tracking on
+  // IBM Plex Mono (font-ibm) — a monospace font, whose naturally wide,
+  // fixed-width glyphs can absorb that much tightening and still read
+  // fine. Space Grotesk is proportional and already tighter by default,
+  // so the same em value here just read as cramped.
+  letter-spacing: -0.01em;
+  transition: color 0.3s var(--transition-timing);
+}
+
+.card:hover .card-title {
+  color: var(--color-primary);
+}
+
+// doc-section-cards wraps its title in a link (the card isn't itself a
+// link, unlike hiero.org's repository/community-call cards) — without
+// this, the sitewide a { color: var(--color-primary) } rule would make
+// the anchor permanently pink regardless of hover, instead of only
+// turning color together with the rest of .card-title on hover.
+.card-title a {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+.card .card-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: -0.008em;
+  color: rgba(30, 30, 30, 0.65) !important;
+  transition: color 0.3s var(--transition-timing);
+}
+
+// Matches .community-call-description's own hover treatment exactly:
+// the body copy gets MORE opaque (not just the title) on hover, so the
+// whole card reads as "responding," not just the heading.
+.card:hover .card-description {
+  color: rgba(30, 30, 30, 0.82) !important;
+}
+
+[data-bs-theme='dark'] .card .card-description {
+  color: var(--color-text-light) !important;
+}
+
+[data-bs-theme='dark'] .card:hover .card-description {
+  color: var(--color-text-dark) !important;
+}
+
+// Top accent bar reveal — ported from .community-call-link::before:
+// a thin brand-colored bar, collapsed to zero width at rest, that slides
+// in from the left on hover. .card already needs position: relative for
+// this; overflow: hidden keeps the bar from poking past the card's own
+// rounded corners.
+.card {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--transition-timing);
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+  }
+}
+
+// Leading icon, elevated from a bare glyph into a proper badge — the
+// closest equivalent here to .community-call-action-glyph's circular
+// badge treatment (border at rest, fills solid with the brand color +
+// white glyph on hover), just used as a leading identifier instead of a
+// trailing action affordance these info cards don't have.
+.card-icon-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  margin-right: 1rem;
+  border-radius: 0.875rem;
+  background: var(--color-primary-very-light);
+  color: var(--color-primary);
+  transition: background-color 0.3s var(--transition-timing), color 0.3s var(--transition-timing);
+
+  i {
+    font-size: 1.25rem;
+  }
+}
+
+.card:hover .card-icon-badge {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+// --color-primary-very-light's dark-mode value (#2a2030) is a muted,
+// desaturated plum — fine as a subtle tint on a light background, but
+// against a dark card it read as barely-there instead of like a brand-
+// colored badge. A translucent red tint instead keeps it clearly
+// "reddish" while still sitting quietly at rest (full .card-icon-badge
+// hover fill, above, is unchanged — this only affects the resting
+// state).
+[data-bs-theme='dark'] .card-icon-badge {
+  background: rgba(217, 45, 106, 0.22);
+  color: var(--color-primary-light);
+}
+
+// Host for the {{< hero-traces variant="light" >}} decorative background
+// (see hero-traces.html) — .core-capabilities is homepage-specific already
+// (not a shared Docsy section class), so this is scoped to just the home
+// page. .features-section used to host a second copy of this pattern too;
+// removed per request, so it's dropped from this selector.
+.core-capabilities {
+  position: relative;
+  // No overflow: hidden here — .hero-traces--light bleeds past this
+  // host's own (narrower, content-column-width) box on purpose via
+  // negative margins; overflow: hidden on the host would clip that bleed
+  // straight back down to the host's own width.
+  isolation: isolate;
+}
+
+// Ported from hiero-website's .repositories-header/-eyebrow/-heading/
+// -intro/-copy/-features (src/app/globals.css) — same two-column header
+// layout (heading column + copy/pills column, bottom-aligned at lg) used
+// for its Repositories, Community Calls, Issue Jump, etc. section headers.
+// Fixed clamp() steps throughout for the same libsass mixed-unit
+// limitation noted elsewhere in this file (see the hero title rule).
+.capabilities-header {
+  margin-bottom: 2.5rem;
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 1280px) {
+  .capabilities-header {
+    margin-bottom: 3rem;
+    grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);
+    align-items: end;
+    gap: 5rem;
+  }
+}
+
+.capabilities-eyebrow {
+  margin: 0 0 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  color: var(--color-primary);
+  text-transform: uppercase;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 1px;
+    margin-top: 0.75em;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+}
+
+.capabilities-heading {
+  margin: 0;
+  max-width: 14ch;
+  text-wrap: balance;
+  font-size: 2.75rem;
+  line-height: 0.96;
+  font-weight: 400;
+  letter-spacing: -0.055em;
+}
+
+@media (min-width: 768px) {
+  .capabilities-heading {
+    font-size: 4rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .capabilities-heading {
+    font-size: 5.75rem;
+  }
+}
+
+.capabilities-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.capabilities-copy {
+  margin: 0;
+  max-width: 36rem;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  letter-spacing: -0.014em;
+  color: var(--color-text-body);
+}
+
+@media (min-width: 1280px) {
+  .capabilities-copy {
+    font-size: 1.25rem;
+  }
+}
+
+.capabilities-features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  li {
+    border-radius: 999px;
+    border: 1px solid rgba(30, 30, 30, 0.18);
+    padding: 0.375rem 0.75rem;
+    font-size: 0.6875rem;
+    line-height: 1;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-body);
+  }
+}
+
+[data-bs-theme='dark'] .capabilities-features li {
+  border-color: var(--color-border);
+}
+
+// .hero-traces--light itself (not its host) bleeds full-viewport-width
+// rather than being confined to the host's content-column width — see
+// the full-bleed override below. Without this the pattern was squeezed
+// into the ~1200px container column, reading as dense/cluttered instead
+// of the sparse, wide field in the reference.
+
+
 // --- 12. GRADIENT BACKGROUNDS & COVER BLOCK ---
+
+// hiero.org doesn't use plain white/gray for section backgrounds — nearly
+// every non-hero section on their site is --color-sand (a warm cream),
+// with cards/borders doing the work of visual separation instead of
+// alternating white/gray bands. Docsy's own .td-box--white/--light
+// classes (homepage section bands, used site-wide) hardcode #fff/#f8f9fa
+// directly rather than a CSS var, so they need an explicit override here
+// rather than just changing a shared token. Light mode only — dark mode
+// already has its own distinct background per .td-box variant further up
+// this file, and a "cream" tint would read as muddy against those.
+.td-box--white,
+.td-box--light {
+  background-color: var(--color-sand) !important;
+}
+
+// Section divider ({{< section-divider >}}, ported from hiero-website's
+// Divider component): a small brand mark plus a hairline spanning the
+// rest of the width, breaking up long stretches of sand background
+// between unrelated sections instead of a hard color-block edge.
+.section-divider {
+  background: var(--color-sand);
+  // Full-bleed, matching .hero-section/.td-footer: without this the
+  // divider only spans its own (Bootstrap-constrained) parent column,
+  // not the full viewport — in dark mode that left bare slivers of
+  // whatever sits behind it visible on both sides instead of one
+  // continuous band.
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+.section-divider-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 1.5rem 0;
+
+  @media (min-width: 768px) {
+    padding: 2rem 0;
+  }
+}
+
+.section-divider-mark {
+  display: inline-flex;
+  flex-shrink: 0;
+
+  svg {
+    height: auto;
+    width: 2.5rem;
+  }
+}
+
+.section-divider-line {
+  height: 1px;
+  width: 100%;
+  background: rgba(30, 30, 30, 0.12);
+}
+
+// The sand divider isn't theme-scoped by default (same reasoning as the
+// footer/hero — hiero.org's own equivalents aren't theme-aware either),
+// but unlike those two this one sits between two sections that DO switch
+// to a dark background in dark mode, so without this it shows up as a
+// jarring light-sand band on an otherwise dark page.
+[data-bs-theme='dark'] .section-divider {
+  background-color: var(--color-bg-white) !important;
+}
+
+[data-bs-theme='dark'] .section-divider-line {
+  background: rgba(220, 229, 248, 0.14) !important;
+}
 
 // First section after cover — increase padding for feature blocks
 .td-cover-block + section {
@@ -749,24 +2064,73 @@ td > code {
   color: var(--color-primary) !important;
 }
 
-.gradient-bg {
-  background: linear-gradient(to bottom right, #992350, #d92d6a, #b81a56) !important;
-  padding: 4rem 0;
-  margin-left: -15px;
-  margin-right: -15px;
-  width: calc(100% + 30px);
-  color: white;
+// Custom brand-glyph icons (One-Shot Deployment, Kubernetes Native —
+// see blocks/feature.html's "svg" param) in place of a Font Awesome
+// class. Sized to match the ~40px (2.5rem) Font Awesome renders at via
+// the .h1 wrapper's font-size, since an inline <svg> doesn't scale with
+// font-size the way an icon font glyph does. Fill color is already
+// baked into these specific SVG files (var(--color-primary)'s own hex,
+// #B81A56) rather than driven by currentColor, so — unlike the Font
+// Awesome icons beside them — they don't need (and aren't affected by)
+// the dark-mode color-override fight below.
+.feature-icon-svg svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
 
-  * {
-    color: white !important;
-  }
+// [data-bs-theme='dark'] .td-box--white/-light .h1 (further down, "Keep
+// adjacent docs content readable" pass) sets color: inherit !important
+// on this feature icon's wrapper (a <div class="h1">, Bootstrap's
+// heading-size utility class, not an actual <h1> — but the selector
+// list still matches it). That rule and a same-specificity attempt to
+// override it both have one attribute selector + two classes; at that
+// tie, source order decides, and the inherit rule sits later in the
+// file — it wins regardless of which one is "meant" to apply here.
+// Targeting the icon element itself directly adds a third selector
+// component (the element), which beats that tie outright rather than
+// depending on source order holding steady.
+[data-bs-theme='dark'] .features-section .h1 i {
+  color: var(--color-primary) !important;
+}
 
-  // Primary CTA buttons sit on a white background — preserve the brand color
-  // for text and icons so they remain legible against the white button face.
-  .cta-btn-primary,
-  .cta-btn-primary * {
-    color: var(--color-primary) !important;
+// Docsy's own .td-block-padding/.td-default main section rule (not a
+// project override — see node_modules/.../_blocks.scss) gives every
+// top-level section 4rem/5rem (mobile/768px+) top+bottom padding by
+// default. Combined with the hero above it, that pushed .features-section
+// well past a typical laptop viewport's height on first load — trimmed
+// here so at least a sliver of it is visible without scrolling, the same
+// goal as the hero's own height trim above.
+.features-section section {
+  padding-top: 2.5rem !important;
+  padding-bottom: 2.5rem !important;
+}
+
+@media (min-width: 768px) {
+  .features-section section {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
   }
+}
+
+// Mirrors hiero-website's .hiero-principles-heading/-intro text treatment
+// (src/app/globals.css): normal (not bold) weight with tight line-height/
+// tracking for the heading, and a 1.6 line-height / tracked-in / ~78%-
+// opacity body color for the paragraph — rather than Bootstrap's default
+// bold .h3 heading and full-opacity paragraph text.
+.features-section h4 {
+  font-weight: 400;
+  line-height: 1.05;
+  // -0.045em is .hiero-principles-heading's own tracking, but that's
+  // applied there at display scale (clamp(2.25rem,4vw,3.5rem)) — these
+  // feature titles render at Bootstrap's much smaller .h3 size, where
+  // that much negative tracking reads as cramped rather than refined.
+  letter-spacing: -0.015em;
+}
+
+.features-section p {
+  line-height: 1.6;
+  letter-spacing: -0.012em;
+  color: var(--color-text-body);
 }
 
 .td-cover-block {
@@ -799,51 +2163,13 @@ td > code {
   margin-bottom: 1.3rem;
 }
 
-// Lead text styling in cover sections
+// Lead text styling — the page/section intro paragraph (e.g. every docs
+// page's description under its h1). 1.5rem was 20% over Bootstrap's own
+// .lead default (1.25rem); restoring that standard ratio to the new 1rem
+// body base instead of re-inflating it.
 .lead {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 400;
-}
-
-// CTA Button Styles
-.cta-btn,
-.hero-btn {
-  padding: 14px 32px !important;
-  font-size: 16px !important;
-  font-weight: 500 !important;
-  border-radius: 8px !important;
-  text-decoration: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  transition: all 0.2s ease !important;
-  border: none !important;
-  background-image: none !important;
-}
-
-.cta-btn-primary,
-.hero-btn-primary {
-  background: white !important;
-  color: var(--color-primary) !important;
-
-  &:hover {
-    background: #f5f5f5 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    color: var(--color-primary) !important;
-  }
-}
-
-.cta-btn-secondary,
-.hero-btn-secondary {
-  background: transparent !important;
-  color: white !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: white !important;
-    color: white !important;
-  }
 }
 
 // --- 13. DARK MODE ---
@@ -898,7 +2224,7 @@ td > code {
   // Override earlier light-forced navbar rule with stronger, later selectors.
   .td-navbar,
   .td-navbar[data-bs-theme='dark'] {
-    background-color: #111723 !important;
+    background-color: var(--color-bg-white) !important;
     border-bottom: 1px solid var(--color-border) !important;
   }
 
@@ -973,20 +2299,18 @@ td > code {
 
   }
 
-  // Keep adjacent homepage sections visually distinct in dark mode.
-  .td-box--white {
-    background-color: #171d29 !important;
-
-    .td-arrow-down::before {
-      border-color: #171d29 transparent transparent transparent !important;
-    }
-  }
-
+  // Matches light mode, where both already resolve to the same
+  // --color-sand: these used to carry two different dark shades
+  // specifically to keep adjacent homepage sections "visually
+  // distinct," but that made dark mode behave inconsistently with light
+  // mode instead (.features-section and .core-capabilities are meant to
+  // read as one continuous band, see .section-divider between them).
+  .td-box--white,
   .td-box--light {
-    background-color: #1d2534 !important;
+    background-color: var(--color-bg-white) !important;
 
     .td-arrow-down::before {
-      border-color: #1d2534 transparent transparent transparent !important;
+      border-color: var(--color-bg-white) transparent transparent transparent !important;
     }
   }
 
@@ -1443,6 +2767,10 @@ td > code {
     color: #ffd58b !important;
   }
 
+  .td-content .chroma .chroma-cmd {
+    color: #ffd58b !important;
+  }
+
   .td-content .chroma .na,
   .td-content .chroma .nc,
   .td-content .chroma .nd,
@@ -1462,7 +2790,7 @@ td > code {
   .td-sidebar__inner,
   .td-sidebar-nav,
   #td-section-nav {
-    background-color: #121925 !important;
+    background-color: var(--color-bg-white) !important;
   }
 
   .td-sidebar-nav__section-title,
@@ -1493,7 +2821,7 @@ td > code {
   .td-sidebar-toc,
   .td-sidebar-toc .td-page-meta,
   .td-sidebar-toc .td-toc {
-    background-color: #121925 !important;
+    background-color: var(--color-bg-white) !important;
     color: #dce5f8 !important;
   }
 
@@ -1516,6 +2844,19 @@ td > code {
     color: #ffbfd5 !important;
     border-left-color: #ff8eb5 !important;
     font-weight: 700 !important;
+  }
+
+  // var(--color-primary) stays the same deep magenta in dark mode (it's
+  // not redefined per-theme), which reads muddy on a dark background —
+  // swap the page-actions capsule to the lighter pink already used for
+  // active-link states above.
+  .td-page-actions__group {
+    border-color: #ff8eb5 !important;
+  }
+
+  .td-page-actions__copy,
+  .td-page-actions__toggle {
+    color: #ff8eb5 !important;
   }
 
   // Keep foldable-nav carets visible and stateful in dark mode.
@@ -1632,7 +2973,7 @@ td > code {
   html:not([data-bs-theme='light']) {
     .td-navbar,
     .td-navbar[data-bs-theme='dark'] {
-      background-color: #111723 !important;
+      background-color: var(--color-bg-white) !important;
       border-bottom: 1px solid var(--color-border) !important;
     }
 
@@ -1665,7 +3006,7 @@ td > code {
     .td-sidebar-toc,
     .td-sidebar-toc .td-page-meta,
     .td-sidebar-toc .td-toc {
-      background-color: #121925 !important;
+      background-color: var(--color-bg-white) !important;
       color: #dce5f8 !important;
     }
 
@@ -1704,6 +3045,15 @@ td > code {
 
     .td-sidebar-toc #TableOfContents a.active {
       border-left-color: #ff8eb5 !important;
+    }
+
+    .td-page-actions__group {
+      border-color: #ff8eb5 !important;
+    }
+
+    .td-page-actions__copy,
+    .td-page-actions__toggle {
+      color: #ff8eb5 !important;
     }
 
     nav.foldable-nav .ul-1 .with-child > label::before {
@@ -1763,20 +3113,14 @@ td > code {
       color: #e3ebff !important;
     }
 
-    .td-box--white {
-      background-color: #171d29 !important;
-    }
-
+    .td-box--white,
     .td-box--light {
-      background-color: #1d2534 !important;
+      background-color: var(--color-bg-white) !important;
     }
 
-    .td-box--white .td-arrow-down::before {
-      border-color: #171d29 transparent transparent transparent !important;
-    }
-
+    .td-box--white .td-arrow-down::before,
     .td-box--light .td-arrow-down::before {
-      border-color: #1d2534 transparent transparent transparent !important;
+      border-color: var(--color-bg-white) transparent transparent transparent !important;
     }
 
     .td-content table:not(.td-initial),
@@ -1989,3 +3333,1173 @@ code.click-to-copy.code-copied::after {
   }
 }
 
+// --- 15. HERO BANNER ---
+// Ported from hiero-website's HeroSection/HeroTraces/HieroMarkScene
+// components (src/app/globals.css + src/lib/gossip-field.ts), translated
+// from Tailwind @apply utilities to plain CSS. The one deliberate gap: the
+// pointer/scroll parallax there is JS-driven (custom properties updated on
+// pointermove/scroll); that part is not replicated, so the scene is static
+// here instead of tilting toward the cursor. Everything else — gradient,
+// gossip-field background, glass-card emblem, rail/signal animations — is
+// a faithful port.
+
+.hero-section {
+  --hero-deep: #3a0a1e;
+  --hero-shadow: #23060f;
+  // Updated live by the pointer/scroll parallax script in
+  // layouts/partials/hooks/body-end.html (logo mark only — the background
+  // traces and halo glow stay static). Defaults below keep the mark
+  // neutral when JS is disabled or prefers-reduced-motion is set.
+  --hero-art-x: 0px;
+  --hero-art-y: 0px;
+  --hero-art-rotate-x: 0deg;
+  --hero-art-rotate-y: 0deg;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #ffffff;
+  // Docsy's own .td-block-padding/.td-default main section rule (4rem/
+  // 5rem at 768px+) AND .td-default main > section:first-of-type (an
+  // EXTRA 4rem on top of that, padding-top only, specifically because
+  // this hero is the first section on the page) both apply here, adding
+  // up to a full 128px/80px of padding directly on .hero-section itself
+  // — on top of, and completely separate from, .hero-section-inner's own
+  // carefully-tuned padding below. That redundant extra layer was the
+  // actual, biggest reason the hero (and therefore .features-section
+  // right after it) was running well past the fold: it was never really
+  // about the min-height floor or the title size alone.
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  // Full-bleed: .hero-section lives inside Bootstrap's .container-fluid
+  // (home baseof.html), which is full-width but still has its own
+  // horizontal padding — without this it leaves a visible gutter on both
+  // sides instead of running edge to edge.
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  // Note: the libsass version this project builds with cannot pass
+  // mixed-unit clamp()/min() through as plain CSS (it tries real Sass
+  // math and fails on "Incompatible units"), so these are fixed values
+  // with breakpoint overrides instead of the fluid clamp() originals.
+  min-height: 26rem;
+
+  background:
+    linear-gradient(to bottom, rgba(35, 6, 15, 0) 34%, rgba(35, 6, 15, 0.3) 100%),
+    radial-gradient(46rem 38rem at 79% 44%, rgba(217, 45, 106, 0.46), transparent 62%),
+    linear-gradient(152deg, var(--hero-deep), var(--color-primary-dark) 44%, #6d1338 74%, var(--hero-shadow));
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    min-height: 36rem;
+  }
+}
+
+// libsass rejects min()/clamp() with a calc() argument outright ("... is
+// not a number for `min'"), not just mixed literal units — so the "cap
+// at whichever is smaller, the fixed rem value or the viewport" behavior
+// has to be two separate rules branching on an actual media query
+// instead of one min() expression. 666px ≈ the 36rem cap above (576px)
+// plus the navbar's own 90px — below that, the fixed cap alone would
+// already push the hero (plus navbar) past the fold, so this switches to
+// sizing off the actual remaining viewport space instead, same goal as
+// the width-indexed font-size/padding trims above.
+@media (min-width: 768px) and (max-height: 666px) {
+  .hero-section {
+    min-height: calc(100vh - 90px);
+  }
+}
+
+.hero-section-inner {
+  position: relative;
+  display: flex;
+  min-height: inherit;
+  flex-direction: column;
+  gap: 1.5rem;
+  // .td-navbar is position: fixed (overlaying, not pushing content down
+  // in normal flow) at a measured 90px tall — this needs to clear that
+  // on its own merits, regardless of how .hero-section's own height/
+  // padding is tuned. Trimming this earlier (along with the min-height
+  // cap) to fit the fold also cut it below that clearance, so the
+  // eyebrow text started rendering fully behind/under the fixed navbar
+  // instead of just close to it.
+  padding-top: 5.5rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .hero-section-inner {
+    gap: 2rem;
+    // The fixed, translucent navbar overlays the hero's own top ~74px
+    // (see the hero-mark-emblem vertical-centering note above for the
+    // same measurement) — padding-top has to clear that AND leave real
+    // visual breathing room below it, not just the bare minimum, or the
+    // eyebrow reads as pinned to the edge relative to the generous gap
+    // .hero-section-lockup's own margin-top leaves at the bottom.
+    padding-top: 8.5rem;
+    padding-bottom: 2rem;
+  }
+}
+
+.hero-section-eyebrow {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.88);
+  text-transform: uppercase;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 1px;
+    margin-top: 0.5em;
+    background: rgba(255, 255, 255, 0.5);
+    flex-shrink: 0;
+  }
+}
+
+.hero-section-lockup {
+  margin-top: auto;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .hero-section-lockup {
+    gap: 2.75rem;
+  }
+}
+
+.hero-section-title {
+  margin: 0 0 0 -0.045em;
+  line-height: 0.78;
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  font-size: 4rem;
+  color: #ffffff;
+}
+
+@media (min-width: 576px) {
+  .hero-section-title {
+    font-size: 6rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-section-title {
+    font-size: 8rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-section-title {
+    // Was 11rem: the hero (and the start of .features-section right
+    // after it) is meant to be visible on first load without scrolling,
+    // on ordinary laptop/desktop viewport heights — this font alone was
+    // measuring ~156-170px tall at the old sizes, the single biggest
+    // contributor to the hero running well past a typical 900px-tall
+    // viewport before any of .features-section came into view.
+    font-size: 8.5rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .hero-section-title {
+    font-size: 9.5rem;
+  }
+}
+
+.hero-section-pitch {
+  display: flex;
+  max-width: 34rem;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero-section-lede {
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+@media (min-width: 1280px) {
+  .hero-section-lede {
+    font-size: 1.3125rem;
+  }
+}
+
+.hero-section-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.hero-section-action {
+  display: inline-flex;
+  height: 3rem;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0 1.625rem;
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  transition: background-color 200ms ease-out, border-color 200ms ease-out, translate 200ms ease-out;
+
+  &:hover {
+    translate: 0 -1px;
+    text-decoration: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+  }
+
+  // The sitewide a[target=_blank]::after indicator (section 5) would
+  // duplicate the explicit ↗ glyph used here, so suppress it on this class.
+  &[target='_blank']::after {
+    content: none;
+  }
+}
+
+.hero-section-action--primary {
+  // Fixed literal, not var(--color-text-dark): this button is always on a
+  // white background regardless of site theme, but that variable flips to
+  // a near-white value in dark mode and would make the text invisible.
+  //
+  // !important on color, not just the class selector: the sitewide
+  // a:visited rule (section 5) has higher specificity than a plain class
+  // selector, so once a link here has actually been clicked, :visited
+  // would otherwise repaint its text maroon instead of staying legible.
+  background: #ffffff;
+
+  &,
+  &:visited {
+    color: #1e1e1e !important;
+  }
+
+  &:hover {
+    background: #e5e4d7;
+    color: #1e1e1e !important;
+  }
+}
+
+.hero-section-action--ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.55);
+
+  &,
+  &:visited {
+    color: #ffffff !important;
+  }
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff !important;
+  }
+}
+
+.hero-section-action-glyph {
+  font-size: 0.875em;
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-section-eyebrow,
+  .hero-section-title,
+  .hero-section-pitch {
+    animation: hero-rise 720ms cubic-bezier(0.22, 0.85, 0.28, 1) both;
+  }
+
+  .hero-section-eyebrow {
+    animation-delay: 60ms;
+  }
+
+  .hero-section-title {
+    animation-delay: 150ms;
+  }
+
+  .hero-section-pitch {
+    animation-delay: 280ms;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.875rem);
+  }
+}
+
+// --- Gossip-field background (hero-traces.html shortcode) ---
+
+.hero-traces {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  height: 100%;
+  width: 100%;
+  transform-origin: center;
+  scale: 1.035;
+  mask-image: radial-gradient(116% 94% at 78% 16%, black 6%, rgba(0, 0, 0, 0.34) 44%, transparent 78%);
+}
+
+.hero-traces-links {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 0.6;
+}
+
+.hero-traces-signals {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.44);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-dasharray: 1 48;
+}
+
+.hero-traces-events {
+  fill: rgba(255, 255, 255, 0.28);
+}
+
+// A couple of the larger nodes (biggest radius in the scatter, r="3.7")
+// get a brand-red accent instead of plain white — same idea as the
+// .hero-traces--light variant's own accent dots below, so the gossip
+// web reads as "mostly neutral scatter, with a few reddish anchor
+// points" consistently wherever it appears, not just in the light
+// (Core Capabilities) variant.
+.hero-traces-events circle:nth-child(6),
+.hero-traces-events circle:nth-child(25) {
+  fill: rgba(255, 158, 199, 0.9);
+  filter: drop-shadow(0 0 6px rgba(255, 110, 160, 0.6));
+}
+
+// Light-section variant ({{< hero-traces variant="light" >}}) — same
+// scatter, recolored for a light/cream background instead of the dark
+// hero gradient. Tuned to match hiero.org's reference treatment, which
+// reads as a sparse, wide, barely-there field (very light lines/dots
+// covering a full-bleed band), not a dense pattern squeezed into one
+// content column.
+.hero-traces--light {
+  // Cancels the base class's z-index: -2. That works for the hero because
+  // .hero-section is the svg's direct parent — but .features-section (one
+  // of the two hosts here) wraps a generated <section> with its own
+  // *opaque* background, sitting between the host and the svg. Stacking
+  // context painting order groups ALL negative-z-index descendants into
+  // one (early) pass and all normal-flow descendants into a later one,
+  // regardless of DOM nesting — so that opaque <section> background,
+  // despite being the svg's ancestor, paints in the later pass and fully
+  // covers it. Dropping to z-index: 0 sidesteps that pass split entirely:
+  // the svg (already the first child of its row) just paints behind its
+  // sibling content via plain DOM order, the same way any non-positioned
+  // background image would.
+  z-index: 0;
+  // Full-bleed: bleeds to the viewport edges regardless of how narrow the
+  // host (.features-section / .core-capabilities) actually is, instead of
+  // inheriting inset: 0 from the base class and being confined to the
+  // host's own (content-column-width) box.
+  top: 0;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  width: 100vw;
+  height: 100%;
+  // hiero.org's own equivalent (GossipField's .gossip-field, behind its
+  // repository grid) caps its height rather than stretching to the full
+  // section — on a multi-row card grid like ours, uncapped height put the
+  // pattern directly behind every card's text at full density, which read
+  // as cluttered/competing with the (now transparent-at-rest, see .card)
+  // cards for attention instead of sitting behind them. Capping it plus
+  // the corner-anchored mask below (ported from .gossip-field--repos)
+  // keeps it concentrated near the top corner and faded out well before
+  // the second row, so it reads as "peeking from behind the first row's
+  // corner" rather than a uniform wash under the whole grid.
+  max-height: 36rem;
+  margin-left: -50vw;
+  // preserveAspectRatio is now "xMidYMid slice" (see hero-traces.html),
+  // which already scales the pattern uniformly to cover this box — no
+  // extra zoom needed on top of that.
+  scale: 1;
+  // Anchored near the top-LEFT instead of .gossip-field--repos's top-
+  // right (hiero.org's own repos-grid field) — this section's heading
+  // sits top-left (see .capabilities-header), so the pattern now extends
+  // from behind that corner instead of the opposite one. Falloff is also
+  // more generous (black holds longer, transparent starts later) than
+  // the first attempt here, which paired with the old preserveAspectRatio
+  // :none/uncapped scale left it barely visible at all once sliced down
+  // to size.
+  //
+  // Two mask layers, intersected: the radial gradient alone fades with
+  // distance from its anchor point, but right at the SVG box's own top
+  // and bottom edges (y: 0 / y: 100%) it's still fully opaque there —
+  // the pattern doesn't extend past the box, so it just stops dead at
+  // that boundary instead of fading into it. The linear gradient adds an
+  // independent fade keyed to those edges specifically (first/last 10%
+  // of the box's height), so the top and bottom both taper off instead
+  // of being cropped.
+  mask-image: radial-gradient(130% 110% at 4% 8%, black 10%, rgba(0, 0, 0, 0.4) 48%, transparent 82%),
+    linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.hero-traces--light .hero-traces-links {
+  stroke: rgba(20, 20, 20, 0.22);
+  stroke-width: 0.7;
+}
+
+.hero-traces--light .hero-traces-signals {
+  display: none;
+}
+
+.hero-traces--light .hero-traces-events {
+  fill: rgba(20, 20, 20, 0.36);
+}
+
+// nth-child(6)/(25): the two largest-radius dots (r="3.7") in the
+// scatter — picked by actual size rather than an arbitrary index, so
+// "the big nodes" really are the biggest ones, matching the base (dark
+// hero) .hero-traces-events accent below.
+.hero-traces--light .hero-traces-events circle:nth-child(6),
+.hero-traces--light .hero-traces-events circle:nth-child(25) {
+  fill: rgba(184, 26, 86, 0.55);
+  r: 5;
+  filter: drop-shadow(0 0 5px rgba(184, 26, 86, 0.3));
+}
+
+// .hero-traces--light's line/dot colors are dark (rgba(20,20,20,…)),
+// tuned to read against the light sand background behind
+// .core-capabilities — against that same section's dark-navy background
+// in dark mode (see .td-box--light above), dark-on-dark made the whole
+// pattern essentially invisible. Lightened here the same way the base
+// (dark hero) .hero-traces-links/-events already are, so the gossip web
+// stays visible in both themes.
+[data-bs-theme='dark'] .hero-traces--light .hero-traces-links {
+  stroke: rgba(255, 255, 255, 0.14);
+}
+
+[data-bs-theme='dark'] .hero-traces--light .hero-traces-events {
+  fill: rgba(255, 255, 255, 0.26);
+}
+
+[data-bs-theme='dark'] .hero-traces--light .hero-traces-events circle:nth-child(6),
+[data-bs-theme='dark'] .hero-traces--light .hero-traces-events circle:nth-child(25) {
+  fill: rgba(217, 45, 106, 0.65);
+  filter: drop-shadow(0 0 5px rgba(217, 45, 106, 0.4));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-traces-signals {
+    animation: hero-trace-flow 10s linear infinite;
+  }
+
+  .hero-traces-events circle {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: hero-trace-event 5.2s ease-in-out infinite alternate;
+  }
+
+  .hero-traces-events circle:nth-child(3n) {
+    animation-delay: -1.7s;
+    animation-duration: 6.4s;
+  }
+
+  .hero-traces-events circle:nth-child(4n) {
+    animation-delay: -3.1s;
+    animation-duration: 4.6s;
+  }
+}
+
+@keyframes hero-trace-flow {
+  to {
+    stroke-dashoffset: -196;
+  }
+}
+
+@keyframes hero-trace-event {
+  from {
+    opacity: 0.45;
+    scale: 0.86;
+  }
+
+  to {
+    opacity: 1;
+    scale: 1.55;
+  }
+}
+
+// --- Logo mark scene (hero-mark-scene.html shortcode) ---
+
+.hero-mark-scene {
+  --hero-mark-band: 10rem;
+
+  pointer-events: none;
+  position: relative;
+  margin-top: 0.25rem;
+  width: calc(100% + 1.563rem);
+  height: var(--hero-mark-band);
+  mask-image: linear-gradient(to right, transparent 0%, black 19%, black 100%);
+}
+
+@media (min-width: 576px) {
+  .hero-mark-scene {
+    --hero-mark-band: 14rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-mark-scene {
+    --hero-mark-band: 18rem;
+    width: calc(100% + 3rem);
+  }
+}
+
+@media (min-width: 992px) {
+  .hero-mark-scene {
+    width: calc(100% + 8.75rem);
+  }
+}
+
+.hero-mark-scene::before {
+  position: absolute;
+  top: 50%;
+  right: -10%;
+  height: 125%;
+  width: 88%;
+  content: '';
+  translate: 0 -50%;
+  background: radial-gradient(ellipse, rgba(255, 158, 199, 0.5) 0%, rgba(217, 45, 106, 0.24) 40%, transparent 72%);
+}
+
+.hero-mark-reactive {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(var(--hero-art-x), var(--hero-art-y), 0) rotateX(var(--hero-art-rotate-x)) rotateY(var(--hero-art-rotate-y));
+  transform-origin: 70% 50%;
+  transform-style: preserve-3d;
+  transition: transform 280ms cubic-bezier(0.22, 0.85, 0.28, 1);
+  will-change: transform;
+}
+
+.hero-mark-rail {
+  position: absolute;
+  right: -12%;
+  height: 1px;
+  width: 88%;
+  transform-origin: right center;
+  rotate: -7deg;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.25) 20%, rgba(255, 207, 228, 0.76) 64%, transparent);
+  box-shadow: 0 0 18px rgba(255, 156, 198, 0.35);
+
+  &::after {
+    position: absolute;
+    top: -2px;
+    left: 18%;
+    height: 5px;
+    width: 5px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 12px rgba(255, 174, 208, 0.95);
+    content: '';
+  }
+}
+
+.hero-mark-rail--top {
+  top: 23%;
+}
+
+.hero-mark-rail--middle {
+  top: 52%;
+  right: -4%;
+  width: 94%;
+}
+
+.hero-mark-rail--bottom {
+  top: 79%;
+  right: -18%;
+  width: 82%;
+}
+
+.hero-mark-emblem,
+.hero-mark-echo {
+  position: absolute;
+  top: 50%;
+  right: 7%;
+  aspect-ratio: 1 / 1;
+  width: 9rem;
+  translate: 0 -50%;
+}
+
+@media (min-width: 576px) {
+  .hero-mark-emblem,
+  .hero-mark-echo {
+    width: 13rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-mark-emblem,
+  .hero-mark-echo {
+    width: 16rem;
+  }
+}
+
+.hero-mark-echo {
+  // Matches hiero-website's own source exactly (src/app/globals.css):
+  // .hero-mark-emblem, .hero-mark-echo share `right: 7%`, then
+  // .hero-mark-echo overrides to `right: 2%` — a 5-point gap is their
+  // actual, intentional design, not a bug. (The earlier "fix" here,
+  // collapsing that gap, was chasing a symptom that was really caused by
+  // .hero-mark-emblem's stray position: relative making IT resolve `right`
+  // against a different positioning scheme than the echo's — see below.)
+  right: 2%;
+  opacity: 0.12;
+  filter: blur(0.4px);
+  scale: 1.13;
+  translate: 0 -43%;
+}
+
+// Between the inline band (<768px) and the two-column "lg" layout
+// (>=1280px), .hero-mark-scene bleeds further right than its own
+// container (width: calc(100% + 8.75rem) below, from the base rule) to
+// match hiero.org's own formula — but hiero's card width there is also
+// vw-relative and shrinks with the viewport, while ours is a fixed 16rem
+// step (a libsass limitation, see the base rule's note). Fixed width +
+// growing bleed meant the card's right edge ran past the actual viewport
+// edge and got hard-clipped by .hero-section's overflow: hidden. Pulling
+// it in (and keeping the echo's 5-point gap behind it) with larger right
+// offsets here keeps both fully on-screen through this whole range,
+// without touching the <768px/>=1280px steps, which don't have this
+// problem. Placed after the rules above so it wins the cascade for
+// .hero-mark-echo's `right` too.
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .hero-mark-emblem,
+  .hero-mark-echo {
+    right: 12%;
+  }
+
+  .hero-mark-echo {
+    right: 7%;
+  }
+}
+
+.hero-mark-emblem {
+  display: grid;
+  place-items: center;
+  // hiero-website's actual value is clamp(1.5rem, 3vw, 3rem) — libsass
+  // can't pass that through as-is (mixed rem/vw units, see the hero
+  // title notes below), so this approximates it with fixed steps at the
+  // same viewport widths where 3vw would cross each rem boundary instead.
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 34px 85px rgba(29, 2, 12, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.17), transparent 38%),
+    linear-gradient(145deg, rgba(104, 12, 48, 0.72), rgba(50, 4, 20, 0.44));
+  backdrop-filter: blur(6px);
+  // No position: relative here — the shared rule above already makes
+  // this position: absolute, which is a valid containing block for the
+  // ::before on its own. Setting it to relative here was silently
+  // overriding that (this rule comes later in the cascade), switching
+  // the emblem from absolute positioning (relative to .hero-mark-scene,
+  // same as the echo) to relative positioning (an offset from its own
+  // normal-flow position instead) — the two ended up positioned via
+  // completely different systems despite sharing the same `right`/
+  // `width` values, which is what was actually pushing the echo so far
+  // from the emblem.
+
+  &::before {
+    position: absolute;
+    inset: 5%;
+    border-radius: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    content: '';
+  }
+}
+
+.hero-mark-image {
+  display: inline-flex;
+  height: 72%;
+  width: 72%;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    filter: brightness(0) invert(1) drop-shadow(0 0 24px rgba(255, 181, 213, 0.34));
+  }
+}
+
+.hero-mark-node {
+  position: absolute;
+  height: 0.625rem;
+  width: 0.625rem;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 174, 208, 0.95), 0 0 34px rgba(217, 45, 106, 0.75);
+}
+
+// hiero-website's own node positions (top:19%/right:43% etc.) put two of
+// these roughly centered on the card — fine against their own logo's
+// artwork/negative space, but Solo's logo fills that same centered area
+// solidly, so those two were rendering as white dots sitting directly on
+// top of the (already white) mark instead of beside it. Moved to the
+// card's four corners instead — solid background there regardless of
+// the specific glyph shape, so no text-dependent tuning is needed.
+.hero-mark-node--one {
+  top: 8%;
+  right: 88%;
+}
+
+.hero-mark-node--two {
+  top: 8%;
+  right: 8%;
+  height: 0.375rem;
+  width: 0.375rem;
+}
+
+.hero-mark-node--three {
+  right: 88%;
+  bottom: 8%;
+  height: 0.375rem;
+  width: 0.375rem;
+}
+
+.hero-mark-node--four {
+  right: 8%;
+  bottom: 8%;
+}
+
+@media (min-width: 1280px) {
+  .hero-section {
+    min-height: 40rem;
+  }
+}
+
+// Same "branch on an actual media query instead of min()" reasoning as
+// the 768px step above — 40rem (640px) + the 90px navbar ≈ 730px.
+@media (min-width: 1280px) and (max-height: 730px) {
+  .hero-section {
+    min-height: calc(100vh - 90px);
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-section-lockup {
+    max-width: 53%;
+    // The base rule's margin-top: auto pushes this all the way down,
+    // absorbing 100% of the leftover space in the flex column above it
+    // — proportionate back when the hero's own height was shorter, but
+    // against the now-taller 40rem hero that gap between the eyebrow and
+    // the title grew enough to read as unbalanced. A fixed, smaller
+    // value here still leaves the lockup sitting below center (matching
+    // the original bottom-weighted intent) without the exaggerated gap.
+    // (5.5rem, paired with .hero-section-inner's own padding-top bump
+    // above — together they roughly even out the gap above the eyebrow
+    // against the gap below the CTA buttons, instead of nearly all of it
+    // landing at the bottom.)
+    margin-top: 5.5rem;
+  }
+
+  .hero-mark-scene {
+    position: absolute;
+    inset: 0;
+    right: -3%;
+    left: auto;
+    margin-top: 0;
+    height: auto;
+    width: 60%;
+    z-index: -1;
+    // The left-edge fade mask exists to blend the small inline mark band
+    // into surrounding text at narrow viewports. At this breakpoint the
+    // scene becomes a large background panel instead, and the mask's
+    // "transparent" edge was landing on the card itself (clipping the
+    // glyph and the emblem's left side), not past it — so drop it here.
+    mask-image: none;
+  }
+
+  .hero-mark-rail {
+    rotate: -13deg;
+  }
+
+  .hero-mark-emblem,
+  .hero-mark-echo {
+    // hiero-website's own values at this breakpoint (src/app/globals.css):
+    // right: 8% / 3%, width: min(33rem, 66%, 58svh). The -30%/-35% this
+    // used to carry pushed the card out past the container's own right
+    // edge — at exactly this breakpoint's width that clipped the emblem
+    // off-screen against .hero-section's overflow: hidden, and the
+    // resulting visual weight on the right (with nothing to balance it
+    // past the container edge) is what was reading as "offset to the
+    // right" overall, not just a positioning quirk local to the mark.
+    //
+    // width is 25rem, not hiero's literal 33rem: that 58svh term in their
+    // own min() is exactly a "shrink the card on a short viewport" cap —
+    // which libsass can't express as min()/clamp() with calc() (see the
+    // note on .hero-section's min-height above), so the fixed 33rem
+    // alone, with no height-based ceiling, stopped leaving the card any
+    // real margin once .hero-section's own height came down to fit the
+    // fold. 25rem keeps comfortable top/bottom breathing room against
+    // that shorter hero instead of nearly touching both edges.
+    right: 8%;
+    width: 25rem;
+    // The base rule's top: 50% centers this against .hero-mark-scene's
+    // full box, which (via inset: 0) spans .hero-section's entire height
+    // — including the ~74px at the very top that sits behind the fixed,
+    // translucent navbar overlaying the hero. True geometric center of
+    // that full box reads as noticeably above center of the part a
+    // reader can actually see below the navbar. +37px (half that
+    // overlap) re-centers it against the visible remainder instead.
+    top: calc(50% + 37px);
+  }
+
+  .hero-mark-emblem {
+    // 3vw at this exact breakpoint width = 2.4rem — see the base rule's
+    // note on why this is stepped instead of a literal clamp().
+    border-radius: 2.4rem;
+  }
+
+  .hero-mark-echo {
+    right: 3%;
+  }
+}
+
+// Moved after the 1280px block above (not left in its own earlier
+// min-width: 1600px block alongside the title size) so its border-radius
+// correctly wins the cascade at viewports ≥1600px — both media queries
+// match there, and the one later in source order takes it for equal
+// specificity, which was previously the 1280px block's smaller 2.4rem.
+@media (min-width: 1600px) {
+  .hero-mark-emblem {
+    // 3vw at 1600px = 3rem, hiero-website's own clamp() ceiling.
+    border-radius: 3rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-mark-emblem {
+    animation: hero-mark-float 8s ease-in-out infinite alternate;
+  }
+
+  .hero-mark-rail::after {
+    animation: hero-mark-signal 5.5s ease-in-out infinite;
+  }
+
+  .hero-mark-rail--middle::after {
+    animation-delay: -1.8s;
+  }
+
+  .hero-mark-rail--bottom::after {
+    animation-delay: -3.6s;
+  }
+}
+
+@keyframes hero-mark-float {
+  from {
+    translate: 0 -50%;
+    rotate: -1deg;
+  }
+
+  to {
+    translate: -0.4rem calc(-50% - 0.6rem);
+    rotate: 1.25deg;
+  }
+}
+
+@keyframes hero-mark-signal {
+  0%,
+  10% {
+    opacity: 0;
+    translate: 0;
+  }
+
+  20%,
+  72% {
+    opacity: 1;
+  }
+
+  90%,
+  100% {
+    opacity: 0;
+    translate: 34vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-traces-signals,
+  .hero-traces-events circle,
+  .hero-mark-emblem,
+  .hero-mark-rail::after {
+    animation: none;
+  }
+
+  // The parallax script itself checks prefers-reduced-motion and never
+  // attaches its listeners, but pin this transition off too in case the
+  // property is ever set another way. Only the logo mark is reactive —
+  // the background traces and halo glow are static regardless.
+  .hero-mark-reactive {
+    transform: none;
+    transition: none;
+  }
+}
+
+// Below the smallest band-size step (576px), shrink further instead of
+// hiding — hero-mark-scene's own absolutely-positioned emblem (max 9rem
+// wide, inset 7% from the right) comfortably fits a 320px-wide viewport,
+// so there's no overlap risk left to guard against at this width.
+@media (max-width: 375px) {
+  .hero-mark-scene {
+    --hero-mark-band: 7.5rem;
+    width: calc(100% + 1rem);
+  }
+}
+
+// --- 16. SITE UTILITY CORNER ---
+// Sits at the bottom of the side menu itself (Community Contributions,
+// FAQs, Examples Hub, Release Notes, GitHub) — not a page-fixed overlay.
+// Rendered in sidebar-tree.html right after the nav tree, inside
+// #td-sidebar-menu.
+//
+// `position: sticky; bottom: 0` (tried first) only takes effect once
+// scrolling actually happens — on a short nav tree (few sections
+// expanded), .td-sidebar__inner never needs to scroll at all, so the
+// sticky element just sits in normal flow right under the nav with a
+// long empty run of sidebar below it instead of being pulled down.
+// margin-top: auto inside .td-sidebar__inner's flex column (see that
+// rule) pushes this to the bottom unconditionally, whether or not the
+// nav tree is tall enough to scroll.
+.site-utility-corner {
+  margin-top: auto;
+  // Breathing room below the last link so the block doesn't butt directly
+  // against the bottom edge of the viewport — margin-top: auto only
+  // absorbs the space ABOVE this element, so this still has to be a real
+  // margin, not padding (padding would sit inside the block, not between
+  // it and the edge).
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 0;
+  background: var(--color-sand);
+  border-top: 1px solid var(--color-border);
+}
+
+// --color-sand isn't theme-scoped (same value in both modes, like the
+// footer/hero), so without this override the corner would keep its light
+// cream background in dark mode — the same jarring-band issue fixed for
+// .section-divider above, just against the dark sidebar instead.
+[data-bs-theme='dark'] .site-utility-corner {
+  background: var(--color-bg-white);
+}
+
+// Below md (768px), Docsy's own sidebar nav has no height cap or sticky
+// behavior at all (see _sidebar-tree.scss — its internal max-height/
+// overflow and .td-sidebar__inner's sticky are both scoped to
+// media-breakpoint-up(md)); it's a plain accordion that grows the page as
+// sections expand. `position: sticky` has no tall-enough containing block
+// to hold against there, so this switches to `position: fixed` instead —
+// anchored purely to the viewport, not to any container's content height,
+// so it can't be pushed around by what's expanded above it.
+@media (max-width: 767.98px) {
+  .site-utility-corner {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1020;
+    margin-top: 0;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  // Keeps page content (and the last item of the sidebar accordion, when
+  // expanded) from ending up hidden behind the now-fixed bar. ~225px
+  // measured rendered height, rounded up with margin.
+  body {
+    padding-bottom: 15rem;
+  }
+}
+
+.site-utility-link {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+
+  // !important + explicit :visited, not just `color` on the base selector:
+  // the sitewide a:visited rule (section 5) has higher specificity than a
+  // plain class selector, so once a link here is actually clicked, :visited
+  // would otherwise repaint its text pink/maroon — only some of these five
+  // looking a different color than the rest was exactly that bug.
+  &,
+  &:visited {
+    color: var(--color-text-body) !important;
+  }
+
+  i {
+    width: 1.125rem;
+    font-size: 1rem;
+    text-align: center;
+    color: var(--color-primary);
+  }
+
+  // Text-only shift, no background — same reasoning as .nav-link above
+  // (see its comment): a gray box here would now mismatch the sand
+  // sidebar background it sits on, same as hiero.org's own plain links.
+  &:hover {
+    background: transparent;
+    color: var(--color-primary) !important;
+    text-decoration: none;
+  }
+
+  // These already carry their own meaning via the icon + label; the
+  // sitewide external-link glyph (section 5) would just add noise here.
+  &[target='_blank']::after {
+    content: none;
+  }
+}
+
+// --- 17. FULL-WIDTH CONTENT ---
+// Docsy's own _content.scss auto-applies .td-max-width-on-larger-screens
+// (max-width: 80% at lg+) to every direct child of .td-content — p, h1,
+// h2, ul, ol, blockquote, pre, .lead, .alert, .td-table, etc. — via
+// @extend, baked in at compile time rather than a class we can just drop.
+// That's why removing the class from the pageinfo banners earlier made
+// them *wider* than the surrounding paragraph/lead text instead of
+// matching it: the cap was still active on everything else. Reset it back
+// to full width here, for the same selector list Docsy targets.
+.td-content {
+  // One step down from body's 1rem (16px) baseline, scoped to docs prose
+  // specifically rather than the sitewide body font-size — the homepage
+  // and UI chrome (nav, buttons) are unaffected, only actual docs
+  // reading content gets the smaller size.
+  font-size: 0.9375rem;
+
+  > .footnotes,
+  > .alert,
+  > .highlight,
+  > .katex-display,
+  > .lead,
+  > .td-table,
+  > blockquote,
+  > dl dd,
+  > h1,
+  > h2,
+  > ol,
+  > p,
+  > pre,
+  > ul {
+    max-width: none;
+  }
+}
+
+// --- 18. PER-PAGE CATEGORIES/TAGS (right sidebar) ---
+// Moved out of the main content flow into the right-hand TOC sidebar,
+// which otherwise goes mostly unused on pages with a short/no table of
+// contents. See layouts/partials/taxonomy_terms_clouds.html.
+
+.td-sidebar-toc-taxonomy {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+
+  .taxonomy {
+    margin-bottom: 1rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Matches hiero.org's sectionLabelClasses (its small uppercase section
+  // labels, e.g. "Hosted by" in the footer): font-medium (500, not 600),
+  // wider tracking (0.16em) than this had before.
+  .taxonomy-title {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--color-text-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .taxonomy-terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    // Docsy's own base .taxonomy-terms rule sets overflow: hidden (for
+    // its original inline/single-line layout) — this rule's higher
+    // specificity wins for display/flex-wrap/gap, but CSS specificity
+    // applies per-property, not per-rule, so without an explicit
+    // override here that overflow: hidden was still the only declared
+    // value in effect, clipping every row of pills after the first once
+    // they wrapped.
+    overflow: visible;
+  }
+
+  // Matches hiero.org's own pill convention (.repository-features li /
+  // .issue-jump-filter / .tsc-about-facts li): a bordered, transparent
+  // chip differentiated by border + tracked uppercase text, not a solid
+  // gray fill (Bootstrap's --bs-secondary-bg default read as a flat gray
+  // smudge against the sand sidebar). !important: needed to beat the
+  // other .taxonomy-term rules elsewhere in this file (the dark-mode
+  // block and the [data-bs-theme='light'] block both set their own
+  // background with equal-or-higher specificity).
+  .taxonomy-term {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(30, 30, 30, 0.18) !important;
+    background: transparent !important;
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-body) !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    // Docsy's base .taxonomy-term sets a left-pointing notch via clip-path
+    // (its own "price tag" shape) — left over here since this rule never
+    // touched it, it was slicing a chunk out of this pill's rounded border.
+    clip-path: none;
+    -webkit-clip-path: none;
+
+    &:hover,
+    &:focus {
+      border-color: var(--color-primary) !important;
+      background: var(--color-primary) !important;
+      color: #ffffff !important;
+    }
+  }
+}
+
+[data-bs-theme='dark'] .td-sidebar-toc-taxonomy .taxonomy-term {
+  border-color: var(--color-border) !important;
+
+  &:hover,
+  &:focus {
+    border-color: var(--color-primary-light) !important;
+    background: var(--color-primary-light) !important;
+  }
+}

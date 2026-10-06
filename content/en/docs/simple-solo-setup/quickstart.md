@@ -8,6 +8,7 @@ description: >
 categories: ["Getting Started", "Deployment"]
 tags: ["beginner", "one-shot", "deployment", "cli"]
 type: docs
+icon: "fas fa-rocket"
 ---
 
 ## Overview
@@ -24,13 +25,13 @@ Before you begin, ensure you have completed the following:
 - System Readiness:
   - Prepare your local environment (Docker, Kind, Kubernetes, and related tooling) by following the **[System Readiness](/docs/simple-solo-setup/system-readiness)** guide.
 
-> **macOS prerequisite:** Docker Desktop must be installed and open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
+> <i class="fa-brands fa-apple" aria-hidden="true"></i> **macOS prerequisite:** Docker Desktop must be installed and open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
-> **Apple Silicon:** If `solo one-shot single deploy` fails with a **"mounts denied"** error, see [Troubleshooting Installation](/docs/simple-solo-setup/system-readiness#troubleshooting-installation).
+> <i class="fa-solid fa-microchip" aria-hidden="true"></i> **Apple Silicon:** If `solo one-shot single deploy` fails with a **"mounts denied"** error, see [Troubleshooting Installation](/docs/simple-solo-setup/system-readiness#troubleshooting-installation).
 
-> **Windows (PowerShell):** Complete the [System Readiness](/docs/simple-solo-setup/system-readiness) **Windows** tab first, then run the commands on this page from a PowerShell terminal. The `solo` and `kubectl` commands are identical in PowerShell; only shell-specific commands (pipes, port checks, and `~/.solo` paths) differ, and those show a **PowerShell** tab.
+> <i class="fa-brands fa-windows" aria-hidden="true"></i> **Windows (PowerShell):** Complete the [System Readiness](/docs/simple-solo-setup/system-readiness) **Windows** tab first, then run the commands on this page from a PowerShell terminal. The `solo` and `kubectl` commands are identical in PowerShell; only shell-specific commands (pipes, port checks, and `~/.solo` paths) differ, and those show a **PowerShell** tab.
 
-> **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
+> <i class="fa-solid fa-circle-info" aria-hidden="true"></i> **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
 > Detailed version requirements, OS-specific notes, and optional tools are documented in the [System Readiness](/docs/simple-solo-setup/system-readiness).
 
 ## Step 1: Install Solo CLI
