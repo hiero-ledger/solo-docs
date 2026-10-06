@@ -170,6 +170,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `MIRROR_NODE_IMPORTER_DETECT_DELAY` | Interval between Mirror Node importer pod detection attempts, in milliseconds | `2000`
 | `MIRROR_NODE_CHART_UPGRADE_MAX_ATTEMPTS` | Maximum number of attempts to install or upgrade the Mirror Node Helm chart before failing. Retries ride out transient Kubernetes API server outages | `3`
 | `MIRROR_NODE_CHART_UPGRADE_RETRY_DELAY_SECS` | Delay between Mirror Node Helm chart install/upgrade attempts, in seconds | `15`
+| `MIRROR_EXTERNAL_DATABASE_CLIENT_IMAGE` | Image of the short-lived `psql` pod that `mirror node add` / `mirror node upgrade` with `--use-external-database` starts to grant the `readonly` role to `mirror_rest` on the external database. The image must provide `psql` and `sleep`. Override it for private or air-gapped registries | `docker.io/bitnamilegacy/postgresql-repmgr:17.6.0-debian-12-r2`
 
 ---
 
