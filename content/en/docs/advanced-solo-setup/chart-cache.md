@@ -30,7 +30,7 @@ You populate and manage the cache with the `solo cache chart` commands.
 
 - **Solo CLI v0.82.0 or later installed** - the chart cache was introduced in
   Solo v0.82.0; earlier versions have no `solo cache chart` command. See
-  [Quickstart](/docs/simple-solo-setup/quickstart#install-solo-cli).
+  [Quickstart](/docs/simple-solo-setup/quickstart#step-1-install-solo-cli).
 
 ## Where the cache lives
 
