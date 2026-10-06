@@ -27,7 +27,7 @@ You can run one of the following commands depending on your needs:
 
     > **Prerequisite:** Install Solo first with `npm install -g @hiero-ledger/solo@latest`. See [System Readiness](/docs/simple-solo-setup/system-readiness) for full install instructions. Homebrew (`brew install hiero-ledger/tools/solo`) is deprecated and will stop receiving updates after August 31, 2026.
 
-    For more information on Single Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
+    For more information on Single Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#step-2-deploy-a-local-network-one-shot)
 
 2. **Multiple Node Deployment (for testing consensus scenarios):**
 
@@ -35,7 +35,7 @@ You can run one of the following commands depending on your needs:
     solo one-shot multi deploy --num-consensus-nodes 3
     ```
 
-    For more information on Multiple Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
+    For more information on Multiple Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#step-2-deploy-a-local-network-one-shot)
 
 3. **Advanced Deployment (with custom configuration file):**
 
@@ -63,7 +63,7 @@ You can run one of the following commands depending on how you deployed:
     solo one-shot single destroy
     ```
 
-    For more information on Single Node Teardown, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
+    For more information on Single Node Teardown, see [Quickstart](/docs/simple-solo-setup/quickstart#step-2-deploy-a-local-network-one-shot)
 
 2. **Multiple Node Teardown:**
 
@@ -71,7 +71,7 @@ You can run one of the following commands depending on how you deployed:
     solo one-shot multi destroy
     ```
 
-    For more information on Multiple Node Teardown, see [Quickstart](/docs/simple-solo-setup/quickstart#deploy-a-local-network-one-shot)
+    For more information on Multiple Node Teardown, see [Quickstart](/docs/simple-solo-setup/quickstart#step-2-deploy-a-local-network-one-shot)
 
 3. **Advanced Deployment Teardown:**
 
