@@ -132,6 +132,8 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `STATE_DOWNLOAD_STABLE_MAX_ATTEMPTS` | Maximum number of attempts to check whether a consensus node's saved state has stopped changing on disk, before `solo consensus state download` archives it and before `solo consensus network freeze` stops the nodes | `180`
 | `STATE_DOWNLOAD_STABLE_DELAY` | Interval between saved state stability checks, in milliseconds | `2000`
 | `STATE_DOWNLOAD_STABLE_POLLS_REQUIRED` | Number of consecutive checks that must report an unchanged saved state before it is treated as stable | `3`
+| `PVC_BOUND_MAX_ATTEMPTS` | Maximum number of attempts to check if consensus node persistent volume claims are bound | `900`
+| `PVC_BOUND_DELAY` | Interval between persistent volume claim bind checks, in milliseconds | `1000`
 
 ---
 
