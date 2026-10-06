@@ -144,6 +144,11 @@ outputs:
 params:
   taxonomy:
     # set taxonomyCloud = [] to hide taxonomy clouds
+    # NOTE: Docsy's taxonomy_terms_clouds partial treats an empty list as
+    # "unset" (Hugo templates treat [] as falsy), which falls back to
+    # rendering ALL site taxonomies instead of hiding them. The clouds are
+    # disabled per #162 via a no-op partial override in layouts/partials/
+    # instead, so this setting is currently inert.
     taxonomyCloud: [categories, tags]
 
     # If used, must have same length as taxonomyCloud

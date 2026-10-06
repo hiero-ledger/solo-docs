@@ -9,6 +9,7 @@ description: >
 categories: ["Advanced", "Reference"]
 tags: ["cli", "migration", "reference"]
 type: docs
+icon: "fas fa-code-branch"
 ---
 
 ## Overview

@@ -1,4 +1,38 @@
 <script>
+  // Back-to-top button click handler, ported from hiero-website's
+  // BackToTop component: smooth-scrolls to the top (respecting
+  // prefers-reduced-motion), then hands focus to the first focusable
+  // element in the header — scrolling alone would leave keyboard focus
+  // down in the footer, so the next Tab would jump straight back down.
+  (function () {
+    function initBackToTop() {
+      var btn = document.getElementById('back-to-top');
+      if (!btn) return;
+
+      btn.addEventListener('click', function () {
+        var prefersReducedMotion =
+          window.matchMedia &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        window.scrollTo({
+          top: 0,
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        });
+
+        var target = document.querySelector('header a, header button');
+        if (target) target.focus({ preventScroll: true });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBackToTop);
+    } else {
+      initBackToTop();
+    }
+  })();
+</script>
+
+<script>
   // Enable typeahead behavior for Docsy offline search.
   // Docsy binds search rendering to the "change" event (Enter/blur), so we
   // dispatch debounced "change" events while typing.
@@ -115,6 +149,64 @@
 </script>
 
 <script>
+  // Highlights the leading command name on each line of shell code blocks
+  // (kubectl, npm, solo, mkdir, go, ...). Chroma's bash lexer only colors
+  // tokens it has semantic knowledge of — recognized keywords (export, cd),
+  // strings, variables, comments — it has no way to know "kubectl" or
+  // "solo" are commands, so they're plain, uncolored text by default. This
+  // fills that gap by coloring the first word of each line, same idea as
+  // the reference screenshot (mkdir/go) that prompted this. Lines Chroma
+  // already colored (e.g. a recognized keyword, or a comment) are left
+  // alone — this only touches lines whose first node is still plain text.
+  (function () {
+    var SHELL_LANGS = [
+      'language-bash',
+      'language-sh',
+      'language-shell',
+      'language-zsh',
+      'language-console',
+    ];
+
+    function highlightCommandNames() {
+      var selector = SHELL_LANGS.map(function (lang) {
+        return '.td-content pre code.' + lang + ' .line .cl';
+      }).join(', ');
+
+      document.querySelectorAll(selector).forEach(function (cl) {
+        if (cl.dataset.cmdHighlighted === '1') return;
+        cl.dataset.cmdHighlighted = '1';
+
+        var first = cl.firstChild;
+        if (!first || first.nodeType !== Node.TEXT_NODE) return;
+
+        var match = first.textContent.match(/^(\s*)([A-Za-z0-9_.\/-]+)/);
+        if (!match) return;
+
+        var leadingWs = match[1];
+        var word = match[2];
+        var rest = first.textContent.slice(match[0].length);
+
+        var span = document.createElement('span');
+        span.className = 'chroma-cmd';
+        span.textContent = word;
+
+        cl.replaceChild(document.createTextNode(rest), first);
+        cl.insertBefore(span, cl.firstChild);
+        if (leadingWs) {
+          cl.insertBefore(document.createTextNode(leadingWs), span);
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', highlightCommandNames);
+    } else {
+      highlightCommandNames();
+    }
+  })();
+</script>
+
+<script>
   // Desktop sidebar collapse toggle.
   // Adds a small button to the sidebar header that hides/shows the sidebar
   // on wide screens. State persists in localStorage so it survives navigation.
@@ -179,6 +271,379 @@
       document.addEventListener('DOMContentLoaded', init);
     } else {
       init();
+    }
+  })();
+</script>
+
+<script>
+  // Right-sidebar "page actions" capsule: a pill button ("Copy page") plus
+  // a dropdown ("View page source" / "Edit this page" / "Report an issue")
+  // built from the hrefs Docsy already renders into the now-hidden
+  // .td-page-meta block (see .td-page-meta / .td-page-actions in
+  // _styles_project.scss) — nothing here is hardcoded per-page, it's all
+  // read off that markup so it keeps working if the repo moves.
+  (function () {
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      // Fallback for non-secure contexts / older browsers.
+      return new Promise(function (resolve, reject) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try {
+          document.execCommand('copy') ? resolve() : reject();
+        } catch (e) {
+          reject(e);
+        } finally {
+          document.body.removeChild(ta);
+        }
+      });
+    }
+
+    // "View page source" points at a github.com/<owner>/<repo>/tree/<branch>/<path>
+    // URL; the raw Markdown lives at the equivalent raw.githubusercontent.com path.
+    function toRawUrl(viewHref) {
+      try {
+        var url = new URL(viewHref, window.location.href);
+        if (url.hostname !== 'github.com') return null;
+        var parts = url.pathname.split('/').filter(Boolean);
+        if (parts.length < 5 || parts[2] !== 'tree') return null;
+        var owner = parts[0];
+        var repo = parts[1];
+        var branch = parts[3];
+        var filePath = parts.slice(4).join('/');
+        return (
+          'https://raw.githubusercontent.com/' +
+          owner +
+          '/' +
+          repo +
+          '/' +
+          branch +
+          '/' +
+          filePath
+        );
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function flashLabel(labelEl, text, delayMs) {
+      var original = labelEl.textContent;
+      labelEl.textContent = text;
+      setTimeout(function () {
+        labelEl.textContent = original;
+      }, delayMs);
+    }
+
+    function copyMarkdown(rawUrl, labelEl) {
+      fetch(rawUrl)
+        .then(function (res) {
+          if (!res.ok) throw new Error('Request failed');
+          return res.text();
+        })
+        .then(copyText)
+        .then(function () {
+          flashLabel(labelEl, 'Copied!', 1500);
+        })
+        .catch(function () {
+          flashLabel(labelEl, 'Copy failed', 1500);
+        });
+    }
+
+    function addMenuItem(menu, opts) {
+      var el = document.createElement(opts.href ? 'a' : 'button');
+      el.className = 'td-page-actions__item';
+      el.setAttribute('role', 'menuitem');
+      if (opts.href) {
+        el.href = opts.href;
+        el.target = '_blank';
+        el.rel = 'noopener';
+      } else {
+        el.type = 'button';
+      }
+      el.innerHTML =
+        '<span class="td-page-actions__item-icon"><i class="' +
+        (opts.iconStyle || 'fa-solid') +
+        ' ' +
+        opts.icon +
+        '" aria-hidden="true"></i></span>' +
+        '<span class="td-page-actions__item-text">' +
+        '<span class="td-page-actions__item-title">' +
+        opts.title +
+        '</span>' +
+        (opts.subtitle
+          ? '<span class="td-page-actions__item-subtitle">' +
+            opts.subtitle +
+            '</span>'
+          : '') +
+        '</span>';
+      if (opts.onClick) {
+        el.addEventListener('click', opts.onClick);
+      }
+      menu.appendChild(el);
+      return el;
+    }
+
+    function addMenuDivider(menu) {
+      var divider = document.createElement('div');
+      divider.className = 'td-page-actions__divider';
+      divider.setAttribute('role', 'separator');
+      menu.appendChild(divider);
+    }
+
+    function initPageActions() {
+      var meta = document.querySelector('.td-page-meta');
+      var heading = document.querySelector('.td-content h1');
+      if (!meta || !heading || document.querySelector('.td-page-actions')) {
+        return;
+      }
+
+      var viewLink = meta.querySelector('.td-page-meta__view');
+      var editLink = meta.querySelector('.td-page-meta__edit');
+      var issueLink = meta.querySelector('.td-page-meta__issue');
+      if (!viewLink && !editLink && !issueLink) return;
+
+      var rawUrl = viewLink ? toRawUrl(viewLink.getAttribute('href')) : null;
+
+      var wrap = document.createElement('div');
+      wrap.className = 'td-page-actions';
+      wrap.innerHTML =
+        '<div class="td-page-actions__group">' +
+        '<button type="button" class="td-page-actions__copy">' +
+        '<i class="fa-solid fa-copy" aria-hidden="true"></i>' +
+        '<span>Copy page</span>' +
+        '</button>' +
+        '<button type="button" class="td-page-actions__toggle" aria-haspopup="true" aria-expanded="false" aria-label="More page actions">' +
+        '<i class="fa-solid fa-chevron-down" aria-hidden="true"></i>' +
+        '</button>' +
+        '</div>' +
+        '<div class="td-page-actions__menu" role="menu" hidden></div>';
+
+      var menu = wrap.querySelector('.td-page-actions__menu');
+      var copyBtn = wrap.querySelector('.td-page-actions__copy');
+      var toggleBtn = wrap.querySelector('.td-page-actions__toggle');
+
+      if (rawUrl) {
+        addMenuItem(menu, {
+          icon: 'fa-copy',
+          title: 'Copy page',
+          subtitle: 'Copy page as Markdown',
+          onClick: function () {
+            copyMarkdown(rawUrl, this.querySelector('.td-page-actions__item-title'));
+          },
+        });
+        copyBtn.addEventListener('click', function () {
+          copyMarkdown(rawUrl, copyBtn.querySelector('span'));
+        });
+
+        addMenuItem(menu, {
+          icon: 'fa-markdown',
+          iconStyle: 'fa-brands',
+          title: 'View as Markdown',
+          subtitle: 'View this page as plain text',
+          href: rawUrl,
+        });
+
+        addMenuDivider(menu);
+
+        var pageTitle = heading.textContent.trim();
+        var prompt =
+          'Read ' +
+          rawUrl +
+          ' so you can answer questions about the "' +
+          pageTitle +
+          '" page from the Solo docs.';
+
+        addMenuItem(menu, {
+          icon: 'fa-comment-dots',
+          title: 'Open in Claude',
+          subtitle: 'Ask questions about this page',
+          href: 'https://claude.ai/new?q=' + encodeURIComponent(prompt),
+        });
+        addMenuItem(menu, {
+          icon: 'fa-comment-dots',
+          title: 'Open in ChatGPT',
+          subtitle: 'Ask questions about this page',
+          href: 'https://chatgpt.com/?q=' + encodeURIComponent(prompt),
+        });
+        addMenuItem(menu, {
+          icon: 'fa-comment-dots',
+          title: 'Open in Perplexity',
+          subtitle: 'Ask questions about this page',
+          href: 'https://www.perplexity.ai/search?q=' + encodeURIComponent(prompt),
+        });
+
+        addMenuDivider(menu);
+      } else {
+        copyBtn.disabled = true;
+      }
+
+      if (viewLink) {
+        addMenuItem(menu, {
+          icon: 'fa-file-lines',
+          title: 'View page source',
+          href: viewLink.getAttribute('href'),
+        });
+      }
+      if (editLink) {
+        addMenuItem(menu, {
+          icon: 'fa-pen-to-square',
+          title: 'Edit this page',
+          href: editLink.getAttribute('href'),
+        });
+      }
+      if (issueLink) {
+        addMenuItem(menu, {
+          icon: 'fa-circle-exclamation',
+          title: 'Report an issue',
+          href: issueLink.getAttribute('href'),
+        });
+      }
+
+      function closeMenu() {
+        menu.hidden = true;
+        toggleBtn.setAttribute('aria-expanded', 'false');
+      }
+
+      function openMenu() {
+        menu.hidden = false;
+        toggleBtn.setAttribute('aria-expanded', 'true');
+      }
+
+      toggleBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (menu.hidden) {
+          openMenu();
+        } else {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!wrap.contains(e.target)) closeMenu();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeMenu();
+      });
+
+      // Move the page <h1> into a flex row alongside the capsule, rather
+      // than placing the capsule next to the (hidden) .td-page-meta block
+      // in the sidebar — see .td-page-title-row in _styles_project.scss.
+      var row = document.createElement('div');
+      row.className = 'td-page-title-row';
+      heading.parentNode.insertBefore(row, heading);
+      row.appendChild(heading);
+      row.appendChild(wrap);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPageActions);
+    } else {
+      initPageActions();
+    }
+  })();
+</script>
+
+<script>
+  // Homepage hero pointer/scroll parallax: tilts the logo mark scene only
+  // (background traces and halo glow stay static). Ported from
+  // hiero-website's HieroMarkScene component
+  // (src/components/HeroSection/HieroMarkScene.tsx) to vanilla JS, since
+  // this site has no React runtime. Purely decorative: skipped entirely
+  // under prefers-reduced-motion, and the CSS custom properties it sets
+  // default to neutral values (see .hero-section in _styles_project.scss)
+  // so the hero still looks correct with JS disabled.
+  (function () {
+    function clamp(value, minimum, maximum) {
+      return Math.min(maximum, Math.max(minimum, value));
+    }
+
+    function initHeroParallax() {
+      var hero = document.querySelector('.hero-section');
+      if (!hero) return;
+      if (
+        window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        return;
+      }
+
+      var input = { x: 0, y: 0, scroll: 0 };
+      var frameId = 0;
+
+      var layers = {
+        '--hero-art-x': function (i) { return (i.x * 18).toFixed(2) + 'px'; },
+        '--hero-art-y': function (i) {
+          return (i.y * 12 - i.scroll * 52).toFixed(2) + 'px';
+        },
+        '--hero-art-rotate-x': function (i) {
+          return (i.y * -2.75 + i.scroll * 1.5).toFixed(2) + 'deg';
+        },
+        '--hero-art-rotate-y': function (i) {
+          return (i.x * 5).toFixed(2) + 'deg';
+        },
+      };
+
+      function scheduleDraw() {
+        if (frameId) return;
+        frameId = window.requestAnimationFrame(function () {
+          frameId = 0;
+          for (var prop in layers) {
+            hero.style.setProperty(prop, layers[prop](input));
+          }
+        });
+      }
+
+      function handlePointerMove(event) {
+        if (event.pointerType === 'touch') return;
+        var bounds = hero.getBoundingClientRect();
+        if (bounds.width <= 0 || bounds.height <= 0) return;
+        input.x = clamp(
+          ((event.clientX - bounds.left) / bounds.width) * 2 - 1,
+          -1,
+          1
+        );
+        input.y = clamp(
+          ((event.clientY - bounds.top) / bounds.height) * 2 - 1,
+          -1,
+          1
+        );
+        scheduleDraw();
+      }
+
+      function handlePointerLeave() {
+        input.x = 0;
+        input.y = 0;
+        scheduleDraw();
+      }
+
+      function handleScroll() {
+        var bounds = hero.getBoundingClientRect();
+        input.scroll = clamp(
+          -bounds.top / Math.max(bounds.height, 1),
+          0,
+          1
+        );
+        scheduleDraw();
+      }
+
+      hero.addEventListener('pointermove', handlePointerMove, { passive: true });
+      hero.addEventListener('pointerleave', handlePointerLeave);
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      window.addEventListener('resize', handleScroll);
+      handleScroll();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initHeroParallax);
+    } else {
+      initHeroParallax();
     }
   })();
 </script>

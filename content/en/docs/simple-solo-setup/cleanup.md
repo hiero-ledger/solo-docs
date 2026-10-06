@@ -8,6 +8,7 @@ description: >
 categories: ['Operations']
 tags: ['operations', 'cli', 'kubernetes']
 type: docs
+icon: "fas fa-broom"
 ---
 
 ## Overview

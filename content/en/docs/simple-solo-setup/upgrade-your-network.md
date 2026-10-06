@@ -7,6 +7,7 @@ description: >
 categories: ["Operations"]
 tags: ["operations", "cli", "consensus-nodes", "upgrade"]
 type: docs
+icon: "fas fa-arrow-up"
 ---
 
 ## Overview

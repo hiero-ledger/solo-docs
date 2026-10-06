@@ -1,0 +1,16 @@
+{{/*
+  Scroll-to-top button, ported from hiero-website's BackToTop component:
+  a circular button with an up-arrow, border-only at rest, filling with
+  the brand color on hover. Respects prefers-reduced-motion for the
+  scroll itself (JS) and for its own hover/focus transition (CSS).
+*/}}
+<button
+  type="button"
+  id="back-to-top"
+  aria-label="Back to top"
+  class="back-to-top"
+>
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+    <path d="M8 13.25V3.25M8 3.25L3.25 8M8 3.25L12.75 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>

@@ -8,6 +8,7 @@ description: >
 categories: ["Operations"]
 tags: ["operations", "cli", "consensus-nodes"]
 type: docs
+icon: "fas fa-server"
 ---
 
 ## Overview

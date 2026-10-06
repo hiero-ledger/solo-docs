@@ -8,6 +8,7 @@ description: >
 categories: ["Advanced", "Operations"]
 tags: ["advanced", "operator", "image-cache", "performance", "docker"]
 type: docs
+icon: "fas fa-box"
 ---
 
 ## Overview
