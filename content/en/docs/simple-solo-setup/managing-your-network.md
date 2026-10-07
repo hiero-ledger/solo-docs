@@ -113,13 +113,13 @@ port-forwards:
 {{% tab header="Docker" lang="bash" %}}
 ```bash
 docker start <container-name>
-solo deployment refresh port-forwards --deployment <deployment-name>
+solo deployment port-forwards refresh --deployment <deployment-name>
 ```
 {{% /tab %}}
 {{% tab header="Podman" lang="bash" %}}
 ```bash
 podman start <container-name>
-solo deployment refresh port-forwards --deployment <deployment-name>
+solo deployment port-forwards refresh --deployment <deployment-name>
 ```
 {{% /tab %}}
 {{< /tabpane >}}
