@@ -52,7 +52,7 @@ Install the latest Solo CLI globally using one of the following methods:
   brew install hiero-ledger/tools/solo
   ```
 
-  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31.
+  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31. If you have installed solo previously by using Homebrew you should uninstall it to make sure that any new version that is installed by npm is used. Just do `brew uninstall solo`.
 
 ### Verify the installation
 
