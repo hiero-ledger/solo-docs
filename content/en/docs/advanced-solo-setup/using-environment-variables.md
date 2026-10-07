@@ -71,6 +71,85 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 
 ---
 
+## Feature Flags
+
+A feature flag is a boolean that turns a piece of Solo behaviour on or off without a
+command-line flag. **Requires Solo v0.92.0 or later**; on earlier releases each of these
+was an ad-hoc variable with its own parsing rules.
+
+| Flag | What it does | Default
+| --- | --- | ---
+| `SOLO_FF_SKIP_NODE_PING` | Skip the SDK health ping against consensus nodes | `false`
+| `SOLO_FF_ENABLE_IMAGE_CACHE` | Cache container images locally during `solo one-shot` deploys | `true`
+| `SOLO_FF_DISABLE_BLOCK_NODE_INTEGRATION` | Stop Solo configuring Mirror Node importer Spring profiles for block-node integration | `false`
+| `EXPERIMENTAL_COPY_WRAPS_LIB_IN_PARALLEL` | Copy the WRAPS library to consensus nodes in parallel instead of one at a time. See [Node Client Behaviour](#node-client-behaviour) for the trade-off | `false`
+
+### Accepted values
+
+A flag accepts `true`, `false`, `1` or `0`, in any case and ignoring surrounding
+whitespace. Any other value — `yes`, `off`, `2` — is rejected at startup with an error
+naming the variable, rather than being silently treated as "on". An empty or
+whitespace-only value counts as unset and falls back to the default.
+
+### Alternative names
+
+Each flag answers to several names. When more than one is set, the highest in this table
+wins:
+
+| Form | Precedence | Example
+| --- | --- | ---
+| `SOLO_FEATURE_FLAGS_<NAME>` | Highest. Generated from the config path, always available | `SOLO_FEATURE_FLAGS_SKIP_NODE_PING`
+| `SOLO_FF_<NAME>` | The short form, and the name to use for a standard flag | `SOLO_FF_SKIP_NODE_PING`
+| `EXPERIMENTAL_<NAME>` | Same level as `SOLO_FF_*`; the name a flag carries while experimental | `EXPERIMENTAL_COPY_WRAPS_LIB_IN_PARALLEL`
+| the older ad-hoc name | Lowest. Kept working so existing scripts need no change; prefer `SOLO_FF_*` in new work | `SKIP_NODE_PING`
+
+Setting two spellings of the same flag at once is allowed; Solo logs which one won.
+
+### Changes in v0.92.0
+
+The older names below keep working, but the values they accept have changed. Check any
+script or CI job that sets them:
+
+| Variable | Before v0.92.0 | From v0.92.0
+| --- | --- | ---
+| `SKIP_NODE_PING` | **Any** non-empty value skipped the ping, `false` and `0` included | `false` and `0` mean "do not skip"
+| `ENABLE_IMAGE_CACHE` | Only the exact lowercase text `false` disabled the cache | `false`, `FALSE` and `0` all disable it; `no` and `off` are now errors
+| `DISABLE_IMPORTER_SPRING_PROFILES` | Only the exact lowercase text `true` had any effect | `TRUE`, `True` and `1` also disable block-node integration
+| `EXPERIMENTAL_COPY_WRAPS_LIB_IN_PARALLEL` | Only the exact lowercase text `true` had any effect | `TRUE` and `1` also enable it; a number such as `4` is now an error
+
+---
+
+## Configuration Overrides
+
+Solo's configuration schema covers Helm chart coordinates and TSS timings. Any field in
+it can be overridden with an environment variable named `SOLO_` followed by the property
+path in `UPPER_SNAKE_CASE`, with both nesting levels and word boundaries written as `_`:
+
+| Config property | Environment variable | Default
+| --- | --- | ---
+| `tss.readyMaxAttempts` | `SOLO_TSS_READY_MAX_ATTEMPTS` | `60`
+| `tss.readyBackoffSeconds` | `SOLO_TSS_READY_BACKOFF_SECONDS` | `3`
+| `tss.timeoutAfterReadySeconds` | `SOLO_TSS_TIMEOUT_AFTER_READY_SECONDS` | `10`
+| `tss.messageSizeSoftLimitBytes` | `SOLO_TSS_MESSAGE_SIZE_SOFT_LIMIT_BYTES` | `4194304`
+| `tss.messageSizeHardLimitBytes` | `SOLO_TSS_MESSAGE_SIZE_HARD_LIMIT_BYTES` | `37748736`
+| `tss.wraps.libraryDownloadUrl` | `SOLO_TSS_WRAPS_LIBRARY_DOWNLOAD_URL` | `https://builds.hedera.com/tss/hiero/wraps/v1.0/wraps-v1.0.0.tar.gz`
+| `tss.wraps.directoryName` | `SOLO_TSS_WRAPS_DIRECTORY_NAME` | `wraps-v1.0.0`
+| `helmChart.directory` | `SOLO_HELM_CHART_DIRECTORY` | unset
+| `helmChart.version` | `SOLO_HELM_CHART_VERSION` | from the release
+| `ingressControllerHelmChart.version` | `SOLO_INGRESS_CONTROLLER_HELM_CHART_VERSION` | from the release
+
+> **Important:** These overrides are read and applied from **Solo v0.92.0 onwards**. On
+> earlier releases the configuration layer was never loaded, so setting any of them had
+> no effect. If you have one of these set from an earlier experiment, it will start
+> taking effect when you upgrade.
+
+Numeric fields accept an integer or decimal literal and boolean fields the values listed
+under [Accepted values](#accepted-values); anything else fails at startup with an error
+naming the variable. A `SOLO_*` variable that does not match a configuration property —
+`SOLO_HOME`, `SOLO_CHART_VERSION` and the rest of this page — is left alone.
+
+---
+
 ## Network and Node Identity
 
 | Environment Variable | Description | Default Value
@@ -110,7 +189,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `NODE_CLIENT_SDK_PING_MAX_RETRIES` | Maximum number of retries for node health pings | `5`
 | `NODE_CLIENT_SDK_PING_RETRY_INTERVAL` | Interval between node health ping retries, in milliseconds | `10000`
 | `NODE_COPY_CONCURRENT` | Number of concurrent threads used when copying files to a node | `4`
-| `EXPERIMENTAL_COPY_WRAPS_LIB_IN_PARALLEL` | Copy the WRAPS proving-key library to every consensus node concurrently during `solo network deploy`, instead of one node at a time. Concurrent copies finish faster on a network deploy with many nodes and ample bandwidth, but can saturate a constrained connection when several multi-hundred-megabyte copies run at once. Accepted values: `true`, `false` | `false`
+| `EXPERIMENTAL_COPY_WRAPS_LIB_IN_PARALLEL` | Copy the WRAPS proving-key library to every consensus node concurrently during `solo network deploy`, instead of one node at a time. Concurrent copies finish faster on a network deploy with many nodes and ample bandwidth, but can saturate a constrained connection when several multi-hundred-megabyte copies run at once. This is a feature flag — see [Accepted values](#accepted-values) | `false`
 | `LOCAL_BUILD_COPY_RETRY` | Number of retries for local build copy operations | `3`
 | `ACCOUNT_UPDATE_BATCH_SIZE` | Number of accounts to update in a single batch operation | `10`
 
@@ -163,8 +242,9 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 
 | Environment Variable | Description | Default Value
 | --- | --- | ---
-| `DISABLE_IMPORTER_SPRING_PROFILES` | Disable automatic configuration of Mirror Node importer Spring profiles for block-node integration. | `false`                                                                                            |
-| `SPRING_PROFILES_ACTIVE` | Spring profiles to use for the Mirror Node importer when automatic importer profile configuration is enabled. | `blocknode`                                                                                        |
+| `SOLO_FF_DISABLE_BLOCK_NODE_INTEGRATION` | Disable automatic configuration of Mirror Node importer Spring profiles for block-node integration. See [Feature Flags](#feature-flags). **Requires Solo v0.92.0 or later**; before that, use `DISABLE_IMPORTER_SPRING_PROFILES`. | `false`
+| `DISABLE_IMPORTER_SPRING_PROFILES` | The older name for the flag above. Still honoured, but `SOLO_FF_DISABLE_BLOCK_NODE_INTEGRATION` takes precedence when both are set. From v0.92.0 it also accepts `TRUE`, `True` and `1`. | `false`
+| `SPRING_PROFILES_ACTIVE` | Spring profiles to use for the Mirror Node importer when automatic importer profile configuration is enabled. | `blocknode`
 | `MIRROR_NODE_SCHEMA_READY_MAX_ATTEMPTS` | Maximum number of attempts to check if the Mirror Node database schema has been built (signalled by importer pod readiness) | `900`
 | `MIRROR_NODE_SCHEMA_READY_DELAY` | Interval between Mirror Node database schema checks, in milliseconds | `2000`
 | `MIRROR_NODE_IMPORTER_DETECT_MAX_ATTEMPTS` | Maximum number of attempts to detect a running Mirror Node importer pod. If no importer pod is found, the database schema wait is skipped | `15`
@@ -314,7 +394,8 @@ the full feature and the `solo cache image` commands.
 
 | Environment Variable | Description | Default
 | --- | --- | ---
-| `ENABLE_IMAGE_CACHE` | Set to `false` to disable the image cache during `solo one-shot` deploys. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). | enabled
+| `SOLO_FF_ENABLE_IMAGE_CACHE` | Set to `false` or `0` to disable the image cache during `solo one-shot` deploys. See [Feature Flags](#feature-flags). **Requires Solo v0.92.0 or later**; before that, use `ENABLE_IMAGE_CACHE`. | enabled
+| `ENABLE_IMAGE_CACHE` | The older name for the flag above. Still honoured, but `SOLO_FF_ENABLE_IMAGE_CACHE` takes precedence when both are set. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). From v0.92.0 it also accepts `FALSE` and `0`, and rejects `no` and `off` instead of ignoring them. | enabled
 | `SOLO_NO_CACHE` | Set to `true` to skip the image pull during an npm global install. | enabled
 | `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image pull during a Homebrew install. | enabled
 | `CACHE_IMAGE_MAX_CONCURRENCY` | Max concurrent image cache pull/load operations | 12
