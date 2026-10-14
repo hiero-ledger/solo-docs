@@ -81,6 +81,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_NODE_DEFAULT_STAKE_AMOUNT` | Default stake amount for a node | `500`
 | `GRPC_PORT` | Local port-forward for consensus node gRPC. Default is `35211` for Solo 0.63+ (changed from `50211` to avoid Windows ephemeral-port conflicts). See [Port availability](/docs/using-solo/endpoints#port-availability). | `35211`
 | `LOCAL_NODE_START_PORT` | Local node start port for the Solo network | `30212`
+| `NETWORK_NODE_LIFECYCLE_MODE` | Selects the root container image Solo uses to run each consensus node and how it starts and stops the node process. Accepted values: `solo-container` (the solo-containers image, controlled by its `/command/network-node-lifecycle` helper) and `consensus-node-image` (the hiero-consensus-node deterministic image `gcr.io/hedera-registry/consensus-node:<version>`, whose platform jars are baked in and which Solo controls with `s6-svc`). In `consensus-node-image` mode Solo sets `AUTO_START_CONSENSUS_SERVICE=false`, skips the *Fetch platform software* step, and installs `zip`, `unzip` and `curl` in the root container. Version upgrade (`solo consensus network upgrade`) is not supported in `consensus-node-image` mode yet | `solo-container`
 
 ---
 
