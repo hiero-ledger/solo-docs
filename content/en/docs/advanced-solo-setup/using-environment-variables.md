@@ -73,7 +73,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 ## Feature Flags
 
 A feature flag is a boolean that turns a piece of Solo behaviour on or off without a
-command-line flag. **Requires Solo v0.92.0 or later**; on earlier releases each of these
+command-line flag. **Requires Solo v0.94.0 or later**; on earlier releases each of these
 was an ad-hoc variable with its own parsing rules.
 
 | Flag | What it does | Default
@@ -104,12 +104,12 @@ wins:
 
 Setting two spellings of the same flag at once is allowed; Solo logs which one won.
 
-### Changes in v0.92.0
+### Changes in v0.94.0
 
 The older names below keep working, but the values they accept have changed. Check any
 script or CI job that sets them:
 
-| Variable | Before v0.92.0 | From v0.92.0
+| Variable | Before v0.94.0 | From v0.94.0
 | --- | --- | ---
 | `SKIP_NODE_PING` | **Any** non-empty value skipped the ping, `false` and `0` included | `false` and `0` mean "do not skip"
 | `ENABLE_IMAGE_CACHE` | Only the exact lowercase text `false` disabled the cache | `false`, `FALSE` and `0` all disable it; `no` and `off` are now errors
@@ -137,7 +137,7 @@ path in `UPPER_SNAKE_CASE`, with both nesting levels and word boundaries written
 | `helmChart.version` | `SOLO_HELM_CHART_VERSION` | from the release
 | `ingressControllerHelmChart.version` | `SOLO_INGRESS_CONTROLLER_HELM_CHART_VERSION` | from the release
 
-> **Important:** These overrides are read and applied from **Solo v0.92.0 onwards**. On
+> **Important:** These overrides are read and applied from **Solo v0.94.0 onwards**. On
 > earlier releases the configuration layer was never loaded, so setting any of them had
 > no effect. If you have one of these set from an earlier experiment, it will start
 > taking effect when you upgrade.
@@ -241,8 +241,8 @@ naming the variable. A `SOLO_*` variable that does not match a configuration pro
 
 | Environment Variable | Description | Default Value
 | --- | --- | ---
-| `SOLO_FF_DISABLE_BLOCK_NODE_INTEGRATION` | Disable automatic configuration of Mirror Node importer Spring profiles for block-node integration. See [Feature Flags](#feature-flags). **Requires Solo v0.92.0 or later**; before that, use `DISABLE_IMPORTER_SPRING_PROFILES`. | `false`
-| `DISABLE_IMPORTER_SPRING_PROFILES` | The older name for the flag above. Still honoured, but `SOLO_FF_DISABLE_BLOCK_NODE_INTEGRATION` takes precedence when both are set. From v0.92.0 it also accepts `TRUE`, `True` and `1`. | `false`
+| `SOLO_FF_DISABLE_BLOCK_NODE_INTEGRATION` | Disable automatic configuration of Mirror Node importer Spring profiles for block-node integration. See [Feature Flags](#feature-flags). **Requires Solo v0.94.0 or later**; before that, use `DISABLE_IMPORTER_SPRING_PROFILES`. | `false`
+| `DISABLE_IMPORTER_SPRING_PROFILES` | The older name for the flag above. Still honoured, but `SOLO_FF_DISABLE_BLOCK_NODE_INTEGRATION` takes precedence when both are set. From v0.94.0 it also accepts `TRUE`, `True` and `1`. | `false`
 | `SPRING_PROFILES_ACTIVE` | Spring profiles to use for the Mirror Node importer when automatic importer profile configuration is enabled. | `blocknode`
 | `MIRROR_NODE_SCHEMA_READY_MAX_ATTEMPTS` | Maximum number of attempts to check if the Mirror Node database schema has been built (signalled by importer pod readiness) | `900`
 | `MIRROR_NODE_SCHEMA_READY_DELAY` | Interval between Mirror Node database schema checks, in milliseconds | `2000`
@@ -393,8 +393,8 @@ the full feature and the `solo cache image` commands.
 
 | Environment Variable | Description | Default
 | --- | --- | ---
-| `SOLO_FF_ENABLE_IMAGE_CACHE` | Set to `false` or `0` to disable the image cache during `solo one-shot` deploys. See [Feature Flags](#feature-flags). **Requires Solo v0.92.0 or later**; before that, use `ENABLE_IMAGE_CACHE`. | enabled
-| `ENABLE_IMAGE_CACHE` | The older name for the flag above. Still honoured, but `SOLO_FF_ENABLE_IMAGE_CACHE` takes precedence when both are set. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). From v0.92.0 it also accepts `FALSE` and `0`, and rejects `no` and `off` instead of ignoring them. | enabled
+| `SOLO_FF_ENABLE_IMAGE_CACHE` | Set to `false` or `0` to disable the image cache during `solo one-shot` deploys. See [Feature Flags](#feature-flags). **Requires Solo v0.94.0 or later**; before that, use `ENABLE_IMAGE_CACHE`. | enabled
+| `ENABLE_IMAGE_CACHE` | The older name for the flag above. Still honoured, but `SOLO_FF_ENABLE_IMAGE_CACHE` takes precedence when both are set. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). From v0.94.0 it also accepts `FALSE` and `0`, and rejects `no` and `off` instead of ignoring them. | enabled
 | `SOLO_NO_CACHE` | Set to `true` to skip the image pull during an npm global install. | enabled
 | `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image pull during a Homebrew install. | enabled
 | `CACHE_IMAGE_MAX_CONCURRENCY` | Max concurrent image cache pull/load operations | 12
