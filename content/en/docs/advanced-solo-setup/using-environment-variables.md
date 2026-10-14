@@ -253,8 +253,7 @@ For full usage, examples, version-format rules, and troubleshooting, see
 | `EXPLORER_CHART_URL` | Helm chart repository URL for the Explorer | `oci://ghcr.io/hiero-ledger/hiero-mirror-node-explorer/hiero-explorer-chart`
 | `INGRESS_CONTROLLER_CHART_URL` | Helm chart repository URL for the ingress controller | `https://haproxy-ingress.github.io/charts`
 | `PROMETHEUS_OPERATOR_CRDS_CHART_URL` | Helm chart repository URL for the Prometheus Operator CRDs | `https://prometheus-community.github.io/helm-charts`
-| `GRAFANA_ALLOY_CHART_URL` | Helm chart repository URL for Grafana Alloy | `https://grafana.github.io/helm-charts`
-| `LOKI_CHART_URL` | Helm chart repository URL for Loki | `https://grafana.github.io/helm-charts`
+| `GRAFANA_CHART_URL` | Helm chart repository URL for Grafana Alloy and Loki | `https://grafana.github.io/helm-charts`
 | `NETWORK_LOAD_GENERATOR_CHART_URL` | Helm chart repository URL for the Network Load Generator | `oci://swirldslabs.jfrog.io/load-generator-helm-release-local`
 
 ---
