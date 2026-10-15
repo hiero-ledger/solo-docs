@@ -81,6 +81,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_NODE_DEFAULT_STAKE_AMOUNT` | Default stake amount for a node | `500`
 | `GRPC_PORT` | Local port-forward for consensus node gRPC. Default is `35211` for Solo 0.63+ (changed from `50211` to avoid Windows ephemeral-port conflicts). See [Port availability](/docs/using-solo/endpoints#port-availability). | `35211`
 | `LOCAL_NODE_START_PORT` | Local node start port for the Solo network | `30212`
+| `NETWORK_NODE_LIFECYCLE_MODE` | Selects the root container image Solo uses to run each consensus node and how it starts and stops the node process. Accepted values: `solo-container` (the solo-containers image, controlled by its `/command/network-node-lifecycle` helper) and `consensus-node-image` (the hiero-consensus-node deterministic image `gcr.io/hedera-registry/consensus-node:<version>`, whose platform jars are baked in and which Solo controls with `s6-svc`). In `consensus-node-image` mode Solo sets `AUTO_START_CONSENSUS_SERVICE=false`, skips the *Fetch platform software* step, and installs `zip`, `unzip` and `curl` in the root container. Version upgrade (`solo consensus network upgrade`) is not supported in `consensus-node-image` mode yet | `solo-container`
 
 ---
 
@@ -133,6 +134,8 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `STATE_DOWNLOAD_STABLE_MAX_ATTEMPTS` | Maximum number of attempts to check whether a consensus node's saved state has stopped changing on disk, before `solo consensus state download` archives it and before `solo consensus network freeze` stops the nodes | `180`
 | `STATE_DOWNLOAD_STABLE_DELAY` | Interval between saved state stability checks, in milliseconds | `2000`
 | `STATE_DOWNLOAD_STABLE_POLLS_REQUIRED` | Number of consecutive checks that must report an unchanged saved state before it is treated as stable | `3`
+| `PVC_BOUND_MAX_ATTEMPTS` | Maximum number of attempts to check if consensus node persistent volume claims are bound | `900`
+| `PVC_BOUND_DELAY` | Interval between persistent volume claim bind checks, in milliseconds | `1000`
 
 ---
 
