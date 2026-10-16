@@ -267,6 +267,6 @@ against the official release list for that component before retrying.
 
 **The deploy starts but a component crashes immediately.**
 
-Different component versions are not guaranteed to be mutually compatible.
+Versions that pass Solo's checks are not guaranteed to work together.
 When mixing edge versions, prefer combinations Solo's CI already exercises
 (see the [Version Compatibility Reference](/docs/simple-solo-setup/system-readiness#version-compatibility-reference)).

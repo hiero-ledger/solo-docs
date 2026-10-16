@@ -283,10 +283,12 @@ Falcon can also include block node configuration.
 > if a `blockNode` section is present in the values file.
 
 Block node deployment is subject to version compatibility requirements. Minimum
-versions are consensus node ≥ v0.72.0 and block node ≥ 0.29.0. Mixing
-incompatible versions will cause the deployment to fail. Check the
-[Version Compatibility Reference](/docs/simple-solo-setup/system-readiness#version-compatibility-reference)
-before enabling block node.
+versions are consensus node ≥ v0.72.0 and block node ≥ 0.29.0. Above those
+minimums, the consensus node, block node, and mirror node versions must also
+follow the
+[component version rules](/docs/simple-solo-setup/system-readiness#component-version-rules).
+Solo checks the versions before it deploys each component, and stops with an
+`Unsupported component version combination` error if they break a rule.
 
 Example:
 

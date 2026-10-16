@@ -284,6 +284,51 @@ The following tools are not required but are recommended for monitoring and mana
 
 {{< solo-releases-table >}}
 
+### Component version rules
+
+Solo checks that the consensus node, block node, and mirror node versions in a
+deployment can run together. Every command that installs or changes one of
+these components runs the check before it changes anything in the cluster. If
+the combination breaks a rule, the command stops with an
+`Unsupported component version combination` error that names the component to
+change.
+
+A pre-release counts as the release it leads up to, so `v0.79.0-rc.1` follows
+the rules for `v0.79.0`.
+
+| Consensus node       | Block node          | Mirror node       |
+| -------------------- | ------------------- | ----------------- |
+| Earlier than v0.77.0 | Earlier than 0.41.0 | Any               |
+| v0.77.0 to v0.78.x   | 0.41.0 or later     | Any               |
+| v0.79.0 or later     | 0.45.0 or later     | v0.165.0 or later |
+
+- **Consensus node v0.77.0 and block node 0.41.0** both switched to a new
+  block root hash format. The two must be on the same side of this change, so
+  a newer block node with an older consensus node is also rejected.
+- **Consensus node v0.79.0** hashes blocks and state with SHA-256, which block
+  node 0.45.0 and mirror node v0.165.0 are the first to read. These block and
+  mirror node versions also work with older consensus nodes, so you can
+  upgrade them first.
+- A rule only applies to components that are deployed. A network without a
+  block node is not checked against the block node rules.
+- The JSON-RPC relay and the explorer have no version rules.
+
+#### Upgrading to consensus node v0.79.0
+
+Consensus node v0.79.0 changes the TSS library, which does not convert the
+keys and proofs of an existing network. You cannot upgrade a network from an
+earlier version to v0.79.0 or later in place: `solo consensus network upgrade`
+stops with a `cannot be upgraded in place` error. Destroy the network and
+deploy it again at the new version instead. Redeploying discards the ledger
+state, so export anything you still need first.
+
+#### Bypassing the checks
+
+Pass `--force` to run the command anyway. Solo prints a warning that names the
+rule it skipped and continues. Expect the resulting network not to work. Use
+`--force` only to test the upgrade path itself or a combination you know is
+safe.
+
 ## Troubleshooting Installation
 
 If you experience issues installing or upgrading Solo - for example, conflicts
