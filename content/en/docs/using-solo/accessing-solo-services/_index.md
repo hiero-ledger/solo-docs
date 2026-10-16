@@ -4,4 +4,8 @@ description: Learn how to locate and connect to ancillary services deployed alon
 categories: ["Integration", "Services"]
 tags: [solo, docs, mirror-node, block-node]
 weight: 1
+icon: "fas fa-door-open"
+hide_section_index: true
 ---
+
+{{< doc-section-cards "docs/using-solo/accessing-solo-services/solo-with-mirror-node" >}}

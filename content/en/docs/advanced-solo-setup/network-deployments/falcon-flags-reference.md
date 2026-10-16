@@ -8,6 +8,7 @@ categories: ["Reference", "Advanced"]
 tags: ["advanced", "operator", "falcon", "cli", "configuration"]
 weight: 2
 type: docs
+icon: "fas fa-list-ul"
 ---
 
 ## Overview

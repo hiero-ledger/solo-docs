@@ -9,6 +9,7 @@ tags: ['advanced', 'performance', 'testing', 'ci-cd']
 type: docs
 nav_prev: /docs/advanced-solo-setup/solo-ci-workflow/
 nav_next: /docs/advanced-solo-setup/cli/
+icon: "fas fa-stopwatch"
 ---
 
 ## Overview

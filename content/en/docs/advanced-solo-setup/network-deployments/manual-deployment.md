@@ -8,6 +8,7 @@ categories: ["Advanced", "Deployment"]
 tags: ["advanced", "operator", "manual-deployment", "cli"]
 weight: 3
 type: docs
+icon: "fas fa-tools"
 ---
 
 ## Overview

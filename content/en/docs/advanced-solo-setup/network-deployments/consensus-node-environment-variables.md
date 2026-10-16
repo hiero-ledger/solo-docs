@@ -7,6 +7,7 @@ categories: ['Advanced', 'Deployment']
 tags: ['advanced', 'operator', 'configuration', 'environment-variables']
 weight: 5
 type: docs
+icon: "fas fa-cog"
 ---
 
 ## Overview

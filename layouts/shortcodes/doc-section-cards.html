@@ -1,0 +1,32 @@
+{{/*
+  Renders a card grid of doc sections, pulling title/description/icon from
+  each section's own front matter so the cards never drift out of sync with
+  the pages they link to.
+
+  Parameters: one or more positional args, each a page path relative to
+  content root (e.g. "docs/simple-solo-setup").
+
+  Usage:
+    {{< doc-section-cards "docs/simple-solo-setup" "docs/advanced-solo-setup" >}}
+*/}}
+<div class="row doc-section-cards">
+  {{- range .Params }}
+    {{- $page := site.GetPage . -}}
+    {{- if not $page -}}
+      {{- errorf "doc-section-cards: no page found at %q" . -}}
+    {{- end -}}
+    <div class="col-md-6 mb-4">
+      <div class="card h-100">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center mb-4">
+            {{- with $page.Params.icon }}
+            <span class="card-icon-badge"><i class="{{ . }}"></i></span>
+            {{- end }}
+            <h4 class="mb-0 card-title"><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h4>
+          </div>
+          <p class="text-muted card-description">{{ $page.Params.description | markdownify }}</p>
+        </div>
+      </div>
+    </div>
+  {{- end }}
+</div>

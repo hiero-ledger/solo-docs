@@ -1,3 +1,11 @@
+---
+title: "Solo Release Checklist"
+build:
+  list: never
+sitemap:
+  disable: true
+---
+
 # Solo Release Checklist
 
 ## 1. Verify Workflows

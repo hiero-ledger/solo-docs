@@ -8,6 +8,7 @@ description: >
 categories: ["Reference"]
 tags: ["endpoints", "ports", "gRPC", "mirror-node", "json-rpc", "explorer"]
 type: docs
+icon: "fas fa-network-wired"
 ---
 
 ## Overview

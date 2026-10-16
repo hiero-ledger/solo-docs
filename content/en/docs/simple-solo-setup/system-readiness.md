@@ -8,6 +8,7 @@ description: >
 categories: ["Getting Started", "Prerequisites"]
 tags: ["beginner", "installation", "prerequisites", "docker", "system-requirements", "kubernetes"]
 type: docs
+icon: "fas fa-clipboard-check"
 ---
 
 ## Overview

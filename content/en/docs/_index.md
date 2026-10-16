@@ -7,16 +7,16 @@ description: >-
   operations, advanced features, integration, and troubleshooting.
 categories: ["Getting Started"]
 tags: ["beginner", "advanced", "cli", "deployment"]
-menu: { main: { weight: 1 } }
+hide_section_index: true
 ---
 
-{{% pageinfo color="warning td-max-width-on-larger-screens mx-0" %}}
+{{% pageinfo color="info mx-0" %}}
 
-This documentation provides a comprehensive guide to using Solo to launch a Hiero Consensus Node network, including setup instructions, usage guides, and information for developers. It covers everything from installation to advanced features and troubleshooting.
+**New to Solo?** [Start with the Quickstart →](/docs/simple-solo-setup/quickstart/) to deploy your first local network in one command.
 
 {{% /pageinfo %}}
 
-{{% pageinfo color="warning td-max-width-on-larger-screens mx-0" %}}
+{{% pageinfo color="warning mx-0" %}}
 
 **Known issue: MinIO image pulls are currently blocked.** MinIO stopped
 publishing new community images as of 2025-10-23, so deployments with MinIO
@@ -30,3 +30,7 @@ no workaround is needed.
   in Troubleshooting.
 
 {{% /pageinfo %}}
+
+## Browse the docs
+
+{{< doc-section-cards "docs/simple-solo-setup" "docs/advanced-solo-setup" "docs/using-solo" "docs/troubleshooting" >}}

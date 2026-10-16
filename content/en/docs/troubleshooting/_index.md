@@ -8,6 +8,7 @@ description: >
 categories: ['Troubleshooting']
 tags: ['troubleshooting', 'debugging', 'kubernetes', 'operations']
 type: docs
+icon: "fas fa-life-ring"
 ---
 
 This guide covers common issues you may encounter when using Solo and how to

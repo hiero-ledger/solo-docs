@@ -8,6 +8,7 @@ categories: ["Advanced", "Deployment"]
 tags: ["advanced", "operator", "falcon", "deployment"]
 weight: 1
 type: docs
+icon: "fas fa-rocket"
 ---
 
 ## Overview

@@ -1,0 +1,28 @@
+{{/*
+  Project override of Docsy's blocks/feature shortcode — adds an optional
+  "svg" param (a resources.Get path, e.g. "icons/one-shot-deployment.svg")
+  rendered inline instead of the Font Awesome "icon" class, for features
+  that need a custom brand glyph Font Awesome doesn't have. Falls back to
+  Docsy's original icon-class behavior when "svg" isn't set, so existing
+  {{% blocks/feature icon="fa-..." %}} calls (e.g. "Developer Friendly")
+  are unaffected.
+*/}}
+{{ $icon := .Get "icon" | default "fa-lightbulb" -}}
+<div class="col-lg-4 mb-5 mb-lg-0 text-center">
+<div class="mb-4 h1">
+  {{- with .Get "svg" -}}
+    {{- with resources.Get . -}}
+      <span class="feature-icon-svg">{{ (. | minify).Content | safeHTML }}</span>
+    {{- end -}}
+  {{- else -}}
+    <i class="{{ if not (or (hasPrefix $icon "fas ") (hasPrefix $icon "fab ")) }}fas {{ end }}{{ $icon }}"></i>
+  {{- end }}
+</div>
+<h4 class="h3">
+  {{- .Get "title" | markdownify -}}
+</h4>
+<div class="mb-0">
+{{ .Inner }}
+</div>
+{{ with .Get "url" }}<p><a href="{{ . }}">{{ with $.Get "url_text" }}{{ . }}{{ else }}{{ T "ui_read_more" }}{{ end }}</a></p>{{ end }}
+</div>

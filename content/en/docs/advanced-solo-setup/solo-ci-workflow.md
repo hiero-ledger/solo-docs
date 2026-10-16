@@ -9,6 +9,7 @@ categories: ["Advanced"]
 tags: ["advanced", "developer", "ci-cd", "testing"]
 type: docs
 nav_next: /docs/advanced-solo-setup/performance-tests-local/
+icon: "fas fa-sync-alt"
 ---
 
 ## Overview

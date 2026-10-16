@@ -8,6 +8,7 @@ description: >
 categories: ["Advanced", "Operations"]
 tags: ["advanced", "operator", "testing"]
 type: docs
+icon: "fas fa-tachometer-alt"
 ---
 
 ## Using Network Load Generator with Solo

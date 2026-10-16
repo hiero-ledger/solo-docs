@@ -9,6 +9,7 @@ description: >
 categories: ["Advanced"]
 tags: ["advanced", "one-shot", "deployment", "versions", "edge"]
 type: docs
+icon: "fas fa-layer-group"
 ---
 
 ## Overview
