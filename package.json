@@ -57,7 +57,7 @@
   "devDependencies": {
     "autoprefixer": "10.6.0",
     "cross-env": "10.1.0",
-    "hugo-extended": "0.166.0",
+    "hugo-extended": "0.168.0",
     "postcss-cli": "12.0.0",
     "rtlcss": "4.3.0"
   },
