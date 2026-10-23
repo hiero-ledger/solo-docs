@@ -261,6 +261,27 @@ For full usage, examples, version-format rules, and troubleshooting, see
 
 ---
 
+## Local Helm Chart Directories
+
+Chart owners can test an unpublished chart by pointing Solo at a local chart directory. Only the chart templates are
+local: every container image the chart references must already be pullable by the cluster (published to a registry or
+loaded with `kind load docker-image`). These variables are the equivalent of the `--block-node-chart-dir`,
+`--explorer-chart-dir`, `--mirror-node-chart-dir` and `--relay-chart-dir` flags, and the flag takes precedence when
+both are set.
+
+> **Note:** Unlike the variables above, these names contain dashes. Each camelCase word boundary in the config path
+> becomes a dash (`blockNodeHelmChart.directory` becomes `SOLO_BLOCK-NODE-HELM-CHART_DIRECTORY`). Set them with
+> `env` or `export` in a POSIX shell, for example `env 'SOLO_RELAY-HELM-CHART_DIRECTORY=...' solo relay node add`.
+
+| Environment Variable | Description | Default Value
+| --- | --- | ---
+| `SOLO_BLOCK-NODE-HELM-CHART_DIRECTORY` | Local Helm chart directory for the block node, e.g. `~/hiero-block-node/charts` | unset (published chart)
+| `SOLO_EXPLORER-HELM-CHART_DIRECTORY` | Local Helm chart directory for the explorer, e.g. `~/hiero-mirror-node-explorer/charts` | unset (published chart)
+| `SOLO_MIRROR-NODE-HELM-CHART_DIRECTORY` | Local Helm chart directory for the mirror node, e.g. `~/hiero-mirror-node/charts` | unset (published chart)
+| `SOLO_RELAY-HELM-CHART_DIRECTORY` | Local Helm chart directory for the JSON-RPC relay, e.g. `~/hiero-json-rpc-relay/charts` | unset (published chart)
+
+---
+
 ## Network Load Generator
 
 | Environment Variable | Description | Default Value
