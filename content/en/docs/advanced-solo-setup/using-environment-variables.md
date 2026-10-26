@@ -68,6 +68,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_DEV_OUTPUT` | Treat all commands as if the `--debug` flag were specified (`--debug` was formerly `--dev`) | `false`
 | `SOLO_CHAIN_ID` | Chain ID of the Solo network | `298`
 | `FORCE_PODMAN` | Force the use of Podman as the container engine when creating a new local cluster. Accepted values: `true`, `false` | `false`
+| `KUBECONFIG` | Kubeconfig file, or `:`-separated list of files, that Solo uses to reach your clusters. When Solo creates the local cluster with rootful Podman on Linux, kind writes the `kind-kind` cluster, context and user into the first listed file that exists, else into the last listed file | `~/.kube/config`
 
 ---
 
@@ -93,7 +94,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_OPERATOR_KEY` | Operator private key for the Solo network | `302e020100...`
 | `SOLO_OPERATOR_PUBLIC_KEY` | Operator public key for the Solo network | `302a300506...`
 | `FREEZE_ADMIN_ACCOUNT` | Freeze admin account ID for the Solo network | `0.0.58`
-| `GENESIS_KEY` | Genesis private key for the Solo network | `302e020100...`
+| `GENESIS_KEY` | ED25519 genesis private key for a new Solo network. At `solo consensus network deploy` Solo stores it in the `genesis-key` Kubernetes secret and sets the genesis public key of the consensus nodes to match. Later commands read the secret first, then this variable | `302e020100...`
 
 > **Note:** Full key values are omitted above for readability. Refer to the
 > [source defaults](https://github.com/hiero-ledger/solo) for complete key strings.
