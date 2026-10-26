@@ -261,6 +261,34 @@ For full usage, examples, version-format rules, and troubleshooting, see
 
 ---
 
+## Local Helm Chart Directories
+
+Chart owners can test an unpublished chart by pointing Solo at a local chart
+directory. Only the chart templates are local: every container image the chart
+references must already be pullable by the cluster (published to a registry or
+loaded with `kind load docker-image`). These variables are the equivalent of the
+`--block-node-chart-dir`, `--explorer-chart-dir`, `--mirror-node-chart-dir` and
+`--relay-chart-dir` flags, and the flag takes precedence when both are set.
+
+| Environment Variable | Description | Default Value
+| --- | --- | ---
+| `SOLO_BLOCK_NODE_CHART_DIR` | Directory that contains the block node chart (`block-node-server`), e.g. `/path/to/hiero-block-node/charts` | unset (published chart)
+| `SOLO_EXPLORER_CHART_DIR` | The explorer chart directory itself (the one holding `Chart.yaml`), e.g. `/path/to/hiero-mirror-node-explorer/_frontend/chart` | unset (published chart)
+| `SOLO_MIRROR_NODE_CHART_DIR` | Directory that contains the mirror node chart (`hedera-mirror`), e.g. `/path/to/hiero-mirror-node/charts` | unset (published chart)
+| `SOLO_RELAY_CHART_DIR` | Directory that contains the JSON-RPC relay chart (`hedera-json-rpc`), e.g. `/path/to/hiero-json-rpc-relay/charts` | unset (published chart)
+
+> **Note:** The explorer variable takes the chart directory itself, while the
+> other three take the directory that contains the chart. Use absolute paths:
+> Solo does not expand `~` inside the value.
+
+For example, to deploy a network with a local mirror node chart:
+
+```bash
+SOLO_MIRROR_NODE_CHART_DIR=/path/to/hiero-mirror-node/charts solo one-shot single deploy
+```
+
+---
+
 ## Network Load Generator
 
 | Environment Variable | Description | Default Value
