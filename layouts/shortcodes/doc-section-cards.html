@@ -22,7 +22,8 @@
             {{- with $page.Params.icon }}
             <span class="card-icon-badge"><i class="{{ . }}"></i></span>
             {{- end }}
-            <h4 class="mb-0 card-title"><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h4>
+            {{/* h2 for heading order (follows the page h1 or a section h2); .h4 keeps the size. */ -}}
+            <h2 class="h4 mb-0 card-title"><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h2>
           </div>
           <p class="text-muted card-description">{{ $page.Params.description | markdownify }}</p>
         </div>

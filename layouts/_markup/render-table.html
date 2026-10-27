@@ -44,7 +44,10 @@
     {{- range .TBody }}
       <tr>
         {{- range . }}
+          {{- /* A date like 2026-06-03 otherwise wraps at its hyphens in
+               narrow columns ("2026-06-" / "03"). */}}
           <td
+            {{- if findRE `^\d{4}-\d{2}-\d{2}$` (trim (plainify .Text) " \n") }} class="td-nowrap"{{ end }}
             {{- with .Alignment }}
               {{- printf " style=%q" (printf "text-align:%s" .) | safeHTMLAttr }}
             {{- end -}}
