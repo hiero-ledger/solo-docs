@@ -18,16 +18,9 @@ hide_section_index: true
 
 {{% pageinfo color="warning mx-0" %}}
 
-**Known issue: MinIO image pulls are currently blocked.** MinIO stopped
-publishing new community images as of 2025-10-23, so deployments with MinIO
-enabled fail with `ImagePullBackOff`. This affects Solo versions **below
-v0.91.0**; starting with v0.91.0, Solo replaces the default tenant image and
-no workaround is needed.
-
-- **Easiest fix:** run `ONE_SHOT_WITH_BLOCK_NODE=true BLOCK_STREAM_STREAM_MODE=BLOCKS solo one-shot single deploy` to skip MinIO entirely.
-- **If you need MinIO** (record streams/backups): see the
-  [values-file workaround](/docs/troubleshooting/#minio-image-pull-failures-imagepullbackoff-on-the-minio-tenant-pod)
-  in Troubleshooting.
+**Using Solo below v0.91.0?** MinIO image pulls fail on those versions. Upgrade
+Solo, or
+[see the workarounds in Troubleshooting](/docs/troubleshooting/#minio-image-pull-failures-imagepullbackoff-on-the-minio-tenant-pod).
 
 {{% /pageinfo %}}
 

@@ -18,6 +18,14 @@
   --color-gradient-start: #992350;
   --color-gradient-end: #b81a56;
 
+  // Inline text links. Separate from --color-primary because the primary
+  // red also fills buttons/badges, where it should stay the same in dark
+  // mode, while link text on a dark background needs a lighter tint to stay
+  // readable (see the dark-mode overrides in section 13).
+  --color-link: var(--color-primary);
+  --color-link-hover: var(--color-primary-dark);
+  --color-link-visited: #8b0e28;
+
   // hiero.org's footer tokens. Not theme-scoped — like the hero section,
   // the footer is a fixed dark panel regardless of the site's light/dark
   // toggle, matching hiero.org's own (toggle-less) footer treatment.
@@ -328,16 +336,16 @@ nav.foldable-nav .ul-1 .without-child:has(label a i[class*="fa-"]) label a {
 
 a,
 main a {
-  color: var(--color-primary);
+  color: var(--color-link);
   text-decoration: none;
 
   &:hover {
-    color: var(--color-primary-dark);
+    color: var(--color-link-hover);
     text-decoration: underline;
   }
 
   &:visited {
-    color: #8b0e28;
+    color: var(--color-link-visited);
   }
 }
 
@@ -1697,20 +1705,38 @@ td > code {
   a {
     &,
     &:visited {
-      color: var(--color-primary-light) !important;
+      color: var(--color-link) !important;
     }
 
     &:hover {
-      color: #ffffff !important;
+      color: var(--color-link-hover) !important;
     }
   }
 }
 
-// Core Capabilities icons should use the Solo primary accent consistently.
-// Scope this override to avoid changing icon colors globally.
-.core-capabilities .text-primary,
-.core-capabilities .text-success {
-  color: var(--color-primary) !important;
+// Core Capabilities highlight lists: a small dot rather than checkmarks,
+// which made the cards read like a feature-comparison table. Uses the link
+// tint so the dot stays visible in dark mode (brand red is too dark there).
+.capability-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    position: relative;
+    padding-left: 1rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.6em;
+      width: 0.375rem;
+      height: 0.375rem;
+      border-radius: 50%;
+      background: var(--color-link);
+    }
+  }
 }
 
 // Matches hiero-website's .repository-name/-description text treatment
@@ -2191,7 +2217,13 @@ td > code {
   --bs-body-color: var(--color-text-body);
   --bs-body-bg: var(--color-bg-white);
   --bs-border-color: var(--color-border);
-  --bs-link-color: #ff7ca9;
+  // Light-mode link reds (#b81a56 and darker) drop to ~1.3-2.9:1 contrast on
+  // these backgrounds. These tints stay >= 5.5:1 on the page, footer, every
+  // callout variant, and table headers.
+  --color-link: #ff9fc2;
+  --color-link-hover: #ffc4da;
+  --color-link-visited: #d98bb0;
+  --bs-link-color: var(--color-link);
 }
 
 
@@ -2709,6 +2741,14 @@ td > code {
   td > code {
     background-color: #222c3f !important;
     color: #f5f8ff !important;
+  }
+
+  // Inside a callout, a fixed blue-gray chip clashes with the box's own
+  // color (e.g. on the brown warning box), so tint relative to the box.
+  .td-content .pageinfo :not(pre) > code,
+  .td-content .alert :not(pre) > code {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: inherit !important;
   }
 
   .td-content .highlight pre button.td-click-to-copy {
@@ -4409,6 +4449,68 @@ code.click-to-copy.code-copied::after {
   > ul {
     max-width: none;
   }
+
+  // Docsy caps top-level tab panes at 80% too (tabbed-pane.scss), so tab
+  // content stopped short of its own tab strip.
+  > .tab-content .tab-pane {
+    max-width: none;
+  }
+}
+
+// --- 17a. BLOCK SPACING: CODE BLOCKS & TABLES ---
+// One rhythm for both. At the top level of a page they get 2rem (Docsy's
+// existing code-block and callout spacing; tables previously had only
+// Bootstrap's 1rem below and nothing above). Nested in a list item or tab,
+// they belong to the step they illustrate, so 1rem keeps them next to their
+// lead-in text instead of splitting it off. Docsy had set code in tabs to
+// margin 0, which left following text touching the block.
+.td-content {
+  .highlight,
+  .td-table-scroll {
+    margin: 2rem 0;
+  }
+
+  li .highlight,
+  li .td-table-scroll,
+  .tab-pane .highlight,
+  .tab-pane .td-table-scroll {
+    margin: 1rem 0;
+  }
+
+  // Docsy's tab treatments, re-asserted over the rules above: nothing adds
+  // space at a pane's edges, and a pane holding only a code block lets it
+  // fill the pane edge to edge.
+  .tab-pane > :first-child {
+    margin-top: 0;
+  }
+
+  .tab-pane > :last-child {
+    margin-bottom: 0;
+  }
+
+  .tab-pane > .highlight:only-child {
+    margin: -1.5rem;
+  }
+}
+
+// Tables scroll inside this wrapper (layouts/_markup/render-table.html)
+// rather than being display:block themselves, so rows always span the full
+// width instead of stopping where their content ends.
+.td-table-scroll {
+  overflow-x: auto;
+
+  // Only focusable while it overflows (tabindex is added by a script in
+  // layouts/partials/hooks/body-end.html).
+  &:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+  }
+}
+
+.td-content .td-table-scroll > table:not(.td-initial) {
+  display: table;
+  width: 100%;
+  margin-bottom: 0;
 }
 
 // --- 18. PER-PAGE CATEGORIES/TAGS (right sidebar) ---
