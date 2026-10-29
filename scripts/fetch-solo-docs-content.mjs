@@ -23,7 +23,8 @@
  *      page — this site owns the presentation layer — writing the result into a
  *      gitignored cache directory that hugo.yaml mounts into `content`.
  *   4. Skips the download when the cached `version.txt` matches the current npm
- *      `latest` and the output is already on disk (download path only).
+ *      `latest` (plus TRANSFORM_VERSION) and the output is already on disk
+ *      (download path only).
  *
  * The script is invoked from the `pre_hugo` lifecycle hook in package.json, so it
  * runs automatically on `npm run build`, `npm run build:production`, `npm run
@@ -50,6 +51,10 @@ const assetName = 'solo-docs-content.tar.gz';
 
 const cacheRoot = '.cache/solo-cli-docs';
 const versionFile = join(cacheRoot, 'version.txt');
+// Bump whenever the transformation of the archive's pages changes, so caches
+// built by an older version of this script regenerate instead of being
+// reused until the next Solo release.
+const TRANSFORM_VERSION = 2;
 // The cache mirrors the language-prefixed layout of `content/en/...` so it can be
 // mounted as `source: .cache/solo-cli-docs/content/en` → `target: content` in
 // hugo.yaml, matching the existing `content/en` mount convention.
@@ -122,6 +127,14 @@ hide_section_index: true
 ---
 
 `;
+}
+
+// The generated body opens with `## \`ClassName\``, but the page title is the
+// code and the description (rendered as the subtitle) already carries the
+// ClassName, so that heading was a third repeat of the same name. Removed so
+// the page reads title → subtitle → details table.
+function removeClassNameHeading(body) {
+  return body.replace(/^##\s+`[^`]+`[ \t]*\r?\n(?:[ \t]*\r?\n)*/m, '');
 }
 
 function errorPageFrontmatter(category, code, body) {
@@ -210,7 +223,7 @@ async function processErrorTree(srcErrorsDir) {
         await writeWithFrontmatter(
           join(errorsOutDir, category, file),
           errorPageFrontmatter(category, code, body),
-          body,
+          removeClassNameHeading(body),
         );
         count++;
       }
@@ -222,10 +235,11 @@ async function processErrorTree(srcErrorsDir) {
 // ── Main ────────────────────────────────────────────────────────────────────
 
 const version = localArchive ? null : resolveVersion();
+const cacheKey = `${version}+transform${TRANSFORM_VERSION}`;
 
 if (!localArchive && existsSync(versionFile)) {
   const cachedVersion = (await readFile(versionFile, 'utf8')).trim();
-  if (cachedVersion === version && existsSync(cliOutFile)) {
+  if (cachedVersion === cacheKey && existsSync(cliOutFile)) {
     console.log(`Solo docs content already cached for v${version}`);
     process.exit(0);
   }
@@ -261,7 +275,7 @@ await processErrorTree(join(extractDir, 'troubleshooting/errors'));
 await rm(extractDir, { recursive: true, force: true });
 if (!localArchive) {
   await rm(tarball, { force: true });
-  await writeFile(versionFile, `${version}\n`);
+  await writeFile(versionFile, `${cacheKey}\n`);
   console.log(`Generated Solo docs content from v${version}`);
 } else {
   console.log('Generated Solo docs content from local archive');
