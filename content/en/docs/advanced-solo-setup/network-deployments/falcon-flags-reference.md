@@ -30,7 +30,7 @@ Sections map to subcommands as follows:
 | `blockNode` | `solo block node add` |
 
 All flag names must be written in long form with double dashes (for example,
-`--release-tag`). Flags left empty (`""`) or matching their default value are
+`--consensus-node-version`). Flags left empty (`""`) or matching their default value are
 ignored by Solo at argument expansion time.
 
 > **Note:** Not every flag listed here is relevant to every deployment. Use this
@@ -46,7 +46,7 @@ Flags passed to `solo consensus network deploy`.
 
 | Flag | Type | Default | Description |
 | --- | --- | --- | --- |
-| `--release-tag` | string | current Hedera platform version | Consensus node release tag (e.g. `v0.71.0`). |
+| `--consensus-node-version` | string | current Hedera platform version | Consensus node version to deploy (e.g. `v0.71.0`). |
 | `--pvcs` | boolean | `false` | Enable Persistent Volume Claims for consensus node storage. Required for node add operations. |
 | `--load-balancer` | boolean | `false` | Enable load balancer for network node proxies. |
 | `--chart-dir` | string | — | Path to a local Helm chart directory for the Solo network chart. |
@@ -91,7 +91,7 @@ Flags passed to `solo consensus node setup`.
 
 | Flag | Type | Default | Description |
 | --- | --- | --- | --- |
-| `--release-tag` | string | current Hedera platform version | Consensus node release tag. Must match `network.--release-tag`. |
+| `--consensus-node-version` | string | current Hedera platform version | Consensus node version to set up. Must match `network.--consensus-node-version`. |
 | `--local-build-path` | string | — | Path to a local Hiero consensus node build (e.g. `~/hiero-consensus-node/hedera-node/data`). Used for local development workflows. |
 | `--app` | string | `HederaNode.jar` | Name of the consensus node application binary. |
 | `--app-config` | string | — | Path to a JSON configuration file for the testing app. |
@@ -187,7 +187,7 @@ Flags passed to `solo relay node add`.
 
 | Flag | Type | Default | Description |
 | --- | --- | --- | --- |
-| `--relay-release` | string | current version | Hiero JSON-RPC Relay Helm chart release to deploy. |
+| `--relay-version` | string | current version | Hiero JSON-RPC Relay version to deploy. |
 | `--node-aliases` | string | — | Comma-separated node aliases the relay will observe (e.g. `node1` or `node1,node2`). |
 | `--replica-count` | number | `1` | Number of relay replicas to deploy. |
 | `--chain-id` | string | `298` | EVM chain ID exposed by the relay (Hedera testnet default). |
@@ -215,8 +215,9 @@ Flags passed to `solo block node add`.
 
 | Flag | Type | Default | Description |
 | --- | --- | --- | --- |
-| `--release-tag` | string | current version | Hiero block node release tag. |
-| `--image-tag` | string | — | Docker image tag to override the Helm chart default. |
+| `--block-node-version` | string | current version | Hiero block node version to deploy. |
+| `--consensus-node-version` | string | current Hedera platform version | Version of the consensus node the block node will serve. Used for the version compatibility check. |
+| `--component-image` | string | — | Block node image override: a registry reference (e.g. `ghcr.io/<org>/<image>:<tag>`), a locally built image, or a Kind-attached local registry image. |
 | `--enable-ingress` | boolean | `false` | Deploy an ingress controller for the block node. |
 | `--domain-name` | string | — | Custom domain name for the block node. |
 | `--debug` | boolean | `false` | Enable debug mode for the block node. (Formerly `--dev`, which is deprecated — see note below.) |
