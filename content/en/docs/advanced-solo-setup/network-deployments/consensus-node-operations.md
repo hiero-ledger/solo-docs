@@ -155,14 +155,14 @@ Stage the updated configuration and any new software version for the target node
 solo consensus dev-node-update prepare \
   --deployment "${SOLO_DEPLOYMENT}" \
   --node-alias node1 \
-  --release-tag v0.66.0 \
+  --consensus-node-version v0.66.0 \
   --output-dir context
 ```
 
 | Flag | Description |
 | --- | --- |
 | --node-alias | Alias of the node to update (e.g., node1). |
-| --release-tag | The consensus node software version to update to. |
+| --consensus-node-version | The consensus node software version to update to. |
 | --new-admin-key | (Optional) New admin key for the node's Hedera account. Omit to keep the existing admin key. |
 | --output-dir | Directory where prepared context files are saved for use in subsequent steps. |
 

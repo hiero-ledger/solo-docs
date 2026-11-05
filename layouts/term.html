@@ -1,0 +1,43 @@
+{{/*
+  Project override of Docsy's term layout (docsy v0.14.3) for tag/category
+  listing pages. Differences: the wrapper is a <div> rather than a second
+  <main> (the base layout already provides one), each article title is
+  <h2 class="h3"> rather than <h3>, which skipped a level after the h1, and
+  each card's breadcrumb is a <div> rather than a <nav>.
+*/ -}}
+{{ define "main" -}}
+<div class="td-content">
+  <div class="taxonomy-taxonomy-page">
+    <h1>{{ with .Data.Singular }}{{ . | humanize }}: {{ end }}<span>{{ .Title }}</span></h1>
+    <div>
+      {{ .Content }}
+    </div>
+    <div>
+      {{ range .Pages }}
+        {{ $manualLink := cond (isset .Params "manuallink") .Params.manualLink ( cond (isset .Params "manuallinkrelref") (relref . .Params.manualLinkRelref) .RelPermalink) }}
+        <article class="card article-teaser article-type-{{ with .Type }}{{ ( urlize . ) }}{{ end }}">
+          <h2 class="h3"><a href="{{ $manualLink }}"{{ with .Params.manualLinkTitle }} title="{{ . }}"{{ end }}{{ with .Params.manualLinkTarget }} target="{{ . }}"{{ if eq . "_blank" }} rel="noopener"{{ end }}{{ end }}>{{- .Title -}}</a></h2>
+          {{ if not .Site.Params.ui.taxonomy_breadcrumb_disable -}}
+            {{/* Use breadcrumb partial, but remove attributes that are invalid or inappropriate in this page-summary context. */ -}}
+            {{/* Also <nav> -> <div>: a path shown inside each listing card
+                 isn't navigation for this page, and one unlabeled nav landmark
+                 per card made the page's landmarks indistinguishable. */ -}}
+            {{ partial "breadcrumb.html" .
+              | replaceRE ` aria-\w+=\".*?\"|(breadcrumb-item) active` "$1"
+              | replaceRE `<nav\b` "<div" | replaceRE `</nav>` "</div>" | safeHTML
+            -}}
+          {{ end -}}
+          <p>{{ .Description | markdownify }}</p>
+          <header class="article-meta">
+            {{ partial "taxonomy_terms_article_wrapper.html" . -}}
+            {{ if (and (not .Params.hide_readingtime) (.Site.Params.ui.readingtime.enable)) -}}
+              {{ partial "reading-time.html" . -}}
+            {{ end -}}
+          </header>
+        </article>
+      {{ end }}
+    </div>
+    <a href="{{ with .Site.GetPage (printf "/%s" ( lower .Data.Plural )) }}{{ .Permalink }}{{ end }}" class="all-taxonomy-terms">{{ humanize ( T "ui_all" ) }} {{ with .Data.Plural }}{{ . | humanize }}{{ end }}</a>
+  </div>
+</div>
+{{- end }}

@@ -647,3 +647,53 @@
     }
   })();
 </script>
+
+<script>
+  // Wide tables scroll sideways inside .td-table-scroll (see
+  // layouts/_markup/render-table.html). A scroll container with nothing
+  // focusable in it can't be scrolled from the keyboard, so make it a
+  // focusable, labelled region -- but only while it actually overflows,
+  // rather than adding a tab stop for every table on the page.
+  (function () {
+    function labelFor(wrapper) {
+      var el = wrapper;
+      while ((el = el.previousElementSibling)) {
+        if (/^H[1-6]$/.test(el.tagName)) {
+          return 'Table: ' + el.textContent.trim();
+        }
+      }
+      return 'Table';
+    }
+
+    function updateScrollableTables() {
+      document.querySelectorAll('.td-table-scroll').forEach(function (w) {
+        if (w.scrollWidth > w.clientWidth + 1) {
+          w.setAttribute('tabindex', '0');
+          w.setAttribute('role', 'region');
+          w.setAttribute('aria-label', labelFor(w));
+        } else {
+          w.removeAttribute('tabindex');
+          w.removeAttribute('role');
+          w.removeAttribute('aria-label');
+        }
+      });
+    }
+
+    function init() {
+      updateScrollableTables();
+      var pending;
+      window.addEventListener('resize', function () {
+        clearTimeout(pending);
+        pending = setTimeout(updateScrollableTables, 150);
+      });
+      // Tables in an inactive tab measure 0 wide until their tab is shown.
+      document.addEventListener('shown.bs.tab', updateScrollableTables);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>

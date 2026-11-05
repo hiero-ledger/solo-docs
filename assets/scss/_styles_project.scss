@@ -18,6 +18,14 @@
   --color-gradient-start: #992350;
   --color-gradient-end: #b81a56;
 
+  // Inline text links. Separate from --color-primary because the primary
+  // red also fills buttons/badges, where it should stay the same in dark
+  // mode, while link text on a dark background needs a lighter tint to stay
+  // readable (see the dark-mode overrides in section 13).
+  --color-link: var(--color-primary);
+  --color-link-hover: var(--color-primary-dark);
+  --color-link-visited: #8b0e28;
+
   // hiero.org's footer tokens. Not theme-scoped — like the hero section,
   // the footer is a fixed dark panel regardless of the site's light/dark
   // toggle, matching hiero.org's own (toggle-less) footer treatment.
@@ -29,8 +37,10 @@
   --color-bg-light: #f5f5f5;
   --color-border: #e0e0e0;
   --color-text-dark: #333333;
-  --color-text-body: #666666;
-  --color-text-light: #888888;
+  // Sized against the sand background most text sits on: #666/#888 were
+  // 4.48:1 and 2.77:1 there (WCAG AA needs 4.5:1). These are 5.8:1 and 4.8:1.
+  --color-text-body: #555555;
+  --color-text-light: #616161;
 
   // Typography Stacks
   --font-family-primary: 'Space Grotesk', -apple-system, system-ui, sans-serif;
@@ -74,6 +84,10 @@
   --bs-body-bg: var(--color-sand);
   --bs-border-color: var(--color-border);
   --bs-link-color: var(--color-primary);
+  // Bootstrap's default inline-code color is a pink (#d63384) that fails
+  // contrast on sand; any code not covered by the inline-code rules below
+  // falls back to this instead.
+  --bs-code-color: var(--color-text-dark);
   // Docsy's own token for code block backgrounds (--td-pre-bg) defaults
   // to --bs-tertiary-bg (#f8f9fa, a cool white-calibrated gray from the
   // "github" Chroma style) — a warm, slightly-lighter-than-sand off-
@@ -102,7 +116,7 @@ body {
   // prose sitewide was reading heavier than that baseline, not just on
   // a few elements.
   font-weight: 400;
-  // --color-text-dark, not --color-text-body: the latter (#666666) is a
+  // --color-text-dark, not --color-text-body: the latter (#555555) is a
   // secondary/muted gray meant for de-emphasized UI chrome (nav links,
   // captions), not primary reading text — using it here as the default
   // body color was making ALL prose read as washed-out, plain-text code
@@ -139,7 +153,9 @@ h1 {
 }
 
 // Scoped to doc content only so it doesn't bleed into home page section headings.
-.td-content h2 {
+// Headings with a size class (e.g. <h2 class="h4"> card and list-entry titles)
+// are h2 for document outline, not section headings, so they skip the rule.
+.td-content h2:not(.h1):not(.h3):not(.h4):not(.h5):not(.h6) {
   border-bottom: 2px solid var(--color-border);
   padding-bottom: 8px;
 }
@@ -317,7 +333,7 @@ nav.foldable-nav .ul-1 .without-child:has(label a i[class*="fa-"]) label a {
 
 // Visual separator above the first of the three external link items.
 // :not(li:has(...) + li) targets the first in a consecutive group of icon-bearing lis.
-// --color-text-light (#888 light / #aab7cf dark) is visible on both backgrounds.
+// --color-text-light (#616161 light / #aab7cf dark) is visible on both backgrounds.
 .td-sidebar-nav li:has(label > a > i[class*="fa-"]):not(li:has(label > a > i[class*="fa-"]) + li) {
   border-top: 1px solid var(--color-text-light);
   margin-top: 0.75rem;
@@ -328,17 +344,46 @@ nav.foldable-nav .ul-1 .without-child:has(label a i[class*="fa-"]) label a {
 
 a,
 main a {
-  color: var(--color-primary);
+  color: var(--color-link);
   text-decoration: none;
 
   &:hover {
-    color: var(--color-primary-dark);
+    color: var(--color-link-hover);
     text-decoration: underline;
   }
 
   &:visited {
-    color: #8b0e28;
+    color: var(--color-link-visited);
   }
+}
+
+// "Skip to content" (layouts/partials/navbar.html): off-screen until it
+// receives keyboard focus, then shown above the fixed navbar.
+a.skip-link,
+a.skip-link:visited {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 1100;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  background: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+a.skip-link:focus {
+  transform: none;
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+// Focus lands on <main> after the skip link; the browser's ring around the
+// whole content area adds nothing.
+#main-content:focus {
+  outline: none;
 }
 
 .td-docs-page-nav__inner {
@@ -823,10 +868,14 @@ pre {
   border-left-color: #8a8572 !important;
 }
 
-// Only apply to inline code, not code blocks with syntax highlighting
+// Only apply to inline code, not code blocks with syntax highlighting. The
+// .td-content rule covers inline code that isn't a direct child of p/li/td
+// (e.g. inside <strong> or a heading), which otherwise fell back to
+// Bootstrap's pink. Code inside links is left to inherit the link color.
 p > code,
 li > code,
-td > code {
+td > code,
+.td-content :not(pre):not(a) > code {
   background: var(--color-bg-light);
   color: var(--color-text-dark);
   padding: 2px 6px;
@@ -1003,6 +1052,33 @@ td > code {
     }
   }
 
+}
+
+// Below md, Docsy's flex-column stacked the logo above the theme toggle
+// (~135px of header). One row instead: logo left, toggle right; the search
+// box (shown here on pages without the docs sidebar, see navbar.html)
+// drops to its own full-width row rather than the desktop's absolutely
+// centered box.
+@media (max-width: 767.98px) {
+  .td-navbar .td-navbar-container {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 0.75rem;
+  }
+
+  .td-navbar .td-navbar__search {
+    position: static;
+    transform: none;
+    width: 100%;
+  }
+}
+
+// Between md and lg the centered 30rem box would overlap the logo.
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .td-navbar .td-navbar__search {
+    width: 18rem;
+  }
 }
 
 @media (min-width: 992px) {
@@ -1697,20 +1773,38 @@ td > code {
   a {
     &,
     &:visited {
-      color: var(--color-primary-light) !important;
+      color: var(--color-link) !important;
     }
 
     &:hover {
-      color: #ffffff !important;
+      color: var(--color-link-hover) !important;
     }
   }
 }
 
-// Core Capabilities icons should use the Solo primary accent consistently.
-// Scope this override to avoid changing icon colors globally.
-.core-capabilities .text-primary,
-.core-capabilities .text-success {
-  color: var(--color-primary) !important;
+// Core Capabilities highlight lists: a small dot rather than checkmarks,
+// which made the cards read like a feature-comparison table. Uses the link
+// tint so the dot stays visible in dark mode (brand red is too dark there).
+.capability-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    position: relative;
+    padding-left: 1rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.6em;
+      width: 0.375rem;
+      height: 0.375rem;
+      border-radius: 50%;
+      background: var(--color-link);
+    }
+  }
 }
 
 // Matches hiero-website's .repository-name/-description text treatment
@@ -2117,7 +2211,7 @@ td > code {
 // tracking for the heading, and a 1.6 line-height / tracked-in / ~78%-
 // opacity body color for the paragraph — rather than Bootstrap's default
 // bold .h3 heading and full-opacity paragraph text.
-.features-section h4 {
+.features-section .h3 {
   font-weight: 400;
   line-height: 1.05;
   // -0.045em is .hiero-principles-heading's own tracking, but that's
@@ -2191,7 +2285,14 @@ td > code {
   --bs-body-color: var(--color-text-body);
   --bs-body-bg: var(--color-bg-white);
   --bs-border-color: var(--color-border);
-  --bs-link-color: #ff7ca9;
+  // Light-mode link reds (#b81a56 and darker) drop to ~1.3-2.9:1 contrast on
+  // these backgrounds. These tints stay >= 5.5:1 on the page, footer, every
+  // callout variant, and table headers.
+  --color-link: #ff9fc2;
+  --color-link-hover: #ffc4da;
+  --color-link-visited: #d98bb0;
+  --bs-link-color: var(--color-link);
+  --bs-code-color: var(--color-text-dark);
 }
 
 
@@ -2704,11 +2805,20 @@ td > code {
   .td-content p code,
   .td-content li > code,
   .td-content table code,
+  .td-content :not(pre):not(a) > code,
   p > code,
   li > code,
   td > code {
     background-color: #222c3f !important;
     color: #f5f8ff !important;
+  }
+
+  // Inside a callout, a fixed blue-gray chip clashes with the box's own
+  // color (e.g. on the brown warning box), so tint relative to the box.
+  .td-content .pageinfo :not(pre) > code,
+  .td-content .alert :not(pre) > code {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: inherit !important;
   }
 
   .td-content .highlight pre button.td-click-to-copy {
@@ -4305,31 +4415,38 @@ code.click-to-copy.code-copied::after {
   background: var(--color-bg-white);
 }
 
-// Below md (768px), Docsy's own sidebar nav has no height cap or sticky
-// behavior at all (see _sidebar-tree.scss — its internal max-height/
-// overflow and .td-sidebar__inner's sticky are both scoped to
-// media-breakpoint-up(md)); it's a plain accordion that grows the page as
-// sections expand. `position: sticky` has no tall-enough containing block
-// to hold against there, so this switches to `position: fixed` instead —
-// anchored purely to the viewport, not to any container's content height,
-// so it can't be pushed around by what's expanded above it.
+// Below md (768px) the sidebar stacks above the page content instead of
+// sitting beside it, so the desktop column behavior has to be undone:
+// - the viewport-height min-height pushed the content a full screen down;
+// - sticky kept that full-height block pinned over the content while
+//   scrolling;
+// - the corner was pinned to the screen bottom, covering ~225px of every
+//   page.
+// Here the sidebar takes only the height it needs (search + menu toggle),
+// and the corner sits at the end of the collapsible menu, revealed along
+// with the nav tree by the menu toggle.
 @media (max-width: 767.98px) {
-  .site-utility-corner {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1020;
-    margin-top: 0;
-    padding: 0.75rem 1rem;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  .td-sidebar {
+    position: static;
   }
 
-  // Keeps page content (and the last item of the sidebar accordion, when
-  // expanded) from ending up hidden behind the now-fixed bar. ~225px
-  // measured rendered height, rounded up with margin.
-  body {
-    padding-bottom: 15rem;
+  .td-sidebar__inner {
+    min-height: 0;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .site-utility-corner {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  // The corner is a sibling of the collapsible nav tree (#td-section-nav),
+  // not inside it, so collapse it along with the tree. While Bootstrap
+  // animates, the nav has .collapsing instead of .collapse, so the corner
+  // appears as the menu opens.
+  .td-sidebar-nav.collapse:not(.show) ~ .site-utility-corner {
+    display: none;
   }
 }
 
@@ -4409,6 +4526,73 @@ code.click-to-copy.code-copied::after {
   > ul {
     max-width: none;
   }
+
+  // Docsy caps top-level tab panes at 80% too (tabbed-pane.scss), so tab
+  // content stopped short of its own tab strip.
+  > .tab-content .tab-pane {
+    max-width: none;
+  }
+}
+
+// --- 17a. BLOCK SPACING: CODE BLOCKS & TABLES ---
+// One rhythm for both. At the top level of a page they get 2rem (Docsy's
+// existing code-block and callout spacing; tables previously had only
+// Bootstrap's 1rem below and nothing above). Nested in a list item or tab,
+// they belong to the step they illustrate, so 1rem keeps them next to their
+// lead-in text instead of splitting it off. Docsy had set code in tabs to
+// margin 0, which left following text touching the block.
+.td-content {
+  .highlight,
+  .td-table-scroll {
+    margin: 2rem 0;
+  }
+
+  li .highlight,
+  li .td-table-scroll,
+  .tab-pane .highlight,
+  .tab-pane .td-table-scroll {
+    margin: 1rem 0;
+  }
+
+  // Docsy's tab treatments, re-asserted over the rules above: nothing adds
+  // space at a pane's edges, and a pane holding only a code block lets it
+  // fill the pane edge to edge.
+  .tab-pane > :first-child {
+    margin-top: 0;
+  }
+
+  .tab-pane > :last-child {
+    margin-bottom: 0;
+  }
+
+  .tab-pane > .highlight:only-child {
+    margin: -1.5rem;
+  }
+}
+
+// Tables scroll inside this wrapper (layouts/_markup/render-table.html)
+// rather than being display:block themselves, so rows always span the full
+// width instead of stopping where their content ends.
+.td-table-scroll {
+  overflow-x: auto;
+
+  // Only focusable while it overflows (tabindex is added by a script in
+  // layouts/partials/hooks/body-end.html).
+  &:focus-visible {
+    outline: 2px solid var(--color-link);
+    outline-offset: 2px;
+  }
+}
+
+.td-content .td-table-scroll > table:not(.td-initial) {
+  display: table;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+// Date-only cells (class added by render-table.html).
+.td-content td.td-nowrap {
+  white-space: nowrap;
 }
 
 // --- 18. PER-PAGE CATEGORIES/TAGS (right sidebar) ---
@@ -4428,7 +4612,13 @@ code.click-to-copy.code-copied::after {
       margin-bottom: 0;
     }
   }
+}
 
+// Label, list, and chip styles shared by the right sidebar and the
+// tag/category listing pages (layouts/term.html), which otherwise still
+// showed Docsy's notched gray chips.
+.td-sidebar-toc-taxonomy,
+.article-teaser .article-meta {
   // Matches hiero.org's sectionLabelClasses (its small uppercase section
   // labels, e.g. "Hosted by" in the footer): font-medium (500, not 600),
   // wider tracking (0.16em) than this had before.
@@ -4494,7 +4684,34 @@ code.click-to-copy.code-copied::after {
   }
 }
 
-[data-bs-theme='dark'] .td-sidebar-toc-taxonomy .taxonomy-term {
+// Docsy offsets a <main> nested in .td-main for the fixed navbar
+// (.td-main main in its _main-container.scss: 1.5rem + $td-navbar-min-height
+// of 4rem). layouts/term.html uses a <div> there instead of a second <main>,
+// so it gets the same offset here.
+.td-main .taxonomy-taxonomy-page {
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+
+  @media (min-width: 768px) {
+    padding-top: 5.5rem;
+  }
+}
+
+// Listing cards: each taxonomy's label and chips on one line.
+.article-teaser .article-meta .taxonomy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  .taxonomy-title {
+    margin: 0 0.25rem 0 0;
+  }
+}
+
+[data-bs-theme='dark'] .td-sidebar-toc-taxonomy .taxonomy-term,
+[data-bs-theme='dark'] .article-teaser .article-meta .taxonomy-term {
   border-color: var(--color-border) !important;
 
   &:hover,
@@ -4502,4 +4719,34 @@ code.click-to-copy.code-copied::after {
     border-color: var(--color-primary-light) !important;
     background: var(--color-primary-light) !important;
   }
+}
+
+// --- 19. 404 PAGE (layouts/404.html) ---
+
+// Not .td-404: Docsy already puts that class on <body> for this page (its
+// body class is td-<page kind>), so styles on it would apply to the page.
+.not-found {
+  max-width: 48rem;
+  // Docsy already offsets this page's <main> for the fixed navbar.
+  padding-top: 1rem;
+  padding-bottom: 6rem;
+}
+
+// Same small tracked label treatment as .capabilities-eyebrow.
+.not-found__code {
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  color: var(--color-link);
+}
+
+.not-found__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 500;
 }

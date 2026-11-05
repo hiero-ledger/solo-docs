@@ -18,9 +18,10 @@
     <i class="{{ if not (or (hasPrefix $icon "fas ") (hasPrefix $icon "fab ")) }}fas {{ end }}{{ $icon }}"></i>
   {{- end }}
 </div>
-<h4 class="h3">
+{{/* h2 for heading order (page h1 -> these); .h3 keeps the visual size. */ -}}
+<h2 class="h3">
   {{- .Get "title" | markdownify -}}
-</h4>
+</h2>
 <div class="mb-0">
 {{ .Inner }}
 </div>

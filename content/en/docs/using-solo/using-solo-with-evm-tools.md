@@ -2,9 +2,9 @@
 title: "Using Solo with EVM Tools"
 weight: 2
 description: >
-  Point your existing Ethereum tooling (Hardhat, ethers.js, and MetaMask) at a local Hiero network via the  Hiero JSON-RPC relay. This document covers enabling the relay, creating and configuring a Hardhat project, deploying a Solidity contract, and configuring wallets.
+  Point your existing Ethereum tooling (Hardhat, ethers.js, Foundry, and MetaMask) at a local Hiero network via the  Hiero JSON-RPC relay. This document covers enabling the relay, creating and configuring a Hardhat project, deploying a Solidity contract, using Foundry, and configuring wallets.
 categories: ["Integration", "Developer"]
-tags: ["developer", "evm", "hardhat", "solidity", "json-rpc", "smart-contracts"]
+tags: ["developer", "evm", "hardhat", "foundry", "solidity", "json-rpc", "smart-contracts"]
 type: docs
 icon: "fab fa-ethereum"
 ---
@@ -21,6 +21,7 @@ This guide walks you through:
 - Retrieving ECDSA accounts for EVM tooling.
 - Creating and configuring a Hardhat project against the relay.
 - Deploying and interacting with a Solidity contract.
+- Deploying, calling and testing the same contract with Foundry (`forge` and `cast`).
 - Verifying transactions via the Explorer and Mirror Node.
 - Configuring ethers.js and MetaMask.
 
@@ -79,10 +80,10 @@ To remove the relay when you no longer need it, see [**Cleanup Step 1: Destroy J
 
 ## Step 2: Retrieve Your ECDSA Account and Private Key
 
-`one-shot single deploy` creates ECDSA alias accounts, which are required for EVM tooling such as Hardhat, ethers.js, and MetaMask.
+`one-shot single deploy` creates ECDSA alias accounts, which are required for EVM tooling such as Hardhat, ethers.js, Foundry, and MetaMask.
 These accounts and their private keys are saved to a cache directory on completion.
 
-> Note: ED25519 accounts are not compatible with Hardhat, ethers.js, or MetaMask when used via the JSON-RPC interface.
+> Note: ED25519 accounts are not compatible with Hardhat, ethers.js, Foundry, or MetaMask when used via the JSON-RPC interface.
 > Always use the ECDSA keys from accounts.json for EVM tooling.
 
 - To find your deployment name, run `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)).
@@ -331,7 +332,114 @@ npx hardhat run scripts/send-tx.ts --network my_solo_deployment
 
 ---
 
-## Step 6: Verify Transactions
+## Step 6: Use Foundry (forge and cast)
+
+[Foundry](https://getfoundry.sh/) works with the Solo relay as well: `forge create`
+and `cast send` submit transactions to the network, and `forge test` runs your
+tests against a fork of it.
+
+> **Version requirements:** Foundry 1.8 or later, and Hiero JSON-RPC relay
+> 0.80.0 or later (Solo 0.94.0 and later deploy relay 0.80.1). Foundry 1.8 sends
+> EIP-1898 block parameters that older relay versions do not support.
+
+### Option A: Use the Pre-Built Solo Example
+
+A ready-to-run Foundry project is provided in the Solo repository. It reuses the
+`SimpleStorage` contract from [Step 4](#step-4-deploy-and-interact-with-a-solidity-contract):
+
+```bash
+git clone https://github.com/hiero-ledger/solo.git
+cd solo/examples/foundry-with-solo
+```
+
+With a Solo network running, `task test` installs `forge-std`, deploys
+`SimpleStorage` with `forge create`, updates it with `cast send`, and runs
+`forge test`. To deploy the network as well, run `task` (see
+[Running the Full Example Automatically](#reference-running-the-full-example-automatically)).
+
+### Option B: Configure Your Own Foundry Project
+
+Point Foundry at the Solo relay in `foundry.toml`:
+
+```toml
+[profile.default]
+src = "contracts"
+out = "out"
+libs = ["lib"]
+evm_version = "cancun"
+
+# Default RPC endpoint for forge and cast; forge test forks it.
+eth_rpc_url = "http://localhost:37546"
+
+# Solo networks are ephemeral and block numbers restart on every redeploy,
+# so do not reuse cached fork state.
+no_storage_caching = true
+```
+
+Install `forge-std` for the test helpers. Add `--no-git` when the project lives
+inside another Git repository and you do not want a submodule:
+
+```bash
+forge install foundry-rs/forge-std
+```
+
+### Deploy a Contract with forge create
+
+```bash
+forge build
+forge create contracts/SimpleStorage.sol:SimpleStorage \
+  --rpc-url http://localhost:37546 \
+  --private-key "$SOLO_EVM_PRIVATE_KEY" \
+  --broadcast \
+  --constructor-args 42
+```
+
+`--constructor-args` takes every remaining argument, so keep it last. The output
+includes a `Deployed to:` line with the contract address. Save it for the next
+commands:
+
+```bash
+export SIMPLE_STORAGE_ADDRESS="0xYOUR_CONTRACT_ADDRESS"
+```
+
+### Interact with the Contract Using cast
+
+```bash
+cast call "$SIMPLE_STORAGE_ADDRESS" "get()(uint256)" --rpc-url http://localhost:37546
+
+cast send "$SIMPLE_STORAGE_ADDRESS" "set(uint256)" 7 \
+  --rpc-url http://localhost:37546 \
+  --private-key "$SOLO_EVM_PRIVATE_KEY"
+
+cast call "$SIMPLE_STORAGE_ADDRESS" "get()(uint256)" --rpc-url http://localhost:37546
+```
+
+The first `cast call` returns `42` and the second returns `7`.
+
+### Run forge test Against Solo
+
+Because `eth_rpc_url` is set, `forge test` forks the Solo network: tests run in a
+local EVM that loads accounts, code and storage from the relay on demand.
+Contracts the tests create and the state changes they make stay in the fork and
+never reach the Solo network. Use `forge create` or `cast send` to change the
+network itself.
+
+```bash
+SIMPLE_STORAGE_VALUE=7 forge test -vvv
+```
+
+The example's `test/SimpleStorage.t.sol` checks that the fork reports chain ID
+`298`, runs the same three scenarios as the Hardhat tests, and reads the
+`SimpleStorage` contract deployed above (from the exported
+`SIMPLE_STORAGE_ADDRESS`) through the fork.
+
+> **Note:** `forge script` is not covered. It has known limitations on Hedera
+> when it broadcasts multiple transactions; use `forge create` and `cast send`
+> to change network state.
+
+---
+
+## Step 7: Verify Transactions
 
 Confirm your transactions reached consensus using any of the following:
 
@@ -368,7 +476,7 @@ curl -X POST http://localhost:37546 \
 
 ---
 
-## Step 7: Configure MetaMask
+## Step 8: Configure MetaMask
 
 To connect MetaMask to your local Solo network:
 
@@ -396,7 +504,7 @@ the pre-allocated HBAR balance.
 
 ---
 
-## Step 8: Tear Down the Network
+## Step 9: Tear Down the Network
 
 When finished, destroy the Solo deployment and all associated containers:
 
@@ -433,6 +541,19 @@ This is useful for CI pipelines. See the
 [Solo deployment with Hardhat Example](https://github.com/hiero-ledger/solo/tree/main/examples/hardhat-with-solo) for full
 details.
 
+The `foundry-with-solo` example does the same for Foundry - deploy the network,
+install `forge-std`, deploy and update `SimpleStorage` with `forge create` and
+`cast send`, then run `forge test`:
+
+```bash
+cd solo/examples/foundry-with-solo
+task
+```
+
+Tear it down with `task destroy`. See the
+[Solo deployment with Foundry Example](https://github.com/hiero-ledger/solo/tree/main/examples/foundry-with-solo)
+for full details.
+
 ---
 
 ## Troubleshooting
@@ -445,6 +566,9 @@ details.
 | MetaMask shows wrong network | Chain ID mismatch | Ensure Chain ID is `298` in MetaMask network settings |
 | `INSUFFICIENT_TX_FEE` on transaction | Account not funded | Use a pre-funded ECDSA account from `accounts.json` |
 | Hardhat test timeout | Network not fully started | Wait for `one-shot` to fully complete before running tests |
+| `forge test` reports chain ID `31337` instead of `298` | `forge test` is not forking the relay | Set `eth_rpc_url` in `foundry.toml` or pass `--fork-url http://localhost:37546` |
+| `forge test` fails while fetching state from the relay | Foundry 1.8+ against a relay older than 0.80.0 | Upgrade to Solo 0.94.0 or later (relay 0.80.1) |
+| `forge create` fails with `contract was not deployed`, but the contract exists | The deployment includes a block node: the mirror node then returns no `created_contract_ids`, so the relay receipt has no `contractAddress` ([hiero-mirror-node#14473](https://github.com/hiero-ledger/hiero-mirror-node/issues/14473)) | Deploy without a block node (`ONE_SHOT_WITH_BLOCK_NODE=false`) |
 | Port `37546` already in use | Another process is using the port | Run `lsof -i :37546` and stop the conflicting process |
 
 ---
@@ -452,5 +576,7 @@ details.
 ## Further Reading
 
 - [Solo deployment with Hardhat Example](https://github.com/hiero-ledger/solo/tree/main/examples/hardhat-with-solo).
+- [Solo deployment with Foundry Example](https://github.com/hiero-ledger/solo/tree/main/examples/foundry-with-solo).
+- [Foundry documentation](https://getfoundry.sh/) - reference for `forge`, `cast`, and `foundry.toml`.
 - [Configuring Hardhat with Hiero Local Node](https://docs.hedera.com/hedera/tutorials/smart-contracts/configuring-hardhat-with-hiero-local-node-a-step-by-step-guide) - the Hedera tutorial this guide is modelled on.
 - [Retrieving Logs](/docs/advanced-solo-setup/jvm-debugger/) - for debugging network-level issues.

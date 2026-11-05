@@ -68,6 +68,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_DEV_OUTPUT` | Treat all commands as if the `--debug` flag were specified (`--debug` was formerly `--dev`) | `false`
 | `SOLO_CHAIN_ID` | Chain ID of the Solo network | `298`
 | `FORCE_PODMAN` | Force the use of Podman as the container engine when creating a new local cluster. Accepted values: `true`, `false` | `false`
+| `KUBECONFIG` | Kubeconfig file, or `:`-separated list of files, that Solo uses to reach your clusters. When Solo creates the local cluster with rootful Podman on Linux, kind writes the `kind-kind` cluster, context and user into the first listed file that exists, else into the last listed file | `~/.kube/config`
 
 ---
 
@@ -93,7 +94,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_OPERATOR_KEY` | Operator private key for the Solo network | `302e020100...`
 | `SOLO_OPERATOR_PUBLIC_KEY` | Operator public key for the Solo network | `302a300506...`
 | `FREEZE_ADMIN_ACCOUNT` | Freeze admin account ID for the Solo network | `0.0.58`
-| `GENESIS_KEY` | Genesis private key for the Solo network | `302e020100...`
+| `GENESIS_KEY` | ED25519 genesis private key for a new Solo network. At `solo consensus network deploy` Solo stores it in the `genesis-key` Kubernetes secret and sets the genesis public key of the consensus nodes to match. Later commands read the secret first, then this variable | `302e020100...`
 
 > **Note:** Full key values are omitted above for readability. Refer to the
 > [source defaults](https://github.com/hiero-ledger/solo) for complete key strings.
@@ -263,22 +264,29 @@ For full usage, examples, version-format rules, and troubleshooting, see
 
 ## Local Helm Chart Directories
 
-Chart owners can test an unpublished chart by pointing Solo at a local chart directory. Only the chart templates are
-local: every container image the chart references must already be pullable by the cluster (published to a registry or
-loaded with `kind load docker-image`). These variables are the equivalent of the `--block-node-chart-dir`,
-`--explorer-chart-dir`, `--mirror-node-chart-dir` and `--relay-chart-dir` flags, and the flag takes precedence when
-both are set.
-
-> **Note:** Unlike the variables above, these names contain dashes. Each camelCase word boundary in the config path
-> becomes a dash (`blockNodeHelmChart.directory` becomes `SOLO_BLOCK-NODE-HELM-CHART_DIRECTORY`). Set them with
-> `env` or `export` in a POSIX shell, for example `env 'SOLO_RELAY-HELM-CHART_DIRECTORY=...' solo relay node add`.
+Chart owners can test an unpublished chart by pointing Solo at a local chart
+directory. Only the chart templates are local: every container image the chart
+references must already be pullable by the cluster (published to a registry or
+loaded with `kind load docker-image`). These variables are the equivalent of the
+`--block-node-chart-dir`, `--explorer-chart-dir`, `--mirror-node-chart-dir` and
+`--relay-chart-dir` flags, and the flag takes precedence when both are set.
 
 | Environment Variable | Description | Default Value
 | --- | --- | ---
-| `SOLO_BLOCK-NODE-HELM-CHART_DIRECTORY` | Local Helm chart directory for the block node, e.g. `~/hiero-block-node/charts` | unset (published chart)
-| `SOLO_EXPLORER-HELM-CHART_DIRECTORY` | Local Helm chart directory for the explorer, e.g. `~/hiero-mirror-node-explorer/charts` | unset (published chart)
-| `SOLO_MIRROR-NODE-HELM-CHART_DIRECTORY` | Local Helm chart directory for the mirror node, e.g. `~/hiero-mirror-node/charts` | unset (published chart)
-| `SOLO_RELAY-HELM-CHART_DIRECTORY` | Local Helm chart directory for the JSON-RPC relay, e.g. `~/hiero-json-rpc-relay/charts` | unset (published chart)
+| `SOLO_BLOCK_NODE_CHART_DIR` | Directory that contains the block node chart (`block-node-server`), e.g. `/path/to/hiero-block-node/charts` | unset (published chart)
+| `SOLO_EXPLORER_CHART_DIR` | The explorer chart directory itself (the one holding `Chart.yaml`), e.g. `/path/to/hiero-mirror-node-explorer/_frontend/chart` | unset (published chart)
+| `SOLO_MIRROR_NODE_CHART_DIR` | Directory that contains the mirror node chart (`hedera-mirror`), e.g. `/path/to/hiero-mirror-node/charts` | unset (published chart)
+| `SOLO_RELAY_CHART_DIR` | Directory that contains the JSON-RPC relay chart (`hedera-json-rpc`), e.g. `/path/to/hiero-json-rpc-relay/charts` | unset (published chart)
+
+> **Note:** The explorer variable takes the chart directory itself, while the
+> other three take the directory that contains the chart. Use absolute paths:
+> Solo does not expand `~` inside the value.
+
+For example, to deploy a network with a local mirror node chart:
+
+```bash
+SOLO_MIRROR_NODE_CHART_DIR=/path/to/hiero-mirror-node/charts solo one-shot single deploy
+```
 
 ---
 

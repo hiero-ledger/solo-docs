@@ -158,7 +158,7 @@ kubectl get pods -n <namespace> -o \
 
 Replace `<namespace>` with your deployment namespace (default: `one-shot`).
 The consensus node pod should reference the image tag that matches your
-`--release-tag` (or the Solo built-in default if you omitted it). The key
+`--consensus-node-version` (or the Solo built-in default if you omitted it). The key
 indicator is that the node started successfully with your local `data/lib/` and
 `data/apps/` artifacts copied in.
 
@@ -199,6 +199,6 @@ task
 | --- | --- | --- |
 | `--local-build-path: path does not exist` | `./gradlew assemble` has not run, or the path is wrong | Confirm: `ls /absolute/path/to/hiero-consensus-node/hedera-node/data/apps/HederaNode.jar` |
 | `./gradlew assemble` fails with `Unsupported class file major version` | Wrong Java version | Check `java -version`; Java 25 (Temurin) is required. Install: `sdk install java 25.0.2-tem` |
-| Consensus node pods crash on start | Build artifacts incompatible with the base container image | Set `--release-tag` in your values file to match the source tag you built from |
+| Consensus node pods crash on start | Build artifacts incompatible with the base container image | Set `--consensus-node-version` in your values file to match the source tag you built from |
 | `nc -zv localhost 35211` fails after deploy | Port-forward died | Restore: `kubectl port-forward svc/haproxy-node1-svc -n one-shot 35211:50211 &` |
 | Slow first deployment | Mirror node, relay, and explorer images pulling for the first time | Let it complete; subsequent runs reuse the [image cache](/docs/advanced-solo-setup/image-cache) |
