@@ -130,12 +130,15 @@ npm install -g @hiero-ledger/solo@0.76.0
 
 {{% /tab %}} {{< /tabpane >}}
 
-> **Note:** On Solo v0.74.0 and later, a global install - including a pinned
-> version - automatically pre-pulls that version's container images into the
-> [image cache](/docs/advanced-solo-setup/image-cache)
-> (`~/.solo/cache/images/`), which can take a few minutes and several GB on
-> first run. Set `SOLO_NO_CACHE=true` (npm) or `HOMEBREW_NO_SOLO_CACHE`
-> (Homebrew) to skip it.
+> **Note:** Since Solo v0.95.0, installing Solo does not download container
+> images. Run `solo cache image pull` after installing to fill the
+> [image cache](/docs/advanced-solo-setup/image-cache) with that version's
+> images (a few minutes and several GB), or install with
+> `SOLO_WITH_IMAGE_CACHE=true` (npm). The pull also removes the images of the
+> version you upgraded from. Solo v0.74.0 to v0.94.0 downloaded the images
+> during every global npm install, unless `SOLO_NO_CACHE=true` was set. The
+> deprecated Homebrew formula still downloads them; set
+> `HOMEBREW_NO_SOLO_CACHE` to skip it.
 
 Confirm the installed version:
 
@@ -173,8 +176,8 @@ configuration, then reinstall.
 
 > **Warning:** This deletes your Solo home directory (`~/.solo`), including the
 > [image cache](/docs/advanced-solo-setup/image-cache), cached configuration,
-> and logs. The reinstall step below re-pulls the image cache (a few minutes,
-> several GB) on Solo v0.74.0 and later. Destroy any running deployments first
+> and logs. Run `solo cache image pull` after reinstalling to fill the image
+> cache again (a few minutes, several GB). Destroy any running deployments first
 > with `solo one-shot single destroy` - see the
 > [Cleanup guide](/docs/simple-solo-setup/cleanup).
 

@@ -338,19 +338,22 @@ to pin multiple components at once.
 
 ## Image Cache
 
-Solo caches the container images it deploys as local archives to speed up
-repeat deployments. The cache is enabled by default; these variables disable it
-per context. See [Solo Image Cache](/docs/advanced-solo-setup/image-cache) for
-the full feature and the `solo cache image` commands.
+Solo downloads verified archives of the container images it deploys from the
+Solo CDN, using the image cache manifest published with each Solo release. See
+[Solo Image Cache](/docs/advanced-solo-setup/image-cache) for the full feature
+and the `solo cache image` commands.
 
 | Environment Variable | Description | Default
 | --- | --- | ---
 | `ENABLE_IMAGE_CACHE` | Set to `false` to disable the image cache during `solo one-shot` deploys. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). | enabled
-| `SOLO_NO_CACHE` | Set to `true` to skip the image pull during an npm global install. | enabled
-| `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image pull during a Homebrew install. | enabled
+| `SOLO_WITH_IMAGE_CACHE` | Set to `true` to download the images during an npm global install. **Solo v0.95.0 and later**; earlier releases downloaded them by default. | disabled
+| `SOLO_NO_CACHE` | Ignored since Solo v0.95.0, where installs no longer download images by default. On v0.74.0 to v0.94.0, set to `true` to skip the image download during an npm global install. | -
+| `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image download during an install with the deprecated Homebrew formula. | enabled
+| `SOLO_CACHE_MANIFEST_URL` | Full URL of the image cache manifest to use instead of the one published with the running Solo release. For staging and testing. **Solo v0.92.0 and later.** | `https://github.com/hiero-ledger/solo/releases/download/v<solo-version>/cache-manifest.json`
+| `SOLO_CACHE_CDN_BASE_URL` | Base URL to download image archives and their hash files from. For staging and testing. **Solo v0.92.0 and later.** | `https://cdn.solo.hiero.org`
 | `CACHE_IMAGE_MAX_CONCURRENCY` | Max concurrent image cache pull/load operations | 12
 
-> **Note:** The cached component versions follow the same environment-variable
-> mechanism as [Pinning Component Versions](#pinning-component-versions) above -
-> the `*_VERSION` environment variables affect the images the cache pulls, but
-> the `--*-version` CLI flags do not.
+> **Note:** Only the image versions listed in the manifest are cached: the
+> default component versions of your Solo release. A version pinned with a
+> `*_VERSION` environment variable or a `--*-version` CLI flag is pulled by the
+> cluster from its registry instead.
