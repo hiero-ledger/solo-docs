@@ -6,31 +6,9 @@
     lang – syntax-highlight language (default "text")
 
   Usage: {{< solo-output ref="solo-consensus-node-start" lang="bash" >}}
+
+  The output is read through partials/solo-command-output.html, which the
+  Markdown copies of pages (partials/markdown-page.html) also use.
 */}}
-{{- $ref := .Get "ref" -}}
 {{- $lang := .Get "lang" | default "text" -}}
-
-{{- $npm := dict -}}
-{{- with resources.GetRemote "https://registry.npmjs.org/@hiero-ledger%2Fsolo" -}}
-  {{- $npm = .Content | transform.Unmarshal -}}
-{{- else -}}
-  {{- errorf "solo-output: could not fetch npm metadata for @hiero-ledger/solo" -}}
-{{- end -}}
-
-{{- $version := index $npm "dist-tags" "latest" -}}
-{{- $tag := printf "v%s" $version -}}
-
-{{- $url := printf "https://github.com/hiero-ledger/solo/releases/download/%s/solo-command-output.json" $tag -}}
-{{- $data := dict -}}
-{{- with resources.GetRemote $url -}}
-  {{- $data = .Content | transform.Unmarshal -}}
-{{- else -}}
-  {{- errorf "solo-output: could not fetch command-output artifact for tag %s" $tag -}}
-{{- end -}}
-
-{{- $encoded := index $data $ref -}}
-{{- if not $encoded -}}
-  {{- errorf "solo-output: ref %q not found in artifact for tag %s" $ref $tag -}}
-{{- end -}}
-
-{{- highlight ($encoded | base64Decode) $lang "" -}}
+{{- highlight (partial "solo-command-output.html" (.Get "ref")) $lang "" -}}

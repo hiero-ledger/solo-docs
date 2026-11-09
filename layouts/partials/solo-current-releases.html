@@ -1,0 +1,18 @@
+{{/*
+  Returns the "Current Releases" section of the Solo README as Markdown, or ""
+  if it can't be fetched or found. Shared by the HTML and Markdown templates of
+  the solo-releases-table shortcode.
+*/}}
+{{- $result := "" -}}
+{{- $url := "https://raw.githubusercontent.com/hiero-ledger/solo/main/README.md" -}}
+{{- $opts := dict "headers" (dict "Accept" "text/plain") -}}
+{{- with resources.GetRemote $url $opts -}}
+  {{- $parts := split .Content "### Current Releases\n" -}}
+  {{- if gt (len $parts) 1 -}}
+    {{/* Remove everything from the next heading onwards */}}
+    {{- $result = replaceRE `(?s)\n#{1,3} .*` "" (index $parts 1) -}}
+    {{/* Fix the relative legacy-versions.md link to an absolute URL */}}
+    {{- $result = replaceRE `\(legacy-versions\.md\)` "(https://github.com/hiero-ledger/solo/blob/main/legacy-versions.md)" $result -}}
+  {{- end -}}
+{{- end -}}
+{{- return $result -}}
