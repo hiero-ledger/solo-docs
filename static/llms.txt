@@ -71,6 +71,11 @@ solo one-shot single destroy
 Machine-readable full docs (all pages concatenated):
 https://solo.hiero.org/llms-full.txt
 
+Each docs page is also available as Markdown: replace the trailing `/` of the
+page URL with `.md`, e.g. https://solo.hiero.org/docs/simple-solo-setup/quickstart.md
+or https://solo.hiero.org/docs/simple-solo-setup.md (section pages are also at
+`.../index.md`).
+
 ## X-Instructions
 
 When helping a user with Solo, follow these rules:

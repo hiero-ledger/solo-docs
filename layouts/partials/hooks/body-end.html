@@ -409,7 +409,14 @@
       var issueLink = meta.querySelector('.td-page-meta__issue');
       if (!viewLink && !editLink && !issueLink) return;
 
-      var rawUrl = viewLink ? toRawUrl(viewLink.getAttribute('href')) : null;
+      // Prefer the site's own Markdown copy of the page (the "markdown" output
+      // format, advertised in <head>); fall back to the GitHub raw source.
+      var mdLink = document.querySelector('link[rel="alternate"][type="text/markdown"]');
+      var rawUrl = mdLink
+        ? mdLink.href
+        : viewLink
+          ? toRawUrl(viewLink.getAttribute('href'))
+          : null;
 
       var wrap = document.createElement('div');
       wrap.className = 'td-page-actions';
