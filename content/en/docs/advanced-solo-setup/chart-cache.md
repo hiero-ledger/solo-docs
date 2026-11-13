@@ -37,8 +37,9 @@ You populate and manage the cache with the `solo cache chart` commands.
 Cached chart tarballs are stored under your Solo home directory, in
 `~/.solo/cache/charts/` - one archive per chart and version, named
 `<chart-name>__<version>.tar`. This sits alongside the
-[image cache](/docs/advanced-solo-setup/image-cache/) (`~/.solo/cache/images/`);
-the two caches are managed independently.
+[image cache](/docs/advanced-solo-setup/image-cache/) (`~/.solo/cache/images/`).
+The two caches are managed independently, except that `solo cache image prune`
+deletes the whole `~/.solo/cache/` directory, including the chart cache.
 
 ## What gets cached
 
