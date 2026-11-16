@@ -23,13 +23,19 @@ so you don't need Node.js or npm. Every Solo release since v0.92.0 publishes it.
 
 ## Supported Platforms
 
-| Platform                     | Release binary     | Available since |
-| ---------------------------- | ------------------ | --------------- |
-| Linux x86_64 (amd64), glibc  | `solo-linux-x64`   | v0.92.0         |
-| Linux arm64 (aarch64), glibc | `solo-linux-arm64` | v0.94.0         |
+| Platform                     | Release binary          | Available since |
+| ---------------------------- | ----------------------- | --------------- |
+| Linux x86_64 (amd64), glibc  | `solo-linux-x64`        | v0.92.0         |
+| Linux arm64 (aarch64), glibc | `solo-linux-arm64`      | v0.94.0         |
+| Linux x86_64 (amd64), musl   | `solo-linux-x64-musl`   | v0.96.0         |
+| Linux arm64 (aarch64), musl  | `solo-linux-arm64-musl` | v0.96.0         |
 
-Alpine Linux and other musl-based distributions aren't supported yet. Install
-Solo with npm on those systems.
+On Alpine Linux and other musl-based distributions, the binary needs the C++
+runtime libraries. Install them before you run the script:
+
+```bash
+apk add libstdc++
+```
 
 The script needs `curl` or `wget`, and `sha256sum` or `shasum`.
 
@@ -44,7 +50,7 @@ curl -fsSL https://github.com/hiero-ledger/solo/releases/latest/download/install
 To pass [options](#options) to the script, add `-s --` after `sh`:
 
 ```bash
-curl -fsSL https://github.com/hiero-ledger/solo/releases/latest/download/install.sh | sh -s -- --skip-image-cache
+curl -fsSL https://github.com/hiero-ledger/solo/releases/latest/download/install.sh | sh -s -- --with-image-cache
 ```
 
 ### Download, inspect, then run
@@ -88,15 +94,19 @@ solo --version
 | -------------------- | --------------------------------------------------------- | ----------------------------------------------- |
 | `--version <tag>`    | Release to install, for example `v0.94.0`.                | `latest`                                        |
 | `--prefix <dir>`     | Directory to install the `solo` binary into.              | `~/.solo/bin`                                   |
-| `--skip-image-cache` | Don't download Solo's container images after installing.  | Images are downloaded                           |
+| `--with-image-cache` | Download Solo's container images after installing.        | Images aren't downloaded                        |
 | `--base-url <url>`   | Base URL to download releases from, for example a mirror. | `https://github.com/hiero-ledger/solo/releases` |
 | `-h`, `--help`       | Show the options and exit.                                |                                                 |
 
 You can also set the install directory with the `SOLO_INSTALL_DIR` environment
 variable. `--prefix` takes precedence over it.
 
-`--version` works for v0.92.0 and later, and for v0.94.0 and later on arm64.
-Earlier releases don't publish the standalone binary.
+`--version` works for v0.92.0 and later, for v0.94.0 and later on arm64, and for
+v0.96.0 and later on musl. Earlier releases don't publish the standalone binary.
+
+The script still accepts `--skip-image-cache`, which turned the image download
+off before v0.95.0. It now has no effect, because the script downloads images
+only with `--with-image-cache`.
 
 A mirror passed to `--base-url` must use the same layout as GitHub Releases:
 `<url>/latest/download/<file>` and `<url>/download/<tag>/<file>`.
@@ -117,11 +127,13 @@ A mirror passed to `--base-url` must use the same layout as GitHub Releases:
 7. Warns you if another `solo`, for example one installed with npm, comes first
    on your `PATH`. Remove it with `npm uninstall -g @hiero-ledger/solo` so the
    new binary runs.
-8. Runs `solo cache image pull` to download the container images Solo deploys,
-   which speeds up your first deployment. If this step fails, for example
-   because Docker isn't running, the install still succeeds; run
-   `solo cache image pull` later to retry. When you install with `sudo`, the
-   script skips this step, so run the command as your own user afterwards.
+8. With `--with-image-cache`, runs `solo cache image pull` to download the
+   container images Solo deploys, which speeds up your first deployment. If this
+   step fails, for example because Docker isn't running, the install still
+   succeeds; run `solo cache image pull` later to retry. When you install with
+   `sudo`, the script skips this step, so run the command as your own user
+   afterwards. Without the option, the script only reminds you to run
+   `solo cache image pull` before your first deployment.
 
 ## PATH Setup
 

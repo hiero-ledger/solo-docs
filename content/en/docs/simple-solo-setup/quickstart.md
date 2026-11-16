@@ -52,7 +52,7 @@ Install the latest Solo CLI globally using one of the following methods:
   curl -fsSL https://github.com/hiero-ledger/solo/releases/latest/download/install.sh | sh
   ```
 
-  > **Note:** The script installs a standalone Solo binary to `~/.solo/bin` and adds that directory to your `PATH`, so open a new terminal before you run `solo`. Alpine Linux isn't supported yet. For the options, what the script changes, and how to remove it, see [Linux Install Script](/docs/simple-solo-setup/linux-install-script).
+  > **Note:** The script installs a standalone Solo binary to `~/.solo/bin` and adds that directory to your `PATH`, so open a new terminal before you run `solo`. On Alpine Linux, run `apk add libstdc++` first. For the options, what the script changes, and how to remove it, see [Linux Install Script](/docs/simple-solo-setup/linux-install-script).
 
 - **Homebrew** (deprecated — macOS/Linux/WSL2 only):
 
