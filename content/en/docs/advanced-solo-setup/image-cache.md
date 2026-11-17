@@ -38,7 +38,8 @@ makes deployments faster. A deployment works without it.
   image cache was introduced in Solo v0.73.0, but the CDN-based cache described
   here requires v0.92.0.
 - **Network access to `github.com` and `cdn.solo.hiero.org`** - for the
-  manifest and the archives.
+  manifest and the archives. Solo v0.92.0 to v0.95.x download the archives from
+  `cdn.solo.hashgraph.io` instead.
 - **A Kind cluster** to load images into. Archives are loaded with
   `kind load image-archive`.
 
@@ -237,7 +238,8 @@ version you are running:
 https://github.com/hiero-ledger/solo/releases/download/v<solo-version>/cache-manifest.json
 ```
 
-Solo downloads archives and hash files from `https://cdn.solo.hiero.org`. To
+Solo downloads archives and hash files from `https://cdn.solo.hiero.org`
+(`https://cdn.solo.hashgraph.io` on Solo v0.92.0 to v0.95.x). To
 test a staging manifest or use a mirror of the archives, override either
 location:
 
@@ -264,9 +266,9 @@ pulls the images from their registries.
 
 ## Troubleshooting
 
-- **`[SOLO-4049] Cache has not been materialized yet`** - `load` and `list` need
-  a cache that `solo cache image pull` has populated. Run
-  `solo cache image pull` first, then retry the command.
+- **`[SOLO-4049] Cache has not been materialized yet`** - `load`, `list`,
+  `clear`, and `status` need a cache that `solo cache image pull` has
+  populated. Run `solo cache image pull` first, then retry the command.
 - **`pull` reports `skipped, no image cache manifest available`.** No manifest
   is published for your Solo version, or Solo could not download it.
   Deployments still work, and the cluster pulls images from their registries. If

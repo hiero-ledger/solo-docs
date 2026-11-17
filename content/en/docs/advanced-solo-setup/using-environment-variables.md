@@ -350,7 +350,7 @@ and the `solo cache image` commands.
 | `SOLO_NO_CACHE` | Ignored since Solo v0.95.0, where installs no longer download images by default. On v0.74.0 to v0.94.0, set to `true` to skip the image download during an npm global install. | -
 | `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image download during an install with the deprecated Homebrew formula. | enabled
 | `SOLO_CACHE_MANIFEST_URL` | Full URL of the image cache manifest to use instead of the one published with the running Solo release. For staging and testing. **Solo v0.92.0 and later.** | `https://github.com/hiero-ledger/solo/releases/download/v<solo-version>/cache-manifest.json`
-| `SOLO_CACHE_CDN_BASE_URL` | Base URL to download image archives and their hash files from. For staging and testing. **Solo v0.92.0 and later.** | `https://cdn.solo.hiero.org`
+| `SOLO_CACHE_CDN_BASE_URL` | Base URL to download image archives and their hash files from. For staging and testing. **Solo v0.92.0 and later.** | `https://cdn.solo.hiero.org` (`https://cdn.solo.hashgraph.io` on v0.92.0 to v0.95.x)
 | `CACHE_IMAGE_MAX_CONCURRENCY` | Max concurrent image cache pull/load operations | 12
 
 > **Note:** Only the image versions listed in the manifest are cached: the
