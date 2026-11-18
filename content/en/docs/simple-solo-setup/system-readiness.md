@@ -44,7 +44,7 @@ install yourself.
 | [Node.js](https://nodejs.org/en/download) | >= 22.0.0 (lts/jod) | **You install it** (required for npm); Homebrew installs it automatically (deprecated) |
 | Container runtime ([Docker](https://www.docker.com/products/docker-desktop) / [Podman](https://podman.io)) | See [Docker](#docker) below | **You install it** — Docker Desktop (macOS/Windows) or Docker Engine (Linux). Solo auto-installs Podman on Linux/macOS/WSL2 if Docker Engine is not found. Not supported on native Windows. |
 | [kubectl](https://kubernetes.io/docs/reference/kubectl/) | >= v1.32.2 | **Solo provisions it** at deploy time - reuses a compatible copy already on your system, or downloads one into `~/.solo/bin` |
-| [Helm](https://helm.sh) | v3.14.2 | **Solo provisions it** at deploy time |
+| [Helm](https://helm.sh) | v4.3.1 | **Solo provisions it** at deploy time |
 | [Kind](https://kind.sigs.k8s.io) | >= v0.29.0 | **Solo provisions it** at deploy time |
 | [Kubernetes](https://kubernetes.io) | >= v1.32.2 | Installed automatically by Kind |
 | [k9s](https://k9scli.io/topics/install/) (optional) | >= v0.27.4 | You install it |
