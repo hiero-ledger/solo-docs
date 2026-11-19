@@ -63,12 +63,11 @@ edge defaults, which themselves fall back to the stable defaults.
 You only need to set variables for the components you want to override. All
 others fall back to their compiled-in defaults.
 
-> **Image cache:** Because you pin versions with environment variables, Solo's
-> [image cache](/docs/advanced-solo-setup/image-cache) pulls the matching image
-> versions automatically. Pinning a version with a `--*-version` CLI flag (or in
-> `solo.config.yaml`) instead does **not** update the cache — it would pull the
-> default versions and cause a cache miss on first deploy. Use the environment
-> variables shown here to keep the cache aligned with the deployed versions.
+> **Image cache:** Solo's [image cache](/docs/advanced-solo-setup/image-cache)
+> holds only the default component versions of your Solo release. A component
+> pinned to another version is not cached; the cluster pulls its image from the
+> registry during the deploy, so the first deploy with a new version takes
+> longer.
 
 ---
 
