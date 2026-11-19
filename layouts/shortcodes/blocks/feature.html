@@ -6,6 +6,13 @@
   Docsy's original icon-class behavior when "svg" isn't set, so existing
   {{% blocks/feature icon="fa-..." %}} calls (e.g. "Developer Friendly")
   are unaffected.
+
+  Also resolves a site-internal "url" (a content path such as
+  "/docs/simple-solo-setup/quickstart", optionally with a #fragment)
+  through relref, since a shortcode can't be nested inside another
+  shortcode's parameter. A moved or renamed page then fails the build
+  instead of leaving a dead link. Absolute URLs (with a scheme) are
+  rendered as-is.
 */}}
 {{ $icon := .Get "icon" | default "fa-lightbulb" -}}
 <div class="col-lg-4 mb-5 mb-lg-0 text-center">
@@ -25,5 +32,8 @@
 <div class="mb-0">
 {{ .Inner }}
 </div>
-{{ with .Get "url" }}<p><a href="{{ . }}">{{ with $.Get "url_text" }}{{ . }}{{ else }}{{ T "ui_read_more" }}{{ end }}</a></p>{{ end }}
+{{ with .Get "url" -}}
+  {{- $href := . -}}
+  {{- if not (urls.Parse .).IsAbs }}{{ $href = relref $.Page . }}{{ end -}}
+  <p><a href="{{ $href }}">{{ with $.Get "url_text" }}{{ . }}{{ else }}{{ T "ui_read_more" }}{{ end }}</a></p>{{ end }}
 </div>

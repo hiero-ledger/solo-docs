@@ -24,16 +24,19 @@ description: Deploy and manage Hiero networks with ease
 
 <div class="features-section" >
 {{% blocks/section color="white" type="row" %}}
-  {{% blocks/feature svg="icons/one-shot-deployment.svg" title="One-Shot Deployment" %}} Deploy a complete Hiero network with consensus nodes,
+  {{% blocks/feature svg="icons/one-shot-deployment.svg" title="One-Shot Deployment" url="/docs/simple-solo-setup/quickstart" url_text="Read the Quickstart" %}} Deploy a complete Hiero network with consensus nodes,
   mirror node, explorer, and JSON RPC relay in a single command. Perfect for rapid development and testing.
   {{% /blocks/feature %}}
 
-{{% blocks/feature svg="icons/kubernetes-native.svg" title="Kubernetes Native" %}} Built on Kubernetes for scalability and reliability.
-Deploy locally with Kind or to any cloud environment. Multi-cluster support for production-like testing.
+{{% blocks/feature svg="icons/kubernetes-native.svg" title="Kubernetes Native" url="/docs/simple-solo-setup/system-readiness" url_text="Check system readiness" %}}
+Built on Kubernetes for scalability and reliability. Deploy locally with Kind or
+to any cloud environment. Multi-cluster support for production-like testing.
 {{% /blocks/feature %}}
 
-{{% blocks/feature icon="fa-terminal" title="Developer Friendly" %}} Intuitive CLI with interactive prompts,
-comprehensive documentation, and sensible defaults. Get a working network in minutes, not hours. {{% /blocks/feature %}}
+{{% blocks/feature icon="fa-terminal" title="Developer Friendly" url="/docs/advanced-solo-setup/cli" url_text="Browse the CLI reference" %}}
+Intuitive CLI with interactive prompts, comprehensive documentation, and
+sensible defaults. Get a working network in minutes, not hours.
+{{% /blocks/feature %}}
 
 {{% /blocks/section %}}
 
@@ -65,7 +68,7 @@ comprehensive documentation, and sensible defaults. Get a working network in min
         <div class="card-body p-3">
           <div class="d-flex align-items-center mb-4">
             <span class="card-icon-badge"><i class="fas fa-network-wired"></i></span>
-            <h3 class="mb-0 card-title">Network Management</h3>
+            <h3 class="mb-0 card-title"><a href="{{< relref "/docs/advanced-solo-setup/network-deployments" >}}">Network Management</a></h3>
           </div>
           <p class="text-muted card-description">
             Deploy and manage multiple consensus nodes with configurable network topology. Support for both local development and cloud deployments.
@@ -83,7 +86,7 @@ comprehensive documentation, and sensible defaults. Get a working network in min
         <div class="card-body p-3">
           <div class="d-flex align-items-center mb-4">
             <span class="card-icon-badge"><i class="fas fa-cogs"></i></span>
-            <h3 class="mb-0 card-title">Complete Ecosystem</h3>
+            <h3 class="mb-0 card-title"><a href="{{< relref "/docs/using-solo/accessing-solo-services" >}}">Complete Ecosystem</a></h3>
           </div>
           <p class="text-muted card-description">
             Deploy the full Hiero stack including mirror node for historical data, block explorer for network visibility, and JSON RPC relay for EVM compatibility.
@@ -101,7 +104,7 @@ comprehensive documentation, and sensible defaults. Get a working network in min
         <div class="card-body p-3">
           <div class="d-flex align-items-center mb-4">
             <span class="card-icon-badge"><i class="fas fa-shield-alt"></i></span>
-            <h3 class="mb-0 card-title">State Management</h3>
+            <h3 class="mb-0 card-title"><a href="{{< relref "/docs/advanced-solo-setup/customizing-solo-with-tasks#workflow-4-backup-and-restore-network-state" >}}">State Management</a></h3>
           </div>
           <p class="text-muted card-description">
             Advanced state management capabilities for backup, restore, and migration scenarios. Test complex upgrade paths and disaster recovery.
@@ -119,13 +122,13 @@ comprehensive documentation, and sensible defaults. Get a working network in min
         <div class="card-body p-3">
           <div class="d-flex align-items-center mb-4">
             <span class="card-icon-badge"><i class="fas fa-puzzle-piece"></i></span>
-            <h3 class="mb-0 card-title">Flexible Configuration</h3>
+            <h3 class="mb-0 card-title"><a href="{{< relref "/docs/advanced-solo-setup" >}}">Flexible Configuration</a></h3>
           </div>
           <p class="text-muted card-description">
-            Customize every aspect of your network with configuration profiles, custom resources, and environment variables for different testing scenarios.
+            Customize every aspect of your network with Helm values files, custom resources, and environment variables for different testing scenarios.
           </p>
           <ul class="capability-list">
-            <li>Resource profiles for different hardware</li>
+            <li>Custom Helm values files</li>
             <li>Custom application properties</li>
             <li>Network topology configuration</li>
           </ul>
