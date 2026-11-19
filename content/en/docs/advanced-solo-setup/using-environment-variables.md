@@ -9,6 +9,7 @@ categories: ["Reference", "Advanced"]
 tags: ["advanced", "operator", "configuration", "cli"]
 type: docs
 nav_next: /docs/advanced-solo-setup/network-deployments/
+icon: "fas fa-cog"
 ---
 
 ## Overview
@@ -67,6 +68,7 @@ Add-Content $PROFILE '$env:CONSENSUS_NODE_VERSION = "v0.73.0"'
 | `SOLO_DEV_OUTPUT` | Treat all commands as if the `--debug` flag were specified (`--debug` was formerly `--dev`) | `false`
 | `SOLO_CHAIN_ID` | Chain ID of the Solo network | `298`
 | `FORCE_PODMAN` | Force the use of Podman as the container engine when creating a new local cluster. Accepted values: `true`, `false` | `false`
+| `KUBECONFIG` | Kubeconfig file, or `:`-separated list of files, that Solo uses to reach your clusters. When Solo creates the local cluster with rootful Podman on Linux, kind writes the `kind-kind` cluster, context and user into the first listed file that exists, else into the last listed file | `~/.kube/config`
 
 ---
 
@@ -159,6 +161,7 @@ naming the variable. A `SOLO_*` variable that does not match a configuration pro
 | `SOLO_NODE_DEFAULT_STAKE_AMOUNT` | Default stake amount for a node | `500`
 | `GRPC_PORT` | Local port-forward for consensus node gRPC. Default is `35211` for Solo 0.63+ (changed from `50211` to avoid Windows ephemeral-port conflicts). See [Port availability](/docs/using-solo/endpoints#port-availability). | `35211`
 | `LOCAL_NODE_START_PORT` | Local node start port for the Solo network | `30212`
+| `NETWORK_NODE_LIFECYCLE_MODE` | Selects the root container image Solo uses to run each consensus node and how it starts and stops the node process. Accepted values: `solo-container` (the solo-containers image, controlled by its `/command/network-node-lifecycle` helper) and `consensus-node-image` (the hiero-consensus-node deterministic image `gcr.io/hedera-registry/consensus-node:<version>`, whose platform jars are baked in and which Solo controls with `s6-svc`). In `consensus-node-image` mode Solo sets `AUTO_START_CONSENSUS_SERVICE=false`, skips the *Fetch platform software* step, and installs `zip`, `unzip` and `curl` in the root container. Version upgrade (`solo consensus network upgrade`) is not supported in `consensus-node-image` mode yet | `solo-container`
 
 ---
 
@@ -170,7 +173,7 @@ naming the variable. A `SOLO_*` variable that does not match a configuration pro
 | `SOLO_OPERATOR_KEY` | Operator private key for the Solo network | `302e020100...`
 | `SOLO_OPERATOR_PUBLIC_KEY` | Operator public key for the Solo network | `302a300506...`
 | `FREEZE_ADMIN_ACCOUNT` | Freeze admin account ID for the Solo network | `0.0.58`
-| `GENESIS_KEY` | Genesis private key for the Solo network | `302e020100...`
+| `GENESIS_KEY` | ED25519 genesis private key for a new Solo network. At `solo consensus network deploy` Solo stores it in the `genesis-key` Kubernetes secret and sets the genesis public key of the consensus nodes to match. Later commands read the secret first, then this variable | `302e020100...`
 
 > **Note:** Full key values are omitted above for readability. Refer to the
 > [source defaults](https://github.com/hiero-ledger/solo) for complete key strings.
@@ -211,6 +214,8 @@ naming the variable. A `SOLO_*` variable that does not match a configuration pro
 | `STATE_DOWNLOAD_STABLE_MAX_ATTEMPTS` | Maximum number of attempts to check whether a consensus node's saved state has stopped changing on disk, before `solo consensus state download` archives it and before `solo consensus network freeze` stops the nodes | `180`
 | `STATE_DOWNLOAD_STABLE_DELAY` | Interval between saved state stability checks, in milliseconds | `2000`
 | `STATE_DOWNLOAD_STABLE_POLLS_REQUIRED` | Number of consecutive checks that must report an unchanged saved state before it is treated as stable | `3`
+| `PVC_BOUND_MAX_ATTEMPTS` | Maximum number of attempts to check if consensus node persistent volume claims are bound | `900`
+| `PVC_BOUND_DELAY` | Interval between persistent volume claim bind checks, in milliseconds | `1000`
 
 ---
 
@@ -250,6 +255,7 @@ naming the variable. A `SOLO_*` variable that does not match a configuration pro
 | `MIRROR_NODE_IMPORTER_DETECT_DELAY` | Interval between Mirror Node importer pod detection attempts, in milliseconds | `2000`
 | `MIRROR_NODE_CHART_UPGRADE_MAX_ATTEMPTS` | Maximum number of attempts to install or upgrade the Mirror Node Helm chart before failing. Retries ride out transient Kubernetes API server outages | `3`
 | `MIRROR_NODE_CHART_UPGRADE_RETRY_DELAY_SECS` | Delay between Mirror Node Helm chart install/upgrade attempts, in seconds | `15`
+| `MIRROR_EXTERNAL_DATABASE_CLIENT_IMAGE` | Image of the short-lived `psql` pod that `mirror node add` / `mirror node upgrade` with `--use-external-database` starts to grant the `readonly` role to `mirror_rest` on the external database. The image must provide `psql` and `sleep`. Override it for private or air-gapped registries | `docker.io/bitnamilegacy/postgresql-repmgr:17.6.0-debian-12-r2`
 
 ---
 
@@ -332,9 +338,36 @@ For full usage, examples, version-format rules, and troubleshooting, see
 | `EXPLORER_CHART_URL` | Helm chart repository URL for the Explorer | `oci://ghcr.io/hiero-ledger/hiero-mirror-node-explorer/hiero-explorer-chart`
 | `INGRESS_CONTROLLER_CHART_URL` | Helm chart repository URL for the ingress controller | `https://haproxy-ingress.github.io/charts`
 | `PROMETHEUS_OPERATOR_CRDS_CHART_URL` | Helm chart repository URL for the Prometheus Operator CRDs | `https://prometheus-community.github.io/helm-charts`
-| `GRAFANA_ALLOY_CHART_URL` | Helm chart repository URL for Grafana Alloy | `https://grafana.github.io/helm-charts`
-| `LOKI_CHART_URL` | Helm chart repository URL for Loki | `https://grafana.github.io/helm-charts`
+| `GRAFANA_CHART_URL` | Helm chart repository URL for Grafana Alloy and Loki | `https://grafana.github.io/helm-charts`
 | `NETWORK_LOAD_GENERATOR_CHART_URL` | Helm chart repository URL for the Network Load Generator | `oci://swirldslabs.jfrog.io/load-generator-helm-release-local`
+
+---
+
+## Local Helm Chart Directories
+
+Chart owners can test an unpublished chart by pointing Solo at a local chart
+directory. Only the chart templates are local: every container image the chart
+references must already be pullable by the cluster (published to a registry or
+loaded with `kind load docker-image`). These variables are the equivalent of the
+`--block-node-chart-dir`, `--explorer-chart-dir`, `--mirror-node-chart-dir` and
+`--relay-chart-dir` flags, and the flag takes precedence when both are set.
+
+| Environment Variable | Description | Default Value
+| --- | --- | ---
+| `SOLO_BLOCK_NODE_CHART_DIR` | Directory that contains the block node chart (`block-node-server`), e.g. `/path/to/hiero-block-node/charts` | unset (published chart)
+| `SOLO_EXPLORER_CHART_DIR` | The explorer chart directory itself (the one holding `Chart.yaml`), e.g. `/path/to/hiero-mirror-node-explorer/_frontend/chart` | unset (published chart)
+| `SOLO_MIRROR_NODE_CHART_DIR` | Directory that contains the mirror node chart (`hedera-mirror`), e.g. `/path/to/hiero-mirror-node/charts` | unset (published chart)
+| `SOLO_RELAY_CHART_DIR` | Directory that contains the JSON-RPC relay chart (`hedera-json-rpc`), e.g. `/path/to/hiero-json-rpc-relay/charts` | unset (published chart)
+
+> **Note:** The explorer variable takes the chart directory itself, while the
+> other three take the directory that contains the chart. Use absolute paths:
+> Solo does not expand `~` inside the value.
+
+For example, to deploy a network with a local mirror node chart:
+
+```bash
+SOLO_MIRROR_NODE_CHART_DIR=/path/to/hiero-mirror-node/charts solo one-shot single deploy
+```
 
 ---
 
@@ -386,20 +419,23 @@ to pin multiple components at once.
 
 ## Image Cache
 
-Solo caches the container images it deploys as local archives to speed up
-repeat deployments. The cache is enabled by default; these variables disable it
-per context. See [Solo Image Cache](/docs/advanced-solo-setup/image-cache) for
-the full feature and the `solo cache image` commands.
+Solo downloads verified archives of the container images it deploys from the
+Solo CDN, using the image cache manifest published with each Solo release. See
+[Solo Image Cache](/docs/advanced-solo-setup/image-cache) for the full feature
+and the `solo cache image` commands.
 
 | Environment Variable | Description | Default
 | --- | --- | ---
 | `SOLO_FF_ENABLE_IMAGE_CACHE` | Set to `false` or `0` to disable the image cache during `solo one-shot` deploys. See [Feature Flags](#feature-flags). **Requires Solo v0.94.0 or later**; before that, use `ENABLE_IMAGE_CACHE`. | enabled
 | `ENABLE_IMAGE_CACHE` | The older name for the flag above. Still honoured, but `SOLO_FF_ENABLE_IMAGE_CACHE` takes precedence when both are set. **Requires Solo v0.78.0 or later** (earlier releases have an inverted-logic bug in this flag). From v0.94.0 it also accepts `FALSE` and `0`, and rejects `no` and `off` instead of ignoring them. | enabled
-| `SOLO_NO_CACHE` | Set to `true` to skip the image pull during an npm global install. | enabled
-| `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image pull during a Homebrew install. | enabled
+| `SOLO_WITH_IMAGE_CACHE` | Set to `true` to download the images during an npm global install. **Solo v0.95.0 and later**; earlier releases downloaded them by default. | disabled
+| `SOLO_NO_CACHE` | Ignored since Solo v0.95.0, where installs no longer download images by default. On v0.74.0 to v0.94.0, set to `true` to skip the image download during an npm global install. | -
+| `HOMEBREW_NO_SOLO_CACHE` | Set to any value to skip the image download during an install with the deprecated Homebrew formula. | enabled
+| `SOLO_CACHE_MANIFEST_URL` | Full URL of the image cache manifest to use instead of the one published with the running Solo release. For staging and testing. **Solo v0.92.0 and later.** | `https://github.com/hiero-ledger/solo/releases/download/v<solo-version>/cache-manifest.json`
+| `SOLO_CACHE_CDN_BASE_URL` | Base URL to download image archives and their hash files from. For staging and testing. **Solo v0.92.0 and later.** | `https://cdn.solo.hiero.org` (`https://cdn.solo.hashgraph.io` on v0.92.0 to v0.95.x)
 | `CACHE_IMAGE_MAX_CONCURRENCY` | Max concurrent image cache pull/load operations | 12
 
-> **Note:** The cached component versions follow the same environment-variable
-> mechanism as [Pinning Component Versions](#pinning-component-versions) above -
-> the `*_VERSION` environment variables affect the images the cache pulls, but
-> the `--*-version` CLI flags do not.
+> **Note:** Only the image versions listed in the manifest are cached: the
+> default component versions of your Solo release. A version pinned with a
+> `*_VERSION` environment variable or a `--*-version` CLI flag is pulled by the
+> cluster from its registry instead.

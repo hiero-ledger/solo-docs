@@ -8,6 +8,7 @@ description: >
 categories: ["Getting Started", "Deployment"]
 tags: ["beginner", "one-shot", "deployment", "cli"]
 type: docs
+icon: "fas fa-rocket"
 ---
 
 ## Overview
@@ -24,13 +25,13 @@ Before you begin, ensure you have completed the following:
 - System Readiness:
   - Prepare your local environment (Docker, Kind, Kubernetes, and related tooling) by following the **[System Readiness](/docs/simple-solo-setup/system-readiness)** guide.
 
-> **macOS prerequisite:** Docker Desktop must be installed and open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
+> <i class="fa-brands fa-apple" aria-hidden="true"></i> **macOS prerequisite:** Docker Desktop must be installed and open before running `solo one-shot single deploy`. The Docker daemon is not started automatically on macOS, so confirm Docker Desktop is running from your menu bar before you begin.
 
-> **Apple Silicon:** If `solo one-shot single deploy` fails with a **"mounts denied"** error, see [Troubleshooting Installation](/docs/simple-solo-setup/system-readiness#troubleshooting-installation).
+> <i class="fa-solid fa-microchip" aria-hidden="true"></i> **Apple Silicon:** If `solo one-shot single deploy` fails with a **"mounts denied"** error, see [Troubleshooting Installation](/docs/simple-solo-setup/system-readiness#troubleshooting-installation).
 
-> **Windows (PowerShell):** Complete the [System Readiness](/docs/simple-solo-setup/system-readiness) **Windows** tab first, then run the commands on this page from a PowerShell terminal. The `solo` and `kubectl` commands are identical in PowerShell; only shell-specific commands (pipes, port checks, and `~/.solo` paths) differ, and those show a **PowerShell** tab.
+> <i class="fa-brands fa-windows" aria-hidden="true"></i> **Windows (PowerShell):** Complete the [System Readiness](/docs/simple-solo-setup/system-readiness) **Windows** tab first, then run the commands on this page from a PowerShell terminal. The `solo` and `kubectl` commands are identical in PowerShell; only shell-specific commands (pipes, port checks, and `~/.solo` paths) differ, and those show a **PowerShell** tab.
 
-> **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
+> <i class="fa-solid fa-circle-info" aria-hidden="true"></i> **Note:** Quickstart only covers what you need to run `solo one-shot single deploy` and verify that the network is working.
 > Detailed version requirements, OS-specific notes, and optional tools are documented in the [System Readiness](/docs/simple-solo-setup/system-readiness).
 
 ## Step 1: Install Solo CLI
@@ -45,13 +46,21 @@ Install the latest Solo CLI globally using one of the following methods:
 
   > **Note:** npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed — Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). Solo provisions kubectl, Helm, and Kind automatically at deploy time.
 
+- **Linux install script** (Linux x64 and arm64, no Node.js needed):
+
+  ```bash
+  curl -fsSL https://github.com/hiero-ledger/solo/releases/latest/download/install.sh | sh
+  ```
+
+  > **Note:** The script installs a standalone Solo binary to `~/.solo/bin` and adds that directory to your `PATH`, so open a new terminal before you run `solo`. On Alpine Linux, run `apk add libstdc++` first. For the options, what the script changes, and how to remove it, see [Linux Install Script](/docs/simple-solo-setup/linux-install-script).
+
 - **Homebrew** (deprecated — macOS/Linux/WSL2 only):
 
   ```bash
   brew install hiero-ledger/tools/solo
   ```
 
-  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31.
+  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31. If you have installed solo previously by using Homebrew you should uninstall it to make sure that any new version that is installed by npm is used. Just do `brew uninstall solo`.
 
 ### Verify the installation
 

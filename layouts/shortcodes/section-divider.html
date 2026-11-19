@@ -1,0 +1,18 @@
+{{/*
+  Section divider, ported from hiero-website's Divider component: the
+  brand mark plus a thin hairline spanning the rest of the width, used to
+  break up long stretches of sand background between unrelated sections
+  instead of a hard color-block edge.
+
+  Usage: {{< section-divider >}}
+*/}}
+<div class="section-divider">
+  <div class="container section-divider-inner">
+    <span class="section-divider-mark">
+      {{ with resources.Get "icons/logo.svg" -}}
+        {{ (. | minify).Content | safeHTML -}}
+      {{ end -}}
+    </span>
+    <span class="section-divider-line" aria-hidden="true"></span>
+  </div>
+</div>

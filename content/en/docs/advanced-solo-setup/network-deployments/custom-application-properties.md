@@ -7,6 +7,7 @@ categories: ["Advanced", "Deployment"]
 tags: ["advanced", "operator", "configuration", "application-properties"]
 weight: 4
 type: docs
+icon: "fas fa-wrench"
 ---
 
 ## Overview

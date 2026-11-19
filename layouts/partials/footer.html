@@ -1,10 +1,93 @@
-{{ $links := .Site.Params.links }}
+{{/*
+  Footer matching hiero.org's: dark charcoal panel, pink top accent bar,
+  brand column (logo + tagline + social icons) plus a 3-column link nav
+  (Docs / Community / Resources), copyright line at the bottom. Colors
+  (--color-charcoal, --color-sand) and layout live in _styles_project.scss
+  under "FOOTER STYLES" — see hiero.org's own CSS custom properties
+  (--color-charcoal / --color-sand / --color-red*) for where those values
+  came from; our --color-primary* already match hiero's --color-red*
+  exactly, so only the two new tokens were needed.
+*/}}
+{{ $exampleHubURL := "https://github.com/hiero-ledger/solo/tree/main/examples" }}
+{{ $releaseNotesURL := "https://github.com/hiero-ledger/solo/releases" }}
+{{ $soloRepoURL := "https://github.com/hiero-ledger/solo" }}
+{{ $soloDocsRepoURL := "https://github.com/hiero-ledger/solo-docs" }}
+{{ $discordURL := "https://discord.com/channels/905194001349627914/1364886813017247775" }}
+{{ $npmURL := "https://www.npmjs.com/package/@hiero-ledger/solo" }}
+
 <footer class="td-footer">
-  <div class="container">
-    <div class="td-footer__content">
-      <p class="td-footer__copyright">
-        Copyright © Solo a Series of LF Projects, LLC | For web site terms of use, trademark policy and other project policies please see <a href="https://lfprojects.org/"  target="_blank" rel="noopener">https://lfprojects.org/</a>.
-      </p>
+  <div class="td-footer__accent-bar" aria-hidden="true"></div>
+  <div class="td-footer__main">
+    <div class="td-footer__wash" aria-hidden="true"></div>
+    <div class="td-footer__bottom-hairline" aria-hidden="true"></div>
+    <div class="container td-footer__grid">
+      <div class="td-footer__brand">
+        <a class="td-footer__brand-link" href="{{ .Site.Home.RelPermalink }}" aria-label="Solo home">
+          <span class="td-footer__brand-logo">
+            {{ with resources.Get "icons/logo.svg" -}}
+              {{ (. | minify).Content | safeHTML -}}
+            {{ end -}}
+          </span>
+          <span class="td-footer__brand-name">Solo</span>
+        </a>
+        <p class="td-footer__tagline">
+          An opinionated CLI tool to deploy and manage standalone Hiero Ledger test networks locally or in the cloud.
+        </p>
+        <ul class="td-footer__social">
+          <li>
+            <a href="{{ $soloRepoURL }}" target="_blank" rel="noopener" aria-label="GitHub">
+              <i class="fab fa-github" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="{{ $discordURL }}" target="_blank" rel="noopener" aria-label="Discord">
+              <i class="fab fa-discord" aria-hidden="true"></i>
+            </a>
+          </li>
+          <li>
+            <a href="{{ $npmURL }}" target="_blank" rel="noopener" aria-label="npm">
+              <i class="fab fa-npm" aria-hidden="true"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <nav class="td-footer__nav" aria-label="Footer">
+        <div class="td-footer__nav-group">
+          <h2 class="td-footer__nav-title"><span aria-hidden="true"></span>Docs</h2>
+          <ul>
+            <li><a href="{{ "docs/simple-solo-setup/quickstart/" | relURL }}">Quickstart</a></li>
+            <li><a href="{{ "docs/" | relURL }}">Documentation</a></li>
+            <li><a href="{{ $releaseNotesURL }}" target="_blank" rel="noopener">Release Notes</a></li>
+          </ul>
+        </div>
+        <div class="td-footer__nav-group">
+          <h2 class="td-footer__nav-title"><span aria-hidden="true"></span>Community</h2>
+          <ul>
+            <li><a href="{{ "docs/community-contributions/" | relURL }}">Community Contributions</a></li>
+            <li><a href="{{ "docs/faqs/" | relURL }}">FAQs</a></li>
+            <li><a href="{{ $discordURL }}" target="_blank" rel="noopener">Discord</a></li>
+          </ul>
+        </div>
+        <div class="td-footer__nav-group">
+          <h2 class="td-footer__nav-title"><span aria-hidden="true"></span>Resources</h2>
+          <ul>
+            <li><a href="{{ $soloRepoURL }}" target="_blank" rel="noopener">Solo Repository</a></li>
+            <li><a href="{{ $soloDocsRepoURL }}" target="_blank" rel="noopener">Docs Repository</a></li>
+            <li><a href="{{ $exampleHubURL }}" target="_blank" rel="noopener">Examples Hub</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <div class="td-footer__bottom">
+    <div class="container td-footer__bottom-row">
+      <div class="td-footer__copyright">
+        <p>Copyright © Solo a Series of LF Projects, LLC</p>
+        <p>For web site terms of use, trademark policy and other project policies, see <a href="https://lfprojects.org/" target="_blank" rel="noopener">LF Projects</a>.</p>
+      </div>
+      {{ partial "back-to-top.html" . }}
     </div>
   </div>
 </footer>

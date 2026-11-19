@@ -1,0 +1,16 @@
+{{/*
+Override of Docsy's taxonomy_terms_clouds partial.
+
+Originally a no-op (see #162 — the full sitewide Categories/Tag Cloud
+widget was overwhelming). Repurposed here to show the *current page's own*
+categories/tags instead, moved out of the main content flow (where it sat
+between the description and the body) into this right-hand sidebar slot,
+which otherwise sits empty on pages with a short or absent table of
+contents. Reuses Docsy's own taxonomy_terms_article_wrapper partial — same
+output as before, just relocated.
+*/}}
+{{ with (partial "taxonomy_terms_article_wrapper.html" .) }}
+<div class="td-sidebar-toc-taxonomy">
+  {{ . }}
+</div>
+{{ end -}}

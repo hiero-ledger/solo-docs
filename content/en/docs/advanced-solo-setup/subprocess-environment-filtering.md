@@ -8,6 +8,7 @@ description: >
 categories: ["Reference", "Advanced"]
 tags: ["advanced", "operator", "configuration", "security"]
 type: docs
+icon: "fas fa-filter"
 ---
 
 ## Overview

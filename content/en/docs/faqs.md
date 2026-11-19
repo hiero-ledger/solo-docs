@@ -8,6 +8,9 @@ description: >
 categories: ["Troubleshooting"]
 tags: ["beginner", "troubleshooting", "deployment", "operations"]
 type: docs
+icon: "fas fa-question-circle"
+build:
+  list: never
 ---
 
 ## One-command deployment options and variants

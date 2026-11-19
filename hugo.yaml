@@ -100,6 +100,17 @@ outputFormats:
     isPlainText: true
     mediaType: text/plain
     root: true
+  # Markdown copy of each docs page for AI agents (layouts/all.markdown.md),
+  # per the llms.txt proposal: the page URL with .md in place of the trailing
+  # slash, e.g. /docs/simple-solo-setup/quickstart.md. Section pages render at
+  # .../index.md and are also published at e.g. /docs/simple-solo-setup.md.
+  # Advertised via <link rel="alternate" type="text/markdown"> in the page head.
+  markdown:
+    baseName: index
+    isPlainText: true
+    mediaType: text/markdown
+    rel: alternate
+    ugly: true
 
 # Configure how URLs look like per section.
 permalinks:
@@ -139,11 +150,17 @@ markup:
 # Comment out if you don't want the "print entire section" link enabled.
 outputs:
   home: [HTML, print, RSS, redirects, llmsfull]
-  section: [HTML, print, RSS]
+  section: [HTML, print, RSS, markdown]
+  page: [HTML, markdown]
 
 params:
   taxonomy:
     # set taxonomyCloud = [] to hide taxonomy clouds
+    # NOTE: Docsy's taxonomy_terms_clouds partial treats an empty list as
+    # "unset" (Hugo templates treat [] as falsy), which falls back to
+    # rendering ALL site taxonomies instead of hiding them. The clouds are
+    # disabled per #162 via a no-op partial override in layouts/partials/
+    # instead, so this setting is currently inert.
     taxonomyCloud: [categories, tags]
 
     # If used, must have same length as taxonomyCloud
