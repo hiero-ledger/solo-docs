@@ -40,7 +40,7 @@ install yourself.
 
 | Tool | Required version | How it is installed |
 | --- | --- | --- |
-| [Solo](https://github.com/hiero-ledger/solo) | latest | `npm install -g @hiero-ledger/solo@latest` (recommended); `brew install hiero-ledger/tools/solo` (deprecated - Homebrew support ends August 31, 2026) |
+| [Solo](https://github.com/hiero-ledger/solo) | latest | `npm install -g @hiero-ledger/solo@latest` (recommended); on Linux, the [install script](/docs/simple-solo-setup/linux-install-script) (no Node.js needed); `brew install hiero-ledger/tools/solo` (deprecated - Homebrew support ends August 31, 2026) |
 | [Node.js](https://nodejs.org/en/download) | >= 22.0.0 (lts/jod) | **You install it** (required for npm); Homebrew installs it automatically (deprecated) |
 | Container runtime ([Docker](https://www.docker.com/products/docker-desktop) / [Podman](https://podman.io)) | See [Docker](#docker) below | **You install it** — Docker Desktop (macOS/Windows) or Docker Engine (Linux). Solo auto-installs Podman on Linux/macOS/WSL2 if Docker Engine is not found. Not supported on native Windows. |
 | [kubectl](https://kubernetes.io/docs/reference/kubectl/) | >= v1.32.2 | **Solo provisions it** at deploy time - reuses a compatible copy already on your system, or downloads one into `~/.solo/bin` |
