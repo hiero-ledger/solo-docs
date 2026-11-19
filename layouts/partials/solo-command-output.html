@@ -1,0 +1,33 @@
+{{/*
+  Returns the Solo CLI command output stored under the given ref in the latest
+  release's solo-command-output.json. Shared by the HTML and Markdown
+  templates of the solo-output shortcode.
+
+  Usage: {{ partial "solo-command-output.html" "solo-consensus-node-start" }}
+*/}}
+{{- $ref := . -}}
+
+{{- $npm := dict -}}
+{{- with resources.GetRemote "https://registry.npmjs.org/@hiero-ledger%2Fsolo" -}}
+  {{- $npm = .Content | transform.Unmarshal -}}
+{{- else -}}
+  {{- errorf "solo-output: could not fetch npm metadata for @hiero-ledger/solo" -}}
+{{- end -}}
+
+{{- $version := index $npm "dist-tags" "latest" -}}
+{{- $tag := printf "v%s" $version -}}
+
+{{- $url := printf "https://github.com/hiero-ledger/solo/releases/download/%s/solo-command-output.json" $tag -}}
+{{- $data := dict -}}
+{{- with resources.GetRemote $url -}}
+  {{- $data = .Content | transform.Unmarshal -}}
+{{- else -}}
+  {{- errorf "solo-output: could not fetch command-output artifact for tag %s" $tag -}}
+{{- end -}}
+
+{{- $encoded := index $data $ref -}}
+{{- if not $encoded -}}
+  {{- errorf "solo-output: ref %q not found in artifact for tag %s" $ref $tag -}}
+{{- end -}}
+
+{{- return ($encoded | base64Decode) -}}

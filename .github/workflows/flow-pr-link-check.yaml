@@ -69,9 +69,22 @@ jobs:
         run: go install github.com/wjdp/htmltest@latest
 
       - name: Build Hugo site
+        id: build
         run: npm run _hugo -- --minify --baseURL "/"
         env:
           HUGO_ENV: production
 
       - name: Check links
         run: htmltest --skip-external
+
+      # The Markdown copies of pages (*.md, llms-full.txt) convert shortcodes in
+      # layouts/partials/markdown-page.html. A shortcode it doesn't handle would
+      # appear raw in that output while the HTML pages still look fine.
+      - name: Check Markdown output for unconverted shortcodes
+        # Run even when the link check fails, as long as the site built.
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          if grep -rlE '\{\{[<%]' public --include='*.md' --include='llms-full.txt'; then
+            echo "::error::Unconverted Hugo shortcodes in the Markdown output (files listed above). Handle them in layouts/partials/markdown-page.html."
+            exit 1
+          fi

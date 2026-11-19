@@ -109,7 +109,7 @@ The generated file is ready to use with `solo one-shot falcon deploy --values-fi
 
 Create a YAML file to control every component of your Solo deployment. The file can have any name -`falcon-values.yaml` is used throughout this guide as a convention.
 
-> **Note:** Keys within each section must be the full CLI flag name including the `--` prefix - for example, `--release-tag`, not `release-tag` or `-r`. Any section you omit
+> **Note:** Keys within each section must be the full CLI flag name including the `--` prefix - for example, `--consensus-node-version`, not `consensus-node-version` or `-r`. Any section you omit
 > from the file is skipped, and Solo uses the built-in defaults for that component.
 
 ### Example: Single-Node Falcon Deployment
@@ -119,11 +119,11 @@ explorer, and relay enabled:
 
 ```yaml
 network:
-  --release-tag: "v0.71.0"
+  --consensus-node-version: "v0.71.0"
   --pvcs: false
 
 setup:
-  --release-tag: "v0.71.0"
+  --consensus-node-version: "v0.71.0"
 
 consensusNode:
   --force-port-forward: true
@@ -202,11 +202,11 @@ provide matching per-node settings where required.
 
   ```yaml
   network:
-    --release-tag: "v0.71.0"
+    --consensus-node-version: "v0.71.0"
     --pvcs: true
 
   setup:
-    --release-tag: "v0.71.0"
+    --consensus-node-version: "v0.71.0"
 
   consensusNode:
     --force-port-forward: true
@@ -292,16 +292,16 @@ Example:
 
 ```yaml
 network:
-  --release-tag: "v0.72.0"
+  --consensus-node-version: "v0.72.0"
 
 setup:
-  --release-tag: "v0.72.0"
+  --consensus-node-version: "v0.72.0"
 
 consensusNode:
   --force-port-forward: true
 
 blockNode:
-  --release-tag: "v0.29.0"
+  --block-node-version: "v0.29.0"
   --enable-ingress: false
 
 mirrorNode:

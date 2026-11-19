@@ -98,6 +98,9 @@ You are likely hitting an installation or upgrade problem if:
   npm package name (`@hiero-ledger/solo` and `@hashgraph/solo` are mirrors that
   share the `solo` binary). See
   [Resolving an `EEXIST` package-name conflict](/docs/simple-solo-setup/upgrading-solo#resolving-an-eexist-package-name-conflict).
+- Topic messages fail with `FAIL_INVALID` after `solo consensus network upgrade`,
+  while other transactions still succeed. See
+  [Topic messages fail with `FAIL_INVALID` after a network upgrade](#topic-messages-fail-with-fail_invalid-after-a-network-upgrade).
 
 ### Quick Checks
 
@@ -318,6 +321,80 @@ is only registered on `one-shot falcon deploy`. If your existing workflow uses
 `solo one-shot single deploy`, switch it to `solo one-shot falcon deploy`
 (same underlying deploy pipeline, `single` is just a preset without the
 values-file escape hatch) to apply this workaround.
+
+### Topic messages fail with `FAIL_INVALID` after a network upgrade
+
+A consensus node keeps its fee schedule in system file `0.0.113`. The file is
+created once and is only replaced when an upgrade supplies a new copy, which
+`solo consensus network upgrade` does not do by default. Consensus node
+**v0.72.x** creates the file without the per-byte entry for topic messages, and
+**v0.73.0 and later** require that entry. A network whose fee file was created
+by v0.72.x therefore rejects every topic message after it is upgraded to v0.73.0
+or later.
+
+You are affected if your network ran v0.72.x at some point, either deployed on
+it or upgraded through it, and was later upgraded to v0.73.0 or later. Networks
+deployed on v0.73.0 or later, and networks upgraded directly from v0.71.x or
+earlier, get a complete fee file and are not affected.
+
+#### Symptoms
+
+- `TopicMessageSubmitTransaction` fails at precheck with `FAIL_INVALID` on every
+  node. Other transactions, including `TopicCreateTransaction` and transfers,
+  still succeed.
+- The consensus node log contains:
+
+  ```bash
+  kubectl exec network-node1-0 -n "${SOLO_NAMESPACE}" -c root-container -- \
+    grep -h "Extra not defined" /opt/hgcapp/services-hedera/HapiApp2.0/output/hgcaa.log
+  ```
+
+  ```text
+  ERROR IngestWorkflowImpl - Possibly CATASTROPHIC failure while running the ingest workflow
+  java.lang.IllegalArgumentException: Extra not defined CONSENSUS_SUBMIT_MESSAGE_WITHOUT_CUSTOM_FEE_BYTES
+  ```
+
+#### Fix: upgrade with the target version's fee schedule
+
+Upgrade the network to a newer consensus node version and pass that version's
+`simpleFeesSchedules.json` with `--simple-fees-schedules-file`. Solo applies the
+file on every node as part of the upgrade.
+
+1. Download the fee schedule for the version you are upgrading to. It must come
+   from that exact release tag:
+
+   ```bash
+   export TARGET_VERSION=v0.76.4
+   curl -fsSL -o simpleFeesSchedules.json \
+     "https://raw.githubusercontent.com/hiero-ledger/hiero-consensus-node/${TARGET_VERSION}/hedera-node/configuration/mainnet/upgrade/simpleFeesSchedules.json"
+   ```
+
+2. Upgrade with the file:
+
+   ```bash
+   solo consensus network upgrade --deployment "${SOLO_DEPLOYMENT}" \
+     --upgrade-version "${TARGET_VERSION}" \
+     --simple-fees-schedules-file ./simpleFeesSchedules.json
+   ```
+
+3. Confirm every node applied the file:
+
+   ```bash
+   kubectl exec network-node1-0 -n "${SOLO_NAMESPACE}" -c root-container -- \
+     grep -h "Dispatching synthetic update" /opt/hgcapp/services-hedera/HapiApp2.0/output/hgcaa.log
+   ```
+
+   The output should include a line ending in
+   `data/config/simpleFeesSchedules.json`. The node applies the file on the
+   first transaction after the restart, so wait a few seconds if the line is not
+   there yet.
+
+> **Note:** The file is applied only during an upgrade to a newer consensus node
+> version. Re-running an upgrade to the version the network already runs does
+> not apply it. The flag requires Solo **v0.XX.0** or later and a target version
+> of v0.68.0 or later, and it cannot be combined with `--upgrade-zip-file`. See
+> [Apply updated fee schedules and throttles](/docs/simple-solo-setup/upgrade-your-network#apply-updated-fee-schedules-and-throttles)
+> for details.
 
 ### Resource constraint errors (CPU / RAM / Disk)
 
