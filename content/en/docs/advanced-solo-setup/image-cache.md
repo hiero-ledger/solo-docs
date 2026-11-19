@@ -219,15 +219,19 @@ succeeds, and you can run `solo cache image pull` later.
 ## Disabling the cache in one-shot deployments
 
 `solo one-shot` deploys pull and load the image cache by default. Set
-`ENABLE_IMAGE_CACHE=false` to skip the whole **Cache container images** phase.
-The cluster then pulls every image from its registry.
+`SOLO_FF_ENABLE_IMAGE_CACHE=false` (or `0`) to skip the whole
+**Cache container images** phase. The cluster then pulls every image from its
+registry. See
+[Feature Flags](/docs/advanced-solo-setup/using-environment-variables#feature-flags).
 
 ```bash
-ENABLE_IMAGE_CACHE=false solo one-shot single deploy
+SOLO_FF_ENABLE_IMAGE_CACHE=false solo one-shot single deploy
 ```
 
-This requires Solo v0.78.0 or later. Earlier releases had an inverted-logic bug
-in this variable.
+`SOLO_FF_ENABLE_IMAGE_CACHE` requires Solo v0.94.0 or later. The older name,
+`ENABLE_IMAGE_CACHE=false`, is still honoured and requires Solo v0.78.0 or
+later (earlier releases had an inverted-logic bug in this variable). From
+v0.94.0 it also accepts `FALSE` and `0`.
 
 ## Overriding the manifest and CDN locations
 
