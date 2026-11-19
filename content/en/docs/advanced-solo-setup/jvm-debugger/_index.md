@@ -231,7 +231,7 @@ solo consensus node update --deployment "${SOLO_DEPLOYMENT}" \
   --new-account-number 0.0.7 \
   --gossip-public-key ./s-public-node2.pem \
   --gossip-private-key ./s-private-node2.pem \
-  --release-tag v0.71.0
+  --consensus-node-version v0.71.0
 ```
 
 ### Example 4 — Debug a node during a node delete operation

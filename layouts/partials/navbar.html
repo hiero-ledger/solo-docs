@@ -12,8 +12,14 @@
 -}}
 {{ $baseURL := urls.Parse $.Site.Params.Baseurl -}}
 
+{{/* First focusable element on every page; targets the id="main-content"
+     on <main> in layouts/baseof.html and layouts/docs/baseof.html. Visible
+     only while focused. */ -}}
+<a class="skip-link" href="#main-content">Skip to content</a>
+
 <nav class="td-navbar js-navbar-scroll
       {{- if $cover }} td-navbar-cover td-navbar-transparent {{- end }}"
+      aria-label="Main"
       {{- if eq (.Param "ui.navbar_theme") "dark" }} data-bs-theme="dark" {{- end }}>
 <div class="td-navbar-container container-fluid flex-column flex-md-row">
   <a class="navbar-brand" href="{{ .Site.Home.RelPermalink }}">
@@ -80,7 +86,10 @@
     </ul>
     <div class="scroll-indicator scroll-right"></div>
   </div>
-  <div class="td-navbar__search d-none d-lg-block">
+  {{/* Docs pages get a search box in the sidebar below lg, so the header one
+       is desktop-only there. Pages without the docs sidebar (home, tag
+       listings, 404) otherwise had no search at all on smaller screens. */ -}}
+  <div class="td-navbar__search{{ if eq .Type "docs" }} d-none d-lg-block{{ end }}">
     {{ partial "search-input.html" . }}
   </div>
 </div>

@@ -1,0 +1,20 @@
+{{/*
+  Project override of Docsy's taxonomy_terms_article partial. Docsy renders
+  the "Categories:"/"Tags:" label as an <h5>, which breaks the page's heading
+  order wherever it appears (it's a label for the list, not a section). It's
+  a plain element here with the same .h5 look, referenced by the list via
+  aria-labelledby so screen readers still announce it with the list.
+*/ -}}
+{{ $context := .context -}}
+{{ $taxo := .taxo -}}
+{{ if (gt (len ($context.GetTerms $taxo)) 0) -}}
+{{ $labelID := printf "taxo-%s-%s" (urlize $taxo) (substr (md5 $context.RelPermalink) 0 8) -}}
+<div class="taxonomy taxonomy-terms-article taxo-{{ urlize $taxo }}">
+  <div class="taxonomy-title h5" id="{{ $labelID }}">{{ humanize $taxo }}:</div>
+  <ul class="taxonomy-terms" aria-labelledby="{{ $labelID }}">
+    {{ range ($context.GetTerms $taxo) -}}
+      <li><a class="taxonomy-term" href="{{ .Permalink }}" data-taxonomy-term="{{ urlize .LinkTitle }}"><span class="taxonomy-label">{{ .LinkTitle }}</span></a></li>
+    {{ end -}}
+  </ul>
+</div>
+{{ end -}}

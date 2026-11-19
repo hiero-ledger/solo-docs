@@ -3,6 +3,8 @@ title: Website information
 likeTitle: Site info
 description: Information about the website.
 type: docs
+# Theme build-info page, not documentation: no per-page Markdown copy.
+outputs: [HTML]
 params:
   body_class: td-no-left-sidebar
   hide_feedback: true

@@ -46,13 +46,21 @@ Install the latest Solo CLI globally using one of the following methods:
 
   > **Note:** npm requires Node.js >= 22.0.0 to already be present (check with `node --version`; upgrade via [nvm](https://github.com/nvm-sh/nvm) or [nodejs.org](https://nodejs.org/en/download) if needed — Solo will fail with an `EBADENGINE` warning on Node.js 20.x or earlier). Solo provisions kubectl, Helm, and Kind automatically at deploy time.
 
+- **Linux install script** (Linux x64 and arm64, no Node.js needed):
+
+  ```bash
+  curl -fsSL https://github.com/hiero-ledger/solo/releases/latest/download/install.sh | sh
+  ```
+
+  > **Note:** The script installs a standalone Solo binary to `~/.solo/bin` and adds that directory to your `PATH`, so open a new terminal before you run `solo`. On Alpine Linux, run `apk add libstdc++` first. For the options, what the script changes, and how to remove it, see [Linux Install Script](/docs/simple-solo-setup/linux-install-script).
+
 - **Homebrew** (deprecated — macOS/Linux/WSL2 only):
 
   ```bash
   brew install hiero-ledger/tools/solo
   ```
 
-  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31.
+  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31. If you have installed solo previously by using Homebrew you should uninstall it to make sure that any new version that is installed by npm is used. Just do `brew uninstall solo`.
 
 ### Verify the installation
 

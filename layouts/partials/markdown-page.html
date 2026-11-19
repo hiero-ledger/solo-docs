@@ -1,0 +1,152 @@
+{{- /*
+  Returns a page as clean Markdown for AI agents: a header (title, summary,
+  URL) and the page's source Markdown with shortcodes converted. Section pages
+  also list their child pages. Shared by the per-page .md output
+  (layouts/all.markdown.md) and /llms-full.txt (layouts/index.llmsfull.txt).
+
+  Shortcodes are converted in the source text rather than rendered: Hugo
+  renders a {{% %}} shortcode nested in a {{< >}} one (every tab) to HTML, so
+  rendering can't produce clean Markdown. Any shortcode not handled here would
+  appear raw in the output; the PR link-check workflow fails if one does.
+    - solo-output, solo-releases-table: replaced with their real content
+      (fenced CLI output, the releases table) via the same partials as the
+      HTML shortcodes.
+    - tab: a bold label with the tab's header. alert: a bold label with its
+      title ("Warning: ..." for warning/danger alerts). details:
+      <details>/<summary>. doc-section-cards: a list of links to the pages.
+    - tabpane, pageinfo: removed, keeping inner content.
+    - relref: the target page's URL.
+  Relative link and image targets are then made absolute: a page's .md copy
+  is served from a different directory than its HTML (and llms-full.txt from
+  the site root), so they would otherwise resolve to the wrong place.
+
+  Usage: {{ partial "markdown-page.html" . }}
+*/ -}}
+{{- $page := . -}}
+{{- $c := .RawContent -}}
+
+{{- /* The prefix (indent and/or list marker) before the shortcode sets the
+       indent of the whole code block, so it stays inside its list item. */ -}}
+{{- range findRESubmatch `(?m)^([ \t]*(?:[-*+] +)?)\{\{<\s*solo-output\s+([^>]*?)\s*>\}\}` $c -}}
+  {{- $prefix := index . 1 -}}
+  {{- $attrs := index . 2 -}}
+  {{- $indent := strings.Repeat (len $prefix) " " -}}
+  {{- $ref := "" -}}
+  {{- with findRESubmatch `ref="([^"]+)"` $attrs 1 }}{{ $ref = index . 0 1 }}{{ end -}}
+  {{- $lang := "text" -}}
+  {{- with findRESubmatch `lang="([^"]+)"` $attrs 1 }}{{ $lang = index . 0 1 }}{{ end -}}
+  {{- $out := partial "solo-command-output.html" $ref | strings.TrimRight "\n" | replaceRE `(?m)^` $indent -}}
+  {{- $c = replace $c (index . 0) (printf "%s```%s\n%s\n%s```" $prefix $lang $out $indent) -}}
+{{- end -}}
+
+{{- range findRE `\{\{<\s*solo-releases-table\s*>\}\}` $c 1 -}}
+  {{- $table := partial "solo-current-releases.html" "" | strings.TrimSpace -}}
+  {{- $table = $table | default "_Version table unavailable. See the [Solo README](https://github.com/hiero-ledger/solo/blob/main/README.md#current-releases)._" -}}
+  {{- $c = replace $c . $table -}}
+{{- end -}}
+
+{{- range findRESubmatch `\{\{[<%]\s*tab\s+([^>%]*?)\s*[>%]\}\}` $c -}}
+  {{- $attrs := index . 1 -}}
+  {{- $header := "" -}}
+  {{- with findRESubmatch `header="([^"]*)"` $attrs 1 -}}
+    {{- $header = index . 0 1 -}}
+  {{- else -}}
+    {{- with findRESubmatch `^"([^"]*)"` $attrs 1 }}{{ $header = index . 0 1 }}{{ end -}}
+  {{- end -}}
+  {{- $c = replace $c (index . 0) (printf "**%s**" $header) -}}
+{{- end -}}
+
+{{- range findRESubmatch `\{\{[<%]\s*alert\s*([^>%]*?)\s*[>%]\}\}` $c -}}
+  {{- $attrs := index . 1 -}}
+  {{- $title := "" -}}
+  {{- with findRESubmatch `title="([^"]*)"` $attrs 1 }}{{ $title = index . 0 1 | plainify }}{{ end -}}
+  {{- if findRE `color="(?:warning|danger)"` $attrs 1 -}}
+    {{- $title = cond (eq $title "") "Warning" (printf "Warning: %s" $title) -}}
+  {{- end -}}
+  {{- $c = replace $c (index . 0) (printf "**%s**\n" ($title | default "Note")) -}}
+{{- end -}}
+
+{{- range findRESubmatch `\{\{<\s*doc-section-cards\s+([^>]*?)\s*>\}\}` $c -}}
+  {{- $items := slice -}}
+  {{- range findRESubmatch `"([^"]+)"` (index . 1) -1 -}}
+    {{- with site.GetPage (index . 1) -}}
+      {{- $item := printf "- [%s](%s.md)" .LinkTitle (strings.TrimSuffix "/" .Permalink) -}}
+      {{- with .Description | strings.TrimSpace }}{{ $item = printf "%s: %s" $item (replaceRE `\s*\n\s*` " " .) }}{{ end -}}
+      {{- $items = $items | append $item -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $c = replace $c (index . 0) (delimit $items "\n") -}}
+{{- end -}}
+
+{{- range findRESubmatch `\{\{[<%]\s*details\s*([^>%]*?)\s*[>%]\}\}` $c -}}
+  {{- $summary := "Details" -}}
+  {{- with findRESubmatch `summary="([^"]*)"` (index . 1) 1 }}{{ $summary = index . 0 1 }}{{ end -}}
+  {{- $c = replace $c (index . 0) (printf "<details>\n<summary>%s</summary>" $summary) -}}
+{{- end -}}
+{{- $c = replaceRE `\{\{[<%]\s*/details\s*[>%]\}\}` "</details>" $c -}}
+
+{{- range findRESubmatch `\{\{<\s*relref\s+"([^"]+)"\s*>\}\}` $c -}}
+  {{- $c = replace $c (index . 0) (ref $page (index . 1)) -}}
+{{- end -}}
+
+{{- /* Wrapper shortcodes that are dropped (tabpane, pageinfo, closing tab
+       and alert). Each one marks a block boundary in the HTML, so it becomes
+       exactly one paragraph break: wrapper-only lines and wrappers starting
+       a line are first replaced by a marker line, then each run of marker and
+       blank lines collapses to a single blank line. Code blocks are never
+       touched, and no blank line between two text lines is lost. */ -}}
+{{- $w := `\{\{[<%]\s*(?:/?(?:tabpane|pageinfo)\b[^}]*|/(?:tab|alert)\s*)[>%]\}\}` -}}
+{{- $mark := "@@MD-WRAPPER@@" -}}
+{{- $c = replaceRE (printf `(?m)^[ \t]*(?:%s[ \t]*)+$` $w) $mark $c -}}
+{{- $c = replaceRE (printf `(?m)^[ \t]*(?:%s[ \t]*)+` $w) (printf "%s\n" $mark) $c -}}
+{{- $c = replaceRE (printf `[ \t]*%s` $w) "" $c -}}
+{{- $c = replaceRE (printf `\n(?:[ \t]*\n|%s\n)*%s(?:\n[ \t]*|\n%s)*\n` $mark $mark $mark) "\n\n" $c -}}
+{{- $c = replaceRE (printf `\A(?:[ \t]*\n|%s\n)*%s(?:\n[ \t]*|\n%s)*\n` $mark $mark $mark) "" $c -}}
+{{- $c = replace $c $mark "" -}}
+
+{{- /* Error-category index pages are client-side redirect stubs; drop the
+       redirect markup so only real content remains. */ -}}
+{{- $c = $c | replaceRE `(?s)<script\b.*?</script>` "" | replaceRE `<meta http-equiv="refresh"[^>]*>` "" -}}
+{{- /* Decorative Font Awesome icons in hand-written HTML are noise here. */ -}}
+{{- $c = replaceRE `<i class="fa[^"]*"[^>]*></i>[ \t]*` "" $c | strings.TrimSpace -}}
+
+{{- /* Make relative link and image targets absolute, resolved against the
+       HTML page's URL as a browser would. Root-relative targets get the site's
+       base path (for non-root deploys). The closing ")" or whitespace is part
+       of the match so one target isn't replaced inside a longer one. */ -}}
+{{- range findRESubmatch `\]\(([^)\s]+)([)\s])` $c -}}
+  {{- $dest := index . 1 -}}
+  {{- if not (findRE `^(?:[a-zA-Z][a-zA-Z0-9+.-]*:|#|//)` $dest 1) -}}
+    {{- $abs := "" -}}
+    {{- if strings.HasPrefix $dest "/" -}}
+      {{- $abs = absURL (strings.TrimPrefix "/" $dest) -}}
+    {{- else -}}
+      {{- $abs = path.Join $page.RelPermalink $dest | absURL -}}
+      {{- if and (strings.HasSuffix $dest "/") (not (strings.HasSuffix $abs "/")) }}{{ $abs = printf "%s/" $abs }}{{ end -}}
+    {{- end -}}
+    {{- $c = replace $c (index . 0) (printf "](%s%s" $abs (index . 2)) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Header in the llms.txt style: title, then the summary as a blockquote. */ -}}
+{{- $out := printf "# %s" .Title -}}
+{{- with .Description | strings.TrimSpace }}{{ $out = printf "%s\n\n> %s" $out (replaceRE `\s*\n\s*` " " .) }}{{ end -}}
+{{- $out = printf "%s\n\nURL: %s" $out .Permalink -}}
+{{- with .Params.manualLink }}{{ $out = printf "%s\n\nThis page links to %s" $out . }}{{ end -}}
+{{- with $c }}{{ $out = printf "%s\n\n%s" $out . }}{{ end -}}
+
+{{- if .IsSection -}}
+  {{- with .Pages.ByWeight -}}
+    {{- $out = printf "%s\n\n## Pages in this section\n" $out -}}
+    {{- range . -}}
+      {{- /* Link each child's Markdown at its "page URL + .md" address. */ -}}
+      {{- $url := .Permalink -}}
+      {{- if .OutputFormats.Get "markdown" }}{{ $url = printf "%s.md" (strings.TrimSuffix "/" .Permalink) }}{{ end -}}
+      {{- $item := printf "\n- [%s](%s)" .LinkTitle $url -}}
+      {{- with .Description | strings.TrimSpace }}{{ $item = printf "%s: %s" $item (replaceRE `\s*\n\s*` " " .) }}{{ end -}}
+      {{- $out = printf "%s%s" $out $item -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- return $out -}}

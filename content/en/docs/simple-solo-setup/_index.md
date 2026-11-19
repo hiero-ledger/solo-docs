@@ -11,4 +11,4 @@ icon: "fas fa-rocket"
 hide_section_index: true
 ---
 
-{{< doc-section-cards "docs/simple-solo-setup/system-readiness" "docs/simple-solo-setup/quickstart" "docs/simple-solo-setup/managing-your-network" "docs/simple-solo-setup/upgrade-your-network" "docs/simple-solo-setup/upgrading-solo" "docs/simple-solo-setup/cleanup" >}}
+{{< doc-section-cards "docs/simple-solo-setup/system-readiness" "docs/simple-solo-setup/quickstart" "docs/simple-solo-setup/linux-install-script" "docs/simple-solo-setup/managing-your-network" "docs/simple-solo-setup/upgrade-your-network" "docs/simple-solo-setup/upgrading-solo" "docs/simple-solo-setup/cleanup" >}}
