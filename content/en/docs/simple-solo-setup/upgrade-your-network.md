@@ -26,7 +26,7 @@ Before upgrading, ensure you have completed the following:
 
 ## Step 1: Find your deployment name
 
-The default for one-shot deployments is `one-shot`. If you used a different name, find it with `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)). Use that value as `<deployment-name>` in the upgrade command.
+The default for one-shot deployments is `one-shot`. If you passed `--deployment` with a different name, list your deployments with `solo deployment config list --quiet-mode` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)). Use that value as `<deployment-name>` in the upgrade command.
 
 ## Step 2: Upgrade the network
 
@@ -36,7 +36,10 @@ Run the following command to upgrade an existing Solo network deployment to a ne
 solo consensus network upgrade --deployment <deployment-name> --upgrade-version <version>
 ```
 
-Replace `<version>` with the target Hiero version, for example `v0.59.0`.
+Replace `<version>` with the target consensus node version, for example
+`v0.79.0`. It must not be older than the version the network runs now (Solo
+v0.98.0 deploys v0.78.1 by default); Solo refuses a downgrade with error
+[SOLO-4040](/docs/troubleshooting/errors/validation/SOLO-4040/).
 
 > **Important:** This command is only for networks already deployed with Solo. Do not run it immediately after Quickstart unless you are moving an older deployment to a newer version.
 
@@ -67,7 +70,7 @@ following in mind:
   flags leaves the current fee schedule and throttles as they are.
 - **Minimum versions.** `--simple-fees-schedules-file` requires a target version
   of v0.68.0 or later, and `--throttles-file` v0.54.0 or later. Both require
-  Solo **v0.XX.0** or later.
+  Solo **v0.92.0** or later.
 - **Not with `--upgrade-zip-file`.** If you supply your own upgrade zip, place
   the files under `data/config/` inside it instead.
 
@@ -82,4 +85,4 @@ After upgrading, confirm the network is healthy by checking pod status:
 kubectl get pods -n <namespace>
 ```
 
-For one-shot deployments, the namespace matches the deployment name, which defaults to `one-shot` unless you passed `--deployment` (retrieve it with `solo one-shot show deployment`).
+For one-shot deployments, the namespace is `one-shot` unless you passed `--namespace` when deploying; `solo deployment config list --quiet-mode` shows the namespace of each deployment.

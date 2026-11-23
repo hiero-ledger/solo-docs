@@ -2,45 +2,24 @@
 title: 'Upgrading an existing Solo installation'
 weight: 5
 description: >
-  Upgrade an existing Solo installation to the latest release - whether you
-  installed via Homebrew or npm - and perform a clean reinstall when an upgrade
-  leaves a broken or conflicting state.
+  Upgrade an existing npm installation of Solo to the latest release, install a
+  specific version, and perform a clean reinstall when an upgrade leaves a
+  broken or conflicting state.
 categories: ['Getting Started', 'Installation']
-tags: ['installation', 'upgrade', 'homebrew', 'npm', 'maintenance']
+tags: ['installation', 'upgrade', 'npm', 'maintenance']
 type: docs
 icon: "fas fa-download"
 ---
 
 ## Overview
 
-If you already have Solo installed, upgrade to the latest release using the same
-package manager you originally installed with. This page covers the Homebrew and
-npm upgrade paths, switching between them, and a clean-reinstall recipe for when
-an upgrade leaves Solo in a broken state.
-
-> ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. Existing Homebrew users should migrate to npm before August 31. See [Switching between Homebrew and npm](#switching-between-homebrew-and-npm).
+If you already have Solo installed, upgrade to the latest release with npm. This
+page covers the npm upgrade path, installing a specific version, and a
+clean-reinstall recipe for when an upgrade leaves Solo in a broken state.
 
 > **Tip:** Check your current version first with `solo --version`, and compare
 > it against the latest release on the
 > [Solo releases page](https://github.com/hiero-ledger/solo/releases).
-
-## Upgrade a Homebrew install
-
-If you installed Solo with `brew install hiero-ledger/tools/solo`, update
-Homebrew's formula list and upgrade:
-
-```bash
-brew update
-brew upgrade hiero-ledger/tools/solo
-```
-
-`brew update` refreshes Homebrew's formulae; `brew upgrade` then installs the
-latest Solo (and Node.js, its only Homebrew dependency). Verify the new
-version:
-
-```bash
-solo --version
-```
 
 ## Upgrade an npm install
 
@@ -51,8 +30,8 @@ to move to the newest release:
 npm install -g @hiero-ledger/solo@latest
 ```
 
-> **Note:** Unlike the Homebrew formula, npm does not install Node.js - make
-> sure Node.js is present before upgrading. (Solo provisions kubectl, Helm, and
+> **Note:** npm does not install Node.js - make sure Node.js >= 22.0.0 is
+> present before upgrading. (Solo provisions kubectl, Helm, and
 > Kind automatically at deploy time regardless of install method.) After a
 > major-version upgrade, re-check the required tool versions in
 > [System Readiness](/docs/simple-solo-setup/system-readiness).
@@ -103,42 +82,26 @@ npm install -g @hiero-ledger/solo@latest
 
 To install a specific (non-latest) Solo release - for example, to reproduce a
 bug, run a regression test, or pin a version across a team - use a versioned
-Homebrew formula or npm tag instead of `latest`.
+npm tag instead of `latest`.
 
-> **Note:** A versioned brew formula or npm tag **pins** Solo to that release - it
-> will not move when you run `brew upgrade` or `npm update`. To change versions
-> later (including returning to the latest release, or **downgrading**),
-> switching in place is **not supported**: uninstall Solo first
-> (`brew uninstall hiero-ledger/tools/solo`, or `npm uninstall -g @hiero-ledger/solo`),
-> then run the versioned install command below for the version you want. This
-> keeps your `~/.solo` data - only a [Clean reinstall](#clean-reinstall) removes
-> it. If you are switching package managers, see also
-> [Switching between Homebrew and npm](#switching-between-homebrew-and-npm).
-
-{{< tabpane text=true >}}
-{{% tab header="Homebrew (deprecated)" lang="homebrew" %}}
-```bash
-brew install hiero-ledger/tools/solo@0.76.0
-```
-
-The tap publishes a versioned formula (`solo@<version>`) for each release.
-{{% /tab %}} {{% tab header="npm" lang="npm" %}}
+> **Note:** A versioned npm tag **pins** Solo to that release - it will not move
+> when you run `npm update`. To change versions later (including returning to
+> the latest release, or **downgrading**), switching in place is **not
+> supported**: uninstall Solo first (`npm uninstall -g @hiero-ledger/solo`), then
+> run the versioned install command below for the version you want. This keeps
+> your `~/.solo` data - only a [Clean reinstall](#clean-reinstall) removes it.
 
 ```bash
 npm install -g @hiero-ledger/solo@0.76.0
 ```
 
-{{% /tab %}} {{< /tabpane >}}
-
 > **Note:** Since Solo v0.95.0, installing Solo does not download container
 > images. Run `solo cache image pull` after installing to fill the
 > [image cache](/docs/advanced-solo-setup/image-cache) with that version's
 > images (a few minutes and several GB), or install with
-> `SOLO_WITH_IMAGE_CACHE=true` (npm). The pull also removes the images of the
+> `SOLO_WITH_IMAGE_CACHE=true`. The pull also removes the images of the
 > version you upgraded from. Solo v0.74.0 to v0.94.0 downloaded the images
-> during every global npm install, unless `SOLO_NO_CACHE=true` was set. The
-> deprecated Homebrew formula still downloads them; set
-> `HOMEBREW_NO_SOLO_CACHE` to skip it.
+> during every global npm install, unless `SOLO_NO_CACHE=true` was set.
 
 Confirm the installed version:
 
@@ -146,27 +109,11 @@ Confirm the installed version:
 solo --version
 ```
 
-> **Tip:** Installing a versioned formula or npm tag **pins** Solo to that
-> release - it will not move when you run `brew upgrade` or `npm update`. To
-> return to the latest release, follow
-> [Upgrade a Homebrew install](#upgrade-a-homebrew-install) or
-> [Upgrade an npm install](#upgrade-an-npm-install) above. If you hit a "two
-> `solo` binaries on PATH" conflict when switching, remove the other install
-> first (see
-> [Switching between Homebrew and npm](#switching-between-homebrew-and-npm)).
-
-## Switching between Homebrew and npm
-
-To migrate from Homebrew to npm, remove the Homebrew copy first so you do not
-end up with two `solo` binaries on your `PATH`:
-
-```bash
-# Remove the Homebrew copy before installing via npm
-brew uninstall hiero-ledger/tools/solo
-```
-
-Then install via npm following the steps in
-[System Readiness](/docs/simple-solo-setup/system-readiness#platform-setup).
+> **Tip:** To return to the latest release, uninstall the pinned version and
+> follow [Upgrade an npm install](#upgrade-an-npm-install) above. If
+> `solo --version` still reports an old version afterwards, another `solo`
+> binary is earlier on your `PATH`; find it with `which -a solo` (PowerShell:
+> `Get-Command solo -All`) and remove it.
 
 ## Clean reinstall
 
@@ -181,19 +128,19 @@ configuration, then reinstall.
 > with `solo one-shot single destroy` - see the
 > [Cleanup guide](/docs/simple-solo-setup/cleanup).
 
-{{< tabpane text=true >}} {{% tab header="Homebrew (deprecated)" lang="homebrew" %}}
-
-```bash
-brew uninstall hiero-ledger/tools/solo
-rm -rf ~/.solo
-brew install hiero-ledger/tools/solo
-```
-
-{{% /tab %}} {{% tab header="npm" lang="npm" %}}
+{{< tabpane text=true >}} {{% tab header="Bash" lang="bash" %}}
 
 ```bash
 npm uninstall -g @hiero-ledger/solo
 rm -rf ~/.solo
+npm install -g @hiero-ledger/solo@latest
+```
+
+{{% /tab %}} {{% tab header="PowerShell" lang="powershell" %}}
+
+```powershell
+npm uninstall -g @hiero-ledger/solo
+Remove-Item -Recurse -Force "$env:USERPROFILE\.solo"
 npm install -g @hiero-ledger/solo@latest
 ```
 

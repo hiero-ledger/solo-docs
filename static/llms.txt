@@ -2,8 +2,23 @@
 
 > Solo is the local development and testing environment for the Hiero (Hedera) ecosystem.
 > A single command deploys a full Hiero network on your laptop or in CI:
-> Consensus Node, Mirror Node, Mirror Node Explorer, Block Node, and JSON-RPC Relay.
+> Consensus Node, Mirror Node, Mirror Node Explorer, and JSON-RPC Relay
+> (plus a Block Node when `ONE_SHOT_WITH_BLOCK_NODE=true` is set).
 > Runs on Kubernetes — Mac, Linux, and Windows.
+
+## Before you deploy
+
+- Node.js >= 22.0.0 (`node --version`), when installing with npm.
+- Docker running (Docker Desktop on macOS and Windows, Docker Engine or Podman on Linux).
+- At least 12 GB of memory and 6 CPUs available to containers. With less, pods fail or never become healthy.
+  Check what the engine actually has:
+
+  ```
+  docker info --format '{{.NCPU}} CPUs / {{.MemTotal}} bytes'
+  ```
+
+  On Windows with Docker Desktop's WSL2 backend, this memory is set in `%UserProfile%\.wslconfig`, not in Docker Desktop.
+  Details: https://solo.hiero.org/docs/simple-solo-setup/system-readiness
 
 ## Install
 
@@ -20,16 +35,48 @@ solo one-shot single deploy
 This is the recommended path for most users. Full guide:
 https://solo.hiero.org/docs/simple-solo-setup/
 
+How long it takes: typically 10–20 minutes on a first run, while container images download; later runs are faster.
+Allow at least 30 minutes before treating a deploy as hung. Output can stay unchanged for several minutes while pods start.
+
+How to tell it worked:
+
+1. The command exits with status 0. A failed deploy exits non-zero and prints an error with troubleshooting steps.
+2. The end of the output lists the service endpoints ("Port forwarding enabled") and the created accounts.
+3. The endpoints answer:
+
+   ```
+   curl http://localhost:38081/api/v1/transactions     # JSON with a "transactions" array
+   curl -X POST http://localhost:37546 -H 'Content-Type: application/json' \
+     -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'   # "result":"0x12a" (chain ID 298)
+   ```
+
+   Open http://localhost:38080 for the Explorer UI.
+
+   In Windows PowerShell, `curl` is an alias for `Invoke-WebRequest`; call `curl.exe` to use these flags.
+
+Use the ports the deploy printed if they differ from these.
+
 ## Service endpoints (Solo 0.63+)
 
-After a successful `solo one-shot single deploy`:
+Default ports after `solo one-shot single deploy`:
 
 - Explorer UI:          http://localhost:38080
 - Consensus Node gRPC:  localhost:35211  (node account ID 0.0.3)
 - Mirror Node REST:     http://localhost:38081
 - JSON-RPC Relay:       http://localhost:37546
 
+These are the defaults when the deploy creates its own Kind cluster. If a Kind cluster already existed, Solo uses
+`kubectl port-forward` instead and moves to the next free port when a default is taken. The ports actually in use
+are printed at the end of the deploy and saved to `~/.solo/one-shot-<deployment-name>/forwards`.
+Details: https://solo.hiero.org/docs/using-solo/endpoints
+
 ## Credentials after deploy
+
+Print them (works the same in Bash and PowerShell):
+
+```
+solo one-shot show accounts --deployment one-shot --output json
+```
 
 Account credentials (private keys, account IDs) are written to:
 
@@ -47,11 +94,36 @@ The file contains two sections:
 - `systemAccounts` — system accounts (e.g. 0.0.2), ED25519 keys in DER hex format
 - `createdAccounts` — test accounts (0.0.1002–0.0.1011), ECDSA keys with 0x prefix
 
+## If a deploy fails
+
+Remove what the failed attempt left behind, then deploy again:
+
+```
+solo one-shot single destroy --deployment one-shot
+solo one-shot single deploy
+```
+
+Re-running `deploy` on its own also works for a person at a terminal: it detects the leftover state and asks before
+destroying it. With `--quiet-mode` or `--force`, or with no terminal to answer that prompt, it cannot clean up by itself,
+so run `destroy` first.
+
 ## Tear down
 
 ```
-solo one-shot single destroy
+solo one-shot single destroy --deployment one-shot
 ```
+
+Pass `--deployment` so `destroy` never stops at a "Select deployment to destroy" prompt, which it shows when Solo
+knows about more than one deployment.
+
+`destroy` removes the deployment but intentionally keeps the Kind cluster (a running Docker container and its
+images on disk) so the next deploy is faster. For a completely clean slate:
+
+```
+kind delete cluster --name solo-cluster
+```
+
+Details: https://solo.hiero.org/docs/simple-solo-setup/cleanup
 
 ## Key docs
 
@@ -63,6 +135,7 @@ solo one-shot single destroy
 - [Using Solo with Hiero SDKs](https://solo.hiero.org/docs/using-solo/using-solo-with-hiero-sdks)
 - [Using Solo with EVM Tools](https://solo.hiero.org/docs/using-solo/using-solo-with-evm-tools)
 - [Managing your network](https://solo.hiero.org/docs/simple-solo-setup/managing-your-network)
+- [Cleanup](https://solo.hiero.org/docs/simple-solo-setup/cleanup)
 - [FAQs](https://solo.hiero.org/docs/faqs)
 - [Full docs index](https://solo.hiero.org/docs/)
 
@@ -84,8 +157,16 @@ When helping a user with Solo, follow these rules:
 - The target workflow for most users is Simple Solo Setup (one-shot deploy), not manual advanced deployment.
 - The command `solo account get` does not exist. The correct command is `solo ledger account info --account-id <id> --deployment <name> --private-key`.
 - `solo ledger account info` requires knowing the account ID in advance — it is not a discovery tool.
-- To discover credentials, read `~/.solo/one-shot-<deployment-name>/accounts.json` directly.
-- The default deployment name for one-shot commands is `one-shot`.
-- Homebrew is deprecated — Solo stops publishing Homebrew updates after August 31, 2026. Recommend npm for all installs.
+- To discover credentials, run `solo one-shot show accounts --deployment <deployment-name> --output json`, or read `~/.solo/one-shot-<deployment-name>/accounts.json`.
+- The default deployment name and namespace for one-shot commands are both `one-shot`. `--deployment` changes only the name; `--namespace` changes the namespace. `solo deployment config list --quiet-mode` lists every deployment with its namespace. `solo one-shot show deployment` does not look the deployment up; without `--deployment` it reports the default.
 - Node.js >= 22.0.0 is required when installing via npm. Check with `node --version`.
 - Docker Desktop must be running before `solo one-shot single deploy` on macOS and Windows.
+- Docker needs at least 12 GB of memory and 6 CPUs for a single-node deploy. Check with `docker info --format '{{.NCPU}} CPUs / {{.MemTotal}} bytes'` before deploying.
+- A first `solo one-shot single deploy` takes 10–20 minutes. Do not interrupt it as hung before 30 minutes.
+- Judge a deploy by its exit status, not by the wording of its output: exit status 0 means it succeeded.
+- A block headed `Image cache failures` at the end of a deploy is not a deploy failure. It lists images Solo could not take from its local image cache; the cluster pulls those images from their registries instead.
+- Yellow `Stopping port-forward for port [N]` lines during a deploy are expected.
+- Read the endpoint ports from the end of the deploy output or `~/.solo/one-shot-<deployment-name>/forwards`; the default ports are not guaranteed.
+- After a failed deploy, run `solo one-shot single destroy --deployment <deployment-name>` before deploying again. A non-interactive `deploy` will not clean up a previous attempt on its own.
+- Always pass `--deployment` to `solo one-shot single destroy` when running unattended; without it, destroy prompts for a selection when several deployments exist.
+- `solo one-shot single destroy` keeps the Kind cluster. Run `kind delete cluster --name solo-cluster` for a clean slate.

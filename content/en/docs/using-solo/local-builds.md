@@ -200,5 +200,5 @@ task
 | `--local-build-path: path does not exist` | `./gradlew assemble` has not run, or the path is wrong | Confirm: `ls /absolute/path/to/hiero-consensus-node/hedera-node/data/apps/HederaNode.jar` |
 | `./gradlew assemble` fails with `Unsupported class file major version` | Wrong Java version | Check `java -version`; Java 25 (Temurin) is required. Install: `sdk install java 25.0.2-tem` |
 | Consensus node pods crash on start | Build artifacts incompatible with the base container image | Set `--consensus-node-version` in your values file to match the source tag you built from |
-| `nc -zv localhost 35211` fails after deploy | Port-forward died | Restore: `kubectl port-forward svc/haproxy-node1-svc -n one-shot 35211:50211 &` |
+| `nc -zv localhost 35211` fails after deploy | The `kubectl port-forward` Solo opened for consensus gRPC died (falcon deployments reach the network through port-forwards) | Restore Solo's port-forwards: `solo deployment port-forwards refresh --deployment <deployment-name>`. See [Port availability](/docs/using-solo/endpoints#port-availability) |
 | Slow first deployment | Mirror node, relay, and explorer images pulling for the first time | Let it complete; subsequent runs reuse the [image cache](/docs/advanced-solo-setup/image-cache) |

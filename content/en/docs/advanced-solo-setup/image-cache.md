@@ -213,8 +213,7 @@ succeeds, and you can run `solo cache image pull` later.
 
 > **Note:** Solo v0.74.0 to v0.94.0 downloaded images on every global npm
 > install, and `SOLO_NO_CACHE=true` turned this off. From v0.95.0,
-> `SOLO_NO_CACHE` is ignored. The deprecated Homebrew formula still downloads
-> images during install; set `HOMEBREW_NO_SOLO_CACHE` to any value to skip it.
+> `SOLO_NO_CACHE` is ignored.
 
 ## Disabling the cache in one-shot deployments
 

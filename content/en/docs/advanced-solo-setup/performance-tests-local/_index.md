@@ -36,7 +36,7 @@ tests.
 
 ## What Gets Tested
 
-The test suite runs four sequential load tests using the Network Load Generator
+The test suite runs five sequential load tests using the Network Load Generator
 (NLG), each for 5 minutes by default (controlled by
 `ONE_SHOT_METRICS_TEST_DURATION_IN_MINUTES`):
 
@@ -46,10 +46,18 @@ The test suite runs four sequential load tests using the Network Load Generator
 | `NftTransferLoadTest`    | NFT transfers                            |
 | `CryptoTransferLoadTest` | HBAR crypto transfers                    |
 | `HCSLoadTest`            | Hedera Consensus Service (HCS) messages  |
+| `SmartContractLoadTest`  | Smart contract calls                     |
 
-All four tests target a max of **100 TPS** with 5 concurrent threads and 1,000
-accounts. After all load tests complete, the suite sleeps for one additional
-metrics-collection window to capture steady-state resource usage.
+Each test uses 5 concurrent clients and 1,000 accounts. The submission rate is
+capped at **105 TPS** (100 TPS for `SmartContractLoadTest`) so that the
+measured throughput lands close to 100 TPS, and a test fails if it achieves
+less than **90 TPS** or if the end-to-end mirror RTT exceeds **500 ms**. After
+all load tests complete, the suite sleeps for one additional metrics-collection
+window to capture steady-state resource usage.
+
+> **Note:** With `PERFORMANCE_TEST_CONCISE_MODE=true`, only
+> `CryptoTransferLoadTest` runs. The scheduled CI workflow uses this mode for
+> some of its runs.
 
 ## Metrics Measured
 
@@ -118,10 +126,12 @@ fields — actual values will differ based on your hardware and Solo version:
   "runtimeInMinutes": 62,
   "transactionCount": 120000,
   "events": [
+    "Deploying Network Load Generator",
     "Starting TokenTransferLoadTest",
     "Starting NftTransferLoadTest",
     "Starting CryptoTransferLoadTest",
     "Starting HCSLoadTest",
+    "Starting SmartContractLoadTest",
     "Completed all performance tests"
   ],
   "peakCpuInMillicores": 2100,
@@ -141,10 +151,10 @@ A full timeline of all 5-second snapshots is written to
 
 | Signal | What to look for |
 |---|---|
-| All four load tests print a green result line | TPS reported as non-zero |
+| All five load tests print a green result line | At least 90 TPS reported |
 | `events` array ends with `"Completed all performance tests"` | All tests ran to completion |
 | `memoryInMebibytes` under **3,000 MiB** | CI threshold — above this indicates a regression |
-| End-to-end mirror RTT under **600 ms** | RTT probe target; values near or above this indicate mirror node lag |
+| End-to-end mirror RTT under **500 ms** | RTT probe limit; the test fails above this |
 
 ### Problem indicators
 
@@ -153,11 +163,8 @@ A full timeline of all 5-second snapshots is written to
 | A load test prints no result line or exits with `NO_RESULT` | NLG pod failed to start or crashed mid-run |
 | TPS is 0 with 0 transactions | Consensus node was unreachable or rejected all transactions |
 | `memoryInMebibytes` above 3,000 MiB | Memory regression — compare per-pod breakdown in `clusterMetrics` to identify the culprit |
-| RTT consistently above 600 ms | Mirror node importer lag; check importer pod logs |
+| RTT above 500 ms | Mirror node importer lag; check importer pod logs |
 | `events` array is missing later entries | Test timed out or threw before completing all load tests |
-
-> **Note:** The `SmartContractLoadTest` is currently disabled (`it.skip`) pending
-> an upstream fix and will not appear in results.
 
 ## Optional: Use a Local Consensus Node Build
 

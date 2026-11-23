@@ -4,6 +4,10 @@
   /llms-full.txt.
 */ -}}
 {{- $out := partial "markdown-page.html" . -}}
+{{- /* Point agents that fetched a single page at the curated index. Only here, not in the shared
+       partial: /llms-full.txt already links it once at the top. */ -}}
+{{- $urlLine := printf "\n\nURL: %s" .Permalink -}}
+{{- $out = replace $out $urlLine (printf "%s\nAgent index: %s" $urlLine ("llms.txt" | absURL)) 1 -}}
 {{- if .IsSection -}}
   {{- /* Section pages render at .../index.md (Hugo always puts a section's
          output in its directory). Also publish a copy at the section URL

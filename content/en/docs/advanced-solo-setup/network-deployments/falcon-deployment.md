@@ -38,6 +38,18 @@ Before proceeding, ensure you have completed the following:
 - [**System Readiness**](/docs/simple-solo-setup/system-readiness) - your local environment meets the hardware and software requirements for Solo, Kubernetes, Docker, Kind, kubectl, and Helm.
 - [**Quickstart**](/docs/simple-solo-setup/quickstart) -you are already familiar with the standard one-shot deployment workflow.
 
+> **Note:** Falcon needs more memory and CPU than `solo one-shot single deploy`.
+> When `one-shot single deploy` and `one-shot multi deploy` deploy consensus
+> node v0.72.0 or later, they apply Solo's small-memory profile: reduced
+> consensus node `settings.txt`, `application.properties`, `application.env`
+> (JVM heap) and throttle settings, plus memory limits for the consensus node
+> container and MinIO. `solo one-shot falcon deploy --values-file` skips that
+> profile and deploys with the standard settings plus whatever your values file
+> sets. Allocate resources as described in
+> [System Readiness](/docs/simple-solo-setup/system-readiness), or set your own
+> lower-memory files with the `network` section flags (`--settings-txt`,
+> `--application-properties`, `--application-env`).
+
 ## How Falcon Works
 
 When you run Falcon deployment, Solo executes the same end-to-end deployment
