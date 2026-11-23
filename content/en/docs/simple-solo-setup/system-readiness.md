@@ -25,7 +25,7 @@ Solo's resource requirements depend on your deployment size:
 
 | Configuration | Minimum RAM | Recommended RAM | Minimum CPU | Minimum Storage |
 | --- | --- | --- | --- | --- |
-| Single-node | 12 GB | 16 GB | 4 cores | 20 GB free |
+| Single-node | 12 GB | 16 GB | 6 cores | 20 GB free |
 | Multi-node (3+ nodes) | 16 GB | 24 GB | 8 cores | 20 GB free |
 
 > **Note:** If you are using Docker Desktop, ensure the resource limits under
@@ -40,13 +40,13 @@ install yourself.
 
 | Tool | Required version | How it is installed |
 | --- | --- | --- |
-| [Solo](https://github.com/hiero-ledger/solo) | latest | `npm install -g @hiero-ledger/solo@latest` (recommended); on Linux, the [install script](/docs/simple-solo-setup/linux-install-script) (no Node.js needed); `brew install hiero-ledger/tools/solo` (deprecated - Homebrew support ends August 31, 2026) |
-| [Node.js](https://nodejs.org/en/download) | >= 22.0.0 (lts/jod) | **You install it** (required for npm); Homebrew installs it automatically (deprecated) |
-| Container runtime ([Docker](https://www.docker.com/products/docker-desktop) / [Podman](https://podman.io)) | See [Docker](#docker) below | **You install it** — Docker Desktop (macOS/Windows) or Docker Engine (Linux). Solo auto-installs Podman on Linux/macOS/WSL2 if Docker Engine is not found. Not supported on native Windows. |
+| [Solo](https://github.com/hiero-ledger/solo) | latest | `npm install -g @hiero-ledger/solo@latest` (recommended); on Linux, the [install script](/docs/simple-solo-setup/linux-install-script) (no Node.js needed) |
+| [Node.js](https://nodejs.org/en/download) | >= 22.0.0 (lts/jod) | **You install it** (required for npm; not needed for the Linux install script) |
+| Container runtime ([Docker](https://www.docker.com/products/docker-desktop) / [Podman](https://podman.io)) | See [Docker](#docker) below | **You install it** — Docker Desktop (macOS/Windows) or Docker Engine (Linux). Solo installs Podman instead on Linux/macOS/WSL2 when the `docker` command is not found (see [Podman fallback](#podman-fallback)). Not supported on native Windows. |
 | [kubectl](https://kubernetes.io/docs/reference/kubectl/) | >= v1.32.2 | **Solo provisions it** at deploy time - reuses a compatible copy already on your system, or downloads one into `~/.solo/bin` |
 | [Helm](https://helm.sh) | v4.3.1 | **Solo provisions it** at deploy time |
 | [Kind](https://kind.sigs.k8s.io) | >= v0.29.0 | **Solo provisions it** at deploy time |
-| [Kubernetes](https://kubernetes.io) | >= v1.32.2 | Installed automatically by Kind |
+| [Kubernetes](https://kubernetes.io) | v1.31.9 (Kind node image) | Installed automatically by Kind when Solo creates the cluster; override the node image with `SOLO_KIND_NODE_IMAGE` |
 | [k9s](https://k9scli.io/topics/install/) (optional) | >= v0.27.4 | You install it |
 
 > **Note:** Solo's provisioned copies of kubectl, Kind, and Helm live in `~/.solo/bin`,
@@ -57,18 +57,24 @@ install yourself.
 
 ### Windows (WSL2) prerequisite
 
-Kind (which Solo provisions automatically) requires WSL2 to be enabled on
-Windows, but you do not need a WSL2 Linux distro installed — only the WSL2
-feature itself. Enable it with:
+Solo runs Kubernetes inside Docker, and Docker Desktop on Windows runs its
+Linux engine in a virtual machine: the WSL2 backend (the default, and the only
+option on Windows Home) or Hyper-V. Both Windows paths on this page — native
+PowerShell and the Ubuntu (WSL2) terminal — therefore need WSL2 (or Hyper-V)
+and hardware virtualization. The native PowerShell path only removes the need
+for a WSL2 Linux distro and terminal.
+
+To enable WSL2 without installing a distro:
 
 ```powershell
 wsl --install --no-distribution
 ```
 
 WSL2 requires hardware virtualization and the Virtual Machine Platform Windows
-feature. If virtualization is unavailable (for example, `wsl --install` reports
-`HCS_E_HYPERV_NOT_INSTALLED`), use the native **Windows (PowerShell)** path
-instead, which does not require WSL2.
+feature. If `wsl --install` reports `HCS_E_HYPERV_NOT_INSTALLED`, enable
+virtualization in your firmware (BIOS/UEFI) settings and turn on the Virtual
+Machine Platform feature, then retry. Docker Desktop cannot run Solo without
+them.
 
 ## Docker
 
@@ -90,6 +96,28 @@ To allocate the required resources in Docker Desktop:
 
    ![Docker Desktop resource allocation settings](../docker_resource_image.png)
 
+> **Windows with the WSL2 backend:** Docker Desktop does not show memory and
+> CPU settings when it uses WSL2; Windows sets the WSL2 VM's limits instead (by
+> default, half of your machine's memory). To give it 12 GB and 6 CPUs, create
+> or edit `%UserProfile%\.wslconfig`:
+>
+> ```ini
+> [wsl2]
+> memory=12GB
+> processors=6
+> ```
+>
+> Then run `wsl --shutdown` in PowerShell and restart Docker Desktop.
+
+To check what your container engine actually has available:
+
+```bash
+docker info --format '{{.NCPU}} CPUs / {{.MemTotal}} bytes'
+```
+
+You need at least 6 CPUs and 12 GB of memory. The memory is shown in bytes, so
+12 GB appears as a number of about `12000000000` or more.
+
 > **Note:** If Docker Desktop does not have enough memory or CPU allocated, the one-shot deployment will fail or produce unhealthy pods.
 
 #### Linux
@@ -104,11 +132,23 @@ Docker Engine on Linux uses system memory directly and does not have a resource 
 **Podman on Linux:**
 If using Podman instead of Docker Engine, ensure your system has at least 12 GB of free RAM available.
 
+#### Podman fallback
+
+When the `docker` command is not on your `PATH` (or `FORCE_PODMAN=true` is set),
+Solo sets up Podman itself the first time it creates a cluster:
+
+- **Linux:** Solo installs `git` and `iptables` with your system package manager,
+  then installs Homebrew if it is missing and uses it to install Podman, and runs
+  Podman in rootful mode. These steps run `sudo`, so expect a password prompt;
+  an unattended run without `sudo` access stops here.
+- **macOS:** Solo installs Podman and runs it in a Podman virtual machine.
+
+To keep Solo from changing your system, install Docker (or Podman) yourself
+before your first deploy.
+
 ## Platform Setup
 
 Solo supports **macOS**, **Linux**, and **Windows** (natively with PowerShell, or via WSL2). Select your platform below to install the required container runtime and configure your environment, before proceeding to Quickstart:
-
-> ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31.
 
 {{< tabpane text=true >}}
 
@@ -205,7 +245,11 @@ Run Solo natively from **Windows PowerShell**. Run every command below in a Powe
       - **Settings → Resources → CPU**: set to at least **6 cores**
       - Click **Apply & Restart**
 
-    > **Windows prerequisite:** Docker Desktop must be running before you run `solo one-shot single deploy`.
+      With the default WSL2 backend these settings are not shown; set the
+      limits in `.wslconfig` instead, as described in
+      [Configure Resources by Platform](#macos-and-windows-docker-desktop).
+
+    > **Windows prerequisite:** Docker Desktop must be running before you run `solo one-shot single deploy`. It needs WSL2 (or Hyper-V) and hardware virtualization; see [Windows (WSL2) prerequisite](#windows-wsl2-prerequisite).
 
 2. Install Node.js (>= 22.0.0):
 
@@ -272,13 +316,9 @@ Your environment is ready. Proceed to [Quickstart](/docs/simple-solo-setup/quick
 
 The following tools are not required but are recommended for monitoring and managing your local network:
 
-- **k9s** (`>= v0.27.4`): A terminal-based UI for managing Kubernetes clusters. Install it with:
-
-  ```bash
-  brew install k9s
-  ```
-
-  Run `k9s` to launch the cluster viewer.
+- **k9s** (`>= v0.27.4`): A terminal-based UI for managing Kubernetes clusters.
+  See the [k9s installation guide](https://k9scli.io/topics/install/) for your
+  platform, then run `k9s` to launch the cluster viewer.
 
 ## Version Compatibility Reference
 
@@ -292,21 +332,23 @@ with a previous installation - clean up your environment and reinstall:
 - To **remove a legacy npm install** or perform a **full environment reset**
   (delete Solo-managed Kind clusters and your `~/.solo` directory), see the
   [Cleanup guide](/docs/simple-solo-setup/cleanup).
-- To **upgrade an existing install**, install a **specific version**, or switch
-  between Homebrew and npm, see
+- To **upgrade an existing install** or install a **specific version**, see
   [Upgrading an existing Solo installation](/docs/simple-solo-setup/upgrading-solo).
 - **macOS "mounts denied" error on Apple Silicon**: If `solo one-shot single deploy`
   fails immediately with a **"mounts denied"** or **"path is not shared from the host"**
-  error, add `/opt/homebrew` to Docker Desktop's File Sharing list:
-  **Settings → Resources → File Sharing → +** → add `/opt/homebrew` → **Apply & Restart**.
-  This can occur on Apple Silicon Macs (M1/M2/M3/M4) when Homebrew's install path
-  (`/opt/homebrew`) is not included in Docker Desktop's shared directories.
-  Intel Mac users (Homebrew path `/usr/local`) are not affected.
+  error, Docker cannot read the directory Solo is installed in. Solo's Kind
+  cluster mounts files from its own install directory, which is under
+  `/opt/homebrew` when Node.js was installed with Homebrew on an Apple Silicon
+  Mac, and Docker Desktop does not share that path by default. Run
+  `npm root -g` to see where global npm packages live, then add that path (or
+  `/opt/homebrew`) under **Settings → Resources → File Sharing → +** →
+  **Apply & Restart**.
 - **WSL2 fails to install** (for example, `wsl --install` reports
   `HCS_E_HYPERV_NOT_INSTALLED`): WSL2 requires hardware virtualization and the
-  Virtual Machine Platform feature. See Microsoft's
-  [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) guide, or
-  use the native **Windows (PowerShell)** path, which does not require WSL2.
+  Virtual Machine Platform feature. Enable virtualization in your firmware
+  settings and see Microsoft's
+  [Install WSL](https://learn.microsoft.com/en-us/windows/wsl/install) guide.
+  Both Windows paths need it, because Docker Desktop runs on WSL2 or Hyper-V.
 - **First deploy fails with a PostgreSQL startup timeout**: If
   `solo one-shot single deploy` fails during mirror node setup with a
   PostgreSQL startup timeout, this is a known intermittent issue on first

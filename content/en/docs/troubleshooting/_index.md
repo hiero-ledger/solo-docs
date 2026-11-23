@@ -79,6 +79,29 @@ suggesting `solo deployment diagnostics logs` or
 
 ## Common Issues and Solutions
 
+The commands in this section use shell variables for your deployment. Set them
+first. The values below are the defaults for `solo one-shot single deploy`; if
+you passed `--deployment` or `--namespace`, use your values instead
+(`solo deployment config list --quiet-mode` lists each deployment with its
+namespace).
+
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+export SOLO_DEPLOYMENT=one-shot
+export SOLO_NAMESPACE=one-shot
+export SOLO_CLUSTER_NAME=solo-cluster
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+$SOLO_DEPLOYMENT = 'one-shot'
+$SOLO_NAMESPACE = 'one-shot'
+$SOLO_CLUSTER_NAME = 'solo-cluster'
+```
+{{% /tab %}}
+{{< /tabpane >}}
+
 ### Troubleshooting Installation and Upgrades
 
 Installation and upgrade failures are common, especially when older installs or
@@ -106,18 +129,15 @@ You are likely hitting an installation or upgrade problem if:
 
 1. **Confirm installation method**
 
-   If you previously installed Solo via Homebrew and are now migrating to npm,
-   remove the Homebrew install to avoid conflicts:
-
-   ```bash
-   brew uninstall hiero-ledger/tools/solo
-   ```
-
-   Then install via npm:
+   Install Solo with npm:
 
    ```bash
    npm install -g @hiero-ledger/solo@latest
    ```
+
+   If `solo --version` does not report the version you just installed, another
+   `solo` binary is earlier on your `PATH`. Find it with `which -a solo`
+   (PowerShell: `Get-Command solo -All`) and remove it.
 
    If you have Solo installed under both npm package names (`@hiero-ledger/solo`
    and `@hashgraph/solo`), remove both before reinstalling:
@@ -391,7 +411,7 @@ file on every node as part of the upgrade.
 
 > **Note:** The file is applied only during an upgrade to a newer consensus node
 > version. Re-running an upgrade to the version the network already runs does
-> not apply it. The flag requires Solo **v0.XX.0** or later and a target version
+> not apply it. The flag requires Solo **v0.92.0** or later and a target version
 > of v0.68.0 or later, and it cannot be combined with `--upgrade-zip-file`. See
 > [Apply updated fee schedules and throttles](/docs/simple-solo-setup/upgrade-your-network#apply-updated-fee-schedules-and-throttles)
 > for details.
@@ -533,11 +553,35 @@ sequence to isolate the issue.
      Ready.  
      See [Pods not reaching Ready state](#pods-not-reaching-ready-state).
 
-2. Use manual port forwarding (bypass automation)
+2. Check how the endpoints are exposed
 
-   If automatic port forwarding (from `solo` commands or your environment) is
-   not working, forward the required services manually. The local ports below
-   match the Solo 0.63+ defaults — adjust to any available port if needed:
+   When `solo one-shot single deploy` created the Kind cluster itself, the
+   default ports (38080, 35211, 38081, 37546) are Docker port mappings on the
+   Kind node container, not `kubectl port-forward` tunnels. They work as long as
+   that container runs; check it, and start it again if it stopped (for
+   example after a reboot):
+
+   ```bash
+   docker ps -a --filter name=solo-cluster-control-plane
+   docker start solo-cluster-control-plane
+   ```
+
+   In this setup, do not run `kubectl port-forward` on those ports: they are
+   already in use by Docker. If the deployment instead runs on a cluster that
+   existed before the deploy, Solo uses port-forwards; restore them with:
+
+   ```bash
+   solo deployment port-forwards refresh --deployment "${SOLO_DEPLOYMENT}"
+   ```
+
+   `~/.solo/one-shot-<deployment-name>/forwards` lists which kind of endpoint
+   each service uses.
+
+3. Use manual port forwarding (bypass automation)
+
+   If the port-forwards still do not work, forward the required services
+   manually. The local ports below match the Solo 0.63+ defaults; if one is
+   already in use, pick any free local port:
 
    ```bash
    # Consensus node (gRPC) — local port 35211 → service port 50211
@@ -559,7 +603,7 @@ sequence to isolate the issue.
    > **Note:** For Solo 0.62 and earlier, use local ports `50211`, `8080`,
    > `5551`, and `7546` respectively.
 
-3. Confirm the expected endpoints and ports
+4. Confirm the expected endpoints and ports
 
    After forwarding, connect to the local ports shown above (for example,
    `http://localhost:38080` for the explorer).  
@@ -626,10 +670,14 @@ are being generated and imported.
    # Redeploy with pinger enabled
    solo mirror node add \
      --deployment "${SOLO_DEPLOYMENT}" \
-     --cluster-ref kind-${SOLO_CLUSTER_NAME} \
+     --cluster-ref one-shot \
      --enable-ingress \
      --pinger
    ```
+
+   `one-shot` is the cluster reference `solo one-shot single deploy` registers;
+   `solo deployment config list --quiet-mode` shows the cluster reference of each
+   deployment.
 
 ### Helm repository errors
 
@@ -661,10 +709,15 @@ creation failures or missing nodes.
 1. Cluster will not start or is in a bad state:
 
    ```bash
-   # Delete and recreate the cluster
+   # Remove the deployment and the cluster, then deploy again
+   solo one-shot single destroy --deployment "${SOLO_DEPLOYMENT}"
    kind delete cluster -n "${SOLO_CLUSTER_NAME}"
-   kind create cluster -n "${SOLO_CLUSTER_NAME}"
+   solo one-shot single deploy
    ```
+
+   Let `solo one-shot single deploy` create the cluster rather than running
+   `kind create cluster` yourself: Solo creates it with the port mappings and
+   settings the one-shot endpoints rely on.
 
 2. Docker context or daemon issues
 

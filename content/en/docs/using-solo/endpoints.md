@@ -13,14 +13,16 @@ icon: "fas fa-network-wired"
 
 ## Overview
 
-After a successful `solo one-shot single deploy`, Solo sets up port-forwards to
-the following local services. Use these endpoints to connect your application,
+After a successful `solo one-shot single deploy`, the following services are
+reachable on `localhost`. Use these endpoints to connect your application,
 SDK, or tooling to the running network.
 
-> **Note:** The ports below are Solo's default targets. If a port is already in
-> use on your machine, Solo automatically selects the next available port and
-> logs `Using available port <port>`. See [Port availability](#port-availability)
-> for how to look up the ports your deployment is actually using.
+> **Note:** How the ports are exposed depends on whether one-shot created the
+> Kind cluster. If it did, the ports are fixed host port mappings; otherwise
+> Solo opens `kubectl port-forward` tunnels and, if a port is already in use,
+> picks the next available one. See [Port availability](#port-availability)
+> for details and for how to look up the ports your deployment is actually
+> using.
 
 ## Solo 0.63 and later (current defaults)
 
@@ -108,27 +110,50 @@ For SDK-specific connection examples, see:
 
 ## Port availability
 
-Solo uses `kubectl port-forward` to tunnel traffic from your machine to services
-running inside Kubernetes. Before opening each tunnel, Solo tries the configured
-port:
+Solo exposes the one-shot endpoints in one of two ways:
 
-- If the port is free, Solo logs: `Using requested port <port>`.
-- If the port is already occupied (by another process, or by a previous Solo
-  session that did not clean up its port-forwards), Solo finds the next
-  available port and logs: `Using available port <port>`.
+- **NodePorts (one-shot created the Kind cluster).** When
+  `solo one-shot single deploy` creates the Kind cluster itself, the cluster is
+  created with Kind `extraPortMappings` that publish fixed NodePorts on
+  `127.0.0.1:35211`, `38080`, `38081` and `37546`. No `kubectl port-forward`
+  process is involved, so nothing needs restoring after the deploy. If an
+  endpoint stops responding, check that the cluster's Docker container is
+  running (`docker ps --filter name=solo-cluster-control-plane`) and start it
+  with `docker start solo-cluster-control-plane` if needed. Do not open a
+  `kubectl port-forward` on these ports - the host port mapping already owns
+  them.
+- **Port-forwards (the cluster already existed).** When you deploy into an
+  existing cluster, Solo opens `kubectl port-forward` tunnels instead. Before
+  opening each tunnel, Solo tries the configured port:
+  - If the port is free, Solo logs: `Using requested port <port>`.
+  - If the port is already occupied (by another process, or by a previous Solo
+    session that did not clean up its port-forwards), Solo finds the next
+    available port and logs: `Using available port <port>`.
 
-The actual ports used are printed at the end of `solo one-shot single deploy`.
+The actual endpoints are printed at the end of `solo one-shot single deploy`.
 You can also look them up at any time with the Solo CLI, using your deployment
 name (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)).
 
-To view the active port assignments:
+To view the deployment's port assignments:
 
 ```bash
 solo deployment config ports --deployment <deployment-name>
 ```
 
-The output directory is `one-shot-<deployment-name>`, and the default deployment
-name is `one-shot`. So the default output directory is `~/.solo/one-shot-one-shot/`.
+```text
+ *** Consensus node gRPC ***
+-------------------------------------------------------------------------------
+ - component 1: localhost:35211 -> pod:30007
+```
+
+The `pod:` value is the target port: a NodePort such as `30007` for the
+one-shot host port mappings, or the container port (for example `50211`) for a
+`kubectl port-forward`.
+
+The one-shot deploy also saves the endpoint summary it printed to a `forwards`
+file in its output directory. The output directory is
+`one-shot-<deployment-name>`, and the default deployment name is `one-shot`.
+So the default output directory is `~/.solo/one-shot-one-shot/`.
 
 {{< tabpane text=true >}}
 {{% tab header="Bash" lang="bash" %}}
@@ -143,17 +168,27 @@ Get-Content "$env:USERPROFILE\.solo\one-shot-one-shot\forwards"
 {{% /tab %}}
 {{< /tabpane >}}
 
+When one-shot created the Kind cluster, the file contains lines such as:
+
 ```text
- *** Consensus node gRPC ***
--------------------------------------------------------------------------------
- - component 1: localhost:35211 -> pod:50211
+Consensus Node gRPC available on 127.0.0.1:35211 (NodePort)
+Explorer available on 127.0.0.1:38080 (NodePort)
+JSON RPC Relay available on http://127.0.0.1:37546 (NodePort)
+Mirror Node REST API available on 127.0.0.1:38081 (NodePort)
 ```
+
+For a deployment into an existing cluster, the lines read
+`<service> port forward enabled on 127.0.0.1:<port>` instead.
+
+To see each port's status as well:
 
 ```bash
 solo deployment config info --deployment one-shot
 ```
 
-To restore port-forwards after a system restart without redeploying:
+To restore `kubectl port-forward` tunnels after a system restart without
+redeploying (this does not apply to the NodePort endpoints, which come back
+with the Kind cluster's container):
 
 ```bash
 solo deployment port-forwards refresh --deployment one-shot

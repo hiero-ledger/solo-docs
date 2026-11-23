@@ -54,14 +54,6 @@ Install the latest Solo CLI globally using one of the following methods:
 
   > **Note:** The script installs a standalone Solo binary to `~/.solo/bin` and adds that directory to your `PATH`, so open a new terminal before you run `solo`. On Alpine Linux, run `apk add libstdc++` first. For the options, what the script changes, and how to remove it, see [Linux Install Script](/docs/simple-solo-setup/linux-install-script).
 
-- **Homebrew** (deprecated — macOS/Linux/WSL2 only):
-
-  ```bash
-  brew install hiero-ledger/tools/solo
-  ```
-
-  > ⚠️ **Homebrew support is being deprecated.** Solo will stop publishing updates to Homebrew after August 31, 2026. New users should install via npm. Existing Homebrew users should migrate before August 31. If you have installed solo previously by using Homebrew you should uninstall it to make sure that any new version that is installed by npm is used. Just do `brew uninstall solo`.
-
 ### Verify the installation
 
 Confirm that Solo is installed and available on your PATH:
@@ -108,14 +100,25 @@ This command performs the following actions:
 > and re-establishes port-forwards to finalize the port configuration (clearing
 > stale forwards and migrating ports as needed). It does not indicate a failure.
 
-> **PostgreSQL startup timeout:** If the first deployment fails during mirror
-> node setup with a PostgreSQL startup timeout, destroy the deployment and
-> retry — this is a known intermittent issue on first deploy:
+> **Note:** A block headed `Image cache failures` at the end of the output
+> does not mean the deployment failed. It lists images Solo could not take from
+> its local [image cache](/docs/advanced-solo-setup/image-cache); the cluster
+> pulls those images from their registries instead. The deployment succeeded if
+> the command finished without an error.
+
+> **If the deployment fails:** Destroy what the failed attempt left behind,
+> then deploy again:
 >
 > ```bash
 > solo one-shot single destroy
 > solo one-shot single deploy
 > ```
+>
+> Running `solo one-shot single deploy` again on its own also works: it detects
+> the leftover deployment and asks before removing it. It cannot ask when run
+> with `--quiet-mode` or `--force`, or without an interactive terminal, so destroy
+> first in those cases. A PostgreSQL startup timeout during mirror node setup is a known
+> intermittent first-deploy failure that this resolves.
 
 ### What gets deployed
 
@@ -149,17 +152,27 @@ For multi-node teardown, run `solo one-shot multi destroy`.
 
 ### Capture your deployment name
 
-`solo one-shot single deploy` (and `multi deploy`) assigns a unique name to
-each deployment. Subsequent Solo commands and SDK guides reference it as
-`<your-deployment-name>` — substitute your actual value when you run them.
+Later Solo commands and guides refer to your deployment as
+`<deployment-name>`. `solo one-shot single deploy` (and `multi deploy`) names it
+`one-shot` unless you pass `--deployment <name>`, and deploys it into the
+`one-shot` Kubernetes namespace unless you pass `--namespace <name>`. If you
+used the defaults, use `one-shot` wherever a page says `<deployment-name>`.
 
-Retrieve the most recent deployment's name with:
+To list the deployments Solo knows about:
 
 ```bash
-solo one-shot show deployment
+solo deployment config list --quiet-mode
 ```
 
-The output includes a `Deployment Name:` line - use that value as `<deployment-name>` in other commands.
+Each deployment is listed with its namespace, cluster reference, kube context,
+and status, for example:
+
+```text
+one-shot | namespace=one-shot | cluster-ref=one-shot | context=kind-solo-cluster | status=connected
+```
+
+> **Note:** `solo one-shot show deployment` does not look up the deployment you
+> created: without `--deployment` it reports the default name, `one-shot`.
 
 ### Verify the network
 
@@ -182,7 +195,7 @@ kubectl get pods -A | Select-String -Pattern 'kube-system' -NotMatch
 
 Confirm that all Solo-related pods are in a `Running` or `Completed` state.
 
-> **Tip:** The Solo testing team recommends [k9s](https://k9scli.io/) for managing Kubernetes clusters. It provides a terminal-based UI that makes it easy to view pods, logs, and cluster status. Install it with `brew install k9s` and run `k9s` to launch.
+> **Tip:** The Solo testing team recommends [k9s](https://k9scli.io/) for managing Kubernetes clusters. It provides a terminal-based UI that makes it easy to view pods, logs, and cluster status. To use it, [install k9s](https://k9scli.io/topics/install/) for your platform and run `k9s`.
 
 ## Step 3: Access your local network
 
@@ -195,11 +208,16 @@ Open `http://localhost:38080` in your browser to explore your network.
 
 ## Step 4: Tear down your network
 
-When you are finished, destroy the network to free up resources:
+When you are finished, destroy the network:
 
 ```bash
 solo one-shot single destroy
 ```
+
+This removes the network but keeps the Kind cluster, so the next deploy starts
+faster. The cluster still runs as a Docker container and its images stay on
+disk. To remove it as well, see
+[Remove the Kind cluster](/docs/simple-solo-setup/cleanup#remove-the-kind-cluster).
 
 For a full teardown procedure including failure recovery, see the [Cleanup](/docs/simple-solo-setup/cleanup) guide. For granular stop/start and management options, see [Managing Your Network](/docs/simple-solo-setup/managing-your-network).
 

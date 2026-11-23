@@ -1,0 +1,7 @@
+{{- /*
+  Docsy head hook. Advertises /llms.txt, the curated entry point for AI agents,
+  from every page, so an agent that lands on any docs page can find it. Each
+  page's own Markdown copy is advertised separately by Docsy's alternate output
+  format links (outputFormats.markdown in hugo.yaml).
+*/ -}}
+<link rel="alternate" type="text/plain" title="llms.txt" href="{{ "llms.txt" | absURL }}">

@@ -25,14 +25,21 @@ Before proceeding, ensure you have completed the following:
 
 ## Destroying Your Network
 
-> **Important:** Always destroy your network before deploying a new one to avoid
-> conflicts and errors.
+> **Important:** Destroy your network before deploying a new one. Running
+> `solo one-shot single deploy` over an existing deployment detects it and asks
+> before removing it, but it cannot ask when run with `--quiet-mode` or `--force`, or
+> without an interactive terminal.
 
 To remove your Solo network:
 
 ```bash
 solo one-shot single destroy
 ```
+
+If Solo knows about more than one deployment, `destroy` asks which one to
+remove. In scripts, CI, or any run without an interactive terminal, name it
+instead: `solo one-shot single destroy --deployment one-shot` (or the name you
+passed to `--deployment`).
 
 For multi-node one-shot deployments, use:
 

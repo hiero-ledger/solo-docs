@@ -27,17 +27,23 @@ Before proceeding, ensure you have completed the following:
 > **Note:** If you need to upgrade an existing Solo network, see
 > [Upgrade Your Network](/docs/simple-solo-setup/upgrade-your-network).
 
+Most management commands require your deployment name. It is `one-shot`
+unless you passed `--deployment` to `solo one-shot single deploy`. To list your
+deployments:
+
 ```bash
-solo one-shot show deployment
+solo deployment config list --quiet-mode
 ```
 
-Expected output — the deployment name you passed to `solo one-shot single deploy`, or the default `one-shot` if you did not specify `--deployment`:
+Each deployment is listed with its namespace, cluster reference, kube context,
+and status, for example:
 
-  ```bash
-  Deployment Name: one-shot (default)
-  ```
+```text
+one-shot | namespace=one-shot | cluster-ref=one-shot | context=kind-solo-cluster | status=connected
+```
 
-Most management commands require your deployment name. Find it with `solo one-shot show deployment` — see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name). It defaults to `one-shot` unless you passed `--deployment`. Use it as `<deployment-name>` in all commands on this page.
+Use the deployment name as `<deployment-name>` in all commands on this page. See
+also [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name).
 
 ## Stopping and Starting Nodes
 
@@ -229,13 +235,13 @@ You can also retrieve logs for a specific pod directly using `kubectl`:
   kubectl logs -n <namespace> <pod-name>
   ```
 
-> **Important:** Solo deploys each network into a Kubernetes namespace. For one-shot deployments, the namespace defaults to `one-shot` (matching the default deployment name). You can override it by passing `--namespace` to `solo one-shot single deploy`.
+> **Important:** Solo deploys each network into a Kubernetes namespace. For one-shot deployments, the namespace is `one-shot` unless you passed `--namespace` to `solo one-shot single deploy`. Passing only `--deployment` changes the deployment name, not the namespace.
 
 To find your deployment namespace, use any of:
 
   ```bash
-  # Look up the namespace Solo recorded for this deployment
-  solo deployment config info --deployment <deployment-name>
+  # List deployments with the namespace Solo recorded for each
+  solo deployment config list --quiet-mode
 
   # Or list all namespaces and pick the one matching your deployment
   kubectl get ns
@@ -243,7 +249,5 @@ To find your deployment namespace, use any of:
   # Or inspect pods and use the NAMESPACE column
   kubectl get pods -A | grep -v kube-system
   ```
-
-For one-shot deployments the namespace matches the deployment name, which defaults to `one-shot` unless you passed `--deployment` (retrieve it with `solo one-shot show deployment`).
 
 Replace `<namespace>` and `<pod-name>` with the values from your deployment.

@@ -95,6 +95,9 @@ npm init -y
 npm install @hiero-ledger/sdk
 ```
 
+The examples below are plain JavaScript in an ES module file (`index.mjs`), so
+they run with `node` and need no build step or `package.json` changes.
+
 For the full SDK source tree (with the bundled `examples/` directory), follow the [Hiero JavaScript SDK README](https://github.com/hiero-ledger/hiero-sdk-js#installation). The repository uses pnpm workspaces + go-task to build.
 
 {{% /tab %}}
@@ -131,21 +134,22 @@ Go 1.25 or higher is required (per `go.mod` in the SDK). See the [Hiero Go SDK R
 
 ## Step 3: Locate Your Operator Credentials
 
-`solo one-shot single deploy` provisions pre-funded accounts and writes their
-credentials to `accounts.json`. Any account from this file can
-serve as your SDK operator — `0.0.2` is used as the example throughout this
-guide, but it is not required. You do **not** need to call
-`solo ledger account create` for the examples in this guide.
+`solo one-shot single deploy` prints the genesis operator account and the
+pre-funded accounts it creates, and writes their credentials to
+`accounts.json`. This guide uses the operator account `0.0.2` as the SDK
+operator. You do **not** need to call `solo ledger account create` for the
+examples in this guide.
 
-> **Tip:** Account credentials are also printed to the terminal at the end of
-> `solo one-shot single deploy`. If you missed the output, use the steps below
-> to retrieve them from disk.
-
-- Print the operator credentials:
+- Print the credentials with the Solo CLI (works the same on macOS, Linux and
+  Windows):
 
   ```bash
-  cat ~/.solo/one-shot-<your-deployment-name>/accounts.json
+  solo one-shot show accounts --output json
   ```
+
+  The command reads `~/.solo/one-shot-<your-deployment-name>/accounts.json`.
+  Add `--deployment <your-deployment-name>` if you have more than one
+  deployment.
 
   > **Tip:** If you are unsure of your deployment name, run `solo one-shot show deployment` — it prints the deployment name and the full path to `accounts.json`.
 
@@ -162,18 +166,34 @@ guide, but it is not required. You do **not** need to call
       }
     ],
     "createdAccounts": [
-      { "accountId": "0.0.1002", "privateKey": "0x105d050185...", "balance": "1000000 ℏ", "group": "ecdsa-alias" },
+      {
+        "accountId": "0.0.1002",
+        "privateKey": "0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524",
+        "publicKey": "0x02b3c641418e89452cd5202adfd4758f459acb8e364f741fd16cd2db79835d39d2",
+        "balance": "1000000 ℏ",
+        "group": "ecdsa-alias",
+        "publicAddress": "0.0.67d8d32e9bf1a9968a5ff53b87d777aa8ebbee69"
+      },
       ...
     ]
   }
   ```
 
-  The `systemAccounts[0]` entry (`0.0.2`) holds an Ed25519 key in DER format
-  and is used as the operator example in this guide. The `createdAccounts` array
-  contains additional pre-funded ECDSA accounts (`0.0.1002`–`0.0.1011`) useful
-  for EVM workflows — any of these can also be used as an operator.
+  The `systemAccounts[0]` entry (`0.0.2`) holds an ED25519 key in DER format
+  and is used as the operator in this guide. The `createdAccounts` array
+  contains 10 pre-funded ECDSA alias accounts (`0.0.1002`–`0.0.1011`) intended
+  for EVM workflows.
 
 - Save the `accountId` and `privateKey` values from `systemAccounts[0]` — you will configure the SDK with them in the next step.
+
+> **Using a `createdAccounts` entry as the operator:** its `privateKey` is a raw
+> 0x-prefixed ECDSA key, not a DER string. Passing it as a plain string (for
+> example `client.setOperator(id, "0x...")` in JavaScript) parses it as an
+> ED25519 key, and every transaction then fails with `INVALID_SIGNATURE`.
+> Parse it explicitly as ECDSA instead: `PrivateKey.fromStringECDSA(key)` in
+> JavaScript, `PrivateKey.fromStringECDSA(key.replaceFirst("^0x", ""))` in Java
+> (the Java parser does not accept the `0x` prefix), or
+> `hiero.PrivateKeyFromStringECDSA(key)` in Go.
 
 > **EVM tooling note:** For ethers.js, Hardhat, or Foundry, use one of the
 > `createdAccounts` entries; their `privateKey` values are already in
@@ -192,34 +212,37 @@ Pick your language tab below.
 
 {{% tab header="JavaScript" lang="javascript" %}}
 
-The Hiero JavaScript SDK uses environment variables to authenticate the operator account. Create a `.env` file at the root of the `hiero-sdk-js` directory:
+The example reads the operator credentials from environment variables. Create a `.env` file in the `solo-js-demo` directory from Step 2:
 
 ```bash
-cd hiero-sdk-js
-
-cat > .env <<EOF
+cat > .env <<'EOF'
 # Operator account ID (systemAccounts[0].accountId from Step 3)
-OPERATOR_ID="0.0.2"
+export OPERATOR_ID="0.0.2"
 
 # Operator private key (systemAccounts[0].privateKey from Step 3)
-OPERATOR_KEY="302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137"
+export OPERATOR_KEY="302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137"
 
 # Required by LocalProvider in the SDK example scripts (Step 5).
-# Not used by the Client.fromConfig() snippet below, but harmless to include.
-HEDERA_NETWORK="local-node"
+# Not used by the index.mjs snippet below, but harmless to include.
+export HEDERA_NETWORK="local-node"
 EOF
 
 source .env
 ```
 
-> **Important:** `OPERATOR_KEY` must be set to the `privateKey` value, not the `publicKey`. The private key is the longer DER-encoded string beginning with `302e...`. The example scripts also require `HEDERA_NETWORK` - they throw "LocalProvider requires the `HEDERA_NETWORK` environment variable to be set" if it is missing.
+> **Important:** `OPERATOR_KEY` must be set to the `privateKey` value, not the `publicKey`. The private key is the longer DER-encoded string beginning with `302e...`. The `export` keyword is required so that `node` sees the variables in `process.env`. The SDK example scripts also require `HEDERA_NETWORK` - they throw "LocalProvider requires the `HEDERA_NETWORK` environment variable to be set" if it is missing.
 
 > **Security:** Never commit `.env` to source control - the file holds the operator's private key. Add `.env` to your repository's `.gitignore`.
 
-Configure the client with the **Solo 0.63+** port-forwards using `Client.fromConfig()`. The SDK's built-in `Client.forLocalNode()` preset is hardcoded to `localhost:50211`, which does not match Solo 0.63+ defaults (`localhost:35211` for consensus gRPC, `localhost:38081` for the mirror node ingress). Use the explicit network map shown below instead:
+Configure the client with Solo's default endpoints using `Client.fromConfig()`. The SDK's built-in `Client.forLocalNode()` preset is hardcoded to `localhost:50211`, which does not match Solo 0.63+ defaults (`localhost:35211` for consensus gRPC, `localhost:38081` for the mirror node ingress). Create `index.mjs` with the explicit network map shown below:
 
-```typescript
-import { Client, AccountId } from "@hiero-ledger/sdk";
+```javascript
+import {
+  AccountId,
+  AccountInfoQuery,
+  Client,
+  PrivateKey,
+} from "@hiero-ledger/sdk";
 
 const network = { "127.0.0.1:35211": AccountId.fromString("0.0.3") };
 const mirrorNetwork = "127.0.0.1:38081";
@@ -231,7 +254,13 @@ const client = Client.fromConfig({
   // hardcoded 50211/50212 ports, which Solo 0.63+ does not expose.
   scheduleNetworkUpdate: false,
 });
-client.setOperator(process.env.OPERATOR_ID!, process.env.OPERATOR_KEY!);
+
+// The operator key is DER-encoded. For a raw 0x-prefixed ECDSA key from
+// createdAccounts, use PrivateKey.fromStringECDSA(...) instead.
+client.setOperator(
+  AccountId.fromString(process.env.OPERATOR_ID),
+  PrivateKey.fromStringDer(process.env.OPERATOR_KEY),
+);
 ```
 
 {{% /tab %}}
@@ -386,16 +415,20 @@ Add an `AccountInfoQuery` for the operator and run it to confirm the client reac
 
 {{% tab header="JavaScript" lang="javascript" %}}
 
-In your TypeScript/JavaScript code, after building `client`:
+Append the query to `index.mjs`, after `setOperator(...)`:
 
-```typescript
+```javascript
 const info = await new AccountInfoQuery()
-  .setAccountId(AccountId.fromString(process.env.OPERATOR_ID!))
+  .setAccountId(AccountId.fromString(process.env.OPERATOR_ID))
   .execute(client);
 
 console.log("Account ID :", info.accountId.toString());
 console.log("Balance    :", info.balance.toString());
+
+client.close();
 ```
+
+Then run `node index.mjs` in the shell where you sourced `.env`.
 
 {{% /tab %}}
 
@@ -481,11 +514,11 @@ Pick one:
 **Option A - forward Solo's services to the SDK's legacy ports** (run examples unchanged):
 
 ```bash
-kubectl port-forward svc/haproxy-node1-svc -n <your-deployment-name> 50211:50211 &
-kubectl port-forward svc/mirror-1-grpc     -n <your-deployment-name> 5600:5600 &
+kubectl port-forward svc/haproxy-node1-svc -n one-shot 50211:50211 &
+kubectl port-forward svc/mirror-1-grpc     -n one-shot 5600:5600 &
 ```
 
-The kubectl namespace matches `<your-deployment-name>` for default one-shot deploys.
+One-shot deploys use the `one-shot` namespace unless you passed `--namespace` to `solo one-shot single deploy`; replace `one-shot` with your namespace in that case (`solo deployment config ports --deployment <your-deployment-name>` prints it).
 
 **Option B - edit the example** to use the `Client.fromConfig({ ..., scheduleNetworkUpdate: false })` pattern from [Step 4](#step-4-configure-the-sdk-to-connect-to-solo). No port-forwarding needed.
 
@@ -506,9 +539,11 @@ Pick one:
 **Option A - forward Solo's services to the SDK's legacy ports** (run upstream examples with `HEDERA_NETWORK="localhost"` unchanged):
 
 ```bash
-kubectl port-forward svc/haproxy-node1-svc -n <your-deployment-name> 50211:50211 &
-kubectl port-forward svc/mirror-1-grpc     -n <your-deployment-name> 5600:5600 &
+kubectl port-forward svc/haproxy-node1-svc -n one-shot 50211:50211 &
+kubectl port-forward svc/mirror-1-grpc     -n one-shot 5600:5600 &
 ```
+
+One-shot deploys use the `one-shot` namespace unless you passed `--namespace` to `solo one-shot single deploy`; replace `one-shot` with your namespace in that case (`solo deployment config ports --deployment <your-deployment-name>` prints it).
 
 **Option B - use `ClientForNetworkV2` directly** (the pattern shown in [Step 4](#step-4-configure-the-sdk-to-connect-to-solo)). No port-forwarding needed.
 
@@ -619,12 +654,14 @@ For SDK-side logs (which logger each SDK uses and how to configure it), see the 
 | `LocalProvider requires the HEDERA_NETWORK environment variable to be set` *(JS)* | `HEDERA_NETWORK` missing from `.env`, or `.env` not sourced in this shell | Add `HEDERA_NETWORK="local-node"` to `.env`; then `source .env` |
 | `Dependency resolution is looking for a library compatible with JVM runtime version 17, but 'com.hedera.hashgraph:sdk:2.72.0' is only compatible with JVM runtime version 21 or newer` *(Java)* | JDK 17 target in `build.gradle.kts` | Set `sourceCompatibility = JavaVersion.VERSION_21` and ensure the JDK on `PATH` is v21+ |
 | `IllegalArgumentException: Name must be one-of 'mainnet', 'testnet', or 'previewnet'` *(Java)* | Called `Client.forName("local-node")` | Use `Client.forNetwork(Map)` + `setMirrorNetwork(List)`; Java SDK has no local-node preset |
-| `go: module ... requires go >= 1.25` *(Go)* | Local Go is older than the SDK's `go.mod` floor | Upgrade Go to v1.25+; on macOS, `brew install go` |
+| `go: module ... requires go >= 1.25` *(Go)* | Local Go is older than the SDK's `go.mod` floor | Upgrade Go to v1.25+ from [go.dev/dl](https://go.dev/dl/) |
 | `TimeoutException` from query or transaction *(all SDKs)* | Consensus node not actually serving (deploy reported a `NodesStarted` timeout even though the pod is `Running`) | Run `solo one-shot single destroy --deployment <name>` then `solo one-shot single deploy`; the second attempt usually succeeds |
-| SDK calls fail; `127.0.0.1:35211` shows as not listening *(all SDKs)* | Solo's auto-port-forward for consensus gRPC died after deploy | Restore manually: `kubectl port-forward svc/haproxy-node1-svc -n <your-deployment-name> 35211:50211 &` |
+| SDK calls fail; `127.0.0.1:35211` shows as not listening *(all SDKs)*, and one-shot created the Kind cluster | Port `35211` is a Kind host port mapping to a NodePort, not a port-forward, so it is down only when the Kind cluster's container is not running (for example after Docker restarted) | Check with `docker ps --filter name=solo-cluster-control-plane`; start it with `docker start solo-cluster-control-plane`. Do not run `kubectl port-forward` on `35211` - the port is owned by the mapping. See [Port availability](/docs/using-solo/endpoints#port-availability) |
+| SDK calls fail; `127.0.0.1:35211` shows as not listening *(all SDKs)*, and the Kind cluster existed before the deploy | Solo's `kubectl port-forward` for consensus gRPC died after deploy | `solo deployment port-forwards refresh --deployment <your-deployment-name>` |
 | Upstream SDK example hangs against Solo *(JS, Go)* | Example uses the SDK's local-node preset, hardcoded to ports Solo doesn't expose | Follow [Option A or B in *Make the examples reachable*](#make-the-examples-reachable) |
 | `INVALID_SIGNATURE` receipt error | `OPERATOR_KEY` set to public key instead of private key | Re-check your `.env` - use the `privateKey` field value |
-| `INSUFFICIENT_TX_FEE` | Operator account has no HBAR | Use a pre-funded `createdAccounts` entry or top up the operator |
+| `INVALID_SIGNATURE` with a `createdAccounts` key as operator | The raw `0x` ECDSA key was parsed as ED25519 (for example by passing it to `setOperator` as a string) | Parse it with `PrivateKey.fromStringECDSA` (JS, Java) or `PrivateKeyFromStringECDSA` (Go) - see [Step 3](#step-3-locate-your-operator-credentials) |
+| `INSUFFICIENT_TX_FEE` | Operator account has no HBAR | Top up the operator, or use a pre-funded `createdAccounts` entry parsed as an ECDSA key (see [Step 3](#step-3-locate-your-operator-credentials)) |
 
 ---
 

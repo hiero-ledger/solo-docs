@@ -2,10 +2,10 @@
 title: "One-Shot Deploy with Custom Component Versions"
 weight: 3
 description: >
-  Use the --edge flag and *_EDGE_VERSION environment variables to deploy a
-  Solo network against arbitrary component versions — release candidates,
-  pre-releases, or local builds — without modifying Solo source or rebuilding
-  the CLI.
+  Use the one-shot version flags, or the --edge flag, to deploy a Solo network
+  against component versions other than the defaults — release candidates,
+  newer stable releases, or specific older tags — without modifying Solo
+  source or rebuilding the CLI.
 categories: ["Advanced"]
 tags: ["advanced", "one-shot", "deployment", "versions", "edge"]
 type: docs
@@ -14,12 +14,14 @@ icon: "fas fa-layer-group"
 
 ## Overview
 
-Solo's `one-shot single deploy` and `one-shot multi deploy` commands accept
-an `--edge` flag that switches every component from its built-in stable
-default to a separate set of "edge" versions. Each edge version is read from
-an environment variable at startup, so you can pin any component to any tag
-the container registry exposes — including release candidates and unreleased
-builds — without editing Solo source or rebuilding the CLI.
+Solo's `one-shot single deploy`, `one-shot multi deploy`, and
+`one-shot falcon deploy` commands each deploy a fixed set of default component
+versions compiled into the CLI. You can change those versions in two ways:
+
+- **Version flags** pin one component to an exact published tag, such as a
+  release candidate: `--consensus-node-version`, `--mirror-node-version`,
+  `--relay-version`, `--explorer-version`, and `--block-node-version`.
+- **`--edge`** moves every component to its newest stable release at once.
 
 Use this guide when you need to:
 
@@ -27,41 +29,40 @@ Use this guide when you need to:
   Solo-managed stack.
 - Reproduce a specific component version combination for a bug report or
   regression test.
-- Iterate on a single component (Mirror Node, Relay, Explorer, …) while the
-  other components stay on stable defaults.
+- Try the newest stable release of every component before Solo adopts them as
+  defaults.
 
-For the canonical list of `*_EDGE_VERSION` variables, see
-[Edge Component Versions](/docs/advanced-solo-setup/using-environment-variables#edge-component-versions)
-in the environment variables reference.
-
-> **Local binary builds vs published version overrides:** `--edge` and
-> `*_EDGE_VERSION` variables pin components to **published container image
-> tags** — they require the image to exist in the registry. If you need to
-> deploy a binary you compiled locally (before any tag or release exists), use
-> `--local-build-path` instead.
+> **Local binary builds vs published version overrides:** version flags and
+> `--edge` pin components to **published container image tags** — the image
+> must exist in the registry. If you need to deploy a binary you compiled
+> locally (before any tag or release exists), use `--local-build-path`
+> instead.
 
 ---
 
 ## How It Works
 
-```text
-*_EDGE_VERSION env var (e.g. CONSENSUS_NODE_EDGE_VERSION)
-      │
-      ▼
-solo one-shot ... deploy --edge
-      │
-      ▼
-Each component is pinned to its edge version for this deploy.
-Components without an explicit override fall back to the compiled-in
-edge defaults, which themselves fall back to the stable defaults.
-```
+For each component, Solo uses the first version it finds in this order:
 
-- Without `--edge`, Solo uses the stable defaults compiled into the CLI.
-- With `--edge`, Solo reads the `*_EDGE_VERSION` constants — and any matching
-  environment variable you set in the shell overrides those constants.
+1. The component's version flag, for example
+   `--consensus-node-version v0.74.0-rc.1`.
+2. A version set in a `solo.config.yaml` or `solo.config.json` file in the
+   current directory or one of its parents, for example
+   `consensus-node-version: v0.74.0-rc.1` (YAML) or
+   `{"consensusNodeVersion": "v0.74.0-rc.1"}` (JSON).
+3. With `--edge`: the newest stable release of the component.
+   Without `--edge`: Solo's default version, which the `*_VERSION`
+   environment variables (for example `CONSENSUS_NODE_VERSION`) can override.
 
-You only need to set variables for the components you want to override. All
-others fall back to their compiled-in defaults.
+With `--edge`, Solo looks up the latest stable (non-pre-release) GitHub release
+of the consensus node, mirror node, Explorer, JSON-RPC relay, and block node.
+The `*_EDGE_VERSION` environment variables (for example
+`CONSENSUS_NODE_EDGE_VERSION`) are used **only as a fallback** when that lookup
+fails, for example when GitHub is unreachable or rate-limits the request. To
+pin an exact version, such as a release candidate, use a version flag rather
+than a `*_EDGE_VERSION` variable. The Solo chart is the exception: with
+`--edge`, Solo uses `SOLO_CHART_EDGE_VERSION` if it is set, otherwise the
+default Solo chart version.
 
 > **Image cache:** Solo's [image cache](/docs/advanced-solo-setup/image-cache)
 > holds only the default component versions of your Solo release. A component
@@ -73,23 +74,25 @@ others fall back to their compiled-in defaults.
 
 ## Quick Start
 
-Deploy a single-node network with a custom Consensus Node release candidate:
+Deploy a single-node network with a Consensus Node release candidate:
 
 ```bash
-CONSENSUS_NODE_EDGE_VERSION=v0.74.0-rc.1 \
-solo one-shot single deploy --edge --debug
+solo one-shot single deploy --consensus-node-version v0.74.0-rc.1 --debug
 ```
 
 What this does:
 
-- `CONSENSUS_NODE_EDGE_VERSION=v0.74.0-rc.1` overrides the consensus node
-  version for this command invocation.
-- `--edge` tells Solo to read `*_EDGE_VERSION` variables instead of stable
-  defaults.
+- `--consensus-node-version v0.74.0-rc.1` pins the consensus node to that tag.
 - `--debug` enables Solo's debug mode — appropriate for local development,
   not for production-shaped deployments.
 - Mirror Node, Relay, Explorer, Block Node, and the Solo chart keep their
-  compiled-in edge defaults because no `*_EDGE_VERSION` was set for them.
+  default versions.
+
+Deploy with the newest stable release of every component instead:
+
+```bash
+solo one-shot single deploy --edge --debug
+```
 
 > **Note:** Every successive `solo one-shot single deploy` command will remove the
 > existing components and will create a new deployment.
@@ -102,7 +105,7 @@ What this does:
 
 ## Where to Find Version Tags
 
-Each `*_EDGE_VERSION` value is a published release tag from the component's
+Each version you pass is a published release tag from the component's
 GitHub release page. Pick a tag from the appropriate page below, and match
 the format the component publishes — a missing or extra `v` prefix is the
 most common cause of image-pull failures.
@@ -114,7 +117,7 @@ most common cause of image-pull failures.
 | JSON-RPC Relay  | [hiero-json-rpc-relay](https://github.com/hiero-ledger/hiero-json-rpc-relay/releases)                 | `MAJOR.MINOR.PATCH`               | `0.77.0`        |
 | Explorer        | [hiero-mirror-node-explorer](https://github.com/hiero-ledger/hiero-mirror-node-explorer/releases)     | `MAJOR.MINOR.PATCH`               | `27.0.0`        |
 | Block Node      | [hiero-block-node](https://github.com/hiero-ledger/hiero-block-node/releases)                         | `vMAJOR.MINOR.PATCH[-qualifier]`  | `v0.32.0`       |
-| Solo Chart      | [hashgraph/solo-charts](https://github.com/hashgraph/solo-charts/releases)                            | `MAJOR.MINOR.PATCH`               | `0.64.0`        |
+| Solo Chart      | [hiero-ledger/solo-charts](https://github.com/hiero-ledger/solo-charts/releases)                      | `MAJOR.MINOR.PATCH`               | `0.64.0`        |
 
 > **Note:** Consensus Node, Mirror Node, and Block Node tags are prefixed
 > with `v`; Relay, Explorer, and Solo Chart tags are not. The tag must exist
@@ -125,25 +128,34 @@ most common cause of image-pull failures.
 
 ## Command Reference
 
-In Solo v0.72.0, `--edge` is accepted by the `single` and `multi` one-shot
-deploy variants. `solo one-shot falcon deploy` does **not** currently accept
-`--edge` — use one of the two variants below to test custom component
-versions.
+All three one-shot deploy variants accept the version flags and `--edge`.
+Solo chart versions have no one-shot flag; set `SOLO_CHART_VERSION` (or, with
+`--edge`, `SOLO_CHART_EDGE_VERSION`) instead.
 
 ### Single-node deploy
 
 ```bash
-CONSENSUS_NODE_EDGE_VERSION=<version> \
-MIRROR_NODE_EDGE_VERSION=<version> \
-solo one-shot single deploy --edge [--debug] [other flags]
+solo one-shot single deploy \
+  --consensus-node-version <version> \
+  --mirror-node-version <version> \
+  [--edge] [--debug] [other flags]
 ```
 
 ### Multi-node deploy
 
 ```bash
-CONSENSUS_NODE_EDGE_VERSION=<version> \
-MIRROR_NODE_EDGE_VERSION=<version> \
-solo one-shot multi deploy --edge --num-consensus-nodes 3 [--debug] [other flags]
+solo one-shot multi deploy --num-consensus-nodes 3 \
+  --consensus-node-version <version> \
+  --mirror-node-version <version> \
+  [--edge] [--debug] [other flags]
+```
+
+### Falcon deploy
+
+```bash
+solo one-shot falcon deploy --values-file falcon-values.yaml \
+  --consensus-node-version <version> \
+  [--edge] [other flags]
 ```
 
 ---
@@ -153,37 +165,51 @@ solo one-shot multi deploy --edge --num-consensus-nodes 3 [--debug] [other flags
 ### Override Consensus Node and Mirror Node
 
 ```bash
-CONSENSUS_NODE_EDGE_VERSION=v0.73.0 \
-MIRROR_NODE_EDGE_VERSION=v0.153.1 \
-solo one-shot single deploy --edge --debug
+solo one-shot single deploy \
+  --consensus-node-version v0.73.0 \
+  --mirror-node-version v0.153.1 \
+  --debug
 ```
 
 ### Override every component
 
 ```bash
-CONSENSUS_NODE_EDGE_VERSION=v0.73.0 \
-MIRROR_NODE_EDGE_VERSION=v0.153.1 \
-RELAY_EDGE_VERSION=0.77.0 \
-EXPLORER_EDGE_VERSION=27.0.0 \
-BLOCK_NODE_EDGE_VERSION=v0.32.0 \
-SOLO_CHART_EDGE_VERSION=0.64.0 \
-solo one-shot single deploy --edge --debug
+SOLO_CHART_VERSION=0.64.0 \
+solo one-shot single deploy \
+  --consensus-node-version v0.73.0 \
+  --mirror-node-version v0.153.1 \
+  --relay-version 0.77.0 \
+  --explorer-version 27.0.0 \
+  --block-node-version v0.32.0 \
+  --debug
 ```
 
-### Export once, reuse across a development session
+### Newest stable releases, with one component pinned
 
-If you are iterating and running deploy/destroy/deploy cycles, export the
-variables so every `one-shot` command in the shell session picks them up:
+Explicit version flags win over `--edge`, so you can move everything to the
+newest stable release while holding one component at a known tag:
 
 ```bash
-export CONSENSUS_NODE_EDGE_VERSION=v0.74.0-rc.1
-export MIRROR_NODE_EDGE_VERSION=v0.153.1
+solo one-shot single deploy --edge --mirror-node-version v0.153.1 --debug
+```
 
-solo one-shot single deploy --edge --debug
+### Reuse versions across a development session
 
-# Destroy and redeploy without re-typing the variables
+If you are iterating and running deploy/destroy/deploy cycles, put the versions
+in a `solo.config.yaml` in your working directory so every `one-shot` deploy run
+from there picks them up:
+
+```yaml
+consensus-node-version: v0.74.0-rc.1
+mirror-node-version: v0.153.1
+```
+
+```bash
+solo one-shot single deploy --debug
+
+# Destroy and redeploy without re-typing the versions
 solo one-shot single destroy
-solo one-shot single deploy --edge --debug
+solo one-shot single deploy --debug
 ```
 
 ---
@@ -221,18 +247,18 @@ see [Find your deployment namespace](/docs/simple-solo-setup/managing-your-netwo
 
 ## Without `--edge`
 
-Omitting `--edge` uses the stable defaults compiled into the Solo CLI you are
-running — any `*_EDGE_VERSION` variables you have set are ignored for that
-invocation.
+Omitting `--edge` uses the default versions compiled into the Solo CLI you are
+running, unless a version flag, a `solo.config.yaml`/`solo.config.json` file, or
+a `*_VERSION` environment variable overrides them. Any `*_EDGE_VERSION`
+variables you have set are ignored.
 
 ```bash
-# Stable defaults — *_EDGE_VERSION variables are ignored.
+# Default versions
 solo one-shot single deploy --debug
 ```
 
-If you want to pin versions without using `--edge` (for example, to test a
-specific stable release of one component), see
-[Pinning Component Versions](/docs/advanced-solo-setup/using-environment-variables#pinning-component-versions)
+For the `*_VERSION` environment variables, see
+[Component Versions](/docs/advanced-solo-setup/using-environment-variables#component-versions)
 in the environment variables reference.
 
 ---
@@ -241,22 +267,15 @@ in the environment variables reference.
 
 **The version I set is not being used.**
 
-Confirm you passed `--edge`. Without it, Solo ignores every `*_EDGE_VERSION`
-variable and uses the compiled-in stable defaults.
-
-**Solo is ignoring my environment variable.**
-
-The variable must be exported in (or prefixed to) the same shell process that
-runs Solo. Verify with:
-
-```bash
-echo $CONSENSUS_NODE_EDGE_VERSION   # should print your value
-```
-
-If you set the variable inline (`FOO=bar solo ...`), double-check the variable
-name is spelled exactly as listed in
-[Edge Component Versions](/docs/advanced-solo-setup/using-environment-variables#edge-component-versions)
-— the names are case-sensitive.
+- If you set a `*_EDGE_VERSION` variable: with `--edge`, Solo uses the newest
+  stable GitHub release and reads `*_EDGE_VERSION` only when that lookup fails.
+  Pass the version with the component's version flag instead.
+- If you set a `*_VERSION` variable together with `--edge`: `--edge` replaces
+  the defaults, so the variable is not used. Use the version flag, or drop
+  `--edge`.
+- A `solo.config.yaml` or `solo.config.json` in the current directory or a
+  parent directory takes precedence over environment variables and `--edge`.
+  Check for one if versions change unexpectedly.
 
 **The deploy fails with an image-pull error.**
 

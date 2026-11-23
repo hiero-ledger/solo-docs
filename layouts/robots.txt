@@ -3,3 +3,5 @@ Content-Signal: ai-train=yes, search=yes, ai-input=yes
 Allow: /
 
 Sitemap: {{ .Site.BaseURL }}sitemap.xml
+
+# AI agents: start at the curated docs index, {{ .Site.BaseURL }}llms.txt

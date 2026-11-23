@@ -58,7 +58,7 @@ This command:
 - Creates a local Kind Kubernetes cluster.
 - Deploys a Hiero consensus node, mirror node, and Hiero Mirror Node Explorer.
 - Deploys the Hiero **JSON-RPC relay** and exposes it at `http://localhost:37546` (Solo 0.63+).
-- Generates three groups of pre-funded accounts, including ECDSA (EVM-compatible) accounts.
+- Creates 10 pre-funded ECDSA alias accounts (EVM-compatible), in addition to the genesis operator account `0.0.2`.
 
 > **Relay endpoint summary (Solo 0.63 and later):**
 >
@@ -80,27 +80,33 @@ To remove the relay when you no longer need it, see [**Cleanup Step 1: Destroy J
 
 ## Step 2: Retrieve Your ECDSA Account and Private Key
 
-`one-shot single deploy` creates ECDSA alias accounts, which are required for EVM tooling such as Hardhat, ethers.js, Foundry, and MetaMask.
-These accounts and their private keys are saved to a cache directory on completion.
+`one-shot single deploy` creates 10 ECDSA alias accounts (group `ecdsa-alias`), which are required for EVM tooling such as Hardhat, ethers.js, Foundry, and MetaMask.
+Their account IDs, keys and EVM addresses are printed at the end of the deploy and saved to `accounts.json` in the one-shot output directory.
 
 > Note: ED25519 accounts are not compatible with Hardhat, ethers.js, Foundry, or MetaMask when used via the JSON-RPC interface.
-> Always use the ECDSA keys from accounts.json for EVM tooling.
+> Always use the ECDSA alias keys from the `createdAccounts` list for EVM tooling.
 
-- To find your deployment name, run `solo one-shot show deployment` (see [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)).
-
-- Then open the accounts file at:
+- Print the accounts with the Solo CLI (works the same on macOS, Linux and Windows):
 
   ```bash
-  ~/.solo/one-shot-<deployment-name>/accounts.json
+  solo one-shot show accounts --output json
   ```
 
-- Open that file to retrieve your ECDSA keys and EVM address. Each account entry contains:
-  - An **ECDSA private key** - 64 hex characters with a `0x` prefix (e.g. `0x105d0050...`).
-  - An **ECDSA public key** - the corresponding public key.
-  - An **EVM address** - derived from the public key (e.g. `0x70d379d473e2005bb054f50a1d9322f45acb215a`). In Hiero terminology, this means the account has an EVM address aliased from its ECDSA public key.
-  
-  ```bash
-  0x105d0050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524
+  The command reads `accounts.json` from `~/.solo/one-shot-<deployment-name>/`
+  (`%USERPROFILE%\.solo\one-shot-<deployment-name>\` on Windows). Add
+  `--deployment <deployment-name>` if you have more than one deployment; run
+  `solo one-shot show deployment` to find the name (see
+  [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name)).
+
+- Each entry in `createdAccounts` contains:
+  - `privateKey` - the **ECDSA private key**, 64 hex characters with a `0x` prefix (e.g. `0x105d0501...`).
+  - `publicKey` - the corresponding compressed ECDSA public key.
+  - `publicAddress` - the account's **EVM address** alias in `<shard>.<realm>.<address>` form (e.g. `0.0.67d8d32e9bf1a9968a5ff53b87d777aa8ebbee69`). Prefix the last part with `0x` to get the address EVM tools display (`0x67d8d32e9bf1a9968a5ff53b87d777aa8ebbee69`). In Hiero terminology, the account has an EVM address aliased from its ECDSA public key.
+
+  The keys are the same on every one-shot deployment. The first two are:
+
+  ```text
+  0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524
   0x2e1d968b041d84dd120a5860cee60cd83f9374ef527ca86996317ada3d0d03e7
   ...
   ```
@@ -111,12 +117,12 @@ hardcode private keys in source files**:
 {{< tabpane text=true >}}
 {{% tab header="Bash" lang="bash" %}}
 ```bash
-export SOLO_EVM_PRIVATE_KEY="0x105d0050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
+export SOLO_EVM_PRIVATE_KEY="0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524"
 ```
 {{% /tab %}}
 {{% tab header="PowerShell" lang="powershell" %}}
 ```powershell
-$env:SOLO_EVM_PRIVATE_KEY = '0x105d0050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524'
+$env:SOLO_EVM_PRIVATE_KEY = '0x105d050185ccb907fba04dd92d8de9e32c18305e097ab41dadda21489a211524'
 ```
 {{% /tab %}}
 {{< /tabpane >}}
@@ -127,8 +133,7 @@ $env:SOLO_EVM_PRIVATE_KEY = '0x105d0050185ccb907fba04dd92d8de9e32c18305e097ab41d
 
 ### Option A: Use the Pre-Built Solo Example (Recommended for First Time)
 
-A ready-to-run Hardhat project is provided in the Solo repository. Skip to
-[Step 4](#step-4-deploy-and-interact-with-a-solidity-contract) after cloning:
+A ready-to-run Hardhat 3 project is provided in the Solo repository:
 
 ```bash
 git clone https://github.com/hiero-ledger/solo.git
@@ -136,29 +141,36 @@ cd solo/examples/hardhat-with-solo/hardhat-example
 npm install
 ```
 
+The example ships `contracts/SimpleStorage.sol`, `test/SimpleStorage.ts`, and a
+`hardhat.config.ts` that already defines the `my_solo_deployment` network with
+all 10 ECDSA alias keys, so you do not need to export `SOLO_EVM_PRIVATE_KEY` or
+edit the config. Continue with
+[Compile the Contract](#compile-the-contract) and
+[Run the Tests](#run-the-tests) in Step 4. The example does not include the
+`scripts/deploy.ts` and `scripts/send-tx.ts` files used later in this guide;
+create them from the snippets below if you want to run those steps.
+
 ### Option B: Create a New Hardhat Project from Scratch
 
-If you want to integrate Solo into your own project:
+If you want to integrate Solo into your own project, initialize a Hardhat 3
+project:
 
 ```bash
 mkdir solo-hardhat && cd solo-hardhat
-npm init -y
-npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
-npx hardhat init
+npx hardhat@3.11.0 --init
 ```
 
-When prompted, choose **TypeScript project** or **JavaScript project** based on
-your preference.
-
-Install dependencies:
-
-```bash
-npm install
-```
+When prompted, choose **Hardhat 3**, initialize in the current directory
+(`.`), select **A TypeScript Hardhat project using Mocha and Ethers.js**, and
+let it install the dependencies. This project type uses
+`@nomicfoundation/hardhat-toolbox-mocha-ethers` (the plugin imported in the
+config below) and sets `"type": "module"` in `package.json`, which Hardhat 3
+requires.
 
 ### Configure Hardhat to Connect to the Solo Relay
 
-Create or update `hardhat.config.ts` to point at the Solo JSON-RPC relay.
+Replace the generated `hardhat.config.ts` with one that points at the Solo JSON-RPC relay.
+(Option A users can skip this section.)
 The `chainId` of `298` is required - Hardhat will reject transactions if it
 does not match the network:
 
@@ -199,7 +211,8 @@ export default config;
 ### The Sample Contract
 
 If using the pre-built Solo example, `contracts/SimpleStorage.sol` is included.
-For a new project, create `contracts/SimpleStorage.sol`:
+For a new project, create `contracts/SimpleStorage.sol` (you can delete the
+generated sample contract, test, and Ignition module):
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -261,13 +274,12 @@ For the pre-built example, the test suite covers three scenarios:
 
 ### Deploy via a Script
 
-To deploy `SimpleStorage` to your Solo network using a deploy script:
+To deploy `SimpleStorage` to your Solo network using a deploy script, save the
+script below as `scripts/deploy.ts` and run:
 
 ```bash
 npx hardhat run scripts/deploy.ts --network my_solo_deployment
 ```
-
-A minimal `scripts/deploy.ts` looks like:
 
 > **Hardhat v3:** The bundled example pins Hardhat 3.x, which removed the
 > `ethers` named export from the `hardhat` module. Obtain `ethers` from the
@@ -296,7 +308,8 @@ main().catch((err) => {
 
 ## Step 5: Send a Transaction with ethers.js
 
-To submit a transaction directly from a script using ethers.js via Hardhat:
+To submit a transaction directly from a script using ethers.js via Hardhat,
+save the following as `scripts/send-tx.ts`:
 
 ```typescript
 import { network } from "hardhat";

@@ -244,13 +244,22 @@ The default local ports depend on your Solo version:
 ## Restoring Port-Forwards
 
 If port-forwards are interrupted — for example after a system restart — restore
-them by re-running the relevant component add commands. These commands are
-idempotent and will reattach port-forwards without redeploying:
+them without redeploying:
 
 ```bash
-solo mirror node add --deployment "${SOLO_DEPLOYMENT}"
-solo explorer node add --deployment "${SOLO_DEPLOYMENT}"
+solo deployment port-forwards refresh --deployment "${SOLO_DEPLOYMENT}"
 ```
+
+This re-establishes every port-forward recorded in the deployment's remote
+config, including the Mirror Node and Explorer ones. Do not re-run
+`solo mirror node add` or `solo explorer node add` for this: `add` deploys an
+additional instance of the component rather than reattaching the existing one.
+
+Manual `kubectl port-forward` tunnels you opened yourself (such as `5551`,
+`5600` and `8084` above) are not tracked by Solo; re-run those commands.
+See [Port availability](/docs/using-solo/endpoints#port-availability) for
+deployments where one-shot created the Kind cluster and the endpoints are
+NodePorts instead of port-forwards.
 
 ---
 

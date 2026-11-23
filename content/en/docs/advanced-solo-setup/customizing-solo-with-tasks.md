@@ -34,19 +34,13 @@ Before you begin, ensure you have completed the following:
 
 ## Install the Task Tool
 
-The Task tool is a dependency for using Taskfile targets in the Solo repository. Install it using one of the following methods:
-
-### Using Homebrew (macOS/Linux) (recommended)
-
-```bash
-brew install go-task/tap/go-task
-```
-
-### Using npm
+The Task tool is a dependency for using Taskfile targets in the Solo repository. Install it with npm:
 
 ```bash
 npm install -g @go-task/cli
 ```
+
+For other installation methods, see the [Task installation guide](https://taskfile.dev/installation/).
 
 Verify the installation:
 
@@ -102,7 +96,7 @@ Deploy a standalone Hiero Consensus Node network with a single command:
 # From the repository root, navigate to scripts directory
 cd scripts
 
-# Deploy default network (2 consensus nodes)
+# Deploy default network (1 consensus node; set SOLO_NETWORK_SIZE for more)
 task default
 ```
 
@@ -110,7 +104,7 @@ This command performs the following actions:
 
 - Initializes Solo and downloads required dependencies.
 - Creates a local Kubernetes cluster using Kind.
-- Deploys 2 consensus nodes.
+- Deploys `SOLO_NETWORK_SIZE` consensus nodes (1 by default).
 - Sets up gRPC and JSON-RPC endpoints for client access.
 
 ### Deploy Network with Mirror Node
@@ -127,7 +121,7 @@ This configuration includes:
 
 | Component          | Description                                   |
 | ------------------ | --------------------------------------------- |
-| **Consensus Node** | 2 consensus nodes running Hiero               |
+| **Consensus Node** | 1 consensus node by default (`SOLO_NETWORK_SIZE`) |
 | **Mirror Node**    | Stores and serves historical transaction data |
 | **Explorer UI**    | Web interface for viewing accounts            |
 
@@ -147,7 +141,7 @@ This configuration includes:
 
 | Component          | Description                                   |
 | ------------------ | --------------------------------------------- |
-| **Consensus Node** | 2 consensus nodes running Hiero               |
+| **Consensus Node** | 1 consensus node by default (`SOLO_NETWORK_SIZE`) |
 | **Mirror Node**    | Stores and serves historical transaction data |
 | **Explorer UI**    | Web interface for viewing accounts            |
 | **JSON-RPC Relay** | Ethereum-compatible JSON-RPC interface        |
@@ -210,7 +204,7 @@ Add, configure, or remove mirror nodes from an existing deployment:
 | Task                          | Description                                       |
 | ----------------------------- | ------------------------------------------------- |
 | `solo:mirror-node`            | Add a mirror node to the current deployment       |
-| `solo:destroyer-mirror-node`  | Remove the mirror node from the deployment        |
+| `solo:destroy-mirror-node`    | Remove the mirror node from the deployment        |
 
 ### Example: Add mirror node to running network
 
@@ -224,7 +218,7 @@ task default
 task solo:mirror-node
 
 # Remove mirror node
-task solo:destroyer-mirror-node
+task solo:destroy-mirror-node
 ```
 
 ### Explorer UI Management
@@ -341,10 +335,16 @@ You can customize Task behavior by setting environment variables before running 
 | --- | --- | --- |
 | `SOLO_NETWORK_SIZE` | Number of consensus nodes | `1` |
 | `SOLO_NAMESPACE` | Kubernetes namespace | `solo-e2e` |
-| `CONSENSUS_NODE_VERSION` | Consensus node version | `v0.65.1` |
-| `MIRROR_NODE_VERSION` | Mirror node version | `v0.138.0` |
-| `RELAY_VERSION` | JSON-RPC Relay version | `v0.70.0` |
-| `EXPLORER_VERSION` | Explorer UI version | `v25.1.1` |
+| `CONSENSUS_NODE_VERSION` | Consensus node version | Solo's default |
+| `MIRROR_NODE_VERSION` | Mirror node version | Solo's default |
+| `RELAY_VERSION` | JSON-RPC Relay version | Solo's default |
+| `EXPLORER_VERSION` | Explorer UI version | Solo's default |
+
+The component version defaults change with almost every Solo release. For the
+values in your checkout, see
+[`version.ts`](https://github.com/hiero-ledger/solo/blob/main/version.ts) at the
+root of the Solo repository; for released versions, see the
+[Version Compatibility Reference](/docs/simple-solo-setup/system-readiness#version-compatibility-reference).
 
 For a comprehensive reference of all available environment variables, see [Using Environment Variables](/docs/advanced-solo-setup/using-environment-variables/).
 
@@ -353,23 +353,26 @@ For a comprehensive reference of all available environment variables, see [Using
 ```bash
 cd scripts
 
-# Deploy with specific component versions
-CONSENSUS_NODE_VERSION=v0.66.0 \
-MIRROR_NODE_VERSION=v0.139.0 \
+# Deploy with specific component versions (replace the placeholders with
+# published release tags)
+CONSENSUS_NODE_VERSION=<consensus-node-version> \
+MIRROR_NODE_VERSION=<mirror-node-version> \
 task default-with-mirror
 ```
 
 ## Example Projects
 
-The Solo repository includes 14+ maintained example projects that demonstrate common Solo workflows. These examples serve as templates and starting points for custom implementations.
+The Solo repository includes more than 20 maintained example projects that demonstrate common Solo workflows. These examples serve as templates and starting points for custom implementations.
 
 ### Getting Started with Examples
 
 Each example is located in the `examples/` directory and includes:
 
-- Pre-configured `Taskfile.yml` with deployment settings.
-- `init-containers-values.yaml` for customization.
-- Example-specific README with detailed instructions.
+- A pre-configured `Taskfile.yml` with deployment settings (except
+  `running-solo-inside-cluster`, which is driven by its README).
+- An example-specific README with detailed instructions.
+- Any extra configuration files that example needs (for example,
+  `local-build-with-custom-config` ships an `init-containers-values.yaml`).
 
 **To run an example:**
 
@@ -457,7 +460,7 @@ Iterate on network configuration using any example with a `Taskfile.yml`:
 ```bash
 cd examples/local-build-with-custom-config
 
-# Edit the Taskfile or init-containers-values.yaml
+# Edit the Taskfile or the example's configuration files
 
 # Deploy with your changes
 task

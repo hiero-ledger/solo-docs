@@ -51,9 +51,9 @@ for the current defaults):
 
 | Chart                                  | Version environment variable       | Source                                |
 | -------------------------------------- | ---------------------------------- | ------------------------------------- |
-| `solo-deployment`                      | `SOLO_CHART_VERSION`               | `oci://ghcr.io/hashgraph/solo-charts` |
-| `solo-cert-manager`                    | `SOLO_CHART_VERSION`               | `oci://ghcr.io/hashgraph/solo-charts` |
-| `solo-shared-resources`                | `SOLO_CHART_VERSION`               | `oci://ghcr.io/hashgraph/solo-charts` |
+| `solo-deployment`                      | `SOLO_CHART_VERSION`               | `oci://ghcr.io/hiero-ledger/solo-charts` |
+| `solo-cert-manager`                    | `SOLO_CHART_VERSION`               | `oci://ghcr.io/hiero-ledger/solo-charts` |
+| `solo-shared-resources`                | `SOLO_CHART_VERSION`               | `oci://ghcr.io/hiero-ledger/solo-charts` |
 | `hedera-mirror` (mirror node)          | `MIRROR_NODE_VERSION`              | `MIRROR_NODE_CHART_URL`               |
 | `hedera-json-rpc` (JSON-RPC relay)     | `RELAY_VERSION`                    | `JSON_RPC_RELAY_CHART_URL`            |
 | `block-node-server` (block node)       | `BLOCK_NODE_VERSION`               | `BLOCK_NODE_CHART_URL`                |
@@ -62,10 +62,16 @@ for the current defaults):
 | `prometheus-operator-crds`             | `PROMETHEUS_OPERATOR_CRDS_VERSION` | `PROMETHEUS_OPERATOR_CRDS_CHART_URL`  |
 | `operator` (MinIO operator)            | `MINIO_OPERATOR_VERSION`           | `MINIO_OPERATOR_CHART_URL`            |
 | `haproxy-ingress` (ingress controller) | `INGRESS_CONTROLLER_VERSION`       | `INGRESS_CONTROLLER_CHART_URL`        |
+| `alloy` (Grafana Alloy)                | `GRAFANA_ALLOY_VERSION`            | `GRAFANA_CHART_URL`                   |
+| `loki` (Grafana Loki)                  | `LOKI_VERSION`                     | `GRAFANA_CHART_URL`                   |
 
-The `Source` column names the environment variable holding the chart repository
-or OCI registry URL; those can be overridden too, for example to pull through an
-internal mirror.
+For the three Solo charts, the `Source` column is the fixed OCI registry. Solo
+chart versions 0.66.1 and earlier were published only under
+`oci://ghcr.io/hashgraph/solo-charts` (before solo-charts moved to the
+`hiero-ledger` organization), and Solo pulls those older versions from there.
+For the other charts, the `Source` column names the environment variable
+holding the chart repository or OCI registry URL; those can be overridden too,
+for example to pull through an internal mirror.
 
 **Not cached:** the network load generator and metrics-server charts are
 intentionally excluded (metrics-server has no pinned version) and always install
@@ -73,8 +79,9 @@ from the network.
 
 ## Managing the cache
 
-All commands live under `solo cache chart`. They accept the shared `--quiet`,
-`--cache-dir`, and `--dev-mode` flags; no other flags are needed.
+All commands live under `solo cache chart`. They accept the shared
+`--quiet-mode` (`-q`), `--cache-dir`, and `--debug` flags; no other flags are
+needed.
 
 ### Pull charts
 

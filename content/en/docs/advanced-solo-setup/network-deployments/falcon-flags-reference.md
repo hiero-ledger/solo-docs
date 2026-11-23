@@ -47,7 +47,8 @@ Flags passed to `solo consensus network deploy`.
 | Flag | Type | Default | Description |
 | --- | --- | --- | --- |
 | `--consensus-node-version` | string | current Hedera platform version | Consensus node version to deploy (e.g. `v0.71.0`). |
-| `--pvcs` | boolean | `false` | Enable Persistent Volume Claims for consensus node storage. Required for node add operations. |
+| `--pvcs` | boolean | `true` (Solo v0.99.0 and later; `false` in earlier versions) | Enable Persistent Volume Claims for consensus node storage. Required for node add operations. |
+| `--chain-id` | string | `298` | EVM chain ID of the network. Solo writes it to the consensus nodes (`contracts.chainId`) and passes the same value to the relay. Set the chain ID here, not under `relayNode`. |
 | `--load-balancer` | boolean | `false` | Enable load balancer for network node proxies. |
 | `--chart-dir` | string | — | Path to a local Helm chart directory for the Solo network chart. |
 | `--solo-chart-version` | string | current chart version | Specific Solo testing chart version to deploy. |
@@ -190,7 +191,7 @@ Flags passed to `solo relay node add`.
 | `--relay-version` | string | current version | Hiero JSON-RPC Relay version to deploy. |
 | `--node-aliases` | string | — | Comma-separated node aliases the relay will observe (e.g. `node1` or `node1,node2`). |
 | `--replica-count` | number | `1` | Number of relay replicas to deploy. |
-| `--chain-id` | string | `298` | EVM chain ID exposed by the relay (Hedera testnet default). |
+| `--chain-id` | string | the `network` chain ID | Leave unset. The relay always uses the chain ID from the `network` section (default `298`); if you set a different value here, the deploy fails with a chain ID mismatch error. |
 | `--force-port-forward` | boolean | `true` | Enable port forwarding for the relay service. |
 | `--domain-name` | string | — | Custom domain name for the relay. |
 | `--relay-chart-dir` | string | — | Path to a local Hiero JSON-RPC Relay Helm chart directory. |
@@ -245,8 +246,27 @@ line. They are **not** read from the values file sections.
 | `--cluster-ref` | string | `one-shot` | Cluster reference name. |
 | `--num-consensus-nodes` | number | `1` | Number of consensus nodes to deploy. |
 | `--parallel-deploy` | boolean | `true` | Run independent deploy stages in parallel (consensus+block, mirror+accounts, explorer+relay). Use `--no-parallel-deploy` for sequential execution. |
+| `--deploy-mirror-node` | boolean | `true` | Deploy the mirror node. Use `--deploy-mirror-node false` to skip it. |
+| `--deploy-explorer` | boolean | `true` | Deploy the Explorer. |
+| `--deploy-relay` | boolean | `true` | Deploy the JSON-RPC relay. |
+| `--metrics-server` | boolean | `false` | Deploy the Kubernetes metrics server so `kubectl top` reports CPU and memory usage. |
+| `--rollback` | boolean | `false` | Clean up automatically if the deploy fails. By default, a failed deploy keeps its partial resources so you can inspect the failure and re-run the command. |
+| `--external-address` | string | — | Bind address for the port forwards Solo creates (for example `127.0.0.1` or `0.0.0.0`). |
+| `--edge` | boolean | `false` | Use the newest stable release of each component instead of Solo's defaults. See [One-Shot Deploy with Custom Component Versions](/docs/advanced-solo-setup/one-shot-deploy-with-custom-versions). |
+| `--consensus-node-version` | string | current Hedera platform version | Consensus node version to deploy. |
+| `--mirror-node-version` | string | current version | Mirror node version to deploy. |
+| `--relay-version` | string | current version | JSON-RPC relay version to deploy. (`--relay-release` is a deprecated alias.) |
+| `--explorer-version` | string | current version | Explorer version to deploy. |
+| `--block-node-version` | string | current version | Block node version to deploy. |
 | `--quiet-mode` | boolean | `false` | Suppress all interactive prompts. |
 | `--force` | boolean | `false` | Force actions that would otherwise be skipped. |
+
+A version set in the matching values-file section (for example
+`network.--consensus-node-version` or `mirrorNode.--mirror-node-version`) takes
+precedence over the command-line version flag.
+
+`solo one-shot falcon deploy` does not accept `--chain-id` on the command line;
+set it under the `network` section of the values file.
 
 ---
 

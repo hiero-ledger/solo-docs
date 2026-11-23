@@ -30,26 +30,34 @@ Before proceeding, ensure you have:
   2. [**Manual Deployment**](/docs/advanced-solo-setup/network-deployments/manual-deployment) - step-by-step
      deployment with full control over each component.
 
-- Set the required environment variables as described below:
+- Persistent Volume Claims (PVCs) enabled on that network if you plan to
+  **add** a node — see [Persistent Volume Claims](#persistent-volume-claims-pvcs) below.
+
+- Set `SOLO_DEPLOYMENT` to the name of the deployment you want to operate on.
+  The commands on this page only need the deployment name.
+
+  - **Quickstart** (`solo one-shot single deploy`): the deployment is named
+    `one-shot` unless you passed `--deployment`.
+  - **Manual Deployment**: use the `SOLO_DEPLOYMENT` value from that guide
+    (`solo-deployment`).
 
 {{< tabpane text=true >}}
 {{% tab header="Bash" lang="bash" %}}
 ```bash
-export SOLO_CLUSTER_NAME=solo
-export SOLO_NAMESPACE=solo-deployment
-export SOLO_CLUSTER_SETUP_NAMESPACE=solo-cluster
-export SOLO_DEPLOYMENT=solo-deployment
+# Quickstart deployment; use solo-deployment for the Manual Deployment guide
+export SOLO_DEPLOYMENT=one-shot
 ```
 {{% /tab %}}
 {{% tab header="PowerShell" lang="powershell" %}}
 ```powershell
-$env:SOLO_CLUSTER_NAME = 'solo'
-$env:SOLO_NAMESPACE = 'solo-deployment'
-$env:SOLO_CLUSTER_SETUP_NAMESPACE = 'solo-cluster'
-$env:SOLO_DEPLOYMENT = 'solo-deployment'
+# Quickstart deployment; use solo-deployment for the Manual Deployment guide
+$env:SOLO_DEPLOYMENT = 'one-shot'
 ```
 {{% /tab %}}
 {{< /tabpane >}}
+
+  On native Windows (PowerShell), reference the variable as `$env:SOLO_DEPLOYMENT`
+  in the commands that follow.
 
 ## Key and Storage Concepts
 
@@ -69,20 +77,28 @@ appear in the `prepare` step.
     When adding a new node, Solo generates a fresh key pair and stores it
     alongside the keys for existing nodes in the same directory. For more detail, see [Where are my keys stored?](/docs/faqs/#5-where-are-my-keys-stored).
 
-2. **Persistent Volume Claims (PVCs)**
+2. <a id="persistent-volume-claims-pvcs"></a>**Persistent Volume Claims (PVCs)**
 
-    By default, consensus node storage is **ephemeral** - data stored by a node
-    is lost if its pod crashes or is restarted. This is intentional for
-    lightweight local testing where persistence is not required.
-
-    The `--pvcs true` flag creates
+    The `--pvcs` flag creates
     [Persistent Volume Claims (PVCs)](https://kubernetes.io/docs/concepts/storage/volumes/#how-volumes-work)
-    for the node, ensuring its state survives pod restarts. Enable this flag for
-    any node that needs to persist across restarts or that will participate in
-    longer-running test scenarios.
+    for consensus node storage, so a node's state survives pod restarts.
+    Without PVCs, node storage is **ephemeral** and is lost when its pod
+    restarts.
 
-    > **Note:** PVCs are not enabled by default. Enable them only if your node
-    > needs to persist state across pod restarts.
+    **Adding a node requires PVCs.** Solo checks that `--pvcs` is enabled on
+    the add command and that the existing nodes already have PVCs; otherwise
+    the add fails. The network you add the node to must therefore have been
+    deployed with PVCs enabled.
+
+    - **Solo v0.99.0 and later** enable PVCs by default (`--pvcs` defaults to
+      `true`) for `solo consensus network deploy`, `solo one-shot single deploy`,
+      and the node add commands, so a default deployment is ready for node
+      additions. A Falcon values file can still turn them off (`--pvcs: false`).
+    - **Earlier versions** default `--pvcs` to `false`. Deploy the network with
+      `solo consensus network deploy --pvcs true` (or set `--pvcs: true` in the
+      Falcon values file), and pass `--pvcs true` to the node add commands.
+      A Quickstart network deployed with an earlier version has no PVCs and
+      cannot accept new nodes.
 
 3. **Staging Directory**
 
@@ -95,7 +111,25 @@ appear in the `prepare` step.
 ## Adding a Node to an Existing Network
 
 You can dynamically add a new consensus node to a running network without taking the network offline.
-This process involves three stages: preparing the node's keys and configuration, submitting the on-chain transaction, and executing the addition.
+
+Solo assigns the new node's alias automatically: it takes the alias of the last
+existing node and increments its number (for example, `node2` after `node1`), and
+gives the node the next free account ID. There is no flag to choose the alias.
+
+The simplest way to add a node is the single command `solo consensus node add`,
+which runs the prepare, submit, and execute stages in one go:
+
+```bash
+solo consensus node add \
+  --gossip-keys true \
+  --tls-keys true \
+  --pvcs true \
+  --deployment "${SOLO_DEPLOYMENT}"
+```
+
+To run (or script) each stage separately, use the `solo consensus dev-node-add`
+commands below. The process has three stages: preparing the node's keys and
+configuration, submitting the on-chain transaction, and executing the addition.
 
 ### Step 1: Prepare the new node
 
@@ -108,7 +142,6 @@ solo consensus dev-node-add prepare \
   --deployment "${SOLO_DEPLOYMENT}" \
   --pvcs true \
   --admin-key <admin-key> \
-  --node-alias node2 \
   --output-dir context
 ```
 
@@ -116,9 +149,8 @@ solo consensus dev-node-add prepare \
 | --- | --- |
 | --gossip-keys | Generate gossip keys for the new node. |
 | --tls-keys | Generate gRPC TLS keys for the new node. |
-| --pvcs | Create persistent volume claims for the new node. |
+| --pvcs | Create persistent volume claims for the new node. Required; defaults to `true` in Solo v0.99.0 and later. |
 | --admin-key | The admin key used to authorize the node addition transaction. |
-| --node-alias | Alias for the new node (e.g., node2). |
 | --output-dir | Directory where prepared context files are saved for use in subsequent steps. |
 
 ### Step 2: Submit the transaction to add the node

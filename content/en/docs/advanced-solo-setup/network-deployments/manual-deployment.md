@@ -26,7 +26,9 @@ Before proceeding, ensure you have completed the following:
 
 - [**System Readiness**](/docs/simple-solo-setup/system-readiness) — your local environment
   meets all hardware and software requirements (Docker, kind, kubectl, helm, Solo).
-- [**Quickstart**](/docs/simple-solo-setup/quickstart) — you have a running Kind cluster.
+- `kind` is on your `PATH`. Solo's own copy lives in `~/.solo/bin`, which is not
+  necessarily on your `PATH`; see the note in
+  [System Readiness](/docs/simple-solo-setup/system-readiness).
 - Set your environment variables if you have not already done so:
 
 {{< tabpane text=true >}}
@@ -47,6 +49,30 @@ $env:SOLO_DEPLOYMENT = 'solo-deployment'
 ```
 {{% /tab %}}
 {{< /tabpane >}}
+
+- Create a dedicated Kind cluster named `${SOLO_CLUSTER_NAME}`. Kind names its
+  kubectl context `kind-<cluster name>`, so the commands below connect to
+  `kind-${SOLO_CLUSTER_NAME}`:
+
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+kind create cluster -n "${SOLO_CLUSTER_NAME}"
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+kind create cluster -n "$env:SOLO_CLUSTER_NAME"
+```
+{{% /tab %}}
+{{< /tabpane >}}
+
+> **Note:** The [Quickstart](/docs/simple-solo-setup/quickstart) creates a Kind
+> cluster named `solo-cluster` (context `kind-solo-cluster`), not `solo`. To
+> deploy into that cluster instead of creating a new one, set
+> `SOLO_CLUSTER_NAME=solo-cluster` and skip `kind create cluster`. A dedicated
+> cluster is recommended so that this deployment does not compete for resources
+> with a running Quickstart network.
 
 ---
 
@@ -167,14 +193,15 @@ HAProxy, Envoy, and MinIO:
 - Download the consensus node platform software and configure each node:
 
   ```bash
-  export CONSENSUS_NODE_VERSION=v0.66.0
-
-  solo consensus node setup \
-    --deployment "${SOLO_DEPLOYMENT}" \
-    --consensus-node-version "${CONSENSUS_NODE_VERSION}"
+  solo consensus node setup --deployment "${SOLO_DEPLOYMENT}"
   ```
 
-  On native Windows (PowerShell), set the version with `$env:CONSENSUS_NODE_VERSION = 'v0.66.0'` and reference variables as `$env:SOLO_DEPLOYMENT` / `$env:CONSENSUS_NODE_VERSION`.
+  This installs the same default consensus node version that step 5 deployed.
+  To run a specific version instead, pass the same
+  `--consensus-node-version <version>` to both `solo consensus network deploy`
+  (step 5) and `solo consensus node setup`. Avoid exporting
+  `CONSENSUS_NODE_VERSION` for this purpose: it changes Solo's default
+  consensus node version for every later command run in that shell.
 
 - **Example output**:
 
@@ -307,3 +334,20 @@ solo consensus network destroy \
   --deployment "${SOLO_DEPLOYMENT}" \
   --force
 ```
+
+### 5. Delete the Kind Cluster
+
+If you created a dedicated Kind cluster for this guide, delete it:
+
+{{< tabpane text=true >}}
+{{% tab header="Bash" lang="bash" %}}
+```bash
+kind delete cluster -n "${SOLO_CLUSTER_NAME}"
+```
+{{% /tab %}}
+{{% tab header="PowerShell" lang="powershell" %}}
+```powershell
+kind delete cluster -n "$env:SOLO_CLUSTER_NAME"
+```
+{{% /tab %}}
+{{< /tabpane >}}

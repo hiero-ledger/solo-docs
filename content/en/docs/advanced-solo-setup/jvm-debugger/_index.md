@@ -34,7 +34,7 @@ Before proceeding, ensure you have completed the following:
 
 You will also need:
 
-- [k9s](https://k9scli.io/) installed (`brew install k9s`)
+- [k9s](https://k9scli.io/) installed (see the [k9s installation guide](https://k9scli.io/topics/install/))
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/) with a Remote JVM Debug
   run configuration (for JVM debugging only)
 - A local checkout of
@@ -298,8 +298,20 @@ The state files are saved under `~/.solo/logs/`:
 
 ### Restore state
 
-Create a fresh cluster, deploy the network, then upload the saved state before
-starting the nodes:
+Create a fresh cluster, deploy the network, then start the nodes from the saved
+state.
+
+The reset below deletes `~/.solo`, which includes the downloaded state files in
+`~/.solo/logs/<namespace>/`. Copy them somewhere outside `~/.solo` first:
+
+```bash
+SOLO_NAMESPACE=solo-deployment
+
+mkdir -p "${HOME}/solo-saved-state"
+cp "${HOME}/.solo/logs/${SOLO_NAMESPACE}/"*-state.zip "${HOME}/solo-saved-state/"
+```
+
+Then recreate the network and start it from the saved state:
 
 ```bash
 SOLO_CLUSTER_NAME=solo-cluster
@@ -323,9 +335,8 @@ solo consensus node setup --deployment "${SOLO_DEPLOYMENT}" -i node1,node2,node3
 solo consensus node start --deployment "${SOLO_DEPLOYMENT}" -i node1,node2,node3
 solo consensus node stop --deployment "${SOLO_DEPLOYMENT}"
 
-# Upload previously saved state files
-solo consensus node state download  -i node1,node2,node3 --deployment "${SOLO_DEPLOYMENT}"
-
-# Restart the network using the uploaded state
-solo consensus node start --deployment "${SOLO_DEPLOYMENT}" --state-file network-node1-0-state.zip
+# Restart the network from the saved state. Solo uploads the file to every
+# node before starting it; use an absolute path.
+solo consensus node start --deployment "${SOLO_DEPLOYMENT}" \
+  --state-file "${HOME}/solo-saved-state/network-node1-0-state.zip"
 ```

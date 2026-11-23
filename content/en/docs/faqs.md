@@ -25,7 +25,7 @@ You can run one of the following commands depending on your needs:
     solo one-shot single deploy
     ```
 
-    > **Prerequisite:** Install Solo first with `npm install -g @hiero-ledger/solo@latest`. See [System Readiness](/docs/simple-solo-setup/system-readiness) for full install instructions. Homebrew (`brew install hiero-ledger/tools/solo`) is deprecated and will stop receiving updates after August 31, 2026.
+    > **Prerequisite:** Install Solo first with `npm install -g @hiero-ledger/solo@latest`. See [System Readiness](/docs/simple-solo-setup/system-readiness) for full install instructions.
 
     For more information on Single Node Deployment, see [Quickstart](/docs/simple-solo-setup/quickstart#step-2-deploy-a-local-network-one-shot)
 
@@ -83,12 +83,21 @@ You can run one of the following commands depending on how you deployed:
 
 ### Why should I destroy my network before redeploying?
 
-Running `solo one-shot single deploy` while a prior deployment still exists causes conflicts and errors. Always run destroy first:
+`solo one-shot single deploy` rebuilds from a clean slate. If it finds a
+previous one-shot deployment, it asks for confirmation and then destroys it
+before deploying. It cannot ask when run with `--quiet-mode` or `--force`, or
+without an interactive terminal (for example in CI or from an AI agent), so in
+those cases destroy first:
 
 ```bash
-solo one-shot single destroy
+solo one-shot single destroy --deployment one-shot
 solo one-shot single deploy
 ```
+
+Passing `--deployment` to `destroy` avoids a "Select deployment to destroy"
+prompt when Solo knows about more than one deployment. `destroy` keeps the Kind
+cluster; see [Cleanup](/docs/simple-solo-setup/cleanup#remove-the-kind-cluster)
+to remove it as well.
 
 ---
 
@@ -196,12 +205,22 @@ Keys are stored in `~/.solo/cache/keys/`. This directory contains:
 
 ### 6. How do I get the key for an account?
 
+- To list the keys of every account `solo one-shot single deploy` created, run:
+
+    ```bash
+    solo one-shot show accounts --deployment <deployment-name> --output json
+    ```
+
+    This prints the contents of `~/.solo/one-shot-<deployment-name>/accounts.json` and works the same in PowerShell.
+
 - Use the following command to get account balance and private key of the account `0.0.1007`:
 
     ```bash
     # get account info of 0.0.1007 and also show the private key
-    solo ledger account info --account-id 0.0.1007 --deployment solo-deployment  --private-key
+    solo ledger account info --account-id 0.0.1007 --deployment <deployment-name> --private-key
     ```
+
+    `<deployment-name>` is `one-shot` unless you passed `--deployment` when deploying.
 
 - The output would be similar to the following:
 
@@ -255,17 +274,17 @@ The most common cause is insufficient memory or CPU allocated to Docker Desktop.
 | Single-node | 12 GB | 6 cores |
 | Multi-node (3+ nodes) | 16 GB | 8 cores |
 
-Adjust these in **Docker Desktop → Settings → Resources** and restart Docker before deploying.
+Adjust these in **Docker Desktop → Settings → Resources** and restart Docker before deploying. On Windows with Docker Desktop's WSL2 backend, set them in `.wslconfig` instead; see [System Readiness](/docs/simple-solo-setup/system-readiness#macos-and-windows-docker-desktop).
 
 ### 9. How do I find my deployment name?
 
-Most management commands (stop, start, diagnostics) require the deployment name. Retrieve it with:
+Most management commands (stop, start, diagnostics) require the deployment name. For one-shot deployments it is `one-shot` unless you passed `--deployment`. To list every deployment Solo knows about, with its namespace:
 
 ```bash
-solo one-shot show deployment
+solo deployment config list --quiet-mode
 ```
 
-This prints your deployment details, including the deployment name — it defaults to `one-shot` for one-shot deployments, or the value you passed to `--deployment`. Use it as `<deployment-name>` in subsequent commands. See [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name) for more detail.
+Use the deployment name as `<deployment-name>` in subsequent commands. See [Capture your deployment name](/docs/simple-solo-setup/quickstart#capture-your-deployment-name) for more detail.
 
 ### 10. How do I create test accounts after deployment?
 
@@ -290,11 +309,7 @@ The mirror node accumulates transaction history while the network is running. If
 
 ### 13. How can I monitor my cluster more easily?
 
-- [k9s](https://k9scli.io/) provides a real-time terminal UI for inspecting pods, logs, and cluster state. Install it with:
-
-    ```bash
-    brew install k9s
-    ```
+- [k9s](https://k9scli.io/) provides a real-time terminal UI for inspecting pods, logs, and cluster state. See the [k9s installation guide](https://k9scli.io/topics/install/) for your platform.
 
 - Then run `k9s` to launch. It is especially helpful for watching pod startup progress during deployment.
 

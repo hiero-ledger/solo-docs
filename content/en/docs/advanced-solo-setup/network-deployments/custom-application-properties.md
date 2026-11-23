@@ -39,14 +39,34 @@ applies your file as key-level overrides:
 - If your file contains a new key, Solo appends it to the final file.
 - Blank lines and comments in your file are ignored during the merge.
 - Solo-generated keys that you do not mention remain in the final file.
+- After the merge, Solo re-applies the [Solo-managed properties](#solo-managed-properties)
+  listed below, so your values for those keys do not take effect.
 
 Example custom file for merge mode:
 
 ```properties
 # Override only the properties that need to change.
-contracts.chainId=298
 hedera.recordStream.logPeriod=1
+contracts.maxGasPerSec=30000000
 ```
+
+### Solo-managed properties
+
+In merge mode, Solo sets these keys itself after applying your file, because
+they must match the deployment. Change them with the Solo option shown instead
+of in `application.properties`:
+
+| Property | Set from |
+| --- | --- |
+| `hedera.realm`, `hedera.shard` | The deployment's realm and shard (`--realm` and `--shard` on `solo deployment config create`) |
+| `contracts.chainId` | The `--chain-id` flag |
+| `bootstrap.genesisPublicKey` | Solo's genesis key |
+| `blockStream.streamMode`, `blockStream.writerMode`, `blockStream.streamWrappedRecordBlocks` | Only when the deployment has block nodes: Solo sets the block stream mode required by the consensus node version and block node topology |
+
+The TSS properties `tss.hintsEnabled`, `tss.historyEnabled`,
+`tss.forceMockSignatures`, and `tss.wrapsEnabled` are different: Solo adds them
+only when TSS is enabled and your file does not already set them, so your values
+win.
 
 This is the recommended mode for most deployments because Solo keeps its
 generated defaults while still applying your overrides.
@@ -59,8 +79,8 @@ marker as a comment in your custom file:
 ```properties
 # SOLO_ENABLE_OVERWRITE=true
 
-contracts.chainId=298
 hedera.recordStream.logPeriod=1
+contracts.maxGasPerSec=30000000
 # Include every other property your consensus nodes require.
 ```
 
@@ -78,9 +98,11 @@ missing, or if it is written as a normal property instead of a comment, Solo
 uses default merge mode.
 
 In overwrite mode, your file becomes the full `application.properties` content.
-Solo does not carry over defaults that are missing from your file, so include
+Solo does not carry over defaults that are missing from your file, and it does
+not re-apply the [Solo-managed properties](#solo-managed-properties), so include
 all properties required by the consensus node version and deployment topology
-you are running.
+you are running, and make sure values such as `contracts.chainId`,
+`hedera.realm`, and `hedera.shard` match the deployment.
 
 ## Falcon values file
 
